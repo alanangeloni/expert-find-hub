@@ -1,8 +1,22 @@
+
 #root {
-  max-width: 1280px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 0;
   text-align: center;
+}
+
+@media (min-width: 768px) {
+  #root {
+    padding: 0 1rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  #root {
+    max-width: 1280px;
+    padding: 0 2rem;
+  }
 }
 
 .logo {
@@ -34,7 +48,13 @@
 }
 
 .card {
-  padding: 2em;
+  padding: 1.5em;
+}
+
+@media (min-width: 768px) {
+  .card {
+    padding: 2em;
+  }
 }
 
 .read-the-docs {

@@ -112,36 +112,38 @@ export default function Blog() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-      <div className="container mx-auto py-8 px-4 md:px-6">
+      <div className="container mx-auto py-6 md:py-8 px-4 md:px-6">
         {/* Blog Header */}
-        <div className="mb-12 text-center">
-          <h1 className="text-3xl md:text-4xl font-bold mb-4">Financial Insights Blog</h1>
-          <p className="text-slate-600 max-w-2xl mx-auto">
+        <div className="mb-8 md:mb-12 text-center">
+          <h1 className="text-2xl md:text-4xl font-bold mb-3 md:mb-4">Financial Insights Blog</h1>
+          <p className="text-slate-600 max-w-2xl mx-auto text-sm md:text-base">
             Expert advice, market insights, and financial planning strategies to help you achieve your financial goals.
           </p>
         </div>
 
         {/* Search and Filter */}
-        <div className="flex flex-col md:flex-row gap-4 mb-10">
+        <div className="flex flex-col md:flex-row gap-4 mb-8 md:mb-10">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input placeholder="Search articles..." className="pl-10" />
           </div>
-          <Tabs defaultValue="All" className="w-full md:w-auto">
-            <TabsList className="h-auto flex flex-wrap justify-start">
-              {categories.map((category) => (
-                <TabsTrigger key={category} value={category} className="text-xs md:text-sm">
-                  {category}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
+          <div className="overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
+            <Tabs defaultValue="All" className="w-full md:w-auto">
+              <TabsList className="h-auto flex flex-nowrap justify-start min-w-max">
+                {categories.map((category) => (
+                  <TabsTrigger key={category} value={category} className="text-xs md:text-sm whitespace-nowrap">
+                    {category}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+            </Tabs>
+          </div>
         </div>
 
         {/* Latest Articles */}
-        <div className="mb-12">
-          <h2 className="text-2xl font-bold mb-6">Latest Articles</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="mb-10 md:mb-12">
+          <h2 className="text-xl md:text-2xl font-bold mb-4 md:mb-6">Latest Articles</h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
             {posts.map((post) => (
               <Card key={post.id} className="overflow-hidden border-slate-200 hover:shadow-md transition-shadow">
                 <div className="aspect-video w-full overflow-hidden">
@@ -151,7 +153,7 @@ export default function Blog() {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <CardContent className="p-5">
+                <CardContent className="p-4 md:p-5">
                   <div className="mb-3">
                     <Badge
                       className={`${
@@ -171,10 +173,10 @@ export default function Blog() {
                       {post.category}
                     </Badge>
                   </div>
-                  <h3 className="text-xl font-bold mb-2 line-clamp-2">{post.title}</h3>
+                  <h3 className="text-lg md:text-xl font-bold mb-2 line-clamp-2">{post.title}</h3>
                   <p className="text-slate-600 text-sm mb-4 line-clamp-3">{post.excerpt}</p>
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-8 w-8">
+                  <div className="flex items-center gap-2 md:gap-3">
+                    <Avatar className="h-7 w-7 md:h-8 md:w-8">
                       <AvatarImage src={post.author.avatar || "/placeholder.svg"} alt={post.author.name} />
                       <AvatarFallback>
                         {post.author.name
@@ -184,24 +186,24 @@ export default function Blog() {
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
-                      <p className="font-medium text-sm truncate">{post.author.name}</p>
+                      <p className="font-medium text-xs md:text-sm truncate">{post.author.name}</p>
                       <p className="text-xs text-slate-500 truncate">{post.author.role}</p>
                     </div>
                   </div>
                 </CardContent>
-                <CardFooter className="px-5 py-3 border-t flex justify-between items-center">
-                  <div className="flex items-center gap-4 text-xs text-slate-500">
-                    <div className="flex items-center gap-1.5">
-                      <Calendar className="h-3.5 w-3.5" />
-                      <span>{post.date}</span>
+                <CardFooter className="px-4 md:px-5 py-2 md:py-3 border-t flex justify-between items-center">
+                  <div className="flex items-center gap-3 md:gap-4 text-xs text-slate-500">
+                    <div className="flex items-center gap-1 md:gap-1.5">
+                      <Calendar className="h-3 w-3 md:h-3.5 md:w-3.5" />
+                      <span className="text-[10px] md:text-xs">{post.date}</span>
                     </div>
-                    <div className="flex items-center gap-1.5">
-                      <Clock className="h-3.5 w-3.5" />
-                      <span>{post.readTime}</span>
+                    <div className="flex items-center gap-1 md:gap-1.5">
+                      <Clock className="h-3 w-3 md:h-3.5 md:w-3.5" />
+                      <span className="text-[10px] md:text-xs">{post.readTime}</span>
                     </div>
                   </div>
                   <Link to={`/blog/${post.id}`}>
-                    <Button variant="ghost" size="sm" className="text-sm">
+                    <Button variant="ghost" size="sm" className="text-xs md:text-sm px-2 md:px-3 h-8">
                       Read More
                     </Button>
                   </Link>
@@ -212,29 +214,29 @@ export default function Blog() {
         </div>
 
         {/* Newsletter Signup */}
-        <div className="bg-gradient-to-r from-slate-800 to-slate-900 rounded-xl p-6 md:p-8 text-white">
+        <div className="bg-gradient-to-r from-slate-800 to-slate-900 rounded-xl p-5 md:p-8 text-white">
           <div className="grid md:grid-cols-2 gap-6 items-center">
             <div>
-              <h2 className="text-2xl font-bold mb-2">Stay Informed</h2>
-              <p className="text-slate-300 mb-4">
+              <h2 className="text-xl md:text-2xl font-bold mb-2">Stay Informed</h2>
+              <p className="text-slate-300 mb-4 text-sm md:text-base">
                 Subscribe to our newsletter for the latest financial insights, market updates, and planning strategies.
               </p>
               <ul className="space-y-2 mb-6">
-                <li className="flex items-center gap-2 text-sm">
+                <li className="flex items-center gap-2 text-xs md:text-sm">
                   <div className="h-1.5 w-1.5 rounded-full bg-blue-400"></div>
                   <span>Weekly market updates and analysis</span>
                 </li>
-                <li className="flex items-center gap-2 text-sm">
+                <li className="flex items-center gap-2 text-xs md:text-sm">
                   <div className="h-1.5 w-1.5 rounded-full bg-blue-400"></div>
                   <span>Exclusive financial planning tips</span>
                 </li>
-                <li className="flex items-center gap-2 text-sm">
+                <li className="flex items-center gap-2 text-xs md:text-sm">
                   <div className="h-1.5 w-1.5 rounded-full bg-blue-400"></div>
                   <span>Early access to webinars and events</span>
                 </li>
               </ul>
             </div>
-            <div className="bg-white/10 rounded-lg p-5">
+            <div className="bg-white/10 rounded-lg p-4 md:p-5">
               <form className="space-y-4">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium mb-1">
