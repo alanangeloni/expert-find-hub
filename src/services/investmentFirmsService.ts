@@ -2,8 +2,41 @@
 import { supabase } from "@/integrations/supabase/client";
 import { type Tables } from "@/integrations/supabase/types";
 
+// Define types for related entities
+type InvestmentFirmFeature = {
+  feature: string;
+};
+
+type InvestmentFirmLeadership = {
+  id: string;
+  name: string;
+  position: string | null;
+  bio: string | null;
+  avatar_url: string | null;
+};
+
+type MoneyMakingMethod = {
+  id: string;
+  title: string;
+  description: string | null;
+};
+
+type InvestmentFirmClient = {
+  client_type: string;
+};
+
+type InvestmentFirmRegulatoryInfo = {
+  registration: string;
+};
+
+// Define the main InvestmentFirm type with its related entities
 export type InvestmentFirm = Tables<"investment_firms"> & {
   asset_classes: string[];
+  investment_firm_features?: InvestmentFirmFeature[];
+  investment_firm_leadership?: InvestmentFirmLeadership[];
+  money_making_methods?: MoneyMakingMethod[];
+  investment_firm_clients?: InvestmentFirmClient[];
+  investment_firm_regulatory_info?: InvestmentFirmRegulatoryInfo[];
 };
 
 export const getInvestmentFirms = async (): Promise<InvestmentFirm[]> => {

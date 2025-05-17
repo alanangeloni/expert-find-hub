@@ -33,18 +33,20 @@ export default function InvestmentFirmDetailPage() {
   const { slug } = useParams<{ slug: string }>();
   const { toast } = useToast();
 
-  // Fetch firm data
+  // Fetch firm data with corrected error handling
   const { data: firm, isLoading, error } = useQuery({
     queryKey: ["investmentFirm", slug],
     queryFn: () => getInvestmentFirmBySlug(slug || ""),
     enabled: !!slug,
-    onError: () => {
-      toast({
-        variant: "destructive",
-        title: "Error",
-        description: "Failed to load investment firm details.",
-      });
-    },
+    meta: {
+      onError: () => {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Failed to load investment firm details.",
+        });
+      }
+    }
   });
   
   // Fetch similar firms
@@ -81,7 +83,7 @@ export default function InvestmentFirmDetailPage() {
     );
   }
 
-  // Extract related data
+  // Extract related data with optional chaining to avoid errors
   const features = firm.investment_firm_features?.map(f => f.feature) || [];
   const leadership = firm.investment_firm_leadership || [];
   const moneyMakingMethods = firm.money_making_methods || [];
