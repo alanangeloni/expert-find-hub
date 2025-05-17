@@ -7,59 +7,52 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Building, ChevronRight, DollarSign, Search, Star } from "lucide-react";
 import { Link } from "react-router-dom";
+import { getInvestmentFirms, type InvestmentFirm } from "@/services/investmentFirmsService";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 export default function InvestmentFirmsPage() {
-  // Sample investment firms data
-  const firms = [
-    {
-      id: "vanguard",
-      name: "Vanguard",
-      logo: "/placeholder.svg",
-      description:
-        "One of the world's largest investment companies, offering low-cost mutual funds, ETFs, advice, and related services.",
-      assetClasses: ["Equities", "Fixed Income", "Multi-Asset"],
-      minimumInvestment: "$1,000",
-      targetReturn: "6% - 10%",
-      rating: 4.7,
-      reviewCount: 203,
-      aum: "$7.2 trillion",
-      headquarters: "Valley Forge, PA",
-      verified: true,
-    },
-    {
-      id: "blackrock",
-      name: "BlackRock",
-      logo: "/placeholder.svg",
-      description:
-        "Global investment manager and technology provider helping investors achieve financial well-being.",
-      assetClasses: ["Equities", "Fixed Income", "Alternatives", "Multi-Asset"],
-      minimumInvestment: "$1,000",
-      targetReturn: "7% - 12%",
-      rating: 4.8,
-      reviewCount: 156,
-      aum: "$9.1 trillion",
-      headquarters: "New York, NY",
-      verified: true,
-    },
-    {
-      id: "fidelity",
-      name: "Fidelity Investments",
-      logo: "/placeholder.svg",
-      description:
-        "Financial services corporation offering investment management, retirement planning, and more.",
-      assetClasses: ["Equities", "Fixed Income", "Alternatives", "Multi-Asset"],
-      minimumInvestment: "$0",
-      targetReturn: "7% - 11%",
-      rating: 4.6,
-      reviewCount: 178,
-      aum: "$4.5 trillion",
-      headquarters: "Boston, MA",
-      verified: true,
-    },
-  ];
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedAssetClass, setSelectedAssetClass] = useState("All");
+  const [selectedMinimum, setSelectedMinimum] = useState("All");
+  
+  // Fetch investment firms
+  const { data: firms = [], isLoading, error } = useQuery({
+    queryKey: ["investmentFirms"],
+    queryFn: getInvestmentFirms,
+  });
 
   // Asset class categories
-  const assetClasses = ["All", "Equities", "Fixed Income", "Multi-Asset", "Alternatives", "Real Estate"];
+  const assetClasses = ["All", "Equities", "Fixed Income", "Multi-Asset", "Alternatives", "Real Estate", "Commodities", "Cash", "Cryptocurrency"];
+
+  // Filter firms based on search, asset class, and minimum investment
+  const filteredFirms = firms.filter((firm) => {
+    // Filter by search query
+    const matchesSearch = 
+      searchQuery.trim() === "" || 
+      firm.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      firm.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      false;
+      
+    // Filter by asset class
+    const matchesAssetClass = 
+      selectedAssetClass === "All" || 
+      firm.asset_classes?.includes(selectedAssetClass as any) ||
+      false;
+      
+    // Filter by minimum investment
+    const minInvestment = parseFloat(firm.minimum_investment?.replace(/[^0-9.]/g, "") || "0");
+    let matchesMinimum = selectedMinimum === "All";
+    if (selectedMinimum === "No Minimum") {
+      matchesMinimum = minInvestment <= 0;
+    } else if (selectedMinimum === "Under $10k") {
+      matchesMinimum = minInvestment > 0 && minInvestment < 10000;
+    } else if (selectedMinimum === "$10k+") {
+      matchesMinimum = minInvestment >= 10000;
+    }
+    
+    return matchesSearch && matchesAssetClass && matchesMinimum;
+  });
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
@@ -82,19 +75,36 @@ export default function InvestmentFirmsPage() {
                 <Input
                   placeholder="Search investment firms..."
                   className="pl-10 bg-slate-50 border-slate-200"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </div>
             </div>
             <div className="space-y-2">
               <div className="text-sm font-medium">Filter by minimum investment</div>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                <Button variant="outline" size="sm" className="text-xs">
+                <Button 
+                  variant={selectedMinimum === "No Minimum" ? "default" : "outline"} 
+                  size="sm" 
+                  className="text-xs"
+                  onClick={() => setSelectedMinimum("No Minimum")}
+                >
                   No Minimum
                 </Button>
-                <Button variant="outline" size="sm" className="text-xs">
+                <Button 
+                  variant={selectedMinimum === "Under $10k" ? "default" : "outline"} 
+                  size="sm" 
+                  className="text-xs"
+                  onClick={() => setSelectedMinimum("Under $10k")}
+                >
                   Under $10k
                 </Button>
-                <Button variant="outline" size="sm" className="text-xs">
+                <Button 
+                  variant={selectedMinimum === "$10k+" ? "default" : "outline"} 
+                  size="sm" 
+                  className="text-xs"
+                  onClick={() => setSelectedMinimum("$10k+")}
+                >
                   $10k+
                 </Button>
               </div>
@@ -104,7 +114,7 @@ export default function InvestmentFirmsPage() {
 
         {/* Asset Class Tabs */}
         <div className="mb-8">
-          <Tabs defaultValue="All">
+          <Tabs defaultValue="All" onValueChange={setSelectedAssetClass}>
             <TabsList className="h-auto flex-wrap justify-start w-full">
               {assetClasses.map((assetClass) => (
                 <TabsTrigger key={assetClass} value={assetClass} className="text-sm">
@@ -115,10 +125,33 @@ export default function InvestmentFirmsPage() {
           </Tabs>
         </div>
 
+        {/* Loading State */}
+        {isLoading && (
+          <div className="flex justify-center items-center py-20">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          </div>
+        )}
+
+        {/* Error State */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative mb-6">
+            <strong className="font-bold">Error!</strong>
+            <span className="block sm:inline"> Failed to load investment firms. Please try again later.</span>
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!isLoading && !error && filteredFirms.length === 0 && (
+          <div className="bg-slate-50 border border-slate-200 rounded-lg p-8 text-center">
+            <h3 className="text-lg font-medium mb-2">No investment firms found</h3>
+            <p className="text-slate-500">Try adjusting your search or filters to find more results.</p>
+          </div>
+        )}
+
         {/* Investment Firms List */}
         <div className="space-y-5">
-          {firms.map((firm) => (
-            <Link key={firm.id} to={`/investment-firms/${firm.id}`} className="block">
+          {filteredFirms.map((firm) => (
+            <Link key={firm.id} to={`/investment-firms/${firm.slug}`} className="block">
               <Card className="overflow-hidden border-slate-200 hover:shadow-md transition-shadow">
                 <CardContent className="p-0">
                   <div className="grid md:grid-cols-4 gap-4 p-6">
@@ -126,7 +159,7 @@ export default function InvestmentFirmsPage() {
                       <div className="flex items-start gap-4 mb-2">
                         <div className="h-12 w-12 rounded-lg overflow-hidden bg-slate-100 flex items-center justify-center flex-shrink-0">
                           <img
-                            src={firm.logo}
+                            src={firm.logo_url || "/placeholder.svg"}
                             alt={firm.name}
                             className="h-8 w-8 object-contain"
                           />
@@ -157,7 +190,7 @@ export default function InvestmentFirmsPage() {
                                 <Star
                                   key={i}
                                   className={`h-4 w-4 ${
-                                    i < Math.floor(firm.rating)
+                                    i < Math.floor(Number(firm.rating) || 0)
                                       ? "fill-yellow-400 text-yellow-400"
                                       : "text-slate-300"
                                   }`}
@@ -165,13 +198,13 @@ export default function InvestmentFirmsPage() {
                               ))}
                             </div>
                             <span className="text-sm font-medium">{firm.rating}</span>
-                            <span className="text-xs text-slate-500">({firm.reviewCount} reviews)</span>
+                            <span className="text-xs text-slate-500">({firm.review_count || 0} reviews)</span>
                           </div>
                         </div>
                       </div>
                       <p className="text-slate-600 text-sm mb-3">{firm.description}</p>
                       <div className="flex flex-wrap gap-1.5">
-                        {firm.assetClasses.map((asset) => (
+                        {firm.asset_classes?.map((asset) => (
                           <Badge
                             key={asset}
                             variant="secondary"
@@ -187,27 +220,27 @@ export default function InvestmentFirmsPage() {
                         <div className="text-xs text-slate-500 mb-1">Minimum Investment</div>
                         <div className="font-semibold flex items-center gap-1">
                           <DollarSign className="h-4 w-4 text-emerald-600" />
-                          {firm.minimumInvestment}
+                          {firm.minimum_investment || "N/A"}
                         </div>
                       </div>
                       <Separator />
                       <div>
                         <div className="text-xs text-slate-500 mb-1">Target Return</div>
-                        <div className="font-semibold">{firm.targetReturn}</div>
+                        <div className="font-semibold">{firm.target_return || "N/A"}</div>
                       </div>
                     </div>
                     <div className="flex items-center">
                       <div className="space-y-3 w-full">
                         <div>
                           <div className="text-xs text-slate-500 mb-1">Assets Under Management</div>
-                          <div className="font-semibold">{firm.aum}</div>
+                          <div className="font-semibold">{firm.aum || "N/A"}</div>
                         </div>
                         <Separator />
                         <div>
                           <div className="text-xs text-slate-500 mb-1">Headquarters</div>
                           <div className="flex items-center gap-1">
                             <Building className="h-3.5 w-3.5 text-slate-400" />
-                            <span className="font-semibold">{firm.headquarters}</span>
+                            <span className="font-semibold">{firm.headquarters || "N/A"}</span>
                           </div>
                         </div>
                         <div className="flex justify-end mt-6">

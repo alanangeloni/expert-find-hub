@@ -11,7 +11,14 @@ import BlogArticle from "./pages/BlogArticle";
 import InvestmentFirms from "./pages/InvestmentFirms";
 import InvestmentFirmDetail from "./pages/InvestmentFirmDetail";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      staleTime: 1000 * 60 * 5, // 5 minutes
+    },
+  },
+});
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
@@ -24,7 +31,7 @@ const App = () => (
           <Route path="/blog" element={<Blog />} />
           <Route path="/blog/:slug" element={<BlogArticle />} />
           <Route path="/investment-firms" element={<InvestmentFirms />} />
-          <Route path="/investment-firms/:id" element={<InvestmentFirmDetail />} />
+          <Route path="/investment-firms/:slug" element={<InvestmentFirmDetail />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

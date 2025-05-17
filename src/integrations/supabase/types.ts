@@ -9,7 +9,663 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      advisor_carousel_images: {
+        Row: {
+          advisor_id: string
+          created_at: string | null
+          id: string
+          image_url: string
+        }
+        Insert: {
+          advisor_id: string
+          created_at?: string | null
+          id?: string
+          image_url: string
+        }
+        Update: {
+          advisor_id?: string
+          created_at?: string | null
+          id?: string
+          image_url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "advisor_carousel_images_advisor_id_fkey"
+            columns: ["advisor_id"]
+            isOneToOne: false
+            referencedRelation: "financial_advisors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      advisor_clientele: {
+        Row: {
+          advisor_id: string
+          clientele_type: Database["public"]["Enums"]["clientele_type"]
+          created_at: string | null
+          id: string
+        }
+        Insert: {
+          advisor_id: string
+          clientele_type: Database["public"]["Enums"]["clientele_type"]
+          created_at?: string | null
+          id?: string
+        }
+        Update: {
+          advisor_id?: string
+          clientele_type?: Database["public"]["Enums"]["clientele_type"]
+          created_at?: string | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "advisor_clientele_advisor_id_fkey"
+            columns: ["advisor_id"]
+            isOneToOne: false
+            referencedRelation: "financial_advisors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      advisor_compensation_types: {
+        Row: {
+          advisor_id: string
+          compensation_type: Database["public"]["Enums"]["compensation_type"]
+          created_at: string | null
+          id: string
+        }
+        Insert: {
+          advisor_id: string
+          compensation_type: Database["public"]["Enums"]["compensation_type"]
+          created_at?: string | null
+          id?: string
+        }
+        Update: {
+          advisor_id?: string
+          compensation_type?: Database["public"]["Enums"]["compensation_type"]
+          created_at?: string | null
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "advisor_compensation_types_advisor_id_fkey"
+            columns: ["advisor_id"]
+            isOneToOne: false
+            referencedRelation: "financial_advisors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      advisor_licenses: {
+        Row: {
+          advisor_id: string
+          created_at: string | null
+          id: string
+          license: string
+        }
+        Insert: {
+          advisor_id: string
+          created_at?: string | null
+          id?: string
+          license: string
+        }
+        Update: {
+          advisor_id?: string
+          created_at?: string | null
+          id?: string
+          license?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "advisor_licenses_advisor_id_fkey"
+            columns: ["advisor_id"]
+            isOneToOne: false
+            referencedRelation: "financial_advisors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      advisor_professional_designations: {
+        Row: {
+          advisor_id: string
+          created_at: string | null
+          designation: string
+          id: string
+        }
+        Insert: {
+          advisor_id: string
+          created_at?: string | null
+          designation: string
+          id?: string
+        }
+        Update: {
+          advisor_id?: string
+          created_at?: string | null
+          designation?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "advisor_professional_designations_advisor_id_fkey"
+            columns: ["advisor_id"]
+            isOneToOne: false
+            referencedRelation: "financial_advisors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      advisor_professions: {
+        Row: {
+          advisor_id: string
+          created_at: string | null
+          id: string
+          profession_type: Database["public"]["Enums"]["profession_type"]
+        }
+        Insert: {
+          advisor_id: string
+          created_at?: string | null
+          id?: string
+          profession_type: Database["public"]["Enums"]["profession_type"]
+        }
+        Update: {
+          advisor_id?: string
+          created_at?: string | null
+          id?: string
+          profession_type?: Database["public"]["Enums"]["profession_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "advisor_professions_advisor_id_fkey"
+            columns: ["advisor_id"]
+            isOneToOne: false
+            referencedRelation: "financial_advisors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      advisor_services: {
+        Row: {
+          advisor_id: string
+          created_at: string | null
+          id: string
+          service: Database["public"]["Enums"]["service_offered"]
+        }
+        Insert: {
+          advisor_id: string
+          created_at?: string | null
+          id?: string
+          service: Database["public"]["Enums"]["service_offered"]
+        }
+        Update: {
+          advisor_id?: string
+          created_at?: string | null
+          id?: string
+          service?: Database["public"]["Enums"]["service_offered"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "advisor_services_advisor_id_fkey"
+            columns: ["advisor_id"]
+            isOneToOne: false
+            referencedRelation: "financial_advisors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      advisor_states: {
+        Row: {
+          advisor_id: string
+          created_at: string | null
+          id: string
+          state: string
+        }
+        Insert: {
+          advisor_id: string
+          created_at?: string | null
+          id?: string
+          state: string
+        }
+        Update: {
+          advisor_id?: string
+          created_at?: string | null
+          id?: string
+          state?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "advisor_states_advisor_id_fkey"
+            columns: ["advisor_id"]
+            isOneToOne: false
+            referencedRelation: "financial_advisors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      financial_advisors: {
+        Row: {
+          advisor_sec_crd: string | null
+          calls_booked: number | null
+          city: string | null
+          created_at: string | null
+          email: string | null
+          fiduciary: boolean | null
+          firm_address: string | null
+          firm_aum: string | null
+          firm_bio: string | null
+          firm_logo_url: string | null
+          firm_name: string | null
+          firm_sec_crd: string | null
+          first_session_is_free: boolean | null
+          headshot_url: string | null
+          id: string
+          link_to_advisor_sec: string | null
+          link_to_firm_sec: string | null
+          minimum: string | null
+          name: string
+          personal_bio: string | null
+          phone_number: string | null
+          position: string | null
+          premium: boolean | null
+          primary_education: string | null
+          rating: number | null
+          scheduling_link: string | null
+          secondary_education: string | null
+          slug: string
+          state_hq: string | null
+          updated_at: string | null
+          username: string | null
+          verified: boolean | null
+          website_url: string | null
+          years_of_experience: number | null
+          youtube_video_id: string | null
+        }
+        Insert: {
+          advisor_sec_crd?: string | null
+          calls_booked?: number | null
+          city?: string | null
+          created_at?: string | null
+          email?: string | null
+          fiduciary?: boolean | null
+          firm_address?: string | null
+          firm_aum?: string | null
+          firm_bio?: string | null
+          firm_logo_url?: string | null
+          firm_name?: string | null
+          firm_sec_crd?: string | null
+          first_session_is_free?: boolean | null
+          headshot_url?: string | null
+          id?: string
+          link_to_advisor_sec?: string | null
+          link_to_firm_sec?: string | null
+          minimum?: string | null
+          name: string
+          personal_bio?: string | null
+          phone_number?: string | null
+          position?: string | null
+          premium?: boolean | null
+          primary_education?: string | null
+          rating?: number | null
+          scheduling_link?: string | null
+          secondary_education?: string | null
+          slug: string
+          state_hq?: string | null
+          updated_at?: string | null
+          username?: string | null
+          verified?: boolean | null
+          website_url?: string | null
+          years_of_experience?: number | null
+          youtube_video_id?: string | null
+        }
+        Update: {
+          advisor_sec_crd?: string | null
+          calls_booked?: number | null
+          city?: string | null
+          created_at?: string | null
+          email?: string | null
+          fiduciary?: boolean | null
+          firm_address?: string | null
+          firm_aum?: string | null
+          firm_bio?: string | null
+          firm_logo_url?: string | null
+          firm_name?: string | null
+          firm_sec_crd?: string | null
+          first_session_is_free?: boolean | null
+          headshot_url?: string | null
+          id?: string
+          link_to_advisor_sec?: string | null
+          link_to_firm_sec?: string | null
+          minimum?: string | null
+          name?: string
+          personal_bio?: string | null
+          phone_number?: string | null
+          position?: string | null
+          premium?: boolean | null
+          primary_education?: string | null
+          rating?: number | null
+          scheduling_link?: string | null
+          secondary_education?: string | null
+          slug?: string
+          state_hq?: string | null
+          updated_at?: string | null
+          username?: string | null
+          verified?: boolean | null
+          website_url?: string | null
+          years_of_experience?: number | null
+          youtube_video_id?: string | null
+        }
+        Relationships: []
+      }
+      investment_firm_clients: {
+        Row: {
+          client_type: string
+          created_at: string | null
+          firm_id: string
+          id: string
+        }
+        Insert: {
+          client_type: string
+          created_at?: string | null
+          firm_id: string
+          id?: string
+        }
+        Update: {
+          client_type?: string
+          created_at?: string | null
+          firm_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "investment_firm_clients_firm_id_fkey"
+            columns: ["firm_id"]
+            isOneToOne: false
+            referencedRelation: "investment_firms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      investment_firm_features: {
+        Row: {
+          created_at: string | null
+          feature: string
+          firm_id: string
+          id: string
+        }
+        Insert: {
+          created_at?: string | null
+          feature: string
+          firm_id: string
+          id?: string
+        }
+        Update: {
+          created_at?: string | null
+          feature?: string
+          firm_id?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "investment_firm_features_firm_id_fkey"
+            columns: ["firm_id"]
+            isOneToOne: false
+            referencedRelation: "investment_firms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      investment_firm_leadership: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string | null
+          firm_id: string
+          id: string
+          name: string
+          position: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          firm_id: string
+          id?: string
+          name: string
+          position?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          firm_id?: string
+          id?: string
+          name?: string
+          position?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "investment_firm_leadership_firm_id_fkey"
+            columns: ["firm_id"]
+            isOneToOne: false
+            referencedRelation: "investment_firms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      investment_firm_regulatory_info: {
+        Row: {
+          created_at: string | null
+          firm_id: string
+          id: string
+          registration: string
+        }
+        Insert: {
+          created_at?: string | null
+          firm_id: string
+          id?: string
+          registration: string
+        }
+        Update: {
+          created_at?: string | null
+          firm_id?: string
+          id?: string
+          registration?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "investment_firm_regulatory_info_firm_id_fkey"
+            columns: ["firm_id"]
+            isOneToOne: false
+            referencedRelation: "investment_firms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      investment_firms: {
+        Row: {
+          address: string | null
+          app_store_link: string | null
+          asset_classes: Database["public"]["Enums"]["asset_class"][] | null
+          aum: string | null
+          created_at: string | null
+          description: string | null
+          established: string | null
+          fees: string | null
+          firm_link: string | null
+          headquarters: string | null
+          how_company_makes_money: string | null
+          how_you_make_money: string | null
+          id: string
+          investment_risks: string | null
+          investor_types: Database["public"]["Enums"]["investor_type"][] | null
+          large_image_url: string | null
+          liquidity: string | null
+          logo_url: string | null
+          long_description: string | null
+          minimum_investment: string | null
+          name: string
+          payout: Database["public"]["Enums"]["payout_frequency"] | null
+          play_store_link: string | null
+          rating: number | null
+          return_type: Database["public"]["Enums"]["return_type"] | null
+          review_count: number | null
+          slug: string
+          small_image_url: string | null
+          target_return: string | null
+          updated_at: string | null
+          verified: boolean | null
+          video_title: string | null
+          video_url: string | null
+          website: string | null
+          withdrawal_type: Database["public"]["Enums"]["withdrawal_type"] | null
+        }
+        Insert: {
+          address?: string | null
+          app_store_link?: string | null
+          asset_classes?: Database["public"]["Enums"]["asset_class"][] | null
+          aum?: string | null
+          created_at?: string | null
+          description?: string | null
+          established?: string | null
+          fees?: string | null
+          firm_link?: string | null
+          headquarters?: string | null
+          how_company_makes_money?: string | null
+          how_you_make_money?: string | null
+          id?: string
+          investment_risks?: string | null
+          investor_types?: Database["public"]["Enums"]["investor_type"][] | null
+          large_image_url?: string | null
+          liquidity?: string | null
+          logo_url?: string | null
+          long_description?: string | null
+          minimum_investment?: string | null
+          name: string
+          payout?: Database["public"]["Enums"]["payout_frequency"] | null
+          play_store_link?: string | null
+          rating?: number | null
+          return_type?: Database["public"]["Enums"]["return_type"] | null
+          review_count?: number | null
+          slug: string
+          small_image_url?: string | null
+          target_return?: string | null
+          updated_at?: string | null
+          verified?: boolean | null
+          video_title?: string | null
+          video_url?: string | null
+          website?: string | null
+          withdrawal_type?:
+            | Database["public"]["Enums"]["withdrawal_type"]
+            | null
+        }
+        Update: {
+          address?: string | null
+          app_store_link?: string | null
+          asset_classes?: Database["public"]["Enums"]["asset_class"][] | null
+          aum?: string | null
+          created_at?: string | null
+          description?: string | null
+          established?: string | null
+          fees?: string | null
+          firm_link?: string | null
+          headquarters?: string | null
+          how_company_makes_money?: string | null
+          how_you_make_money?: string | null
+          id?: string
+          investment_risks?: string | null
+          investor_types?: Database["public"]["Enums"]["investor_type"][] | null
+          large_image_url?: string | null
+          liquidity?: string | null
+          logo_url?: string | null
+          long_description?: string | null
+          minimum_investment?: string | null
+          name?: string
+          payout?: Database["public"]["Enums"]["payout_frequency"] | null
+          play_store_link?: string | null
+          rating?: number | null
+          return_type?: Database["public"]["Enums"]["return_type"] | null
+          review_count?: number | null
+          slug?: string
+          small_image_url?: string | null
+          target_return?: string | null
+          updated_at?: string | null
+          verified?: boolean | null
+          video_title?: string | null
+          video_url?: string | null
+          website?: string | null
+          withdrawal_type?:
+            | Database["public"]["Enums"]["withdrawal_type"]
+            | null
+        }
+        Relationships: []
+      }
+      money_making_methods: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          firm_id: string
+          id: string
+          title: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          firm_id: string
+          id?: string
+          title: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          firm_id?: string
+          id?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "money_making_methods_firm_id_fkey"
+            columns: ["firm_id"]
+            isOneToOne: false
+            referencedRelation: "investment_firms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      similar_firms: {
+        Row: {
+          created_at: string | null
+          firm_id: string
+          id: string
+          similar_firm_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          firm_id: string
+          id?: string
+          similar_firm_id: string
+        }
+        Update: {
+          created_at?: string | null
+          firm_id?: string
+          id?: string
+          similar_firm_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "similar_firms_firm_id_fkey"
+            columns: ["firm_id"]
+            isOneToOne: false
+            referencedRelation: "investment_firms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "similar_firms_similar_firm_id_fkey"
+            columns: ["similar_firm_id"]
+            isOneToOne: false
+            referencedRelation: "investment_firms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +674,68 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      asset_class:
+        | "Equities"
+        | "Fixed Income"
+        | "Multi-Asset"
+        | "Alternatives"
+        | "Real Estate"
+        | "Commodities"
+        | "Cash"
+        | "Cryptocurrency"
+      clientele_type:
+        | "Individuals"
+        | "High Net Worth Individuals"
+        | "Business Owners"
+        | "Retirees"
+        | "Families"
+        | "Young Professionals"
+        | "Medical Professionals"
+        | "Tech Professionals"
+      compensation_type:
+        | "Fee-Only"
+        | "Fee-Based"
+        | "Commission"
+        | "Hourly"
+        | "Flat Fee"
+        | "Assets Under Management"
+      investor_type:
+        | "Individual Investors"
+        | "High Net Worth Individuals"
+        | "Financial Advisors"
+        | "Institutional Investors"
+        | "Retirement Plan Sponsors"
+        | "Endowments and Foundations"
+        | "Corporations"
+      payout_frequency:
+        | "Monthly"
+        | "Quarterly"
+        | "Semi-Annually"
+        | "Annually"
+        | "As Needed"
+      profession_type:
+        | "Financial Advisor"
+        | "CFP"
+        | "CFA"
+        | "Wealth Manager"
+        | "Financial Planner"
+        | "Investment Advisor"
+        | "Retirement Planner"
+      return_type:
+        | "Income"
+        | "Growth"
+        | "Income and Growth"
+        | "Capital Preservation"
+      service_offered:
+        | "Financial Planning"
+        | "Retirement Planning"
+        | "Investment Management"
+        | "Estate Planning"
+        | "Tax Planning"
+        | "Insurance Planning"
+        | "Education Planning"
+        | "Business Planning"
+      withdrawal_type: "Anytime" | "Limited" | "Locked Period" | "Scheduled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -133,6 +850,77 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      asset_class: [
+        "Equities",
+        "Fixed Income",
+        "Multi-Asset",
+        "Alternatives",
+        "Real Estate",
+        "Commodities",
+        "Cash",
+        "Cryptocurrency",
+      ],
+      clientele_type: [
+        "Individuals",
+        "High Net Worth Individuals",
+        "Business Owners",
+        "Retirees",
+        "Families",
+        "Young Professionals",
+        "Medical Professionals",
+        "Tech Professionals",
+      ],
+      compensation_type: [
+        "Fee-Only",
+        "Fee-Based",
+        "Commission",
+        "Hourly",
+        "Flat Fee",
+        "Assets Under Management",
+      ],
+      investor_type: [
+        "Individual Investors",
+        "High Net Worth Individuals",
+        "Financial Advisors",
+        "Institutional Investors",
+        "Retirement Plan Sponsors",
+        "Endowments and Foundations",
+        "Corporations",
+      ],
+      payout_frequency: [
+        "Monthly",
+        "Quarterly",
+        "Semi-Annually",
+        "Annually",
+        "As Needed",
+      ],
+      profession_type: [
+        "Financial Advisor",
+        "CFP",
+        "CFA",
+        "Wealth Manager",
+        "Financial Planner",
+        "Investment Advisor",
+        "Retirement Planner",
+      ],
+      return_type: [
+        "Income",
+        "Growth",
+        "Income and Growth",
+        "Capital Preservation",
+      ],
+      service_offered: [
+        "Financial Planning",
+        "Retirement Planning",
+        "Investment Management",
+        "Estate Planning",
+        "Tax Planning",
+        "Insurance Planning",
+        "Education Planning",
+        "Business Planning",
+      ],
+      withdrawal_type: ["Anytime", "Limited", "Locked Period", "Scheduled"],
+    },
   },
 } as const
