@@ -630,6 +630,36 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          created_at: string
+          first_name: string
+          id: string
+          last_name: string
+          phone_number: string | null
+          professional_type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          first_name: string
+          id: string
+          last_name: string
+          phone_number?: string | null
+          professional_type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          phone_number?: string | null
+          professional_type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       similar_firms: {
         Row: {
           created_at: string | null
