@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Header from "@/components/layout/Header";
@@ -24,7 +25,7 @@ const Index = () => {
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
               <h1 className="text-4xl font-bold mb-2 md:text-7xl">
-                Find a <br />
+                <span className="text-brand-blue">Find a</span> <br />
                 <span className="text-emerald-400">
                   {professionalTypes[professionalTypeIndex]}
                 </span>
