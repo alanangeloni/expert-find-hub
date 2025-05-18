@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Header from "@/components/layout/Header";
@@ -8,22 +7,15 @@ import { Star } from "lucide-react";
 
 // Professional type that rotates in the hero section
 const professionalTypes = ["Financial Advisor", "Accountant", "Wealth Manager", "Tax Specialist"];
-
 const Index = () => {
   const [professionalTypeIndex, setProfessionalTypeIndex] = useState(0);
-
   useEffect(() => {
     const interval = setInterval(() => {
-      setProfessionalTypeIndex((prevIndex) => 
-        (prevIndex + 1) % professionalTypes.length
-      );
+      setProfessionalTypeIndex(prevIndex => (prevIndex + 1) % professionalTypes.length);
     }, 3000);
-
     return () => clearInterval(interval);
   }, []);
-
-  return (
-    <div className="flex min-h-screen flex-col">
+  return <div className="flex min-h-screen flex-col">
       <Header />
       
       <main className="flex-1">
@@ -31,7 +23,7 @@ const Index = () => {
         <section className="bg-white py-12 md:py-20 text-center">
           <div className="container mx-auto px-4">
             <div className="max-w-4xl mx-auto">
-              <h1 className="text-4xl md:text-5xl font-bold mb-2">
+              <h1 className="text-4xl font-bold mb-2 md:text-7xl">
                 Find a <br />
                 <span className="text-emerald-400">
                   {professionalTypes[professionalTypeIndex]}
@@ -42,10 +34,7 @@ const Index = () => {
                 Take a quick quiz to hear from accountants, financial advisors, or browse our directory.
               </p>
               <div className="flex justify-center">
-                <Link
-                  to="/investment-firms"
-                  className="inline-flex items-center justify-center px-6 py-3 text-base font-medium rounded-md text-white bg-brand-blue hover:bg-opacity-90 transition-colors"
-                >
+                <Link to="/investment-firms" className="inline-flex items-center justify-center px-6 py-3 text-base font-medium rounded-md text-white bg-brand-blue hover:bg-opacity-90 transition-colors">
                   Take Quiz to Connect
                 </Link>
               </div>
@@ -75,12 +64,7 @@ const Index = () => {
                       <h3 className="text-lg font-semibold">Jennifer Wilson, CFP®</h3>
                       <p className="text-emerald-500">Wealth Management</p>
                       <div className="flex items-center mt-1">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <Star 
-                            key={star} 
-                            className="h-4 w-4 fill-yellow-400 text-yellow-400" 
-                          />
-                        ))}
+                        {[1, 2, 3, 4, 5].map(star => <Star key={star} className="h-4 w-4 fill-yellow-400 text-yellow-400" />)}
                         <span className="text-xs text-gray-500 ml-2">5.0 (48 reviews)</span>
                       </div>
                     </div>
@@ -103,10 +87,7 @@ const Index = () => {
                   </p>
                   
                   <div className="flex space-x-3 mt-4">
-                    <Link
-                      to="/investment-firms/jennifer-wilson"
-                      className="px-4 py-2 border border-brand-blue text-brand-blue rounded hover:bg-gray-50"
-                    >
+                    <Link to="/investment-firms/jennifer-wilson" className="px-4 py-2 border border-brand-blue text-brand-blue rounded hover:bg-gray-50">
                       View Profile
                     </Link>
                     <button className="px-4 py-2 border border-gray-300 text-gray-600 rounded hover:bg-gray-50">
@@ -125,12 +106,7 @@ const Index = () => {
                       <h3 className="text-lg font-semibold">Michael Chen, CFA</h3>
                       <p className="text-emerald-500">Investment Advisory</p>
                       <div className="flex items-center mt-1">
-                        {[1, 2, 3, 4].map((star) => (
-                          <Star 
-                            key={star} 
-                            className="h-4 w-4 fill-yellow-400 text-yellow-400" 
-                          />
-                        ))}
+                        {[1, 2, 3, 4].map(star => <Star key={star} className="h-4 w-4 fill-yellow-400 text-yellow-400" />)}
                         <Star className="h-4 w-4 fill-yellow-200 text-yellow-400" />
                         <span className="text-xs text-gray-500 ml-2">4.5 (39 reviews)</span>
                       </div>
@@ -154,10 +130,7 @@ const Index = () => {
                   </p>
                   
                   <div className="flex space-x-3 mt-4">
-                    <Link
-                      to="/investment-firms/michael-chen"
-                      className="px-4 py-2 border border-brand-blue text-brand-blue rounded hover:bg-gray-50"
-                    >
+                    <Link to="/investment-firms/michael-chen" className="px-4 py-2 border border-brand-blue text-brand-blue rounded hover:bg-gray-50">
                       View Profile
                     </Link>
                     <button className="px-4 py-2 border border-gray-300 text-gray-600 rounded hover:bg-gray-50">
@@ -176,12 +149,7 @@ const Index = () => {
                       <h3 className="text-lg font-semibold">Sarah Johnson, ChFC</h3>
                       <p className="text-emerald-500">Retirement Planning</p>
                       <div className="flex items-center mt-1">
-                        {[1, 2, 3, 4].map((star) => (
-                          <Star 
-                            key={star} 
-                            className="h-4 w-4 fill-yellow-400 text-yellow-400" 
-                          />
-                        ))}
+                        {[1, 2, 3, 4].map(star => <Star key={star} className="h-4 w-4 fill-yellow-400 text-yellow-400" />)}
                         <Star className="h-4 w-4 fill-yellow-200 text-yellow-400" />
                         <span className="text-xs text-gray-500 ml-2">4.7 (52 reviews)</span>
                       </div>
@@ -205,10 +173,7 @@ const Index = () => {
                   </p>
                   
                   <div className="flex space-x-3 mt-4">
-                    <Link
-                      to="/investment-firms/sarah-johnson"
-                      className="px-4 py-2 border border-brand-blue text-brand-blue rounded hover:bg-gray-50"
-                    >
+                    <Link to="/investment-firms/sarah-johnson" className="px-4 py-2 border border-brand-blue text-brand-blue rounded hover:bg-gray-50">
                       View Profile
                     </Link>
                     <button className="px-4 py-2 border border-gray-300 text-gray-600 rounded hover:bg-gray-50">
@@ -288,8 +253,6 @@ const Index = () => {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 };
-
 export default Index;
