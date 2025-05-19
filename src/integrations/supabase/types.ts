@@ -9,6 +9,168 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      accounting_firm_industries: {
+        Row: {
+          created_at: string | null
+          firm_id: string
+          id: string
+          industry: string
+        }
+        Insert: {
+          created_at?: string | null
+          firm_id: string
+          id?: string
+          industry: string
+        }
+        Update: {
+          created_at?: string | null
+          firm_id?: string
+          id?: string
+          industry?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accounting_firm_industries_firm_id_fkey"
+            columns: ["firm_id"]
+            isOneToOne: false
+            referencedRelation: "accounting_firms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      accounting_firm_services: {
+        Row: {
+          created_at: string | null
+          firm_id: string
+          id: string
+          service: Database["public"]["Enums"]["accounting_service_type"]
+        }
+        Insert: {
+          created_at?: string | null
+          firm_id: string
+          id?: string
+          service: Database["public"]["Enums"]["accounting_service_type"]
+        }
+        Update: {
+          created_at?: string | null
+          firm_id?: string
+          id?: string
+          service?: Database["public"]["Enums"]["accounting_service_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accounting_firm_services_firm_id_fkey"
+            columns: ["firm_id"]
+            isOneToOne: false
+            referencedRelation: "accounting_firms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      accounting_firm_specialties: {
+        Row: {
+          created_at: string | null
+          firm_id: string
+          id: string
+          specialty: Database["public"]["Enums"]["client_specialty_type"]
+        }
+        Insert: {
+          created_at?: string | null
+          firm_id: string
+          id?: string
+          specialty: Database["public"]["Enums"]["client_specialty_type"]
+        }
+        Update: {
+          created_at?: string | null
+          firm_id?: string
+          id?: string
+          specialty?: Database["public"]["Enums"]["client_specialty_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accounting_firm_specialties_firm_id_fkey"
+            columns: ["firm_id"]
+            isOneToOne: false
+            referencedRelation: "accounting_firms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      accounting_firms: {
+        Row: {
+          address: string | null
+          created_at: string | null
+          description: string | null
+          employees: string | null
+          established: string | null
+          headquarters: string | null
+          id: string
+          large_image_url: string | null
+          logo_url: string | null
+          long_description: string | null
+          minimum_fee: string | null
+          name: string
+          premium: boolean | null
+          rating: number | null
+          review_count: number | null
+          slug: string
+          small_image_url: string | null
+          updated_at: string | null
+          verified: boolean | null
+          video_title: string | null
+          video_url: string | null
+          website: string | null
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string | null
+          description?: string | null
+          employees?: string | null
+          established?: string | null
+          headquarters?: string | null
+          id?: string
+          large_image_url?: string | null
+          logo_url?: string | null
+          long_description?: string | null
+          minimum_fee?: string | null
+          name: string
+          premium?: boolean | null
+          rating?: number | null
+          review_count?: number | null
+          slug: string
+          small_image_url?: string | null
+          updated_at?: string | null
+          verified?: boolean | null
+          video_title?: string | null
+          video_url?: string | null
+          website?: string | null
+        }
+        Update: {
+          address?: string | null
+          created_at?: string | null
+          description?: string | null
+          employees?: string | null
+          established?: string | null
+          headquarters?: string | null
+          id?: string
+          large_image_url?: string | null
+          logo_url?: string | null
+          long_description?: string | null
+          minimum_fee?: string | null
+          name?: string
+          premium?: boolean | null
+          rating?: number | null
+          review_count?: number | null
+          slug?: string
+          small_image_url?: string | null
+          updated_at?: string | null
+          verified?: boolean | null
+          video_title?: string | null
+          video_url?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
       advisor_carousel_images: {
         Row: {
           advisor_id: string
@@ -704,6 +866,17 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      accounting_service_type:
+        | "Advisory Services"
+        | "Bookkeeping"
+        | "Business Formation"
+        | "Forensic Accounting"
+        | "Fractional CFO Services"
+        | "International Tax Services"
+        | "Mergers and Acquisitions"
+        | "Payroll Services"
+        | "Sales Tax"
+        | "Tax Preparation"
       asset_class:
         | "Equities"
         | "Fixed Income"
@@ -713,6 +886,21 @@ export type Database = {
         | "Commodities"
         | "Cash"
         | "Cryptocurrency"
+      client_specialty_type:
+        | "High Net Worth Individuals"
+        | "Real Estate Investors"
+        | "VC Backed"
+        | "Ultra High Net Worth Individuals"
+        | "Digital Nomads"
+        | "Equity Compensation (RSUs, Stock Options)"
+        | "QSBS Holders"
+        | "HENRY (High Earners Not Rich Yet)"
+        | "K1 Partnership Income"
+        | "International/Expats"
+        | "E-commerce Businesses"
+        | "Crypto Investors"
+        | "Solopreneurs"
+        | "SMB Owner"
       clientele_type:
         | "Individuals"
         | "High Net Worth Individuals"
@@ -881,6 +1069,18 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      accounting_service_type: [
+        "Advisory Services",
+        "Bookkeeping",
+        "Business Formation",
+        "Forensic Accounting",
+        "Fractional CFO Services",
+        "International Tax Services",
+        "Mergers and Acquisitions",
+        "Payroll Services",
+        "Sales Tax",
+        "Tax Preparation",
+      ],
       asset_class: [
         "Equities",
         "Fixed Income",
@@ -890,6 +1090,22 @@ export const Constants = {
         "Commodities",
         "Cash",
         "Cryptocurrency",
+      ],
+      client_specialty_type: [
+        "High Net Worth Individuals",
+        "Real Estate Investors",
+        "VC Backed",
+        "Ultra High Net Worth Individuals",
+        "Digital Nomads",
+        "Equity Compensation (RSUs, Stock Options)",
+        "QSBS Holders",
+        "HENRY (High Earners Not Rich Yet)",
+        "K1 Partnership Income",
+        "International/Expats",
+        "E-commerce Businesses",
+        "Crypto Investors",
+        "Solopreneurs",
+        "SMB Owner",
       ],
       clientele_type: [
         "Individuals",

@@ -12,6 +12,8 @@ import Blog from "./pages/Blog";
 import BlogArticle from "./pages/BlogArticle";
 import InvestmentFirms from "./pages/InvestmentFirms";
 import InvestmentFirmDetail from "./pages/InvestmentFirmDetail";
+import AccountingFirms from "./pages/AccountingFirms";
+import AccountingFirmDetail from "./pages/AccountingFirmDetail";
 import SignUp from "./pages/auth/SignUp";
 import SignIn from "./pages/auth/SignIn";
 import ForgotPassword from "./pages/auth/ForgotPassword";
@@ -34,6 +36,8 @@ const AppRoutes = () => (
     <Route path="/blog/:slug" element={<BlogArticle />} />
     <Route path="/investment-firms" element={<InvestmentFirms />} />
     <Route path="/investment-firms/:slug" element={<InvestmentFirmDetail />} />
+    <Route path="/accounting-firms" element={<AccountingFirms />} />
+    <Route path="/accounting-firms/:slug" element={<AccountingFirmDetail />} />
     
     {/* Auth routes */}
     <Route path="/auth/signup" element={<SignUp />} />
