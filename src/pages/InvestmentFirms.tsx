@@ -1,15 +1,17 @@
 
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Building, ChevronRight, DollarSign, Search, Star } from "lucide-react";
-import { Link } from "react-router-dom";
-import { getInvestmentFirms, type InvestmentFirm } from "@/services/investmentFirmsService";
-import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { Building, ChevronRight, DollarSign, Star } from "lucide-react";
+import { getInvestmentFirms } from "@/services/investmentFirmsService";
+import { Button } from "@/components/ui/button";
+import { FilterBar } from "@/components/filters/FilterBar";
+import { FilterButton } from "@/components/filters/FilterButton";
+import Header from "@/components/layout/Header";
 
 export default function InvestmentFirmsPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -56,6 +58,7 @@ export default function InvestmentFirmsPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+      <Header />
       <div className="container mx-auto py-6 md:py-8 px-4 md:px-6">
         {/* Page Header */}
         <div className="mb-6 md:mb-10">
@@ -67,57 +70,55 @@ export default function InvestmentFirmsPage() {
         </div>
 
         {/* Search and Filter */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 md:p-5 mb-6 md:mb-8">
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="md:col-span-2">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                <Input
-                  placeholder="Search investment firms..."
-                  className="pl-10 bg-slate-50 border-slate-200"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <div className="text-xs md:text-sm font-medium">Filter by minimum investment</div>
-              <div className="grid grid-cols-3 gap-2">
-                <Button 
-                  variant={selectedMinimum === "No Minimum" ? "default" : "outline"} 
-                  size="sm" 
-                  className="text-[10px] md:text-xs px-1 md:px-2"
-                  onClick={() => setSelectedMinimum("No Minimum")}
+        <FilterBar
+          searchPlaceholder="Search investment firms..."
+          searchQuery={searchQuery}
+          onSearchChange={(e) => setSearchQuery(e.target.value)}
+        >
+          <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+            <div className="text-sm font-medium text-slate-700">Minimum:</div>
+            <div className="flex flex-wrap gap-2">
+              <FilterButton
+                active={selectedMinimum === "No Minimum"}
+                onClick={() => setSelectedMinimum("No Minimum")}
+              >
+                No Minimum
+              </FilterButton>
+              <FilterButton
+                active={selectedMinimum === "Under $10k"}
+                onClick={() => setSelectedMinimum("Under $10k")}
+              >
+                Under $10k
+              </FilterButton>
+              <FilterButton
+                active={selectedMinimum === "$10k+"}
+                onClick={() => setSelectedMinimum("$10k+")}
+              >
+                $10k+
+              </FilterButton>
+              {selectedMinimum !== "All" && (
+                <FilterButton
+                  active={false}
+                  onClick={() => setSelectedMinimum("All")}
+                  className="border-dashed"
                 >
-                  No Minimum
-                </Button>
-                <Button 
-                  variant={selectedMinimum === "Under $10k" ? "default" : "outline"} 
-                  size="sm" 
-                  className="text-[10px] md:text-xs px-1 md:px-2"
-                  onClick={() => setSelectedMinimum("Under $10k")}
-                >
-                  Under $10k
-                </Button>
-                <Button 
-                  variant={selectedMinimum === "$10k+" ? "default" : "outline"} 
-                  size="sm" 
-                  className="text-[10px] md:text-xs px-1 md:px-2"
-                  onClick={() => setSelectedMinimum("$10k+")}
-                >
-                  $10k+
-                </Button>
-              </div>
+                  Clear
+                </FilterButton>
+              )}
             </div>
           </div>
-        </div>
+        </FilterBar>
 
         {/* Asset Class Tabs */}
         <div className="mb-6 md:mb-8 overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
-          <Tabs defaultValue="All" onValueChange={setSelectedAssetClass}>
-            <TabsList className="h-auto flex-nowrap justify-start w-max md:w-full">
+          <Tabs defaultValue="All" value={selectedAssetClass} onValueChange={setSelectedAssetClass}>
+            <TabsList className="h-auto flex-nowrap justify-start w-max md:w-full rounded-[20px] p-1.5 bg-slate-100/80">
               {assetClasses.map((assetClass) => (
-                <TabsTrigger key={assetClass} value={assetClass} className="text-xs md:text-sm whitespace-nowrap">
+                <TabsTrigger 
+                  key={assetClass} 
+                  value={assetClass} 
+                  className="text-xs md:text-sm whitespace-nowrap rounded-[15px] px-4 py-2 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm"
+                >
                   {assetClass}
                 </TabsTrigger>
               ))}
@@ -152,7 +153,7 @@ export default function InvestmentFirmsPage() {
         <div className="space-y-4 md:space-y-5">
           {filteredFirms.map((firm) => (
             <Link key={firm.id} to={`/investment-firms/${firm.slug}`} className="block">
-              <Card className="overflow-hidden border-slate-200 hover:shadow-md transition-shadow">
+              <Card className="overflow-hidden border-slate-200 hover:shadow-md transition-shadow rounded-[20px]">
                 <CardContent className="p-0">
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 md:p-6">
                     <div className="md:col-span-2">

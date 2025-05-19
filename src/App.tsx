@@ -19,6 +19,7 @@ import SignIn from "./pages/auth/SignIn";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Header from "./components/layout/Header";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -55,9 +56,11 @@ const App = () => (
     <TooltipProvider>
       <BrowserRouter>
         <AuthProvider>
-          <AppRoutes />
-          <Toaster />
-          <Sonner />
+          <div className="flex flex-col min-h-screen">
+            <AppRoutes />
+            <Toaster />
+            <Sonner />
+          </div>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>

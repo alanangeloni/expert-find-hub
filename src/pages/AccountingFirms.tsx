@@ -2,20 +2,22 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Building, ChevronRight, DollarSign, Search, Star } from "lucide-react";
-import { getAccountingFirms, type AccountingFirm } from "@/services/accountingFirmsService";
+import { Building, ChevronRight, DollarSign, Star } from "lucide-react";
+import { getAccountingFirms } from "@/services/accountingFirmsService";
 import Header from "@/components/layout/Header";
+import { Button } from "@/components/ui/button";
+import { FilterBar } from "@/components/filters/FilterBar";
+import { FilterButton } from "@/components/filters/FilterButton";
 
 export default function AccountingFirmsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSpecialty, setSelectedSpecialty] = useState("All");
   const [selectedService, setSelectedService] = useState("All");
+  const [selectedMinimumFee, setSelectedMinimumFee] = useState("All");
   
   // Fetch accounting firms
   const { data: firms = [], isLoading, error } = useQuery({
@@ -46,7 +48,7 @@ export default function AccountingFirmsPage() {
     "SMB Owner"
   ];
 
-  // Filter firms based on search, specialty, and service
+  // Filter firms based on search, specialty, service, and minimum fee
   const filteredFirms = firms.filter((firm) => {
     // Filter by search query
     const matchesSearch = 
@@ -67,7 +69,22 @@ export default function AccountingFirmsPage() {
       firm.services?.includes(selectedService as any) ||
       false;
     
-    return matchesSearch && matchesSpecialty && matchesService;
+    // Filter by minimum fee
+    let matchesMinimumFee = selectedMinimumFee === "All";
+    if (firm.minimum_fee) {
+      const feeMatch = firm.minimum_fee.match(/\$?(\d+)/);
+      const fee = feeMatch ? parseInt(feeMatch[1], 10) : 0;
+      
+      if (selectedMinimumFee === "No Minimum") {
+        matchesMinimumFee = fee <= 0;
+      } else if (selectedMinimumFee === "Under $250/mo") {
+        matchesMinimumFee = fee > 0 && fee < 250;
+      } else if (selectedMinimumFee === "$250/mo+") {
+        matchesMinimumFee = fee >= 250;
+      }
+    }
+    
+    return matchesSearch && matchesSpecialty && matchesService && matchesMinimumFee;
   });
 
   return (
@@ -84,54 +101,55 @@ export default function AccountingFirmsPage() {
         </div>
 
         {/* Search and Filter */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 md:p-5 mb-6 md:mb-8">
-          <div className="grid md:grid-cols-3 gap-4">
-            <div className="md:col-span-2">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                <Input
-                  placeholder="Search accounting firms..."
-                  className="pl-10 bg-slate-50 border-slate-200"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <div className="text-xs md:text-sm font-medium">Filter by minimum fee</div>
-              <div className="grid grid-cols-3 gap-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="text-[10px] md:text-xs px-1 md:px-2"
+        <FilterBar
+          searchPlaceholder="Search accounting firms..."
+          searchQuery={searchQuery}
+          onSearchChange={(e) => setSearchQuery(e.target.value)}
+        >
+          <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
+            <div className="text-sm font-medium text-slate-700">Minimum fee:</div>
+            <div className="flex flex-wrap gap-2">
+              <FilterButton
+                active={selectedMinimumFee === "No Minimum"}
+                onClick={() => setSelectedMinimumFee("No Minimum")}
+              >
+                No Minimum
+              </FilterButton>
+              <FilterButton
+                active={selectedMinimumFee === "Under $250/mo"}
+                onClick={() => setSelectedMinimumFee("Under $250/mo")}
+              >
+                Under $250/mo
+              </FilterButton>
+              <FilterButton
+                active={selectedMinimumFee === "$250/mo+"}
+                onClick={() => setSelectedMinimumFee("$250/mo+")}
+              >
+                $250/mo+
+              </FilterButton>
+              {selectedMinimumFee !== "All" && (
+                <FilterButton
+                  active={false}
+                  onClick={() => setSelectedMinimumFee("All")}
+                  className="border-dashed"
                 >
-                  No Minimum
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="text-[10px] md:text-xs px-1 md:px-2"
-                >
-                  Under $250/mo
-                </Button>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
-                  className="text-[10px] md:text-xs px-1 md:px-2"
-                >
-                  $250/mo+
-                </Button>
-              </div>
+                  Clear
+                </FilterButton>
+              )}
             </div>
           </div>
-        </div>
+        </FilterBar>
 
         {/* Service Tabs */}
         <div className="mb-6 md:mb-8 overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
-          <Tabs defaultValue="All" onValueChange={setSelectedService}>
-            <TabsList className="h-auto flex-nowrap justify-start w-max md:w-full">
+          <Tabs defaultValue="All" value={selectedService} onValueChange={setSelectedService}>
+            <TabsList className="h-auto flex-nowrap justify-start w-max md:w-full rounded-[20px] p-1.5 bg-slate-100/80">
               {services.map((service) => (
-                <TabsTrigger key={service} value={service} className="text-xs md:text-sm whitespace-nowrap">
+                <TabsTrigger 
+                  key={service} 
+                  value={service} 
+                  className="text-xs md:text-sm whitespace-nowrap rounded-[15px] px-4 py-2 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm"
+                >
                   {service}
                 </TabsTrigger>
               ))}
@@ -141,10 +159,14 @@ export default function AccountingFirmsPage() {
 
         {/* Specialties Tabs */}
         <div className="mb-6 md:mb-8 overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
-          <Tabs defaultValue="All" onValueChange={setSelectedSpecialty}>
-            <TabsList className="h-auto flex-nowrap justify-start w-max md:w-full">
+          <Tabs defaultValue="All" value={selectedSpecialty} onValueChange={setSelectedSpecialty}>
+            <TabsList className="h-auto flex-nowrap justify-start w-max md:w-full rounded-[20px] p-1.5 bg-slate-100/80">
               {specialties.map((specialty) => (
-                <TabsTrigger key={specialty} value={specialty} className="text-xs md:text-sm whitespace-nowrap">
+                <TabsTrigger 
+                  key={specialty} 
+                  value={specialty} 
+                  className="text-xs md:text-sm whitespace-nowrap rounded-[15px] px-4 py-2 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm"
+                >
                   {specialty}
                 </TabsTrigger>
               ))}
@@ -179,7 +201,7 @@ export default function AccountingFirmsPage() {
         <div className="space-y-4 md:space-y-5">
           {filteredFirms.map((firm) => (
             <Link key={firm.id} to={`/accounting-firms/${firm.slug}`} className="block">
-              <Card className="overflow-hidden border-slate-200 hover:shadow-md transition-shadow">
+              <Card className="overflow-hidden border-slate-200 hover:shadow-md transition-shadow rounded-[20px]">
                 <CardContent className="p-0">
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 md:p-6">
                     <div className="md:col-span-2">
