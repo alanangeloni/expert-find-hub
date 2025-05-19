@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
@@ -106,37 +105,35 @@ export default function AccountingFirmsPage() {
           searchQuery={searchQuery}
           onSearchChange={(e) => setSearchQuery(e.target.value)}
         >
-          <div className="flex flex-col sm:flex-row gap-3 sm:items-center">
-            <div className="text-sm font-medium text-slate-700">Minimum fee:</div>
-            <div className="flex flex-wrap gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="text-sm font-medium text-slate-700 mr-1">Fee:</div>
+            <FilterButton
+              active={selectedMinimumFee === "No Minimum"}
+              onClick={() => setSelectedMinimumFee("No Minimum")}
+            >
+              No Minimum
+            </FilterButton>
+            <FilterButton
+              active={selectedMinimumFee === "Under $250/mo"}
+              onClick={() => setSelectedMinimumFee("Under $250/mo")}
+            >
+              Under $250/mo
+            </FilterButton>
+            <FilterButton
+              active={selectedMinimumFee === "$250/mo+"}
+              onClick={() => setSelectedMinimumFee("$250/mo+")}
+            >
+              $250/mo+
+            </FilterButton>
+            {selectedMinimumFee !== "All" && (
               <FilterButton
-                active={selectedMinimumFee === "No Minimum"}
-                onClick={() => setSelectedMinimumFee("No Minimum")}
+                active={false}
+                onClick={() => setSelectedMinimumFee("All")}
+                className="border-dashed"
               >
-                No Minimum
+                Clear
               </FilterButton>
-              <FilterButton
-                active={selectedMinimumFee === "Under $250/mo"}
-                onClick={() => setSelectedMinimumFee("Under $250/mo")}
-              >
-                Under $250/mo
-              </FilterButton>
-              <FilterButton
-                active={selectedMinimumFee === "$250/mo+"}
-                onClick={() => setSelectedMinimumFee("$250/mo+")}
-              >
-                $250/mo+
-              </FilterButton>
-              {selectedMinimumFee !== "All" && (
-                <FilterButton
-                  active={false}
-                  onClick={() => setSelectedMinimumFee("All")}
-                  className="border-dashed"
-                >
-                  Clear
-                </FilterButton>
-              )}
-            </div>
+            )}
           </div>
         </FilterBar>
 

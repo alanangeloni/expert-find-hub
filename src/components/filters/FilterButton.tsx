@@ -21,7 +21,7 @@ export function FilterButton({
       variant={active ? "default" : "outline"}
       size="sm"
       className={cn(
-        "rounded-[20px] h-10 px-4 text-xs md:text-sm bg-white border border-slate-200",
+        "rounded-[20px] h-10 px-4 text-xs md:text-sm bg-white border border-slate-200 whitespace-nowrap",
         active && "bg-brand-blue text-white border-brand-blue",
         className
       )}
@@ -31,4 +31,3 @@ export function FilterButton({
     </Button>
   );
 }
-
