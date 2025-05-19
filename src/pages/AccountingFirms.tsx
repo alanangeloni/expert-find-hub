@@ -1,16 +1,29 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Building, ChevronRight, DollarSign, Star } from "lucide-react";
+import { Building, ChevronRight, DollarSign, Star, ChevronDown } from "lucide-react";
 import { getAccountingFirms } from "@/services/accountingFirmsService";
 import Header from "@/components/layout/Header";
 import { Button } from "@/components/ui/button";
 import { FilterBar } from "@/components/filters/FilterBar";
 import { FilterButton } from "@/components/filters/FilterButton";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function AccountingFirmsPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -105,71 +118,64 @@ export default function AccountingFirmsPage() {
           searchQuery={searchQuery}
           onSearchChange={(e) => setSearchQuery(e.target.value)}
         >
-          <div className="flex items-center gap-2 flex-wrap">
-            <div className="text-sm font-medium text-slate-700 mr-1">Fee:</div>
-            <FilterButton
-              active={selectedMinimumFee === "No Minimum"}
-              onClick={() => setSelectedMinimumFee("No Minimum")}
-            >
-              No Minimum
-            </FilterButton>
-            <FilterButton
-              active={selectedMinimumFee === "Under $250/mo"}
-              onClick={() => setSelectedMinimumFee("Under $250/mo")}
-            >
-              Under $250/mo
-            </FilterButton>
-            <FilterButton
-              active={selectedMinimumFee === "$250/mo+"}
-              onClick={() => setSelectedMinimumFee("$250/mo+")}
-            >
-              $250/mo+
-            </FilterButton>
-            {selectedMinimumFee !== "All" && (
-              <FilterButton
-                active={false}
-                onClick={() => setSelectedMinimumFee("All")}
-                className="border-dashed"
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Fee Filter */}
+            <Select value={selectedMinimumFee} onValueChange={setSelectedMinimumFee}>
+              <SelectTrigger className="w-[140px] rounded-[20px] h-12 bg-slate-50 border-slate-100">
+                <SelectValue placeholder="Fee" />
+              </SelectTrigger>
+              <SelectContent className="rounded-md bg-white">
+                <SelectItem value="All">All Fees</SelectItem>
+                <SelectItem value="No Minimum">No Minimum</SelectItem>
+                <SelectItem value="Under $250/mo">Under $250/mo</SelectItem>
+                <SelectItem value="$250/mo+">$250/mo+</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            {/* Service Filter */}
+            <Select value={selectedService} onValueChange={setSelectedService}>
+              <SelectTrigger className="w-[180px] rounded-[20px] h-12 bg-slate-50 border-slate-100">
+                <SelectValue placeholder="Service" />
+              </SelectTrigger>
+              <SelectContent className="rounded-md bg-white">
+                {services.map((service) => (
+                  <SelectItem key={service} value={service}>
+                    {service}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            {/* Specialty Filter */}
+            <Select value={selectedSpecialty} onValueChange={setSelectedSpecialty}>
+              <SelectTrigger className="w-[180px] rounded-[20px] h-12 bg-slate-50 border-slate-100">
+                <SelectValue placeholder="Specialty" />
+              </SelectTrigger>
+              <SelectContent className="rounded-md bg-white">
+                {specialties.map((specialty) => (
+                  <SelectItem key={specialty} value={specialty}>
+                    {specialty}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Clear Filters */}
+            {(selectedMinimumFee !== "All" || selectedService !== "All" || selectedSpecialty !== "All") && (
+              <Button 
+                variant="outline" 
+                className="rounded-[20px] h-12 border-dashed"
+                onClick={() => {
+                  setSelectedMinimumFee("All");
+                  setSelectedService("All");
+                  setSelectedSpecialty("All");
+                }}
               >
-                Clear
-              </FilterButton>
+                Clear Filters
+              </Button>
             )}
           </div>
         </FilterBar>
-
-        {/* Service Tabs */}
-        <div className="mb-6 md:mb-8 overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
-          <Tabs defaultValue="All" value={selectedService} onValueChange={setSelectedService}>
-            <TabsList className="h-auto flex-nowrap justify-start w-max md:w-full rounded-[20px] p-1.5 bg-slate-100/80">
-              {services.map((service) => (
-                <TabsTrigger 
-                  key={service} 
-                  value={service} 
-                  className="text-xs md:text-sm whitespace-nowrap rounded-[15px] px-4 py-2 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm"
-                >
-                  {service}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
-        </div>
-
-        {/* Specialties Tabs */}
-        <div className="mb-6 md:mb-8 overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
-          <Tabs defaultValue="All" value={selectedSpecialty} onValueChange={setSelectedSpecialty}>
-            <TabsList className="h-auto flex-nowrap justify-start w-max md:w-full rounded-[20px] p-1.5 bg-slate-100/80">
-              {specialties.map((specialty) => (
-                <TabsTrigger 
-                  key={specialty} 
-                  value={specialty} 
-                  className="text-xs md:text-sm whitespace-nowrap rounded-[15px] px-4 py-2 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm"
-                >
-                  {specialty}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
-        </div>
 
         {/* Loading State */}
         {isLoading && (

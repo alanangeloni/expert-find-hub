@@ -24,14 +24,14 @@ export function FilterBar({
       "bg-white rounded-[20px] shadow-sm border border-slate-100 p-4 md:p-5 mb-6",
       className
     )}>
-      <div className="flex flex-wrap items-center gap-4">
+      <div className="flex flex-wrap items-center gap-3 md:gap-4">
         <div className="relative flex-1 min-w-[240px]">
           <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
             <Search className="h-4 w-4 text-slate-400" />
           </div>
           <Input
             placeholder={searchPlaceholder}
-            className="pl-10 h-14 rounded-[20px] bg-slate-50 border-slate-100 focus-visible:ring-brand-blue"
+            className="pl-10 h-12 rounded-[20px] bg-slate-50 border-slate-100 focus-visible:ring-brand-blue"
             value={searchQuery}
             onChange={onSearchChange}
           />

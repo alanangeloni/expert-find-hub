@@ -1,16 +1,23 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
-import { Building, ChevronRight, DollarSign, Star } from "lucide-react";
+import { Building, ChevronRight, DollarSign, Star, ChevronDown } from "lucide-react";
 import { getInvestmentFirms } from "@/services/investmentFirmsService";
 import { Button } from "@/components/ui/button";
 import { FilterBar } from "@/components/filters/FilterBar";
 import { FilterButton } from "@/components/filters/FilterButton";
 import Header from "@/components/layout/Header";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function InvestmentFirmsPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -74,54 +81,49 @@ export default function InvestmentFirmsPage() {
           searchQuery={searchQuery}
           onSearchChange={(e) => setSearchQuery(e.target.value)}
         >
-          <div className="flex items-center gap-2 flex-wrap">
-            <div className="text-sm font-medium text-slate-700 mr-1">Minimum:</div>
-            <FilterButton
-              active={selectedMinimum === "No Minimum"}
-              onClick={() => setSelectedMinimum("No Minimum")}
-            >
-              No Minimum
-            </FilterButton>
-            <FilterButton
-              active={selectedMinimum === "Under $10k"}
-              onClick={() => setSelectedMinimum("Under $10k")}
-            >
-              Under $10k
-            </FilterButton>
-            <FilterButton
-              active={selectedMinimum === "$10k+"}
-              onClick={() => setSelectedMinimum("$10k+")}
-            >
-              $10k+
-            </FilterButton>
-            {selectedMinimum !== "All" && (
-              <FilterButton
-                active={false}
-                onClick={() => setSelectedMinimum("All")}
-                className="border-dashed"
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Minimum Investment Filter */}
+            <Select value={selectedMinimum} onValueChange={setSelectedMinimum}>
+              <SelectTrigger className="w-[150px] rounded-[20px] h-12 bg-slate-50 border-slate-100">
+                <SelectValue placeholder="Minimum" />
+              </SelectTrigger>
+              <SelectContent className="rounded-md bg-white">
+                <SelectItem value="All">All Minimums</SelectItem>
+                <SelectItem value="No Minimum">No Minimum</SelectItem>
+                <SelectItem value="Under $10k">Under $10k</SelectItem>
+                <SelectItem value="$10k+">$10k+</SelectItem>
+              </SelectContent>
+            </Select>
+            
+            {/* Asset Class Filter */}
+            <Select value={selectedAssetClass} onValueChange={setSelectedAssetClass}>
+              <SelectTrigger className="w-[180px] rounded-[20px] h-12 bg-slate-50 border-slate-100">
+                <SelectValue placeholder="Asset Class" />
+              </SelectTrigger>
+              <SelectContent className="rounded-md bg-white">
+                {assetClasses.map((assetClass) => (
+                  <SelectItem key={assetClass} value={assetClass}>
+                    {assetClass}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Clear Filters */}
+            {(selectedMinimum !== "All" || selectedAssetClass !== "All") && (
+              <Button 
+                variant="outline" 
+                className="rounded-[20px] h-12 border-dashed"
+                onClick={() => {
+                  setSelectedMinimum("All");
+                  setSelectedAssetClass("All");
+                }}
               >
-                Clear
-              </FilterButton>
+                Clear Filters
+              </Button>
             )}
           </div>
         </FilterBar>
-
-        {/* Asset Class Tabs */}
-        <div className="mb-6 md:mb-8 overflow-x-auto -mx-4 px-4 md:mx-0 md:px-0">
-          <Tabs defaultValue="All" value={selectedAssetClass} onValueChange={setSelectedAssetClass}>
-            <TabsList className="h-auto flex-nowrap justify-start w-max md:w-full rounded-[20px] p-1.5 bg-slate-100/80">
-              {assetClasses.map((assetClass) => (
-                <TabsTrigger 
-                  key={assetClass} 
-                  value={assetClass} 
-                  className="text-xs md:text-sm whitespace-nowrap rounded-[15px] px-4 py-2 data-[state=active]:bg-white data-[state=active]:text-slate-900 data-[state=active]:shadow-sm"
-                >
-                  {assetClass}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </Tabs>
-        </div>
 
         {/* Loading State */}
         {isLoading && (
