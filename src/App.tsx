@@ -21,6 +21,10 @@ import ResetPassword from "./pages/auth/ResetPassword";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Header from "./components/layout/Header";
 
+// Admin pages
+import AdminDashboard from "./components/admin/AdminDashboard";
+import BlogEditor from "./pages/admin/BlogEditor";
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -46,6 +50,23 @@ const AppRoutes = () => (
     <Route path="/auth/forgot-password" element={<ForgotPassword />} />
     <Route path="/auth/reset-password" element={<ResetPassword />} />
     
+    {/* Admin routes - protected */}
+    <Route path="/admin/blog" element={
+      <ProtectedRoute>
+        <AdminDashboard />
+      </ProtectedRoute>
+    } />
+    <Route path="/admin/blog/new" element={
+      <ProtectedRoute>
+        <BlogEditor />
+      </ProtectedRoute>
+    } />
+    <Route path="/admin/blog/edit/:id" element={
+      <ProtectedRoute>
+        <BlogEditor />
+      </ProtectedRoute>
+    } />
+    
     {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
     <Route path="*" element={<NotFound />} />
   </Routes>
@@ -57,6 +78,7 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <div className="flex flex-col min-h-screen">
+            <Header />
             <AppRoutes />
             <Toaster />
             <Sonner />
