@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
@@ -14,6 +13,7 @@ export type BlogPost = {
   published_at?: string | null;
   created_at: string;
   updated_at: string;
+  authorName?: string; // Added this field for UI display
 };
 
 export type CreateBlogPostInput = {

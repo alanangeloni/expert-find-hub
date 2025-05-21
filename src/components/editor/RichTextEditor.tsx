@@ -1,10 +1,9 @@
-
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { Bold, Italic, Underline, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, ListOrdered, ListUnordered, Quote, Image, Link } from "lucide-react";
+import { Bold, Italic, Underline, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, ListOrdered, List, Quote, Image, Link } from "lucide-react";
 
 interface RichTextEditorProps {
   value: string;
@@ -213,7 +212,7 @@ export function RichTextEditor({
           onClick={() => handleCommand('ul')}
           title="Unordered List"
         >
-          <ListUnordered className="h-4 w-4" />
+          <List className="h-4 w-4" />
         </Button>
         <Button 
           type="button" 

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -140,7 +139,8 @@ export default function Blog() {
       post.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
       (post.excerpt?.toLowerCase().includes(searchQuery.toLowerCase()) || false);
     
-    const matchesCategory = activeCategory === "All" || post.categoryName === activeCategory;
+    // Since we don't have categories implemented yet, we'll only filter by search
+    const matchesCategory = activeCategory === "All";
     
     return matchesSearch && matchesCategory;
   });
