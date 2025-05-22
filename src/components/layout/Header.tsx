@@ -1,7 +1,5 @@
-
 import { Link } from "react-router-dom";
 import UserMenu from "@/components/auth/UserMenu";
-
 const Header = () => {
   return <header className="bg-white shadow">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
@@ -10,9 +8,7 @@ const Header = () => {
         </Link>
 
         <nav className="hidden md:flex items-center space-x-6">
-          <Link to="/" className="text-gray-600 hover:text-brand-blue">
-            Home
-          </Link>
+          
           <Link to="/investment-firms" className="text-gray-600 hover:text-brand-blue">
             Investment Firms
           </Link>
