@@ -33,6 +33,7 @@ export interface AdvisorFilter {
   minimumAssets?: string;
   serviceType?: string;
   compensationType?: string;
+  specialty?: string;
 }
 
 export const getAdvisors = async (filters: AdvisorFilter = {}) => {
@@ -48,6 +49,28 @@ export const getAdvisors = async (filters: AdvisorFilter = {}) => {
   
   if (filters.state) {
     query = query.eq("state_hq", filters.state);
+  }
+  
+  if (filters.minimumAssets) {
+    // Handle minimum assets filter based on the selected value
+    switch (filters.minimumAssets) {
+      case "No Minimum":
+        // Include advisors with no minimum or 0 minimum
+        query = query.or('minimum.is.null,minimum.eq.0,minimum.eq.$0');
+        break;
+      case "Under $250k":
+        query = query.lt("minimum", "250000");
+        break;
+      case "$250k - $500k":
+        query = query.gte("minimum", "250000").lt("minimum", "500000");
+        break;
+      case "$500k - $1M":
+        query = query.gte("minimum", "500000").lt("minimum", "1000000");
+        break;
+      case "$1M+":
+        query = query.gte("minimum", "1000000");
+        break;
+    }
   }
 
   // Fetch the results
@@ -116,4 +139,35 @@ export const getAdvisorCompensationTypes = async (advisorId: string) => {
   }
 
   return data.map(item => item.compensation_type);
+};
+
+export const getAdvisorSpecialties = async (advisorId: string) => {
+  const { data, error } = await supabase
+    .from("advisor_services")
+    .select("service")
+    .eq("advisor_id", advisorId);
+
+  if (error) {
+    console.error(`Error fetching specialties for advisor ${advisorId}:`, error);
+    return [];
+  }
+
+  return data.map(item => item.service);
+};
+
+export const getUniqueStates = async () => {
+  const { data, error } = await supabase
+    .from("financial_advisors")
+    .select("state_hq")
+    .not("state_hq", "is", null)
+    .order("state_hq");
+
+  if (error) {
+    console.error("Error fetching unique states:", error);
+    return [];
+  }
+
+  // Filter out duplicates and null values
+  const uniqueStates = [...new Set(data.map(item => item.state_hq).filter(Boolean))];
+  return uniqueStates;
 };
