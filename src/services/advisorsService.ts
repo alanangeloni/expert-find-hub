@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 
 export interface Advisor {
@@ -25,13 +26,23 @@ export interface Advisor {
   website_url?: string;
 }
 
+export type AdvisorSpecialty = 
+  | "Retirement Planning" 
+  | "Investment Management" 
+  | "Tax Planning" 
+  | "Estate Planning" 
+  | "Insurance Planning"
+  | "Business Planning"
+  | "Education Planning"
+  | "Financial Planning";
+
 export interface AdvisorFilter {
   searchQuery?: string;
   state?: string;
   minimumAssets?: string;
   serviceType?: string;
   compensationType?: string;
-  specialty?: string;
+  specialty?: string; // Kept as string for form handling
 }
 
 export const getAdvisors = async (filters: AdvisorFilter = {}) => {
@@ -86,6 +97,8 @@ export const getAdvisors = async (filters: AdvisorFilter = {}) => {
       const advisorsWithSpecialty = [];
       
       for (const advisor of data) {
+        // Cast filters.specialty to AdvisorSpecialty type only for the comparison
+        // This maintains compatibility with the form handling while satisfying TypeScript
         const services = await getAdvisorSpecialties(advisor.id);
         if (services.includes(filters.specialty)) {
           advisorsWithSpecialty.push(advisor);
