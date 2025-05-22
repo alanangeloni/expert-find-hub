@@ -42,15 +42,15 @@ const AdvisorSearch = () => {
   };
 
   const handleStateChange = (value: string) => {
-    setFilters(prev => ({ ...prev, state: value === "All" ? undefined : value }));
+    setFilters(prev => ({ ...prev, state: value === "all" ? undefined : value }));
   };
 
   const handleMinimumChange = (value: string) => {
-    setFilters(prev => ({ ...prev, minimumAssets: value === "All" ? undefined : value }));
+    setFilters(prev => ({ ...prev, minimumAssets: value === "all" ? undefined : value }));
   };
 
   const handleSpecialtyChange = (value: string) => {
-    setFilters(prev => ({ ...prev, specialty: value === "All" ? undefined : value }));
+    setFilters(prev => ({ ...prev, specialty: value === "all" ? undefined : value }));
   };
 
   const clearFilters = () => {
@@ -64,7 +64,8 @@ const AdvisorSearch = () => {
     "Estate Planning", 
     "Insurance Planning",
     "Business Planning",
-    "Education Planning"
+    "Education Planning",
+    "Financial Planning"
   ];
 
   const minimumAssetOptions = [

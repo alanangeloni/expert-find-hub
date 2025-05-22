@@ -61,7 +61,7 @@ export const AdvisorFilterSidebar = ({
                 <SelectValue placeholder="Select state" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All States</SelectItem>
+                <SelectItem value="all">All States</SelectItem>
                 {states.map((state) => (
                   <SelectItem key={state} value={state}>{state}</SelectItem>
                 ))}
@@ -80,7 +80,7 @@ export const AdvisorFilterSidebar = ({
               className="flex flex-col space-y-2"
             >
               <div className="flex items-center space-x-2">
-                <RadioGroupItem value="" id="all-min" />
+                <RadioGroupItem value="all" id="all-min" />
                 <FormLabel className="cursor-pointer font-normal" htmlFor="all-min">All</FormLabel>
               </div>
               
@@ -103,7 +103,7 @@ export const AdvisorFilterSidebar = ({
                 <SelectValue placeholder="Select specialty" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Specialties</SelectItem>
+                <SelectItem value="all">All Specialties</SelectItem>
                 {specialties.map((specialty) => (
                   <SelectItem key={specialty} value={specialty}>{specialty}</SelectItem>
                 ))}
