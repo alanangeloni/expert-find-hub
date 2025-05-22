@@ -20,6 +20,11 @@ export interface Advisor {
   premium?: boolean;
   first_session_is_free?: boolean;
   scheduling_link?: string;
+  // Add missing properties that are used in the AdvisorDetail component
+  firm_logo_url?: string;
+  phone_number?: string;
+  email?: string;
+  website_url?: string;
 }
 
 export interface AdvisorFilter {
