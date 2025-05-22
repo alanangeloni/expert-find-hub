@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 export interface Advisor {
@@ -20,7 +19,6 @@ export interface Advisor {
   premium?: boolean;
   first_session_is_free?: boolean;
   scheduling_link?: string;
-  // Add missing properties that are used in the AdvisorDetail component
   firm_logo_url?: string;
   phone_number?: string;
   email?: string;
@@ -73,7 +71,34 @@ export const getAdvisors = async (filters: AdvisorFilter = {}) => {
     }
   }
 
-  // Fetch the results
+  if (filters.specialty) {
+    // If specialty filter is applied, we need to join with advisor_services
+    // For simplicity in this implementation, we'll fetch all advisors first and filter in memory
+    const { data, error } = await query;
+    
+    if (error) {
+      console.error("Error fetching advisors:", error);
+      throw error;
+    }
+    
+    if (data.length > 0) {
+      // For each advisor, fetch their services and check if they match the specialty
+      const advisorsWithSpecialty = [];
+      
+      for (const advisor of data) {
+        const services = await getAdvisorSpecialties(advisor.id);
+        if (services.includes(filters.specialty)) {
+          advisorsWithSpecialty.push(advisor);
+        }
+      }
+      
+      return advisorsWithSpecialty as Advisor[];
+    }
+    
+    return [];
+  }
+
+  // If no specialty filter, just fetch with the query
   const { data, error } = await query;
 
   if (error) {
