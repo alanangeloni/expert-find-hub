@@ -5,7 +5,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Star } from "lucide-react";
 
 // Professional type that rotates in the hero section
-const professionalTypes = ["Financial Advisor", "Accountant", "Wealth Manager", "Tax Specialist"];
+const professionalTypes = ["Financial Professional", "Financial Advisor", "Accountant", "Tax Specialist"];
 const Index = () => {
   const [professionalTypeIndex, setProfessionalTypeIndex] = useState(0);
   useEffect(() => {
