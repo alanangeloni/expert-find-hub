@@ -696,7 +696,6 @@ export type Database = {
         Row: {
           address: string | null
           app_store_link: string | null
-          asset_classes: Database["public"]["Enums"]["asset_class"][] | null
           aum: string | null
           created_at: string | null
           description: string | null
@@ -708,17 +707,15 @@ export type Database = {
           how_you_make_money: string | null
           id: string
           investment_risks: string | null
-          investor_types: Database["public"]["Enums"]["investor_type"][] | null
           large_image_url: string | null
           liquidity: string | null
           logo_url: string | null
           long_description: string | null
-          minimum_investment: string | null
+          minimum_investment: number | null
           name: string
           payout: Database["public"]["Enums"]["payout_frequency"] | null
           play_store_link: string | null
           rating: number | null
-          return_type: Database["public"]["Enums"]["return_type"] | null
           review_count: number | null
           slug: string
           small_image_url: string | null
@@ -733,7 +730,6 @@ export type Database = {
         Insert: {
           address?: string | null
           app_store_link?: string | null
-          asset_classes?: Database["public"]["Enums"]["asset_class"][] | null
           aum?: string | null
           created_at?: string | null
           description?: string | null
@@ -745,17 +741,15 @@ export type Database = {
           how_you_make_money?: string | null
           id?: string
           investment_risks?: string | null
-          investor_types?: Database["public"]["Enums"]["investor_type"][] | null
           large_image_url?: string | null
           liquidity?: string | null
           logo_url?: string | null
           long_description?: string | null
-          minimum_investment?: string | null
+          minimum_investment?: number | null
           name: string
           payout?: Database["public"]["Enums"]["payout_frequency"] | null
           play_store_link?: string | null
           rating?: number | null
-          return_type?: Database["public"]["Enums"]["return_type"] | null
           review_count?: number | null
           slug: string
           small_image_url?: string | null
@@ -772,7 +766,6 @@ export type Database = {
         Update: {
           address?: string | null
           app_store_link?: string | null
-          asset_classes?: Database["public"]["Enums"]["asset_class"][] | null
           aum?: string | null
           created_at?: string | null
           description?: string | null
@@ -784,17 +777,15 @@ export type Database = {
           how_you_make_money?: string | null
           id?: string
           investment_risks?: string | null
-          investor_types?: Database["public"]["Enums"]["investor_type"][] | null
           large_image_url?: string | null
           liquidity?: string | null
           logo_url?: string | null
           long_description?: string | null
-          minimum_investment?: string | null
+          minimum_investment?: number | null
           name?: string
           payout?: Database["public"]["Enums"]["payout_frequency"] | null
           play_store_link?: string | null
           rating?: number | null
-          return_type?: Database["public"]["Enums"]["return_type"] | null
           review_count?: number | null
           slug?: string
           small_image_url?: string | null
@@ -930,15 +921,30 @@ export type Database = {
         | "Payroll Services"
         | "Sales Tax"
         | "Tax Preparation"
-      asset_class:
-        | "Equities"
-        | "Fixed Income"
-        | "Multi-Asset"
-        | "Alternatives"
-        | "Real Estate"
+      "Asset Class":
+        | "Art"
+        | "Asset Management"
+        | "Collectibles"
         | "Commodities"
-        | "Cash"
         | "Cryptocurrency"
+        | "Loans"
+        | "Real Estate"
+        | "Robo-Advisor"
+        | "Savings"
+        | "Startups"
+        | "Trading"
+      blog_category:
+        | "Banking"
+        | "Business"
+        | "Loans"
+        | "Investing"
+        | "Insurance"
+        | "Interview"
+        | "Finance"
+        | "Taxes"
+        | "Real Estate"
+        | "Retirement"
+        | "Reviews"
       client_specialty_type:
         | "High Net Worth Individuals"
         | "Real Estate Investors"
@@ -983,7 +989,7 @@ export type Database = {
         | "Quarterly"
         | "Semi-Annually"
         | "Annually"
-        | "As Needed"
+        | "Asset Sold"
       profession_type:
         | "Financial Advisor"
         | "CFP"
@@ -993,10 +999,11 @@ export type Database = {
         | "Investment Advisor"
         | "Retirement Planner"
       return_type:
-        | "Income"
-        | "Growth"
-        | "Income and Growth"
-        | "Capital Preservation"
+        | "Dividends"
+        | "Dividends & Value"
+        | "Interest"
+        | "Royalties"
+        | "Value"
       service_offered:
         | "Financial Planning"
         | "Retirement Planning"
@@ -1006,6 +1013,58 @@ export type Database = {
         | "Insurance Planning"
         | "Education Planning"
         | "Business Planning"
+      States:
+        | "Alabama"
+        | "Alaska"
+        | "Arizona"
+        | "Arkansas"
+        | "California"
+        | "Colorado"
+        | "Connecticut"
+        | "Delaware"
+        | "District of Columbia"
+        | "Florida"
+        | "Georgia"
+        | "Hawaii"
+        | "Idaho"
+        | "Illinois"
+        | "Indiana"
+        | "Iowa"
+        | "Kansas"
+        | "Kentucky"
+        | "Louisiana"
+        | "Maine"
+        | "Maryland"
+        | "Massachusetts"
+        | "Michigan"
+        | "Minnesota"
+        | "Mississippi"
+        | "Missouri"
+        | "Montana"
+        | "Nebraska"
+        | "Nevada"
+        | "New Hampshire"
+        | "New Jersey"
+        | "New Mexico"
+        | "New York"
+        | "North Carolina"
+        | "North Dakota"
+        | "Ohio"
+        | "Oklahoma"
+        | "Oregon"
+        | "Pennsylvania"
+        | "Rhode Island"
+        | "South Carolina"
+        | "South Dakota"
+        | "Tennessee"
+        | "Texas"
+        | "Utah"
+        | "Vermont"
+        | "Virginia"
+        | "Washington"
+        | "West Virginia"
+        | "Wisconsin"
+        | "Wyoming"
       withdrawal_type: "Anytime" | "Limited" | "Locked Period" | "Scheduled"
     }
     CompositeTypes: {
@@ -1134,15 +1193,31 @@ export const Constants = {
         "Sales Tax",
         "Tax Preparation",
       ],
-      asset_class: [
-        "Equities",
-        "Fixed Income",
-        "Multi-Asset",
-        "Alternatives",
-        "Real Estate",
+      "Asset Class": [
+        "Art",
+        "Asset Management",
+        "Collectibles",
         "Commodities",
-        "Cash",
         "Cryptocurrency",
+        "Loans",
+        "Real Estate",
+        "Robo-Advisor",
+        "Savings",
+        "Startups",
+        "Trading",
+      ],
+      blog_category: [
+        "Banking",
+        "Business",
+        "Loans",
+        "Investing",
+        "Insurance",
+        "Interview",
+        "Finance",
+        "Taxes",
+        "Real Estate",
+        "Retirement",
+        "Reviews",
       ],
       client_specialty_type: [
         "High Net Worth Individuals",
@@ -1192,7 +1267,7 @@ export const Constants = {
         "Quarterly",
         "Semi-Annually",
         "Annually",
-        "As Needed",
+        "Asset Sold",
       ],
       profession_type: [
         "Financial Advisor",
@@ -1204,10 +1279,11 @@ export const Constants = {
         "Retirement Planner",
       ],
       return_type: [
-        "Income",
-        "Growth",
-        "Income and Growth",
-        "Capital Preservation",
+        "Dividends",
+        "Dividends & Value",
+        "Interest",
+        "Royalties",
+        "Value",
       ],
       service_offered: [
         "Financial Planning",
@@ -1218,6 +1294,59 @@ export const Constants = {
         "Insurance Planning",
         "Education Planning",
         "Business Planning",
+      ],
+      States: [
+        "Alabama",
+        "Alaska",
+        "Arizona",
+        "Arkansas",
+        "California",
+        "Colorado",
+        "Connecticut",
+        "Delaware",
+        "District of Columbia",
+        "Florida",
+        "Georgia",
+        "Hawaii",
+        "Idaho",
+        "Illinois",
+        "Indiana",
+        "Iowa",
+        "Kansas",
+        "Kentucky",
+        "Louisiana",
+        "Maine",
+        "Maryland",
+        "Massachusetts",
+        "Michigan",
+        "Minnesota",
+        "Mississippi",
+        "Missouri",
+        "Montana",
+        "Nebraska",
+        "Nevada",
+        "New Hampshire",
+        "New Jersey",
+        "New Mexico",
+        "New York",
+        "North Carolina",
+        "North Dakota",
+        "Ohio",
+        "Oklahoma",
+        "Oregon",
+        "Pennsylvania",
+        "Rhode Island",
+        "South Carolina",
+        "South Dakota",
+        "Tennessee",
+        "Texas",
+        "Utah",
+        "Vermont",
+        "Virginia",
+        "Washington",
+        "West Virginia",
+        "Wisconsin",
+        "Wyoming",
       ],
       withdrawal_type: ["Anytime", "Limited", "Locked Period", "Scheduled"],
     },

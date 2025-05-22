@@ -54,20 +54,44 @@ export default function BlogArticle() {
         if (isAdmin && user) {
           const { data } = await supabase
             .from('blog_posts')
-            .select('*')
+            .select('*, blog_post_categories(category_name)')
             .eq('slug', slug)
-            .single();
+            .maybeSingle();
             
-          postData = data as BlogPost;
+          if (data) {
+            // Format the post with categories
+            const categories = data.blog_post_categories 
+              ? data.blog_post_categories.map((cat: any) => cat.category_name) 
+              : [];
+            
+            const { blog_post_categories, ...restPost } = data;
+            
+            postData = {
+              ...restPost,
+              categories
+            } as BlogPost;
+          }
         } else {
           const { data } = await supabase
             .from('blog_posts')
-            .select('*')
+            .select('*, blog_post_categories(category_name)')
             .eq('slug', slug)
             .eq('status', 'published')
-            .single();
+            .maybeSingle();
             
-          postData = data as BlogPost;
+          if (data) {
+            // Format the post with categories
+            const categories = data.blog_post_categories 
+              ? data.blog_post_categories.map((cat: any) => cat.category_name) 
+              : [];
+            
+            const { blog_post_categories, ...restPost } = data;
+            
+            postData = {
+              ...restPost,
+              categories
+            } as BlogPost;
+          }
         }
         
         if (!postData) {
@@ -170,6 +194,19 @@ export default function BlogArticle() {
       {/* Blog Content */}
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto">
+          {/* Categories */}
+          {post.categories && post.categories.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-6">
+              {post.categories.map(category => (
+                <Link to={`/blog?category=${category}`} key={category}>
+                  <Badge variant="outline" className="hover:bg-slate-100">
+                    {category}
+                  </Badge>
+                </Link>
+              ))}
+            </div>
+          )}
+          
           {/* Article Meta */}
           <div className="flex flex-wrap items-center gap-4 mb-8 text-sm text-slate-600">
             <div className="flex items-center gap-2">

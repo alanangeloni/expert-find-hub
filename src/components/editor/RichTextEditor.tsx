@@ -34,6 +34,16 @@ export function RichTextEditor({
     let newValue = value;
     let newCursorPosition = end;
     
+    // Calculate the line start to properly apply heading markdown
+    let lineStart = start;
+    while (lineStart > 0 && value[lineStart - 1] !== '\n') {
+      lineStart--;
+    }
+    
+    // Check if line already has heading markdown
+    const currentLine = value.substring(lineStart, Math.max(lineStart, end));
+    const lineAlreadyHasHeading = /^(#{1,6})\s/.test(currentLine);
+    
     switch (command) {
       case 'bold':
         newValue = value.substring(0, start) + `**${selectedText}**` + value.substring(end);
@@ -48,28 +58,72 @@ export function RichTextEditor({
         newCursorPosition = end + 7;
         break;
       case 'h1':
-        newValue = value.substring(0, start) + `# ${selectedText}` + value.substring(end);
-        newCursorPosition = end + 2;
+        if (lineAlreadyHasHeading) {
+          // Replace existing heading
+          newValue = value.substring(0, lineStart) + 
+                    `# ${currentLine.replace(/^#{1,6}\s/, '')}` + 
+                    value.substring(Math.max(lineStart, end));
+        } else {
+          // Add new heading at line start
+          newValue = value.substring(0, lineStart) + 
+                    `# ${selectedText || value.substring(lineStart, end)}` + 
+                    value.substring(end);
+        }
         break;
       case 'h2':
-        newValue = value.substring(0, start) + `## ${selectedText}` + value.substring(end);
-        newCursorPosition = end + 3;
+        if (lineAlreadyHasHeading) {
+          newValue = value.substring(0, lineStart) + 
+                    `## ${currentLine.replace(/^#{1,6}\s/, '')}` + 
+                    value.substring(Math.max(lineStart, end));
+        } else {
+          newValue = value.substring(0, lineStart) + 
+                    `## ${selectedText || value.substring(lineStart, end)}` + 
+                    value.substring(end);
+        }
         break;
       case 'h3':
-        newValue = value.substring(0, start) + `### ${selectedText}` + value.substring(end);
-        newCursorPosition = end + 4;
+        if (lineAlreadyHasHeading) {
+          newValue = value.substring(0, lineStart) + 
+                    `### ${currentLine.replace(/^#{1,6}\s/, '')}` + 
+                    value.substring(Math.max(lineStart, end));
+        } else {
+          newValue = value.substring(0, lineStart) + 
+                    `### ${selectedText || value.substring(lineStart, end)}` + 
+                    value.substring(end);
+        }
         break;
       case 'h4':
-        newValue = value.substring(0, start) + `#### ${selectedText}` + value.substring(end);
-        newCursorPosition = end + 5;
+        if (lineAlreadyHasHeading) {
+          newValue = value.substring(0, lineStart) + 
+                    `#### ${currentLine.replace(/^#{1,6}\s/, '')}` + 
+                    value.substring(Math.max(lineStart, end));
+        } else {
+          newValue = value.substring(0, lineStart) + 
+                    `#### ${selectedText || value.substring(lineStart, end)}` + 
+                    value.substring(end);
+        }
         break;
       case 'h5':
-        newValue = value.substring(0, start) + `##### ${selectedText}` + value.substring(end);
-        newCursorPosition = end + 6;
+        if (lineAlreadyHasHeading) {
+          newValue = value.substring(0, lineStart) + 
+                    `##### ${currentLine.replace(/^#{1,6}\s/, '')}` + 
+                    value.substring(Math.max(lineStart, end));
+        } else {
+          newValue = value.substring(0, lineStart) + 
+                    `##### ${selectedText || value.substring(lineStart, end)}` + 
+                    value.substring(end);
+        }
         break;
       case 'h6':
-        newValue = value.substring(0, start) + `###### ${selectedText}` + value.substring(end);
-        newCursorPosition = end + 7;
+        if (lineAlreadyHasHeading) {
+          newValue = value.substring(0, lineStart) + 
+                    `###### ${currentLine.replace(/^#{1,6}\s/, '')}` + 
+                    value.substring(Math.max(lineStart, end));
+        } else {
+          newValue = value.substring(0, lineStart) + 
+                    `###### ${selectedText || value.substring(lineStart, end)}` + 
+                    value.substring(end);
+        }
         break;
       case 'ol':
         newValue = value.substring(0, start) + `1. ${selectedText}` + value.substring(end);

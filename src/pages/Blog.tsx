@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +12,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
+import { getBlogPosts, getBlogCategories } from "@/services/blogService";
 
 type BlogPost = {
   id: string;
@@ -23,6 +25,7 @@ type BlogPost = {
   slug: string;
   author_id: string | null;
   authorName?: string;
+  categories?: string[];
 };
 
 export default function Blog() {
@@ -31,41 +34,34 @@ export default function Blog() {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [isAdmin, setIsAdmin] = useState(false);
+  const [categories, setCategories] = useState<string[]>(["All"]);
   const { user } = useAuth();
   const navigate = useNavigate();
   
-  const categories = [
-    "All",
-    "Retirement",
-    "Investing",
-    "Tax Planning",
-    "Estate Planning",
-    "Market Insights",
-    "Financial Education",
-  ];
+  // Fetch categories
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const categoriesData = await getBlogCategories();
+      setCategories(["All", ...categoriesData]);
+    };
+    
+    fetchCategories();
+  }, []);
 
   // Get all blog posts
   useEffect(() => {
     const fetchBlogPosts = async () => {
       setLoading(true);
       try {
-        let query = supabase
-          .from('blog_posts')
-          .select('*')
-          .order('published_at', { ascending: false });
+        const categoryFilter = activeCategory !== "All" ? activeCategory : undefined;
+        const postsData = await getBlogPosts(categoryFilter);
+        
+        // Filter by published status if not admin
+        const filteredPosts = isAdmin 
+          ? postsData 
+          : postsData.filter(post => post.status === 'published');
           
-        // Only admins can see drafts  
-        if (!isAdmin) {
-          query = query.eq('status', 'published');
-        }
-        
-        const { data, error } = await query;
-        
-        if (error) {
-          throw new Error(error.message);
-        }
-        
-        setPosts(data || []);
+        setPosts(filteredPosts);
       } catch (error) {
         console.error('Error fetching blog posts:', error);
         setPosts([]);
@@ -75,7 +71,7 @@ export default function Blog() {
     };
 
     fetchBlogPosts();
-  }, [isAdmin]);
+  }, [isAdmin, activeCategory]);
 
   // Check if user is admin
   useEffect(() => {
@@ -113,7 +109,7 @@ export default function Blog() {
           .in('id', authorIds);
           
         if (data) {
-          const authorsMap = data.reduce((map, author) => ({
+          const authorsMap = data.reduce((map: {[key: string]: string}, author) => ({
             ...map,
             [author.id]: `${author.first_name} ${author.last_name}`
           }), {});
@@ -133,16 +129,10 @@ export default function Blog() {
     }
   }, [posts.length]);
 
-  // Filter posts based on search query and category
+  // Filter posts based on search query
   const filteredPosts = posts.filter(post => {
-    const matchesSearch = 
-      post.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    return post.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
       (post.excerpt?.toLowerCase().includes(searchQuery.toLowerCase()) || false);
-    
-    // Since we don't have categories implemented yet, we'll only filter by search
-    const matchesCategory = activeCategory === "All";
-    
-    return matchesSearch && matchesCategory;
   });
 
   return (
@@ -228,6 +218,18 @@ export default function Blog() {
                     {post.excerpt && (
                       <p className="text-slate-600 text-sm mb-4 line-clamp-3">{post.excerpt}</p>
                     )}
+                    
+                    {/* Categories badges */}
+                    {post.categories && post.categories.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {post.categories.map(category => (
+                          <Badge key={category} variant="outline" className="text-xs">
+                            {category}
+                          </Badge>
+                        ))}
+                      </div>
+                    )}
+                    
                     {post.author_id && post.authorName && (
                       <div className="flex items-center gap-2 md:gap-3">
                         <Avatar className="h-7 w-7 md:h-8 md:w-8">

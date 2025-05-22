@@ -4,7 +4,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { 
   createBlogPost, 
   updateBlogPost, 
-  getBlogPostBySlug, 
+  getBlogPostBySlug,
+  getBlogCategories,
   BlogPost,
   uploadBlogImage
 } from '@/services/blogService';
@@ -15,6 +16,15 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Spinner } from '@/components/ui/spinner';
 import { Switch } from '@/components/ui/switch';
+import { Badge } from '@/components/ui/badge';
+import { X } from 'lucide-react';
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -34,6 +44,9 @@ const BlogEditor = () => {
   const [saving, setSaving] = useState(false);
   const [initialLoading, setInitialLoading] = useState(isEditing);
   const [existingPost, setExistingPost] = useState<BlogPost | null>(null);
+  const [availableCategories, setAvailableCategories] = useState<string[]>([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [currentCategory, setCurrentCategory] = useState<string>('');
   
   // Admin status check
   const [isAdmin, setIsAdmin] = useState(false);
@@ -66,6 +79,16 @@ const BlogEditor = () => {
 
     checkAdminStatus();
   }, []);
+  
+  // Fetch available categories
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const categories = await getBlogCategories();
+      setAvailableCategories(categories);
+    };
+    
+    fetchCategories();
+  }, []);
 
   // Load existing post data if editing
   useEffect(() => {
@@ -76,7 +99,7 @@ const BlogEditor = () => {
         setInitialLoading(true);
         const { data, error } = await supabase
           .from('blog_posts')
-          .select('*')
+          .select('*, blog_post_categories(category_name)')
           .eq('id', id)
           .single();
           
@@ -88,7 +111,14 @@ const BlogEditor = () => {
           throw new Error('Blog post not found');
         }
         
-        const post = data as BlogPost;
+        // Extract categories from the relation
+        const categories = data.blog_post_categories 
+          ? data.blog_post_categories.map((cat: any) => cat.category_name)
+          : [];
+        
+        const { blog_post_categories, ...postData } = data;
+        const post = { ...postData, categories } as BlogPost;
+        
         setExistingPost(post);
         setTitle(post.title);
         setSlug(post.slug);
@@ -96,6 +126,7 @@ const BlogEditor = () => {
         setExcerpt(post.excerpt || '');
         setCoverImageUrl(post.cover_image_url || '');
         setIsPublished(post.status === 'published');
+        setSelectedCategories(post.categories || []);
       } catch (error: any) {
         toast({
           title: "Error loading blog post",
@@ -137,6 +168,17 @@ const BlogEditor = () => {
       fileReader.readAsDataURL(file);
     }
   };
+  
+  const handleAddCategory = (categoryName: string) => {
+    if (!categoryName || selectedCategories.includes(categoryName)) return;
+    
+    setSelectedCategories([...selectedCategories, categoryName]);
+    setCurrentCategory('');
+  };
+  
+  const handleRemoveCategory = (categoryToRemove: string) => {
+    setSelectedCategories(selectedCategories.filter(cat => cat !== categoryToRemove));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -171,7 +213,8 @@ const BlogEditor = () => {
           content,
           excerpt: excerpt || undefined,
           cover_image_url: finalCoverImageUrl || undefined,
-          status: isPublished ? 'published' : 'draft'
+          status: isPublished ? 'published' : 'draft',
+          categories: selectedCategories
         });
         
         navigate('/admin/blog');
@@ -183,7 +226,8 @@ const BlogEditor = () => {
           content,
           excerpt: excerpt || undefined,
           cover_image_url: finalCoverImageUrl || undefined,
-          status: isPublished ? 'published' : 'draft'
+          status: isPublished ? 'published' : 'draft',
+          categories: selectedCategories
         });
         
         if (result) {
@@ -282,6 +326,49 @@ const BlogEditor = () => {
                     Generate from Title
                   </Button>
                 )}
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="categories" className="mb-2 block">Categories</Label>
+              <div className="mb-2">
+                <Select
+                  value={currentCategory}
+                  onValueChange={(value) => {
+                    setCurrentCategory(value);
+                    handleAddCategory(value);
+                  }}
+                >
+                  <SelectTrigger className="w-[200px]">
+                    <SelectValue placeholder="Select category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableCategories.map((category) => (
+                      <SelectItem 
+                        key={category} 
+                        value={category}
+                        disabled={selectedCategories.includes(category)}
+                      >
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              
+              <div className="flex flex-wrap gap-2 mt-2">
+                {selectedCategories.map(category => (
+                  <Badge key={category} variant="secondary" className="flex items-center gap-1">
+                    {category}
+                    <button 
+                      type="button" 
+                      onClick={() => handleRemoveCategory(category)}
+                      className="text-xs text-gray-500 hover:text-gray-700 rounded-full ml-1"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                ))}
               </div>
             </div>
 

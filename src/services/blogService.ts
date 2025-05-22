@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
@@ -14,6 +15,7 @@ export type BlogPost = {
   created_at: string;
   updated_at: string;
   authorName?: string; // Added this field for UI display
+  categories?: string[]; // Added for category support
 };
 
 export type CreateBlogPostInput = {
@@ -23,6 +25,7 @@ export type CreateBlogPostInput = {
   excerpt?: string;
   cover_image_url?: string;
   status?: 'draft' | 'published';
+  categories?: string[]; // Added for category support
 };
 
 export type UpdateBlogPostInput = Partial<CreateBlogPostInput> & {
@@ -30,13 +33,35 @@ export type UpdateBlogPostInput = Partial<CreateBlogPostInput> & {
   published_at?: string | null;
 };
 
-// Get all blog posts (admin can see all, public sees only published)
-export const getBlogPosts = async () => {
+// Get all available blog categories
+export const getBlogCategories = async (): Promise<string[]> => {
   try {
     const { data, error } = await supabase
+      .from('blog_categories')
+      .select('name')
+      .order('name');
+      
+    if (error) {
+      console.error('Error fetching blog categories:', error);
+      return [];
+    }
+    
+    return data.map(category => category.name);
+  } catch (error: any) {
+    console.error('Error fetching blog categories:', error);
+    return [];
+  }
+};
+
+// Get all blog posts (admin can see all, public sees only published)
+export const getBlogPosts = async (categoryFilter?: string) => {
+  try {
+    const query = supabase
       .from('blog_posts')
-      .select('*')
+      .select('*, blog_post_categories(category_name)')
       .order('created_at', { ascending: false });
+    
+    const { data, error } = await query;
 
     if (error) {
       console.error('Error fetching blog posts:', error);
@@ -48,7 +73,28 @@ export const getBlogPosts = async () => {
       return [];
     }
 
-    return data as BlogPost[];
+    const formattedPosts = data.map(post => {
+      // Extract categories from the blog_post_categories relation
+      const categories = post.blog_post_categories 
+        ? post.blog_post_categories.map((cat: any) => cat.category_name) 
+        : [];
+      
+      // Remove the blog_post_categories property and add the categories array
+      const { blog_post_categories, ...restPost } = post;
+      return {
+        ...restPost,
+        categories
+      } as BlogPost;
+    });
+    
+    // Filter by category if requested
+    if (categoryFilter && categoryFilter !== 'All') {
+      return formattedPosts.filter(post => 
+        post.categories?.includes(categoryFilter)
+      );
+    }
+
+    return formattedPosts;
   } catch (error: any) {
     console.error('Error fetching blog posts:', error);
     toast({
@@ -65,16 +111,26 @@ export const getBlogPostBySlug = async (slug: string) => {
   try {
     const { data, error } = await supabase
       .from('blog_posts')
-      .select('*')
+      .select('*, blog_post_categories(category_name)')
       .eq('slug', slug)
-      .single();
+      .maybeSingle();
 
-    if (error) {
+    if (error || !data) {
       console.error(`Error fetching blog post with slug ${slug}:`, error);
       return null;
     }
 
-    return data as BlogPost;
+    // Format the post with categories
+    const categories = data.blog_post_categories 
+      ? data.blog_post_categories.map((cat: any) => cat.category_name) 
+      : [];
+    
+    const { blog_post_categories, ...restPost } = data;
+    
+    return {
+      ...restPost,
+      categories
+    } as BlogPost;
   } catch (error: any) {
     console.error(`Error fetching blog post with slug ${slug}:`, error);
     return null;
@@ -88,9 +144,13 @@ export const createBlogPost = async (post: CreateBlogPostInput) => {
     const status = post.status || 'draft';
     const published_at = status === 'published' ? new Date().toISOString() : null;
     
+    // Extract categories to handle separately
+    const { categories, ...postData } = post;
+    
+    // Insert the post first
     const { data, error } = await supabase
       .from('blog_posts')
-      .insert([{ ...post, status, published_at }])
+      .insert([{ ...postData, status, published_at }])
       .select()
       .single();
 
@@ -103,13 +163,34 @@ export const createBlogPost = async (post: CreateBlogPostInput) => {
       });
       return null;
     }
+    
+    // If categories were provided, add them to the blog_post_categories table
+    if (categories && categories.length > 0 && data.id) {
+      const categoryEntries = categories.map(category => ({
+        post_id: data.id,
+        category_name: category
+      }));
+      
+      const { error: categoryError } = await supabase
+        .from('blog_post_categories')
+        .insert(categoryEntries);
+      
+      if (categoryError) {
+        console.error('Error adding blog post categories:', categoryError);
+        toast({
+          title: "Warning",
+          description: "Post created but categories could not be added",
+          variant: "default",
+        });
+      }
+    }
 
     toast({
       title: "Blog post created",
       description: "The blog post was created successfully.",
     });
 
-    return data as BlogPost;
+    return { ...data, categories } as BlogPost;
   } catch (error: any) {
     console.error('Error creating blog post:', error);
     toast({
@@ -124,7 +205,7 @@ export const createBlogPost = async (post: CreateBlogPostInput) => {
 // Update an existing blog post
 export const updateBlogPost = async (post: UpdateBlogPostInput) => {
   try {
-    const { id, ...updateData } = post;
+    const { id, categories, ...updateData } = post;
     
     // If status is changed to published and there's no published_at date, set it
     if (updateData.status === 'published') {
@@ -139,6 +220,7 @@ export const updateBlogPost = async (post: UpdateBlogPostInput) => {
       }
     }
     
+    // Update the blog post
     const { data, error } = await supabase
       .from('blog_posts')
       .update(updateData)
@@ -156,12 +238,51 @@ export const updateBlogPost = async (post: UpdateBlogPostInput) => {
       return null;
     }
 
+    // If categories are provided, update them
+    if (categories !== undefined) {
+      // First remove all existing categories for this post
+      const { error: deleteError } = await supabase
+        .from('blog_post_categories')
+        .delete()
+        .eq('post_id', id);
+        
+      if (deleteError) {
+        console.error('Error removing existing categories:', deleteError);
+        toast({
+          title: "Warning",
+          description: "Post updated but there was an issue updating categories",
+          variant: "default",
+        });
+      }
+      
+      // Then add the new categories
+      if (categories.length > 0) {
+        const categoryEntries = categories.map(category => ({
+          post_id: id,
+          category_name: category
+        }));
+        
+        const { error: insertError } = await supabase
+          .from('blog_post_categories')
+          .insert(categoryEntries);
+          
+        if (insertError) {
+          console.error('Error adding new categories:', insertError);
+          toast({
+            title: "Warning",
+            description: "Post updated but there was an issue adding new categories",
+            variant: "default",
+          });
+        }
+      }
+    }
+
     toast({
       title: "Blog post updated",
       description: "The blog post was updated successfully.",
     });
 
-    return data as BlogPost;
+    return { ...data, categories } as BlogPost;
   } catch (error: any) {
     console.error('Error updating blog post:', error);
     toast({
@@ -176,6 +297,13 @@ export const updateBlogPost = async (post: UpdateBlogPostInput) => {
 // Delete a blog post
 export const deleteBlogPost = async (id: string) => {
   try {
+    // First delete the category associations
+    await supabase
+      .from('blog_post_categories')
+      .delete()
+      .eq('post_id', id);
+      
+    // Then delete the blog post
     const { error } = await supabase
       .from('blog_posts')
       .delete()
