@@ -55,30 +55,68 @@ export const getAdvisors = async (filters?: AdvisorFilter) => {
       query = query.eq("state_hq", filters.state);
     }
 
-    // Apply minimum assets filter - completely restructured to avoid complex chaining
+    // Handle minimum assets filter with separate query building to avoid deep type instantiation
     if (filters?.minimumAssets && filters.minimumAssets !== "all") {
-      // Use a switch-like structure with separate assignments to avoid deep type instantiation
       const minimum = filters.minimumAssets;
       
+      // Create separate queries based on the minimum assets value to avoid complex chaining
       if (minimum === "No Minimum") {
         query = query.eq("minimum", "0");
-      } 
-      else if (minimum === "Under $250k") {
+      } else if (minimum === "Under $250k") {
         query = query.lt("minimum", "250000");
-      } 
-      else if (minimum === "$250k - $500k") {
-        // Apply each filter separately to avoid complex nesting
-        const tempQuery = query;
-        query = tempQuery.gte("minimum", "250000");
-        query = query.lt("minimum", "500000");
-      } 
-      else if (minimum === "$500k - $1M") {
-        // Apply each filter separately to avoid complex nesting
-        const tempQuery = query;
-        query = tempQuery.gte("minimum", "500000");
-        query = query.lt("minimum", "1000000");
-      } 
-      else if (minimum === "$1M+") {
+      } else if (minimum === "$250k - $500k") {
+        // Using a flat approach instead of chaining
+        query = supabase
+          .from("financial_advisors")
+          .select("*")
+          .gte("minimum", "250000")
+          .lt("minimum", "500000");
+        
+        // Re-apply other filters to the new query
+        if (filters?.searchQuery) {
+          query = query.or(
+            `first_name.ilike.%${filters.searchQuery}%,last_name.ilike.%${filters.searchQuery}%,firm_name.ilike.%${filters.searchQuery}%,name.ilike.%${filters.searchQuery}%`
+          );
+        }
+        if (filters?.leadGenEnabled !== undefined) {
+          query = query.eq("lead_gen_enabled", filters.leadGenEnabled);
+        }
+        if (filters?.minExperience) {
+          query = query.gte("years_of_experience", filters.minExperience);
+        }
+        if (filters?.maxExperience) {
+          query = query.lte("years_of_experience", filters.maxExperience);
+        }
+        if (filters?.state && filters.state !== "all") {
+          query = query.eq("state_hq", filters.state);
+        }
+      } else if (minimum === "$500k - $1M") {
+        // Using a flat approach instead of chaining
+        query = supabase
+          .from("financial_advisors")
+          .select("*")
+          .gte("minimum", "500000")
+          .lt("minimum", "1000000");
+        
+        // Re-apply other filters to the new query
+        if (filters?.searchQuery) {
+          query = query.or(
+            `first_name.ilike.%${filters.searchQuery}%,last_name.ilike.%${filters.searchQuery}%,firm_name.ilike.%${filters.searchQuery}%,name.ilike.%${filters.searchQuery}%`
+          );
+        }
+        if (filters?.leadGenEnabled !== undefined) {
+          query = query.eq("lead_gen_enabled", filters.leadGenEnabled);
+        }
+        if (filters?.minExperience) {
+          query = query.gte("years_of_experience", filters.minExperience);
+        }
+        if (filters?.maxExperience) {
+          query = query.lte("years_of_experience", filters.maxExperience);
+        }
+        if (filters?.state && filters.state !== "all") {
+          query = query.eq("state_hq", filters.state);
+        }
+      } else if (minimum === "$1M+") {
         query = query.gte("minimum", "1000000");
       }
     }
