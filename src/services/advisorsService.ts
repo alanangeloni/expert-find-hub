@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { type Tables } from "@/integrations/supabase/types";
 
@@ -54,17 +53,25 @@ export const getAdvisors = async (filters?: AdvisorFilter) => {
       query = query.eq("state_hq", filters.state);
     }
 
-    // Fix the type instantiation issue by using simpler comparisons for minimum assets
+    // Fix the type instantiation issue by simplifying the minimum assets filter logic
     if (filters?.minimumAssets && filters.minimumAssets !== "all") {
-      if (filters.minimumAssets === "No Minimum") {
+      const minimumFilter = filters.minimumAssets;
+      
+      if (minimumFilter === "No Minimum") {
         query = query.eq("minimum", "0");
-      } else if (filters.minimumAssets === "Under $250k") {
+      } 
+      else if (minimumFilter === "Under $250k") {
         query = query.lt("minimum", "250000");
-      } else if (filters.minimumAssets === "$250k - $500k") {
-        query = query.gte("minimum", "250000").lt("minimum", "500000");
-      } else if (filters.minimumAssets === "$500k - $1M") {
-        query = query.gte("minimum", "500000").lt("minimum", "1000000");
-      } else if (filters.minimumAssets === "$1M+") {
+      } 
+      else if (minimumFilter === "$250k - $500k") {
+        query = query.gte("minimum", "250000");
+        query = query.lt("minimum", "500000");
+      } 
+      else if (minimumFilter === "$500k - $1M") {
+        query = query.gte("minimum", "500000");
+        query = query.lt("minimum", "1000000");
+      } 
+      else if (minimumFilter === "$1M+") {
         query = query.gte("minimum", "1000000");
       }
     }
