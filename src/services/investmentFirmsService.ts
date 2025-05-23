@@ -35,7 +35,7 @@ export interface InvestmentFirm {
   asset_classes?: string[];
   created_at?: string;
   updated_at?: string;
-  // Add related entities that are being used in InvestmentFirmDetail.tsx
+  // Related entities
   investment_firm_features?: InvestmentFirmFeature[];
   investment_firm_leadership?: InvestmentFirmLeadership[];
   money_making_methods?: MoneyMakingMethod[];

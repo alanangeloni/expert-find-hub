@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { type Tables } from "@/integrations/supabase/types";
 
@@ -53,9 +54,8 @@ export const getAdvisors = async (filters?: AdvisorFilter) => {
       query = query.eq("state_hq", filters.state);
     }
 
-    // Fix the type instantiation issue by simplifying the minimum assets filtering
+    // Fix the type instantiation issue by using simpler comparisons for minimum assets
     if (filters?.minimumAssets && filters.minimumAssets !== "all") {
-      // Handle minimum assets filtering with direct comparison instead of complex logic
       if (filters.minimumAssets === "No Minimum") {
         query = query.eq("minimum", "0");
       } else if (filters.minimumAssets === "Under $250k") {

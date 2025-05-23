@@ -1,10 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { FilterBar } from '@/components/filters/FilterBar';
 import { getAdvisors, getUniqueStates, type AdvisorFilter } from '@/services/advisorsService';
-import { AdvisorFilterSidebar } from '@/components/advisors/AdvisorFilterSidebar';
 import { AdvisorList } from '@/components/advisors/AdvisorList';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Button } from '@/components/ui/button';
+import { Search } from 'lucide-react';
 
 const AdvisorSearch = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -85,26 +87,80 @@ const AdvisorSearch = () => {
         </p>
       </div>
       
-      <FilterBar 
-        searchPlaceholder="Search advisors by name or firm..." 
-        searchQuery={searchQuery}
-        onSearchChange={handleSearchChange}
-        className="mb-8"
-      />
+      <div className="bg-white rounded-[20px] shadow-sm border border-slate-100 p-4 md:p-5 mb-8">
+        <div className="flex flex-wrap items-center gap-3 md:gap-4">
+          <div className="relative flex-1 min-w-[240px]">
+            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+              <Search className="h-4 w-4 text-slate-400" />
+            </div>
+            <Input
+              placeholder="Search advisors by name or firm..."
+              className="pl-10 h-12 rounded-[20px] bg-slate-50 border-slate-100 focus-visible:ring-brand-blue"
+              value={searchQuery}
+              onChange={handleSearchChange}
+            />
+          </div>
+          
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Minimum Assets Filter */}
+            <Select value={formValues.minimumAssets} onValueChange={handleMinimumChange}>
+              <SelectTrigger className="w-[140px] rounded-[20px] h-12 bg-slate-50 border-slate-100">
+                <SelectValue placeholder="Minimum Assets" />
+              </SelectTrigger>
+              <SelectContent className="rounded-md bg-white">
+                <SelectItem value="all">All Minimums</SelectItem>
+                {minimumAssetOptions.map((option) => (
+                  <SelectItem key={option} value={option}>{option}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            {/* Specialty Filter */}
+            <Select value={formValues.specialty} onValueChange={handleSpecialtyChange}>
+              <SelectTrigger className="w-[180px] rounded-[20px] h-12 bg-slate-50 border-slate-100">
+                <SelectValue placeholder="Specialty" />
+              </SelectTrigger>
+              <SelectContent className="rounded-md bg-white">
+                <SelectItem value="all">All Specialties</SelectItem>
+                {specialties.map((specialty) => (
+                  <SelectItem key={specialty} value={specialty}>{specialty}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            {/* State Filter */}
+            <Select value={formValues.state} onValueChange={handleStateChange}>
+              <SelectTrigger className="w-[180px] rounded-[20px] h-12 bg-slate-50 border-slate-100">
+                <SelectValue placeholder="State" />
+              </SelectTrigger>
+              <SelectContent className="rounded-md bg-white">
+                <SelectItem value="all">All States</SelectItem>
+                {states.map((state) => (
+                  <SelectItem key={state} value={state}>{state}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Clear Filters */}
+            {(formValues.state !== "all" || formValues.minimumAssets !== "all" || formValues.specialty !== "all") && (
+              <Button 
+                variant="outline" 
+                className="rounded-[20px] h-12 border-dashed"
+                onClick={clearFilters}
+              >
+                Clear Filters
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <AdvisorFilterSidebar 
-          states={states}
-          minimumAssetOptions={minimumAssetOptions}
-          specialties={specialties}
-          onStateChange={handleStateChange}
-          onMinimumChange={handleMinimumChange}
-          onSpecialtyChange={handleSpecialtyChange}
-          clearFilters={clearFilters}
-          formValues={formValues}
-        />
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <div className="col-span-1 lg:hidden">
+          {/* Mobile filters would go here if needed */}
+        </div>
         
-        <div className="col-span-1 md:col-span-3">
+        <div className="col-span-1 lg:col-span-4">
           <AdvisorList 
             advisors={advisors || []}
             isLoading={isLoading}
