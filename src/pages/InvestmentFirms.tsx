@@ -16,7 +16,7 @@ const InvestmentFirms = () => {
   const formValues = {
     state: filters.state || "all",
     minimumInvestment: filters.minimumInvestment || "all",
-    firmType: filters.firmType || "all",
+    assetClass: filters.assetClass || "all",
   };
 
   // Fetch unique states for the dropdown
@@ -51,20 +51,22 @@ const InvestmentFirms = () => {
     setFilters(prev => ({ ...prev, minimumInvestment: value === "all" ? undefined : value }));
   };
 
-  const handleFirmTypeChange = (value: string) => {
-    setFilters(prev => ({ ...prev, firmType: value === "all" ? undefined : value }));
+  const handleAssetClassChange = (value: string) => {
+    setFilters(prev => ({ ...prev, assetClass: value === "all" ? undefined : value }));
   };
 
   const clearFilters = () => {
     setFilters({ searchQuery });
   };
   
-  const firmTypes = [
-    "Registered Investment Advisor", 
-    "Broker-Dealer", 
-    "Hybrid",
-    "Family Office",
-    "Wealth Management Firm"
+  const assetClasses = [
+    "Stocks",
+    "Bonds", 
+    "Real Estate",
+    "Commodities",
+    "Cash Equivalents",
+    "Alternative Investments",
+    "Private Equity"
   ];
 
   const minimumInvestmentOptions = [
@@ -109,7 +111,7 @@ const InvestmentFirms = () => {
           </div>
           
           <div className="flex flex-wrap items-center gap-3">
-            {/* Fee Filter */}
+            {/* Minimum Investment Filter */}
             <Select value={formValues.minimumInvestment} onValueChange={handleMinimumChange}>
               <SelectTrigger className="w-[140px] rounded-[20px] h-12 bg-slate-50 border-slate-100">
                 <SelectValue placeholder="Investment Min" />
@@ -122,15 +124,15 @@ const InvestmentFirms = () => {
               </SelectContent>
             </Select>
             
-            {/* Firm Type Filter */}
-            <Select value={formValues.firmType} onValueChange={handleFirmTypeChange}>
+            {/* Asset Class Filter */}
+            <Select value={formValues.assetClass} onValueChange={handleAssetClassChange}>
               <SelectTrigger className="w-[180px] rounded-[20px] h-12 bg-slate-50 border-slate-100">
-                <SelectValue placeholder="Firm Type" />
+                <SelectValue placeholder="Asset Class" />
               </SelectTrigger>
               <SelectContent className="rounded-md bg-white">
-                <SelectItem value="all">All Types</SelectItem>
-                {firmTypes.map((type) => (
-                  <SelectItem key={type} value={type}>{type}</SelectItem>
+                <SelectItem value="all">All Classes</SelectItem>
+                {assetClasses.map((assetClass) => (
+                  <SelectItem key={assetClass} value={assetClass}>{assetClass}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -149,7 +151,7 @@ const InvestmentFirms = () => {
             </Select>
 
             {/* Clear Filters */}
-            {(formValues.state !== "all" || formValues.minimumInvestment !== "all" || formValues.firmType !== "all") && (
+            {(formValues.state !== "all" || formValues.minimumInvestment !== "all" || formValues.assetClass !== "all") && (
               <Button 
                 variant="outline" 
                 className="rounded-[20px] h-12 border-dashed"

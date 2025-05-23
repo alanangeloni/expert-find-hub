@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 
 // Define types for investment firms
@@ -33,6 +34,7 @@ export interface InvestmentFirm {
   how_company_makes_money?: string;
   how_you_make_money?: string;
   asset_classes?: string[];
+  asset_class?: string[];
   created_at?: string;
   updated_at?: string;
   // Related entities
@@ -87,7 +89,7 @@ export interface FirmFilter {
   searchQuery?: string;
   state?: string;
   minimumInvestment?: string;
-  firmType?: string;
+  assetClass?: string;
 }
 
 export const getInvestmentFirms = async (filters?: FirmFilter): Promise<InvestmentFirm[]> => {
@@ -109,7 +111,7 @@ export const getInvestmentFirms = async (filters?: FirmFilter): Promise<Investme
     if (filters?.minimumInvestment && filters.minimumInvestment !== 'all') {
       switch (filters.minimumInvestment) {
         case 'No Minimum':
-          query = query.is('minimum_investment', null).or('minimum_investment.eq.0');
+          query = query.or('minimum_investment.is.null,minimum_investment.eq.0');
           break;
         case 'Under $250k':
           query = query.lt('minimum_investment', 250000);
@@ -129,6 +131,14 @@ export const getInvestmentFirms = async (filters?: FirmFilter): Promise<Investme
       }
     }
     
+    // Handle asset class filter
+    let assetClassFilterApplied = false;
+    if (filters?.assetClass && filters.assetClass !== 'all') {
+      // Since asset_class is an array, we need to check if it contains the selected asset class
+      query = query.contains('asset_class', [filters.assetClass]);
+      assetClassFilterApplied = true;
+    }
+    
     const { data, error } = await query;
     
     if (error) {
@@ -139,7 +149,7 @@ export const getInvestmentFirms = async (filters?: FirmFilter): Promise<Investme
     // Add asset_classes as empty array to match the required interface
     const firmsWithAssetClasses = data?.map(firm => ({
       ...firm,
-      asset_classes: [] // Add empty array to satisfy TypeScript
+      asset_classes: firm.asset_class || [] // Use the database asset_class field or empty array
     })) || [];
     
     return firmsWithAssetClasses;

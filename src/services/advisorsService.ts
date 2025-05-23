@@ -28,35 +28,35 @@ export interface AdvisorFilter {
 
 export const getAdvisors = async (filters?: AdvisorFilter) => {
   try {
-    // Handle minimum assets filter separately to avoid deep type instantiation
-    if (filters?.minimumAssets && filters.minimumAssets !== "all") {
-      return await getAdvisorsWithAssetFilter(filters);
-    }
-    
     // Start with a basic query
-    const query = supabase.from("financial_advisors").select("*");
+    let query = supabase.from("financial_advisors").select("*");
 
-    // Apply filters one by one to avoid deep chaining
+    // Apply filters one by one
     if (filters?.searchQuery) {
-      query.or(
+      query = query.or(
         `first_name.ilike.%${filters.searchQuery}%,last_name.ilike.%${filters.searchQuery}%,firm_name.ilike.%${filters.searchQuery}%,name.ilike.%${filters.searchQuery}%`
       );
     }
 
     if (filters?.leadGenEnabled !== undefined) {
-      query.eq("lead_gen_enabled", filters.leadGenEnabled);
+      query = query.eq("lead_gen_enabled", filters.leadGenEnabled);
     }
 
     if (filters?.minExperience) {
-      query.gte("years_of_experience", filters.minExperience);
+      query = query.gte("years_of_experience", filters.minExperience);
     }
 
     if (filters?.maxExperience) {
-      query.lte("years_of_experience", filters.maxExperience);
+      query = query.lte("years_of_experience", filters.maxExperience);
     }
 
     if (filters?.state && filters.state !== "all") {
-      query.eq("state_hq", filters.state);
+      query = query.eq("state_hq", filters.state);
+    }
+    
+    // Apply minimum assets filter separately
+    if (filters?.minimumAssets && filters.minimumAssets !== "all") {
+      applyMinimumAssetsFilter(query, filters.minimumAssets);
     }
 
     // Execute query
@@ -81,74 +81,26 @@ export const getAdvisors = async (filters?: AdvisorFilter) => {
   }
 };
 
-// Helper function to handle minimum assets filtering
-const getAdvisorsWithAssetFilter = async (filters: AdvisorFilter) => {
-  try {
-    // Create a basic query first
-    const query = supabase.from("financial_advisors").select("*");
-    
-    // Apply non-asset filters
-    if (filters.searchQuery) {
-      query.or(
-        `first_name.ilike.%${filters.searchQuery}%,last_name.ilike.%${filters.searchQuery}%,firm_name.ilike.%${filters.searchQuery}%,name.ilike.%${filters.searchQuery}%`
-      );
-    }
-
-    if (filters.leadGenEnabled !== undefined) {
-      query.eq("lead_gen_enabled", filters.leadGenEnabled);
-    }
-
-    if (filters.minExperience) {
-      query.gte("years_of_experience", filters.minExperience);
-    }
-
-    if (filters.maxExperience) {
-      query.lte("years_of_experience", filters.maxExperience);
-    }
-
-    if (filters.state && filters.state !== "all") {
-      query.eq("state_hq", filters.state);
-    }
-    
-    // Apply the asset filter based on range
-    switch (filters.minimumAssets) {
-      case "No Minimum":
-        query.eq("minimum", "0");
-        break;
-      case "Under $250k":
-        query.lt("minimum", "250000");
-        break;
-      case "$250k - $500k":
-        query.gte("minimum", "250000").lt("minimum", "500000");
-        break;
-      case "$500k - $1M":
-        query.gte("minimum", "500000").lt("minimum", "1000000");
-        break;
-      case "$1M+":
-        query.gte("minimum", "1000000");
-        break;
-    }
-
-    // Execute the query
-    const { data, error } = await query;
-    
-    if (error) {
-      console.error("Error fetching advisors with asset filter:", error);
-      return [];
-    }
-
-    let advisors = data || [];
-    
-    // Apply specialty filter if needed
-    if (filters.specialty && filters.specialty !== "all") {
-      advisors = await filterBySpecialty(advisors, filters.specialty);
-    }
-
-    return advisors;
-  } catch (error) {
-    console.error("Error in getAdvisorsWithAssetFilter:", error);
-    return [];
+// Helper function to apply minimum assets filter
+const applyMinimumAssetsFilter = (query: any, minimumAssets: string) => {
+  switch (minimumAssets) {
+    case "No Minimum":
+      query.eq("minimum", "0");
+      break;
+    case "Under $250k":
+      query.lt("minimum", "250000");
+      break;
+    case "$250k - $500k":
+      query.gte("minimum", "250000").lt("minimum", "500000");
+      break;
+    case "$500k - $1M":
+      query.gte("minimum", "500000").lt("minimum", "1000000");
+      break;
+    case "$1M+":
+      query.gte("minimum", "1000000");
+      break;
   }
+  return query;
 };
 
 // Helper function to filter advisors by specialty

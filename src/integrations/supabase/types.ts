@@ -749,6 +749,7 @@ export type Database = {
         Row: {
           address: string | null
           app_store_link: string | null
+          asset_class: Database["public"]["Enums"]["Asset Class"] | null
           aum: string | null
           created_at: string | null
           description: string | null
@@ -775,7 +776,6 @@ export type Database = {
           target_return: string | null
           updated_at: string | null
           verified: boolean | null
-          video_title: string | null
           video_url: string | null
           website: string | null
           withdrawal_type: Database["public"]["Enums"]["withdrawal_type"] | null
@@ -783,6 +783,7 @@ export type Database = {
         Insert: {
           address?: string | null
           app_store_link?: string | null
+          asset_class?: Database["public"]["Enums"]["Asset Class"] | null
           aum?: string | null
           created_at?: string | null
           description?: string | null
@@ -809,7 +810,6 @@ export type Database = {
           target_return?: string | null
           updated_at?: string | null
           verified?: boolean | null
-          video_title?: string | null
           video_url?: string | null
           website?: string | null
           withdrawal_type?:
@@ -819,6 +819,7 @@ export type Database = {
         Update: {
           address?: string | null
           app_store_link?: string | null
+          asset_class?: Database["public"]["Enums"]["Asset Class"] | null
           aum?: string | null
           created_at?: string | null
           description?: string | null
@@ -845,7 +846,6 @@ export type Database = {
           target_return?: string | null
           updated_at?: string | null
           verified?: boolean | null
-          video_title?: string | null
           video_url?: string | null
           website?: string | null
           withdrawal_type?:
