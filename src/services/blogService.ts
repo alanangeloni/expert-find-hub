@@ -295,12 +295,14 @@ export const removeCategoryFromPost = async (postId: string, categoryName: strin
 
 export const uploadBlogImage = async (file: File): Promise<string | null> => {
   try {
+    // Create a unique file name for storage
     const fileExt = file.name.split('.').pop();
-    const fileName = `${Math.random().toString(36).substring(2, 15)}.${fileExt}`;
-    const filePath = `blog-images/${fileName}`;
+    const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
+    const filePath = `blog_images/${fileName}`;
     
-    const { error } = await supabase.storage
-      .from('blog-images')
+    // Upload the file to Supabase storage
+    const { data, error } = await supabase.storage
+      .from('blog_images')
       .upload(filePath, file);
       
     if (error) {
@@ -308,11 +310,12 @@ export const uploadBlogImage = async (file: File): Promise<string | null> => {
       return null;
     }
     
-    const { data } = supabase.storage
-      .from('blog-images')
+    // Get the public URL for the uploaded file
+    const { data: urlData } = supabase.storage
+      .from('blog_images')
       .getPublicUrl(filePath);
-      
-    return data.publicUrl;
+    
+    return urlData.publicUrl;
   } catch (error) {
     console.error('Error in uploadBlogImage:', error);
     return null;

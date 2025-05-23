@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -5,13 +6,13 @@ import { Editor } from '@tinymce/tinymce-react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { BlogPost, getBlogCategories, createBlogPost, updateBlogPost, getBlogPostBySlug, uploadBlogImage } from '@/services/blogService';
+import { BlogPost, getBlogCategories, getBlogPostBySlug, uploadBlogImage } from '@/services/blogService';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Checkbox } from "@/components/ui/checkbox"
+import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from '@/components/ui/card';
 import { toast } from '@/components/ui/use-toast';
 import { Spinner } from '@/components/ui/spinner';
@@ -28,6 +29,55 @@ const blogPostSchema = z.object({
 });
 
 type BlogPostFormValues = z.infer<typeof blogPostSchema>;
+
+// Add these functions that were missing from blogService import
+const createBlogPost = async (postData: {
+  title: string;
+  slug: string;
+  content: string;
+  excerpt?: string;
+  cover_image_url?: string;
+  status: "draft" | "published";
+  categories?: string[];
+}): Promise<BlogPost> => {
+  // Implementation
+  const response = await fetch('/api/blog/posts', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(postData),
+  });
+  
+  if (!response.ok) {
+    throw new Error('Failed to create blog post');
+  }
+  
+  return response.json();
+};
+
+const updateBlogPost = async (postData: {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  excerpt?: string;
+  cover_image_url?: string;
+  status: "draft" | "published";
+  categories?: string[];
+  published_at?: string;
+}): Promise<BlogPost> => {
+  // Implementation
+  const response = await fetch(`/api/blog/posts/${postData.id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(postData),
+  });
+  
+  if (!response.ok) {
+    throw new Error('Failed to update blog post');
+  }
+  
+  return response.json();
+};
 
 const BlogEditor = () => {
   const { slug } = useParams<{ slug?: string }>();
@@ -90,7 +140,7 @@ const BlogEditor = () => {
       toast({
         title: "Blog post created successfully!",
       });
-      queryClient.invalidateQueries(['blogPosts']);
+      queryClient.invalidateQueries({ queryKey: ['blogPosts'] });
       navigate('/admin/blog');
     },
     onError: (error: any) => {
@@ -109,7 +159,7 @@ const BlogEditor = () => {
       toast({
         title: "Blog post updated successfully!",
       });
-      queryClient.invalidateQueries(['blogPosts']);
+      queryClient.invalidateQueries({ queryKey: ['blogPosts'] });
       navigate('/admin/blog');
     },
     onError: (error: any) => {
@@ -124,15 +174,29 @@ const BlogEditor = () => {
   // Function to handle form submission
   const onSubmit = (data: BlogPostFormValues) => {
     if (slug && existingPost) {
-      // Update existing post
+      // Update existing post - ensure all required fields are included
       updatePostMutation.mutate({
         id: existingPost.id,
-        ...data,
+        title: data.title,
+        slug: data.slug,
+        content: data.content,
+        excerpt: data.excerpt,
+        cover_image_url: data.cover_image_url,
+        status: data.status,
+        categories: data.categories,
         published_at: existingPost.published_at, // Preserve existing published_at value
       });
     } else {
-      // Create new post
-      createPostMutation.mutate(data);
+      // Create new post - ensure all required fields are included
+      createPostMutation.mutate({
+        title: data.title,
+        slug: data.slug,
+        content: data.content,
+        excerpt: data.excerpt,
+        cover_image_url: data.cover_image_url,
+        status: data.status,
+        categories: data.categories,
+      });
     }
   };
 
@@ -171,7 +235,7 @@ const BlogEditor = () => {
     }
   };
 
-  const isLoading = isCategoriesLoading || isPostLoading || createPostMutation.isLoading || updatePostMutation.isLoading || isUploading;
+  const isLoading = isCategoriesLoading || isPostLoading || createPostMutation.isPending || updatePostMutation.isPending || isUploading;
 
   return (
     <div className="container mx-auto py-10">

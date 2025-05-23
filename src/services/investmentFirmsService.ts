@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 // Define types for investment firms
@@ -36,6 +35,12 @@ export interface InvestmentFirm {
   asset_classes?: string[];
   created_at?: string;
   updated_at?: string;
+  // Add related entities that are being used in InvestmentFirmDetail.tsx
+  investment_firm_features?: InvestmentFirmFeature[];
+  investment_firm_leadership?: InvestmentFirmLeadership[];
+  money_making_methods?: MoneyMakingMethod[];
+  investment_firm_regulatory_info?: InvestmentFirmRegulatoryInfo[];
+  investment_firm_clients?: InvestmentFirmClient[];
 }
 
 // Define type for investment firm features
@@ -224,6 +229,47 @@ export const getUniqueStates = async (): Promise<string[]> => {
     return states;
   } catch (error) {
     console.error('Error in getUniqueStates:', error);
+    return [];
+  }
+};
+
+// Add the getSimilarFirms function
+export const getSimilarFirms = async (firmId: string): Promise<InvestmentFirm[]> => {
+  try {
+    // First get the similar firm IDs
+    const { data: similarFirmsData, error: similarError } = await supabase
+      .from('similar_firms')
+      .select('similar_firm_id')
+      .eq('firm_id', firmId);
+    
+    if (similarError || !similarFirmsData || similarFirmsData.length === 0) {
+      console.log('No similar firms found or error:', similarError);
+      return [];
+    }
+    
+    // Extract the similar firm IDs
+    const similarFirmIds = similarFirmsData.map(item => item.similar_firm_id);
+    
+    // Fetch the details of these similar firms
+    const { data: firms, error: firmsError } = await supabase
+      .from('investment_firms')
+      .select('*')
+      .in('id', similarFirmIds);
+    
+    if (firmsError || !firms) {
+      console.error('Error fetching similar firms:', firmsError);
+      return [];
+    }
+    
+    // Add asset_classes as empty array to satisfy the interface requirements
+    const firmsWithAssetClasses = firms.map(firm => ({
+      ...firm,
+      asset_classes: [] // Add empty array to satisfy TypeScript
+    }));
+    
+    return firmsWithAssetClasses;
+  } catch (error) {
+    console.error('Error in getSimilarFirms:', error);
     return [];
   }
 };
