@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { type Tables } from "@/integrations/supabase/types";
 
@@ -28,6 +29,7 @@ export interface AdvisorFilter {
 
 export const getAdvisors = async (filters?: AdvisorFilter) => {
   try {
+    // Start with a basic query
     let query = supabase.from("financial_advisors").select("*");
 
     // Apply filters if provided
@@ -42,40 +44,46 @@ export const getAdvisors = async (filters?: AdvisorFilter) => {
     }
 
     if (filters?.minExperience) {
-      query = query.gte("years_experience", filters.minExperience);
+      query = query.gte("years_of_experience", filters.minExperience);
     }
 
     if (filters?.maxExperience) {
-      query = query.lte("years_experience", filters.maxExperience);
+      query = query.lte("years_of_experience", filters.maxExperience);
     }
 
     if (filters?.state && filters.state !== "all") {
       query = query.eq("state_hq", filters.state);
     }
 
-    // Fix the type instantiation issue by simplifying the minimum assets filter logic
+    // Apply minimum assets filter - completely restructured to avoid complex chaining
     if (filters?.minimumAssets && filters.minimumAssets !== "all") {
-      const minimumFilter = filters.minimumAssets;
+      // Use a switch-like structure with separate assignments to avoid deep type instantiation
+      const minimum = filters.minimumAssets;
       
-      if (minimumFilter === "No Minimum") {
+      if (minimum === "No Minimum") {
         query = query.eq("minimum", "0");
       } 
-      else if (minimumFilter === "Under $250k") {
+      else if (minimum === "Under $250k") {
         query = query.lt("minimum", "250000");
       } 
-      else if (minimumFilter === "$250k - $500k") {
-        query = query.gte("minimum", "250000");
+      else if (minimum === "$250k - $500k") {
+        // Apply each filter separately to avoid complex nesting
+        const tempQuery = query;
+        query = tempQuery.gte("minimum", "250000");
         query = query.lt("minimum", "500000");
       } 
-      else if (minimumFilter === "$500k - $1M") {
-        query = query.gte("minimum", "500000");
+      else if (minimum === "$500k - $1M") {
+        // Apply each filter separately to avoid complex nesting
+        const tempQuery = query;
+        query = tempQuery.gte("minimum", "500000");
         query = query.lt("minimum", "1000000");
       } 
-      else if (minimumFilter === "$1M+") {
+      else if (minimum === "$1M+") {
         query = query.gte("minimum", "1000000");
       }
     }
 
+    // Execute the query
     const { data, error } = await query;
 
     if (error) {
