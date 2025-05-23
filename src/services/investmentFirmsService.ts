@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { type Tables } from "@/integrations/supabase/types";
 
@@ -29,6 +28,14 @@ type InvestmentFirmRegulatoryInfo = {
   registration: string;
 };
 
+// Define filter type
+export type FirmFilter = {
+  state?: string;
+  minimumInvestment?: string;
+  firmType?: string;
+  searchQuery?: string;
+};
+
 // Define the main InvestmentFirm type with its related entities
 export type InvestmentFirm = Tables<"investment_firms"> & {
   asset_classes: string[];
@@ -39,11 +46,49 @@ export type InvestmentFirm = Tables<"investment_firms"> & {
   investment_firm_regulatory_info?: InvestmentFirmRegulatoryInfo[];
 };
 
-export const getInvestmentFirms = async (): Promise<InvestmentFirm[]> => {
-  const { data, error } = await supabase
-    .from("investment_firms")
-    .select("*")
-    .order("name");
+export const getInvestmentFirms = async (filter?: FirmFilter): Promise<InvestmentFirm[]> => {
+  let query = supabase.from("investment_firms").select("*");
+
+  if (filter) {
+    if (filter.state) {
+      query = query.eq("headquarters", filter.state);
+    }
+    
+    if (filter.firmType) {
+      // Assuming there's a column for firm_type, adjust if needed
+      query = query.eq("firm_type", filter.firmType);
+    }
+    
+    if (filter.minimumInvestment) {
+      // Handle minimum investment filtering based on ranges
+      switch (filter.minimumInvestment) {
+        case "No Minimum":
+          query = query.is("minimum_investment", null);
+          break;
+        case "Under $250k":
+          query = query.lt("minimum_investment", 250000);
+          break;
+        case "$250k - $500k":
+          query = query.gte("minimum_investment", 250000).lt("minimum_investment", 500000);
+          break;
+        case "$500k - $1M":
+          query = query.gte("minimum_investment", 500000).lt("minimum_investment", 1000000);
+          break;
+        case "$1M - $5M":
+          query = query.gte("minimum_investment", 1000000).lt("minimum_investment", 5000000);
+          break;
+        case "$5M+":
+          query = query.gte("minimum_investment", 5000000);
+          break;
+      }
+    }
+    
+    if (filter.searchQuery) {
+      query = query.or(`name.ilike.%${filter.searchQuery}%,description.ilike.%${filter.searchQuery}%`);
+    }
+  }
+  
+  const { data, error } = await query.order("name");
     
   if (error) {
     console.error("Error fetching investment firms:", error);
@@ -51,6 +96,27 @@ export const getInvestmentFirms = async (): Promise<InvestmentFirm[]> => {
   }
   
   return data || [];
+};
+
+export const getUniqueStates = async (): Promise<string[]> => {
+  const { data, error } = await supabase
+    .from("investment_firms")
+    .select("headquarters")
+    .not("headquarters", "is", null);
+    
+  if (error) {
+    console.error("Error fetching unique states:", error);
+    throw new Error("Failed to fetch states");
+  }
+  
+  const states = data
+    .map(item => item.headquarters)
+    .filter((state, index, self) => 
+      state && self.indexOf(state) === index
+    )
+    .sort();
+    
+  return states;
 };
 
 export const getInvestmentFirmBySlug = async (slug: string): Promise<InvestmentFirm | null> => {

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { FilterBar } from '@/components/filters/FilterBar';
@@ -77,8 +78,9 @@ const InvestmentFirms = () => {
   const formatMinimumInvestment = (value: number | null | undefined): string => {
     if (value === null || value === undefined) return "No minimum";
     
-    // Ensure value is a string before using replace
-    return `$${value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+    // Convert value to string before using replace
+    const valueStr = value.toString();
+    return `$${valueStr.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
   };
   
   return (
