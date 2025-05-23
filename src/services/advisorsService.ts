@@ -55,83 +55,94 @@ export const getAdvisors = async (filters?: AdvisorFilter) => {
       query = query.eq("state_hq", filters.state);
     }
 
-    // Handle minimum assets filter with separate query building to avoid deep type instantiation
+    // Handle minimum assets filter
+    // Changed approach: Execute separate queries for ranges to avoid deep type instantiation
+    let data: Advisor[] = [];
+    
     if (filters?.minimumAssets && filters.minimumAssets !== "all") {
-      const minimum = filters.minimumAssets;
-      
-      // Create separate queries based on the minimum assets value to avoid complex chaining
-      if (minimum === "No Minimum") {
+      if (filters.minimumAssets === "No Minimum") {
         query = query.eq("minimum", "0");
-      } else if (minimum === "Under $250k") {
+        const result = await query;
+        data = result.data || [];
+      } 
+      else if (filters.minimumAssets === "Under $250k") {
         query = query.lt("minimum", "250000");
-      } else if (minimum === "$250k - $500k") {
-        // Using a flat approach instead of chaining
-        query = supabase
+        const result = await query;
+        data = result.data || [];
+      } 
+      else if (filters.minimumAssets === "$250k - $500k") {
+        // Create a new clean query instead of building on existing one
+        let rangeQuery = supabase
           .from("financial_advisors")
           .select("*")
           .gte("minimum", "250000")
           .lt("minimum", "500000");
-        
-        // Re-apply other filters to the new query
-        if (filters?.searchQuery) {
-          query = query.or(
+          
+        // Re-apply all other filters
+        if (filters.searchQuery) {
+          rangeQuery = rangeQuery.or(
             `first_name.ilike.%${filters.searchQuery}%,last_name.ilike.%${filters.searchQuery}%,firm_name.ilike.%${filters.searchQuery}%,name.ilike.%${filters.searchQuery}%`
           );
         }
-        if (filters?.leadGenEnabled !== undefined) {
-          query = query.eq("lead_gen_enabled", filters.leadGenEnabled);
+        if (filters.leadGenEnabled !== undefined) {
+          rangeQuery = rangeQuery.eq("lead_gen_enabled", filters.leadGenEnabled);
         }
-        if (filters?.minExperience) {
-          query = query.gte("years_of_experience", filters.minExperience);
+        if (filters.minExperience) {
+          rangeQuery = rangeQuery.gte("years_of_experience", filters.minExperience);
         }
-        if (filters?.maxExperience) {
-          query = query.lte("years_of_experience", filters.maxExperience);
+        if (filters.maxExperience) {
+          rangeQuery = rangeQuery.lte("years_of_experience", filters.maxExperience);
         }
-        if (filters?.state && filters.state !== "all") {
-          query = query.eq("state_hq", filters.state);
+        if (filters.state && filters.state !== "all") {
+          rangeQuery = rangeQuery.eq("state_hq", filters.state);
         }
-      } else if (minimum === "$500k - $1M") {
-        // Using a flat approach instead of chaining
-        query = supabase
+        
+        const result = await rangeQuery;
+        data = result.data || [];
+      }
+      else if (filters.minimumAssets === "$500k - $1M") {
+        // Create a new clean query instead of building on existing one
+        let rangeQuery = supabase
           .from("financial_advisors")
           .select("*")
           .gte("minimum", "500000")
           .lt("minimum", "1000000");
-        
-        // Re-apply other filters to the new query
-        if (filters?.searchQuery) {
-          query = query.or(
+          
+        // Re-apply all other filters
+        if (filters.searchQuery) {
+          rangeQuery = rangeQuery.or(
             `first_name.ilike.%${filters.searchQuery}%,last_name.ilike.%${filters.searchQuery}%,firm_name.ilike.%${filters.searchQuery}%,name.ilike.%${filters.searchQuery}%`
           );
         }
-        if (filters?.leadGenEnabled !== undefined) {
-          query = query.eq("lead_gen_enabled", filters.leadGenEnabled);
+        if (filters.leadGenEnabled !== undefined) {
+          rangeQuery = rangeQuery.eq("lead_gen_enabled", filters.leadGenEnabled);
         }
-        if (filters?.minExperience) {
-          query = query.gte("years_of_experience", filters.minExperience);
+        if (filters.minExperience) {
+          rangeQuery = rangeQuery.gte("years_of_experience", filters.minExperience);
         }
-        if (filters?.maxExperience) {
-          query = query.lte("years_of_experience", filters.maxExperience);
+        if (filters.maxExperience) {
+          rangeQuery = rangeQuery.lte("years_of_experience", filters.maxExperience);
         }
-        if (filters?.state && filters.state !== "all") {
-          query = query.eq("state_hq", filters.state);
+        if (filters.state && filters.state !== "all") {
+          rangeQuery = rangeQuery.eq("state_hq", filters.state);
         }
-      } else if (minimum === "$1M+") {
-        query = query.gte("minimum", "1000000");
+        
+        const result = await rangeQuery;
+        data = result.data || [];
       }
-    }
-
-    // Execute the query
-    const { data, error } = await query;
-
-    if (error) {
-      console.error("Error fetching advisors:", error);
-      return [];
+      else if (filters.minimumAssets === "$1M+") {
+        query = query.gte("minimum", "1000000");
+        const result = await query;
+        data = result.data || [];
+      }
+    } else {
+      // If no minimum assets filter, execute the query normally
+      const result = await query;
+      data = result.data || [];
     }
 
     // If specialty filter is provided, we'll need to do client-side filtering
-    // since we need to get the advisor services from a separate table
-    let filteredData = data || [];
+    let filteredData = data;
     
     if (filters?.specialty && filters.specialty !== "all") {
       const advisorIds = filteredData.map(advisor => advisor.id);
