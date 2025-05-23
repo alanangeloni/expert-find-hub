@@ -403,6 +403,56 @@ export type Database = {
           },
         ]
       }
+      blog_categories: {
+        Row: {
+          created_at: string | null
+          id: string
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      blog_post_categories: {
+        Row: {
+          category_name: string
+          created_at: string | null
+          id: string
+          post_id: string
+        }
+        Insert: {
+          category_name: string
+          created_at?: string | null
+          id?: string
+          post_id: string
+        }
+        Update: {
+          category_name?: string
+          created_at?: string | null
+          id?: string
+          post_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_post_categories_post_id_fkey"
+            columns: ["post_id"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       blog_posts: {
         Row: {
           author_id: string | null
@@ -907,7 +957,32 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      add_category_to_post: {
+        Args: { post_id: string; category: string }
+        Returns: undefined
+      }
+      get_blog_categories: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          name: string
+          slug: string
+        }[]
+      }
+      get_post_categories: {
+        Args: { post_id: string }
+        Returns: {
+          category_name: string
+        }[]
+      }
+      remove_all_post_categories: {
+        Args: { post_id: string }
+        Returns: undefined
+      }
+      remove_category_from_post: {
+        Args: { post_id: string; category: string }
+        Returns: undefined
+      }
     }
     Enums: {
       accounting_service_type:

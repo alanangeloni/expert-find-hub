@@ -1,5 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import { getPostCategories } from "@/utils/blogRelations";
 
 export interface BlogPost {
   id: string;
@@ -58,7 +59,7 @@ export const getBlogPosts = async (options: {
     
     if (!data) return [];
     
-    // Get categories for each post using a utility function
+    // Get categories for each post using our utility function
     const posts = await Promise.all(data.map(async (post) => {
       const postCategories = await getPostCategories(post.id);
       return {
@@ -111,26 +112,8 @@ export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> 
   }
 };
 
-// Get categories for a specific post
-export const getPostCategories = async (postId: string): Promise<string[]> => {
-  try {
-    // Using direct SQL query since the relation might not be set up in Supabase types yet
-    const { data, error } = await supabase
-      .rpc('get_post_categories', { post_id: postId });
-    
-    if (error || !data) {
-      console.error('Error fetching post categories:', error);
-      return [];
-    }
-    
-    return data.map((item: any) => item.category_name);
-  } catch (error) {
-    console.error('Error in getPostCategories:', error);
-    return [];
-  }
-};
-
-export const getBlogCategories = async (): Promise<string[]> => {
+// Get all blog categories
+export const getBlogCategories = async (): Promise<BlogCategory[]> => {
   try {
     // Using direct SQL query since the table might not be set up in Supabase types yet
     const { data, error } = await supabase
@@ -141,7 +124,7 @@ export const getBlogCategories = async (): Promise<string[]> => {
       return [];
     }
     
-    return data.map((item: any) => item.name);
+    return data as BlogCategory[];
   } catch (error) {
     console.error('Error in getBlogCategories:', error);
     return [];
@@ -202,6 +185,7 @@ export const updateBlogPost = async (postData: {
   cover_image_url?: string;
   status: 'draft' | 'published';
   categories?: string[];
+  published_at?: string;
 }): Promise<BlogPost | null> => {
   try {
     const { id, categories, ...postFields } = postData;
@@ -214,7 +198,7 @@ export const updateBlogPost = async (postData: {
         // Update published_at if changing to published status
         published_at: postData.status === 'published' && !postData.published_at 
           ? new Date().toISOString() 
-          : undefined
+          : postData.published_at
       })
       .eq('id', id)
       .select()
