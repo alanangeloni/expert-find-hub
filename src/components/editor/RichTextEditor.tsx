@@ -62,11 +62,11 @@ export function RichTextEditor({
           // Replace existing heading
           newValue = value.substring(0, lineStart) + 
                     `# ${currentLine.replace(/^#{1,6}\s/, '')}` + 
-                    value.substring(Math.max(lineStart, end));
+                    value.substring(Math.max(lineStart + currentLine.length, end));
         } else {
           // Add new heading at line start
           newValue = value.substring(0, lineStart) + 
-                    `# ${selectedText || value.substring(lineStart, end)}` + 
+                    `# ${value.substring(lineStart, end)}` + 
                     value.substring(end);
         }
         break;
@@ -74,10 +74,10 @@ export function RichTextEditor({
         if (lineAlreadyHasHeading) {
           newValue = value.substring(0, lineStart) + 
                     `## ${currentLine.replace(/^#{1,6}\s/, '')}` + 
-                    value.substring(Math.max(lineStart, end));
+                    value.substring(Math.max(lineStart + currentLine.length, end));
         } else {
           newValue = value.substring(0, lineStart) + 
-                    `## ${selectedText || value.substring(lineStart, end)}` + 
+                    `## ${value.substring(lineStart, end)}` + 
                     value.substring(end);
         }
         break;
@@ -85,10 +85,10 @@ export function RichTextEditor({
         if (lineAlreadyHasHeading) {
           newValue = value.substring(0, lineStart) + 
                     `### ${currentLine.replace(/^#{1,6}\s/, '')}` + 
-                    value.substring(Math.max(lineStart, end));
+                    value.substring(Math.max(lineStart + currentLine.length, end));
         } else {
           newValue = value.substring(0, lineStart) + 
-                    `### ${selectedText || value.substring(lineStart, end)}` + 
+                    `### ${value.substring(lineStart, end)}` + 
                     value.substring(end);
         }
         break;
@@ -96,10 +96,10 @@ export function RichTextEditor({
         if (lineAlreadyHasHeading) {
           newValue = value.substring(0, lineStart) + 
                     `#### ${currentLine.replace(/^#{1,6}\s/, '')}` + 
-                    value.substring(Math.max(lineStart, end));
+                    value.substring(Math.max(lineStart + currentLine.length, end));
         } else {
           newValue = value.substring(0, lineStart) + 
-                    `#### ${selectedText || value.substring(lineStart, end)}` + 
+                    `#### ${value.substring(lineStart, end)}` + 
                     value.substring(end);
         }
         break;
@@ -107,10 +107,10 @@ export function RichTextEditor({
         if (lineAlreadyHasHeading) {
           newValue = value.substring(0, lineStart) + 
                     `##### ${currentLine.replace(/^#{1,6}\s/, '')}` + 
-                    value.substring(Math.max(lineStart, end));
+                    value.substring(Math.max(lineStart + currentLine.length, end));
         } else {
           newValue = value.substring(0, lineStart) + 
-                    `##### ${selectedText || value.substring(lineStart, end)}` + 
+                    `##### ${value.substring(lineStart, end)}` + 
                     value.substring(end);
         }
         break;
@@ -118,10 +118,10 @@ export function RichTextEditor({
         if (lineAlreadyHasHeading) {
           newValue = value.substring(0, lineStart) + 
                     `###### ${currentLine.replace(/^#{1,6}\s/, '')}` + 
-                    value.substring(Math.max(lineStart, end));
+                    value.substring(Math.max(lineStart + currentLine.length, end));
         } else {
           newValue = value.substring(0, lineStart) + 
-                    `###### ${selectedText || value.substring(lineStart, end)}` + 
+                    `###### ${value.substring(lineStart, end)}` + 
                     value.substring(end);
         }
         break;
@@ -151,9 +151,32 @@ export function RichTextEditor({
     
     onChange(newValue);
     
+    // Delay setting selection to ensure React has updated the DOM
     setTimeout(() => {
-      textarea.selectionStart = command === 'link' ? end + 1 : start;
-      textarea.selectionEnd = command === 'link' ? end + selectedText.length + 1 : newCursorPosition;
+      if (!textareaRef.current) return;
+      textareaRef.current.focus();
+      
+      if (command.startsWith('h') && lineAlreadyHasHeading) {
+        // Place cursor at end of heading text
+        const headingLength = command === 'h1' ? 2 : 
+                             (command === 'h2' ? 3 : 
+                             (command === 'h3' ? 4 : 
+                             (command === 'h4' ? 5 : 
+                             (command === 'h5' ? 6 : 7))));
+        textareaRef.current.selectionStart = 
+        textareaRef.current.selectionEnd = lineStart + headingLength + currentLine.replace(/^#{1,6}\s/, '').length;
+      } else if (command === 'link') {
+        // Position cursor inside the URL parentheses
+        textareaRef.current.selectionStart = start + selectedText.length + 3;
+        textareaRef.current.selectionEnd = end + 7;
+      } else if (command === 'image') {
+        // Position cursor inside the URL parentheses
+        textareaRef.current.selectionStart = start + selectedText.length + 5;
+        textareaRef.current.selectionEnd = end + 13;
+      } else {
+        // Default cursor positioning
+        textareaRef.current.selectionStart = textareaRef.current.selectionEnd = newCursorPosition;
+      }
     }, 0);
   };
   

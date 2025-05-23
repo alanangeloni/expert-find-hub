@@ -12,9 +12,9 @@ const AdvisorSearch = () => {
   const [states, setStates] = useState<string[]>([]);
   
   const formValues = {
-    state: filters.state || "",
-    minimumAssets: filters.minimumAssets || "",
-    specialty: filters.specialty || "",
+    state: filters.state || "all",
+    minimumAssets: filters.minimumAssets || "all",
+    specialty: filters.specialty || "all",
   };
 
   // Fetch unique states for the dropdown
@@ -106,7 +106,7 @@ const AdvisorSearch = () => {
         
         <div className="col-span-1 md:col-span-3">
           <AdvisorList 
-            advisors={advisors}
+            advisors={advisors || []}
             isLoading={isLoading}
           />
         </div>

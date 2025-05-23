@@ -1,7 +1,6 @@
-
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { getBlogPostBySlug, BlogPost } from "@/services/blogService";
+import { BlogPost } from "@/services/blogService";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,6 +10,7 @@ import { format } from "date-fns";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import ReactMarkdown from "react-markdown";
+import { getPostCategories } from "@/utils/blogRelations";
 
 export default function BlogArticle() {
   const { slug } = useParams<{ slug: string }>();
@@ -54,41 +54,33 @@ export default function BlogArticle() {
         if (isAdmin && user) {
           const { data } = await supabase
             .from('blog_posts')
-            .select('*, blog_post_categories(category_name)')
+            .select('*')
             .eq('slug', slug)
             .maybeSingle();
             
           if (data) {
-            // Format the post with categories
-            const categories = data.blog_post_categories 
-              ? data.blog_post_categories.map((cat: any) => cat.category_name) 
-              : [];
-            
-            const { blog_post_categories, ...restPost } = data;
+            // Fetch categories separately
+            const categories = await getPostCategories(data.id);
             
             postData = {
-              ...restPost,
+              ...data,
               categories
             } as BlogPost;
           }
         } else {
           const { data } = await supabase
             .from('blog_posts')
-            .select('*, blog_post_categories(category_name)')
+            .select('*')
             .eq('slug', slug)
             .eq('status', 'published')
             .maybeSingle();
             
           if (data) {
-            // Format the post with categories
-            const categories = data.blog_post_categories 
-              ? data.blog_post_categories.map((cat: any) => cat.category_name) 
-              : [];
-            
-            const { blog_post_categories, ...restPost } = data;
+            // Fetch categories separately
+            const categories = await getPostCategories(data.id);
             
             postData = {
-              ...restPost,
+              ...data,
               categories
             } as BlogPost;
           }
@@ -164,7 +156,7 @@ export default function BlogArticle() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section with Cover Image */}
-      {post.cover_image_url ? (
+      {post?.cover_image_url ? (
         <div 
           className="w-full h-[40vh] md:h-[50vh] relative bg-center bg-cover" 
           style={{ backgroundImage: `url(${post.cover_image_url})` }}
@@ -182,11 +174,11 @@ export default function BlogArticle() {
         </div>
       ) : (
         <div className="container mx-auto pt-10 md:pt-14 px-4">
-          {post.status === 'draft' && isAdmin && (
+          {post?.status === 'draft' && isAdmin && (
             <Badge className="mb-4 bg-yellow-500 hover:bg-yellow-600">Draft</Badge>
           )}
           <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold max-w-4xl">
-            {post.title}
+            {post?.title}
           </h1>
         </div>
       )}
@@ -195,7 +187,7 @@ export default function BlogArticle() {
       <div className="container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto">
           {/* Categories */}
-          {post.categories && post.categories.length > 0 && (
+          {post?.categories && post.categories.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-6">
               {post.categories.map(category => (
                 <Link to={`/blog?category=${category}`} key={category}>
@@ -208,43 +200,48 @@ export default function BlogArticle() {
           )}
           
           {/* Article Meta */}
-          <div className="flex flex-wrap items-center gap-4 mb-8 text-sm text-slate-600">
-            <div className="flex items-center gap-2">
-              <Calendar className="h-4 w-4" />
-              <span>{format(new Date(post.published_at || post.created_at), 'MMMM d, yyyy')}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4" />
-              <span>{Math.ceil(post.content.length / 1000)} min read</span>
-            </div>
-            {post.authorName && (
-              <div className="flex items-center gap-2">
-                <Avatar className="h-6 w-6">
-                  <AvatarFallback>
-                    {post.authorName.split(' ').map(n => n[0]).join('')}
-                  </AvatarFallback>
-                </Avatar>
-                <span>{post.authorName}</span>
+          {post && (
+            <>
+              {/* Article Meta */}
+              <div className="flex flex-wrap items-center gap-4 mb-8 text-sm text-slate-600">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4" />
+                  <span>{format(new Date(post.published_at || post.created_at), 'MMMM d, yyyy')}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4" />
+                  <span>{Math.ceil(post.content.length / 1000)} min read</span>
+                </div>
+                {post.authorName && (
+                  <div className="flex items-center gap-2">
+                    <Avatar className="h-6 w-6">
+                      <AvatarFallback>
+                        {post.authorName.split(' ').map(n => n[0]).join('')}
+                      </AvatarFallback>
+                    </Avatar>
+                    <span>{post.authorName}</span>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
 
-          {/* Admin Edit Button */}
-          {isAdmin && (
-            <div className="mb-8">
-              <Button 
-                variant="outline" 
-                onClick={() => navigate(`/admin/blog/edit/${post.id}`)}
-              >
-                <Edit className="mr-2 h-4 w-4" /> Edit Post
-              </Button>
-            </div>
+              {/* Admin Edit Button */}
+              {isAdmin && (
+                <div className="mb-8">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => navigate(`/admin/blog/edit/${post.id}`)}
+                  >
+                    <Edit className="mr-2 h-4 w-4" /> Edit Post
+                  </Button>
+                </div>
+              )}
+
+              {/* Article Content */}
+              <article className="prose max-w-none">
+                <ReactMarkdown>{post.content}</ReactMarkdown>
+              </article>
+            </>
           )}
-
-          {/* Article Content */}
-          <article className="prose max-w-none">
-            <ReactMarkdown>{post.content}</ReactMarkdown>
-          </article>
 
           {/* Back to Blog */}
           <div className="mt-12 pt-8 border-t">

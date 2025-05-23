@@ -1,7 +1,9 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { type Tables } from "@/integrations/supabase/types";
 
-export type Advisor = Tables<"advisors">;
+// Define Advisor type based on the financial_advisors table
+export type Advisor = Tables<"financial_advisors">;
 
 // Define an AdvisorSpecialty type to match the allowed values
 export type AdvisorSpecialty = 
@@ -14,33 +16,63 @@ export type AdvisorSpecialty =
   | "Education Planning" 
   | "Business Planning";
 
-export const getAdvisors = async (
-  searchTerm?: string,
-  specialties?: AdvisorSpecialty | "all",
-  leadGenEnabled?: boolean,
-  minExperience?: number,
-  maxExperience?: number
-) => {
+// Define the filter interface for advisor search
+export interface AdvisorFilter {
+  searchQuery?: string;
+  specialty?: string;
+  state?: string;
+  minimumAssets?: string;
+  leadGenEnabled?: boolean;
+  minExperience?: number;
+  maxExperience?: number;
+}
+
+export const getAdvisors = async (filters?: AdvisorFilter) => {
   try {
-    let query = supabase.from("advisors").select("*");
+    let query = supabase.from("financial_advisors").select("*");
 
     // Apply filters if provided
-    if (searchTerm) {
+    if (filters?.searchQuery) {
       query = query.or(
-        `first_name.ilike.%${searchTerm}%,last_name.ilike.%${searchTerm}%,firm_name.ilike.%${searchTerm}%`
+        `first_name.ilike.%${filters.searchQuery}%,last_name.ilike.%${filters.searchQuery}%,firm_name.ilike.%${filters.searchQuery}%,name.ilike.%${filters.searchQuery}%`
       );
     }
 
-    if (leadGenEnabled !== undefined) {
-      query = query.eq("lead_gen_enabled", leadGenEnabled);
+    if (filters?.leadGenEnabled !== undefined) {
+      query = query.eq("lead_gen_enabled", filters.leadGenEnabled);
     }
 
-    if (minExperience) {
-      query = query.gte("years_experience", minExperience);
+    if (filters?.minExperience) {
+      query = query.gte("years_experience", filters.minExperience);
     }
 
-    if (maxExperience) {
-      query = query.lte("years_experience", maxExperience);
+    if (filters?.maxExperience) {
+      query = query.lte("years_experience", filters.maxExperience);
+    }
+
+    if (filters?.state && filters.state !== "all") {
+      query = query.eq("state_hq", filters.state);
+    }
+
+    if (filters?.minimumAssets && filters.minimumAssets !== "all") {
+      // Handle different minimum asset ranges
+      switch (filters.minimumAssets) {
+        case "No Minimum":
+          query = query.eq("minimum", "0");
+          break;
+        case "Under $250k":
+          query = query.lt("minimum", "250000");
+          break;
+        case "$250k - $500k":
+          query = query.gte("minimum", "250000").lt("minimum", "500000");
+          break;
+        case "$500k - $1M":
+          query = query.gte("minimum", "500000").lt("minimum", "1000000");
+          break;
+        case "$1M+":
+          query = query.gte("minimum", "1000000");
+          break;
+      }
     }
 
     const { data, error } = await query;
@@ -53,14 +85,29 @@ export const getAdvisors = async (
     // Filter by specialty if needed (using client-side filtering)
     let filteredData = [...(data || [])];
     
-    if (specialties && specialties !== "all") {
-      const specialtyToCheck = specialties;
-      filteredData = filteredData.filter((advisor) => {
-        // Safe check for services property
-        if (!advisor.services || !Array.isArray(advisor.services)) return false;
-        // Check if the advisor has the requested specialty
-        return advisor.services.includes(specialtyToCheck);
-      });
+    if (filters?.specialty && filters.specialty !== "all") {
+      // Get the advisor services for each advisor
+      const advisorIds = filteredData.map(advisor => advisor.id);
+      const { data: servicesData } = await supabase
+        .from("advisor_services")
+        .select("*")
+        .in("advisor_id", advisorIds);
+      
+      if (servicesData) {
+        // Create a map of advisor_id to services
+        const servicesMap = new Map();
+        servicesData.forEach(service => {
+          const services = servicesMap.get(service.advisor_id) || [];
+          services.push(service.service);
+          servicesMap.set(service.advisor_id, services);
+        });
+        
+        // Filter advisors based on specialty
+        filteredData = filteredData.filter(advisor => {
+          const services = servicesMap.get(advisor.id) || [];
+          return services.includes(filters.specialty);
+        });
+      }
     }
 
     return filteredData;
@@ -73,7 +120,7 @@ export const getAdvisors = async (
 export const getAdvisorBySlug = async (slug: string): Promise<Advisor | null> => {
   try {
     const { data, error } = await supabase
-      .from('advisors')
+      .from('financial_advisors')
       .select('*')
       .eq('slug', slug)
       .single();
@@ -87,5 +134,87 @@ export const getAdvisorBySlug = async (slug: string): Promise<Advisor | null> =>
   } catch (error: any) {
     console.error(`Error fetching advisor with slug ${slug}:`, error);
     return null;
+  }
+};
+
+// Function to get unique states from advisors
+export const getUniqueStates = async (): Promise<string[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('financial_advisors')
+      .select('state_hq')
+      .not('state_hq', 'is', null);
+    
+    if (error) {
+      console.error('Error fetching states:', error);
+      return [];
+    }
+    
+    // Extract unique states
+    const states = [...new Set(data.map(item => item.state_hq))].filter(Boolean).sort();
+    return states;
+  } catch (error) {
+    console.error('Error in getUniqueStates:', error);
+    return [];
+  }
+};
+
+// Function to get advisor services
+export const getAdvisorServices = async (advisorId: string): Promise<string[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('advisor_services')
+      .select('service')
+      .eq('advisor_id', advisorId);
+    
+    if (error) {
+      console.error('Error fetching advisor services:', error);
+      return [];
+    }
+    
+    return data.map(item => item.service);
+  } catch (error) {
+    console.error('Error in getAdvisorServices:', error);
+    return [];
+  }
+};
+
+// Function to get advisor professional designations
+export const getAdvisorProfessionalDesignations = async (advisorId: string): Promise<string[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('advisor_professional_designations')
+      .select('designation')
+      .eq('advisor_id', advisorId);
+    
+    if (error) {
+      console.error('Error fetching advisor designations:', error);
+      return [];
+    }
+    
+    return data.map(item => item.designation);
+  } catch (error) {
+    console.error('Error in getAdvisorProfessionalDesignations:', error);
+    return [];
+  }
+};
+
+// Function to get advisor compensation types
+export const getAdvisorCompensationTypes = async (advisorId: string): Promise<string[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('advisor_compensation_types')
+      .select('compensation_type')
+      .eq('advisor_id', advisorId);
+    
+    if (error) {
+      console.error('Error fetching advisor compensation types:', error);
+      return [];
+    }
+    
+    return data.map(item => item.compensation_type);
+  } catch (error) {
+    console.error('Error in getAdvisorCompensationTypes:', error);
+    return [];
   }
 };
