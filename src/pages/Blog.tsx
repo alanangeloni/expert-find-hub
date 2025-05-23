@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -12,7 +11,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { getBlogPosts, getBlogCategories } from "@/services/blogService";
+import { BlogPost, getBlogPosts, getBlogCategories } from "@/services/blogService";
 
 type BlogPost = {
   id: string;
@@ -53,8 +52,18 @@ export default function Blog() {
     const fetchBlogPosts = async () => {
       setLoading(true);
       try {
-        const categoryFilter = activeCategory !== "All" ? activeCategory : undefined;
-        const postsData = await getBlogPosts(categoryFilter);
+        const options: {
+          status?: 'draft' | 'published' | 'all';
+          category?: string;
+          limit?: number;
+          authorId?: string;
+        } = {};
+        
+        if (activeCategory !== "All") {
+          options.category = activeCategory;
+        }
+        
+        const postsData = await getBlogPosts(options);
         
         // Filter by published status if not admin
         const filteredPosts = isAdmin 

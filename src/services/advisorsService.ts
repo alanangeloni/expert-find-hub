@@ -54,8 +54,8 @@ export const getAdvisors = async (filters?: AdvisorFilter) => {
       query = query.eq("state_hq", filters.state);
     }
 
+    // Handle minimum assets filtering with string comparison
     if (filters?.minimumAssets && filters.minimumAssets !== "all") {
-      // Handle different minimum asset ranges
       switch (filters.minimumAssets) {
         case "No Minimum":
           query = query.eq("minimum", "0");
@@ -82,31 +82,34 @@ export const getAdvisors = async (filters?: AdvisorFilter) => {
       return [];
     }
 
-    // Filter by specialty if needed (using client-side filtering)
-    let filteredData = [...(data || [])];
+    // If specialty filter is provided, we'll need to do client-side filtering
+    // since we need to get the advisor services from a separate table
+    let filteredData = data || [];
     
     if (filters?.specialty && filters.specialty !== "all") {
-      // Get the advisor services for each advisor
       const advisorIds = filteredData.map(advisor => advisor.id);
-      const { data: servicesData } = await supabase
-        .from("advisor_services")
-        .select("*")
-        .in("advisor_id", advisorIds);
       
-      if (servicesData) {
-        // Create a map of advisor_id to services
-        const servicesMap = new Map();
-        servicesData.forEach(service => {
-          const services = servicesMap.get(service.advisor_id) || [];
-          services.push(service.service);
-          servicesMap.set(service.advisor_id, services);
-        });
-        
-        // Filter advisors based on specialty
-        filteredData = filteredData.filter(advisor => {
-          const services = servicesMap.get(advisor.id) || [];
-          return services.includes(filters.specialty);
-        });
+      if (advisorIds.length > 0) {
+        const { data: servicesData } = await supabase
+          .from("advisor_services")
+          .select("*")
+          .in("advisor_id", advisorIds);
+          
+        if (servicesData) {
+          // Create a mapping of advisor_id -> services
+          const servicesMap = new Map();
+          servicesData.forEach(service => {
+            const services = servicesMap.get(service.advisor_id) || [];
+            services.push(service.service);
+            servicesMap.set(service.advisor_id, services);
+          });
+          
+          // Filter advisors based on specialty
+          filteredData = filteredData.filter(advisor => {
+            const services = servicesMap.get(advisor.id) || [];
+            return services.includes(filters.specialty);
+          });
+        }
       }
     }
 

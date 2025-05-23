@@ -1,12 +1,11 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { 
-  createBlogPost, 
-  updateBlogPost, 
   getBlogPostBySlug,
   getBlogCategories,
   BlogPost,
+  createBlogPost,
+  updateBlogPost,
   uploadBlogImage
 } from '@/services/blogService';
 import { RichTextEditor } from '@/components/editor/RichTextEditor';
@@ -27,6 +26,7 @@ import {
 } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { getPostCategories } from '@/utils/blogRelations';
 
 const BlogEditor = () => {
   const { id } = useParams();
@@ -97,27 +97,11 @@ const BlogEditor = () => {
       
       try {
         setInitialLoading(true);
-        const { data, error } = await supabase
-          .from('blog_posts')
-          .select('*, blog_post_categories(category_name)')
-          .eq('id', id)
-          .single();
-          
-        if (error) {
-          throw new Error(error.message);
-        }
+        const post = await getBlogPostBySlug(id);
         
-        if (!data) {
+        if (!post) {
           throw new Error('Blog post not found');
         }
-        
-        // Extract categories from the relation
-        const categories = data.blog_post_categories 
-          ? data.blog_post_categories.map((cat: any) => cat.category_name)
-          : [];
-        
-        const { blog_post_categories, ...postData } = data;
-        const post = { ...postData, categories } as BlogPost;
         
         setExistingPost(post);
         setTitle(post.title);
