@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { type Tables } from "@/integrations/supabase/types";
 
@@ -29,10 +28,15 @@ export interface AdvisorFilter {
 
 export const getAdvisors = async (filters?: AdvisorFilter) => {
   try {
-    // Start with a basic query
+    // Handle minimum assets filter separately to avoid deep type instantiation
+    if (filters?.minimumAssets && filters.minimumAssets !== "all") {
+      return await getAdvisorsWithAssetFilter(filters);
+    }
+    
+    // Standard query without minimum assets filter
     let query = supabase.from("financial_advisors").select("*");
 
-    // Apply filters if provided
+    // Apply other filters
     if (filters?.searchQuery) {
       query = query.or(
         `first_name.ilike.%${filters.searchQuery}%,last_name.ilike.%${filters.searchQuery}%,firm_name.ilike.%${filters.searchQuery}%,name.ilike.%${filters.searchQuery}%`
@@ -55,127 +59,119 @@ export const getAdvisors = async (filters?: AdvisorFilter) => {
       query = query.eq("state_hq", filters.state);
     }
 
-    // Handle minimum assets filter
-    // Changed approach: Execute separate queries for ranges to avoid deep type instantiation
-    let data: Advisor[] = [];
+    // Execute query
+    const { data, error } = await query;
     
-    if (filters?.minimumAssets && filters.minimumAssets !== "all") {
-      if (filters.minimumAssets === "No Minimum") {
-        query = query.eq("minimum", "0");
-        const result = await query;
-        data = result.data || [];
-      } 
-      else if (filters.minimumAssets === "Under $250k") {
-        query = query.lt("minimum", "250000");
-        const result = await query;
-        data = result.data || [];
-      } 
-      else if (filters.minimumAssets === "$250k - $500k") {
-        // Create a new clean query instead of building on existing one
-        let rangeQuery = supabase
-          .from("financial_advisors")
-          .select("*")
-          .gte("minimum", "250000")
-          .lt("minimum", "500000");
-          
-        // Re-apply all other filters
-        if (filters.searchQuery) {
-          rangeQuery = rangeQuery.or(
-            `first_name.ilike.%${filters.searchQuery}%,last_name.ilike.%${filters.searchQuery}%,firm_name.ilike.%${filters.searchQuery}%,name.ilike.%${filters.searchQuery}%`
-          );
-        }
-        if (filters.leadGenEnabled !== undefined) {
-          rangeQuery = rangeQuery.eq("lead_gen_enabled", filters.leadGenEnabled);
-        }
-        if (filters.minExperience) {
-          rangeQuery = rangeQuery.gte("years_of_experience", filters.minExperience);
-        }
-        if (filters.maxExperience) {
-          rangeQuery = rangeQuery.lte("years_of_experience", filters.maxExperience);
-        }
-        if (filters.state && filters.state !== "all") {
-          rangeQuery = rangeQuery.eq("state_hq", filters.state);
-        }
-        
-        const result = await rangeQuery;
-        data = result.data || [];
-      }
-      else if (filters.minimumAssets === "$500k - $1M") {
-        // Create a new clean query instead of building on existing one
-        let rangeQuery = supabase
-          .from("financial_advisors")
-          .select("*")
-          .gte("minimum", "500000")
-          .lt("minimum", "1000000");
-          
-        // Re-apply all other filters
-        if (filters.searchQuery) {
-          rangeQuery = rangeQuery.or(
-            `first_name.ilike.%${filters.searchQuery}%,last_name.ilike.%${filters.searchQuery}%,firm_name.ilike.%${filters.searchQuery}%,name.ilike.%${filters.searchQuery}%`
-          );
-        }
-        if (filters.leadGenEnabled !== undefined) {
-          rangeQuery = rangeQuery.eq("lead_gen_enabled", filters.leadGenEnabled);
-        }
-        if (filters.minExperience) {
-          rangeQuery = rangeQuery.gte("years_of_experience", filters.minExperience);
-        }
-        if (filters.maxExperience) {
-          rangeQuery = rangeQuery.lte("years_of_experience", filters.maxExperience);
-        }
-        if (filters.state && filters.state !== "all") {
-          rangeQuery = rangeQuery.eq("state_hq", filters.state);
-        }
-        
-        const result = await rangeQuery;
-        data = result.data || [];
-      }
-      else if (filters.minimumAssets === "$1M+") {
-        query = query.gte("minimum", "1000000");
-        const result = await query;
-        data = result.data || [];
-      }
-    } else {
-      // If no minimum assets filter, execute the query normally
-      const result = await query;
-      data = result.data || [];
+    if (error) {
+      console.error("Error fetching advisors:", error);
+      return [];
     }
 
-    // If specialty filter is provided, we'll need to do client-side filtering
-    let filteredData = data;
+    let advisors = data || [];
     
+    // Apply specialty filter if needed
     if (filters?.specialty && filters.specialty !== "all") {
-      const advisorIds = filteredData.map(advisor => advisor.id);
-      
-      if (advisorIds.length > 0) {
-        const { data: servicesData } = await supabase
-          .from("advisor_services")
-          .select("*")
-          .in("advisor_id", advisorIds);
-          
-        if (servicesData) {
-          // Create a mapping of advisor_id -> services
-          const servicesMap = new Map();
-          servicesData.forEach(service => {
-            const services = servicesMap.get(service.advisor_id) || [];
-            services.push(service.service);
-            servicesMap.set(service.advisor_id, services);
-          });
-          
-          // Filter advisors based on specialty
-          filteredData = filteredData.filter(advisor => {
-            const services = servicesMap.get(advisor.id) || [];
-            return services.includes(filters.specialty);
-          });
-        }
-      }
+      advisors = await filterBySpecialty(advisors, filters.specialty);
     }
 
-    return filteredData;
+    return advisors;
   } catch (error) {
     console.error("Error in getAdvisors:", error);
     return [];
   }
+};
+
+// Helper function to handle minimum assets filtering
+const getAdvisorsWithAssetFilter = async (filters: AdvisorFilter) => {
+  // Create base query
+  let baseQuery = () => {
+    let query = supabase.from("financial_advisors").select("*");
+    
+    // Apply all non-asset filters
+    if (filters.searchQuery) {
+      query = query.or(
+        `first_name.ilike.%${filters.searchQuery}%,last_name.ilike.%${filters.searchQuery}%,firm_name.ilike.%${filters.searchQuery}%,name.ilike.%${filters.searchQuery}%`
+      );
+    }
+
+    if (filters.leadGenEnabled !== undefined) {
+      query = query.eq("lead_gen_enabled", filters.leadGenEnabled);
+    }
+
+    if (filters.minExperience) {
+      query = query.gte("years_of_experience", filters.minExperience);
+    }
+
+    if (filters.maxExperience) {
+      query = query.lte("years_of_experience", filters.maxExperience);
+    }
+
+    if (filters.state && filters.state !== "all") {
+      query = query.eq("state_hq", filters.state);
+    }
+    
+    return query;
+  };
+
+  // Handle different minimum asset ranges
+  let result;
+  switch (filters.minimumAssets) {
+    case "No Minimum":
+      result = await baseQuery().eq("minimum", "0");
+      break;
+    case "Under $250k":
+      result = await baseQuery().lt("minimum", "250000");
+      break;
+    case "$250k - $500k":
+      result = await baseQuery().gte("minimum", "250000").lt("minimum", "500000");
+      break;
+    case "$500k - $1M":
+      result = await baseQuery().gte("minimum", "500000").lt("minimum", "1000000");
+      break;
+    case "$1M+":
+      result = await baseQuery().gte("minimum", "1000000");
+      break;
+    default:
+      result = await baseQuery();
+  }
+
+  const { data } = result;
+  const advisors = data || [];
+
+  // Apply specialty filter if needed
+  if (filters.specialty && filters.specialty !== "all") {
+    return await filterBySpecialty(advisors, filters.specialty);
+  }
+
+  return advisors;
+};
+
+// Helper function to filter advisors by specialty
+const filterBySpecialty = async (advisors: Advisor[], specialty: string) => {
+  if (advisors.length === 0) return [];
+  
+  const advisorIds = advisors.map(advisor => advisor.id);
+  
+  const { data: servicesData } = await supabase
+    .from("advisor_services")
+    .select("*")
+    .in("advisor_id", advisorIds);
+    
+  if (!servicesData) return [];
+  
+  // Create a mapping of advisor_id -> services
+  const servicesMap = new Map();
+  servicesData.forEach(service => {
+    const services = servicesMap.get(service.advisor_id) || [];
+    services.push(service.service);
+    servicesMap.set(service.advisor_id, services);
+  });
+  
+  // Filter advisors based on specialty
+  return advisors.filter(advisor => {
+    const services = servicesMap.get(advisor.id) || [];
+    return services.includes(specialty);
+  });
 };
 
 export const getAdvisorBySlug = async (slug: string): Promise<Advisor | null> => {
