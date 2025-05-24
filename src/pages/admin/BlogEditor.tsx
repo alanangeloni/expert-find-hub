@@ -1,12 +1,11 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Editor } from '@tinymce/tinymce-react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { BlogPost, getBlogCategories, getBlogPostBySlug, uploadBlogImage } from '@/services/blogService';
+import { RichTextEditor } from '@/components/editor/RichTextEditor';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -328,24 +327,11 @@ const BlogEditor = () => {
                   name="content"
                   control={control}
                   render={({ field }) => (
-                    <Editor
-                      apiKey="YOUR_TINY_MCE_API_KEY"
+                    <RichTextEditor
                       value={field.value || ''}
-                      onEditorChange={field.onChange}
-                      init={{
-                        height: 500,
-                        menubar: true,
-                        plugins: [
-                          'advlist autolink lists link image charmap print preview anchor',
-                          'searchreplace visualblocks code fullscreen',
-                          'insertdatetime media table paste code help wordcount'
-                        ],
-                        toolbar:
-                          'undo redo | formatselect | ' +
-                          'bold italic backcolor | alignleft aligncenter ' +
-                          'alignright alignjustify | bullist numlist outdent indent | ' +
-                          'removeformat | help'
-                      }}
+                      onChange={field.onChange}
+                      placeholder="Write your blog post content here..."
+                      className="mt-1"
                     />
                   )}
                 />
