@@ -4,21 +4,16 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { getBlogCategories, getBlogPostBySlug } from '@/services/blogService';
+import { getBlogPostBySlug } from '@/services/blogService';
 import { createBlogPost, updateBlogPost } from '@/services/blogMutations';
 import { toast } from '@/components/ui/use-toast';
-import { blogPostSchema, type BlogPostFormValues } from '@/types/blog';
+import { blogPostSchema, type BlogPostFormValues, type BlogCategoryType } from '@/types/blog';
 
 export const useBlogEditor = () => {
   const { slug } = useParams<{ slug?: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [coverImageUrl, setCoverImageUrl] = useState<string>('');
-
-  const { data: categories, isLoading: isCategoriesLoading } = useQuery({
-    queryKey: ['blogCategories'],
-    queryFn: getBlogCategories,
-  });
 
   const { data: existingPost, isLoading: isPostLoading } = useQuery({
     queryKey: ['blogPost', slug],
@@ -47,7 +42,7 @@ export const useBlogEditor = () => {
       setValue('excerpt', existingPost.excerpt || '');
       setValue('cover_image_url', existingPost.cover_image_url || '');
       setValue('status', existingPost.status);
-      setValue('categories', existingPost.categories ? existingPost.categories.map(cat => cat) : []);
+      setValue('categories', existingPost.categories as BlogCategoryType[] || []);
       setCoverImageUrl(existingPost.cover_image_url || '');
     }
   }, [existingPost, setValue]);
@@ -110,14 +105,13 @@ export const useBlogEditor = () => {
     }
   };
 
-  const isLoading = isCategoriesLoading || isPostLoading || createPostMutation.isPending || updatePostMutation.isPending;
+  const isLoading = isPostLoading || createPostMutation.isPending || updatePostMutation.isPending;
 
   return {
     slug,
     control,
     errors,
     setValue,
-    categories,
     coverImageUrl,
     setCoverImageUrl,
     handleSubmit,

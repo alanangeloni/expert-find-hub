@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Controller, Control, FieldErrors, UseFormSetValue } from 'react-hook-form';
 import { RichTextEditor } from '@/components/editor/RichTextEditor';
@@ -9,13 +10,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from '@/components/ui/card';
 import { toast } from '@/components/ui/use-toast';
 import { uploadBlogImage } from '@/services/blogService';
-import { type BlogPostFormValues, type BlogCategory } from '@/types/blog';
+import { type BlogPostFormValues, BLOG_CATEGORIES, type BlogCategoryType } from '@/types/blog';
 
 interface BlogPostFormProps {
   control: Control<BlogPostFormValues>;
   errors: FieldErrors<BlogPostFormValues>;
   setValue: UseFormSetValue<BlogPostFormValues>;
-  categories?: BlogCategory[];
+  categories?: { id: string; name: BlogCategoryType }[];
   coverImageUrl: string;
   setCoverImageUrl: (url: string) => void;
 }
@@ -24,7 +25,6 @@ export const BlogPostForm = ({
   control,
   errors,
   setValue,
-  categories,
   coverImageUrl,
   setCoverImageUrl
 }: BlogPostFormProps) => {
@@ -173,33 +173,31 @@ export const BlogPostForm = ({
 
           <div>
             <Label htmlFor="categories" className="block text-sm font-medium text-gray-700">Categories</Label>
-            <div className="mt-1">
-              {categories && categories.length > 0 ? (
-                categories.map((category) => (
-                  <div key={category.id} className="flex items-center space-x-2">
-                    <Controller
-                      name="categories"
-                      control={control}
-                      render={({ field }) => (
-                        <Checkbox
-                          id={`category-${category.id}`}
-                          checked={field.value?.includes(category.name) || false}
-                          onCheckedChange={(checked) => {
-                            if (checked) {
-                              field.onChange([...(field.value || []), category.name]);
-                            } else {
-                              field.onChange(field.value?.filter((val) => val !== category.name));
-                            }
-                          }}
-                        />
-                      )}
-                    />
-                    <Label htmlFor={`category-${category.id}`} className="text-sm font-medium text-gray-700">{category.name}</Label>
-                  </div>
-                ))
-              ) : (
-                <p>No categories available.</p>
-              )}
+            <div className="mt-1 max-h-40 overflow-y-auto border rounded-md p-2">
+              {BLOG_CATEGORIES.map((category) => (
+                <div key={category} className="flex items-center space-x-2 py-1">
+                  <Controller
+                    name="categories"
+                    control={control}
+                    render={({ field }) => (
+                      <Checkbox
+                        id={`category-${category}`}
+                        checked={field.value?.includes(category) || false}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            field.onChange([...(field.value || []), category]);
+                          } else {
+                            field.onChange(field.value?.filter((val) => val !== category));
+                          }
+                        }}
+                      />
+                    )}
+                  />
+                  <Label htmlFor={`category-${category}`} className="text-sm font-medium text-gray-700">
+                    {category}
+                  </Label>
+                </div>
+              ))}
             </div>
           </div>
         </div>

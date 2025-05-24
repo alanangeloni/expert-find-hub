@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+
+import React, { useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { Bold, Italic, Underline, Heading1, Heading2, Heading3, Heading4, Heading5, Heading6, ListOrdered, List, Quote, Image, Link } from "lucide-react";
+import { Bold, Italic, Underline, Heading2, ListOrdered, List, Quote, Image, Link } from "lucide-react";
 
 interface RichTextEditorProps {
   value: string;
@@ -18,194 +18,84 @@ export function RichTextEditor({
   className,
   placeholder
 }: RichTextEditorProps) {
-  const [selection, setSelection] = useState<{ start: number; end: number } | null>(null);
-  const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const handleCommand = (command: string) => {
+  const insertMarkdown = (prefix: string, suffix: string = '', newLine: boolean = false) => {
     if (!textareaRef.current) return;
     
     const textarea = textareaRef.current;
-    textarea.focus();
-    
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
     const selectedText = value.substring(start, end);
     
-    let newValue = value;
-    let newCursorPosition = end;
-    
-    // Calculate the line start to properly apply heading markdown
-    let lineStart = start;
-    while (lineStart > 0 && value[lineStart - 1] !== '\n') {
-      lineStart--;
-    }
-    
-    // Check if line already has heading markdown
-    const currentLine = value.substring(lineStart, Math.max(lineStart, end));
-    const lineAlreadyHasHeading = /^(#{1,6})\s/.test(currentLine);
-    
-    switch (command) {
-      case 'bold':
-        newValue = value.substring(0, start) + `**${selectedText}**` + value.substring(end);
-        newCursorPosition = end + 4;
-        break;
-      case 'italic':
-        newValue = value.substring(0, start) + `*${selectedText}*` + value.substring(end);
-        newCursorPosition = end + 2;
-        break;
-      case 'underline':
-        newValue = value.substring(0, start) + `<u>${selectedText}</u>` + value.substring(end);
-        newCursorPosition = end + 7;
-        break;
-      case 'h1':
-        if (lineAlreadyHasHeading) {
-          // Replace existing heading
-          newValue = value.substring(0, lineStart) + 
-                    `# ${currentLine.replace(/^#{1,6}\s/, '')}` + 
-                    value.substring(Math.max(lineStart + currentLine.length, end));
-        } else {
-          // Add new heading at line start
-          newValue = value.substring(0, lineStart) + 
-                    `# ${value.substring(lineStart, end)}` + 
-                    value.substring(end);
-        }
-        break;
-      case 'h2':
-        if (lineAlreadyHasHeading) {
-          newValue = value.substring(0, lineStart) + 
-                    `## ${currentLine.replace(/^#{1,6}\s/, '')}` + 
-                    value.substring(Math.max(lineStart + currentLine.length, end));
-        } else {
-          newValue = value.substring(0, lineStart) + 
-                    `## ${value.substring(lineStart, end)}` + 
-                    value.substring(end);
-        }
-        break;
-      case 'h3':
-        if (lineAlreadyHasHeading) {
-          newValue = value.substring(0, lineStart) + 
-                    `### ${currentLine.replace(/^#{1,6}\s/, '')}` + 
-                    value.substring(Math.max(lineStart + currentLine.length, end));
-        } else {
-          newValue = value.substring(0, lineStart) + 
-                    `### ${value.substring(lineStart, end)}` + 
-                    value.substring(end);
-        }
-        break;
-      case 'h4':
-        if (lineAlreadyHasHeading) {
-          newValue = value.substring(0, lineStart) + 
-                    `#### ${currentLine.replace(/^#{1,6}\s/, '')}` + 
-                    value.substring(Math.max(lineStart + currentLine.length, end));
-        } else {
-          newValue = value.substring(0, lineStart) + 
-                    `#### ${value.substring(lineStart, end)}` + 
-                    value.substring(end);
-        }
-        break;
-      case 'h5':
-        if (lineAlreadyHasHeading) {
-          newValue = value.substring(0, lineStart) + 
-                    `##### ${currentLine.replace(/^#{1,6}\s/, '')}` + 
-                    value.substring(Math.max(lineStart + currentLine.length, end));
-        } else {
-          newValue = value.substring(0, lineStart) + 
-                    `##### ${value.substring(lineStart, end)}` + 
-                    value.substring(end);
-        }
-        break;
-      case 'h6':
-        if (lineAlreadyHasHeading) {
-          newValue = value.substring(0, lineStart) + 
-                    `###### ${currentLine.replace(/^#{1,6}\s/, '')}` + 
-                    value.substring(Math.max(lineStart + currentLine.length, end));
-        } else {
-          newValue = value.substring(0, lineStart) + 
-                    `###### ${value.substring(lineStart, end)}` + 
-                    value.substring(end);
-        }
-        break;
-      case 'ol':
-        newValue = value.substring(0, start) + `1. ${selectedText}` + value.substring(end);
-        newCursorPosition = end + 3;
-        break;
-      case 'ul':
-        newValue = value.substring(0, start) + `- ${selectedText}` + value.substring(end);
-        newCursorPosition = end + 2;
-        break;
-      case 'quote':
-        newValue = value.substring(0, start) + `> ${selectedText}` + value.substring(end);
-        newCursorPosition = end + 2;
-        break;
-      case 'link':
-        newValue = value.substring(0, start) + `[${selectedText}](url)` + value.substring(end);
-        newCursorPosition = end + 7;
-        break;
-      case 'image':
-        newValue = value.substring(0, start) + `![${selectedText}](image_url)` + value.substring(end);
-        newCursorPosition = end + 13;
-        break;
-      default:
-        break;
-    }
-    
-    onChange(newValue);
-    
-    // Delay setting selection to ensure React has updated the DOM
-    setTimeout(() => {
-      if (!textareaRef.current) return;
-      textareaRef.current.focus();
+    let newText = '';
+    if (newLine) {
+      // For headings, we want to work with the entire line
+      const lineStart = value.lastIndexOf('\n', start - 1) + 1;
+      const lineEnd = value.indexOf('\n', end);
+      const actualLineEnd = lineEnd === -1 ? value.length : lineEnd;
+      const currentLine = value.substring(lineStart, actualLineEnd);
       
-      if (command.startsWith('h') && lineAlreadyHasHeading) {
-        // Place cursor at end of heading text
-        const headingLength = command === 'h1' ? 2 : 
-                             (command === 'h2' ? 3 : 
-                             (command === 'h3' ? 4 : 
-                             (command === 'h4' ? 5 : 
-                             (command === 'h5' ? 6 : 7))));
-        textareaRef.current.selectionStart = 
-        textareaRef.current.selectionEnd = lineStart + headingLength + currentLine.replace(/^#{1,6}\s/, '').length;
-      } else if (command === 'link') {
-        // Position cursor inside the URL parentheses
-        textareaRef.current.selectionStart = start + selectedText.length + 3;
-        textareaRef.current.selectionEnd = end + 7;
-      } else if (command === 'image') {
-        // Position cursor inside the URL parentheses
-        textareaRef.current.selectionStart = start + selectedText.length + 5;
-        textareaRef.current.selectionEnd = end + 13;
-      } else {
-        // Default cursor positioning
-        textareaRef.current.selectionStart = textareaRef.current.selectionEnd = newCursorPosition;
+      // Remove existing heading markup if present
+      const cleanLine = currentLine.replace(/^#{1,6}\s*/, '');
+      const beforeLine = value.substring(0, lineStart);
+      const afterLine = value.substring(actualLineEnd);
+      
+      newText = beforeLine + prefix + cleanLine + afterLine;
+    } else {
+      newText = value.substring(0, start) + prefix + selectedText + suffix + value.substring(end);
+    }
+    
+    onChange(newText);
+    
+    // Set cursor position after the change
+    setTimeout(() => {
+      if (textareaRef.current) {
+        textareaRef.current.focus();
+        if (newLine) {
+          const newPosition = start + prefix.length;
+          textareaRef.current.setSelectionRange(newPosition, newPosition);
+        } else {
+          const newPosition = start + prefix.length + selectedText.length + suffix.length;
+          textareaRef.current.setSelectionRange(newPosition, newPosition);
+        }
       }
     }, 0);
   };
-  
+
+  const handleHeading = (level: number) => {
+    const prefix = '#'.repeat(level) + ' ';
+    insertMarkdown(prefix, '', true);
+  };
+
   return (
     <div className="space-y-2">
       <div className="bg-white border rounded-t-lg border-gray-200 p-2 flex flex-wrap gap-1">
         <Button 
           type="button" 
           variant="ghost" 
-          size="icon"
-          onClick={() => handleCommand('bold')}
+          size="sm"
+          onClick={() => insertMarkdown('**', '**')}
           title="Bold"
         >
           <Bold className="h-4 w-4" />
         </Button>
+        
         <Button 
           type="button" 
           variant="ghost" 
-          size="icon"
-          onClick={() => handleCommand('italic')}
+          size="sm"
+          onClick={() => insertMarkdown('*', '*')}
           title="Italic"
         >
           <Italic className="h-4 w-4" />
         </Button>
+        
         <Button 
           type="button" 
           variant="ghost" 
-          size="icon"
-          onClick={() => handleCommand('underline')}
+          size="sm"
+          onClick={() => insertMarkdown('<u>', '</u>')}
           title="Underline"
         >
           <Underline className="h-4 w-4" />
@@ -215,59 +105,59 @@ export function RichTextEditor({
         
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="ghost" size="icon" title="Headings">
+            <Button variant="ghost" size="sm" title="Headings">
               <Heading2 className="h-4 w-4" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-auto p-2">
-            <div className="grid grid-cols-3 gap-1">
+            <div className="flex flex-col gap-1">
               <Button 
                 variant="ghost" 
                 size="sm"
-                onClick={() => handleCommand('h1')}
-                className="text-base font-bold"
+                onClick={() => handleHeading(1)}
+                className="text-left justify-start font-bold text-2xl"
               >
-                H1
+                H1 Heading
               </Button>
               <Button 
                 variant="ghost" 
                 size="sm"
-                onClick={() => handleCommand('h2')}
-                className="text-base font-bold"
+                onClick={() => handleHeading(2)}
+                className="text-left justify-start font-bold text-xl"
               >
-                H2
+                H2 Heading
               </Button>
               <Button 
                 variant="ghost" 
                 size="sm"
-                onClick={() => handleCommand('h3')}
-                className="text-base font-bold"
+                onClick={() => handleHeading(3)}
+                className="text-left justify-start font-bold text-lg"
               >
-                H3
+                H3 Heading
               </Button>
               <Button 
                 variant="ghost" 
                 size="sm"
-                onClick={() => handleCommand('h4')}
-                className="text-sm font-bold"
+                onClick={() => handleHeading(4)}
+                className="text-left justify-start font-semibold"
               >
-                H4
+                H4 Heading
               </Button>
               <Button 
                 variant="ghost" 
                 size="sm"
-                onClick={() => handleCommand('h5')}
-                className="text-xs font-bold"
+                onClick={() => handleHeading(5)}
+                className="text-left justify-start font-semibold text-sm"
               >
-                H5
+                H5 Heading
               </Button>
               <Button 
                 variant="ghost" 
                 size="sm"
-                onClick={() => handleCommand('h6')}
-                className="text-xs font-bold"
+                onClick={() => handleHeading(6)}
+                className="text-left justify-start font-semibold text-xs"
               >
-                H6
+                H6 Heading
               </Button>
             </div>
           </PopoverContent>
@@ -276,26 +166,28 @@ export function RichTextEditor({
         <Button 
           type="button" 
           variant="ghost" 
-          size="icon"
-          onClick={() => handleCommand('ol')}
+          size="sm"
+          onClick={() => insertMarkdown('1. ')}
           title="Ordered List"
         >
           <ListOrdered className="h-4 w-4" />
         </Button>
+        
         <Button 
           type="button" 
           variant="ghost" 
-          size="icon"
-          onClick={() => handleCommand('ul')}
+          size="sm"
+          onClick={() => insertMarkdown('- ')}
           title="Unordered List"
         >
           <List className="h-4 w-4" />
         </Button>
+        
         <Button 
           type="button" 
           variant="ghost" 
-          size="icon"
-          onClick={() => handleCommand('quote')}
+          size="sm"
+          onClick={() => insertMarkdown('> ')}
           title="Quote"
         >
           <Quote className="h-4 w-4" />
@@ -306,17 +198,18 @@ export function RichTextEditor({
         <Button 
           type="button" 
           variant="ghost" 
-          size="icon"
-          onClick={() => handleCommand('link')}
+          size="sm"
+          onClick={() => insertMarkdown('[', '](url)')}
           title="Link"
         >
           <Link className="h-4 w-4" />
         </Button>
+        
         <Button 
           type="button" 
           variant="ghost" 
-          size="icon"
-          onClick={() => handleCommand('image')}
+          size="sm"
+          onClick={() => insertMarkdown('![', '](image_url)')}
           title="Image"
         >
           <Image className="h-4 w-4" />
@@ -327,16 +220,8 @@ export function RichTextEditor({
         ref={textareaRef}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={`min-h-[500px] rounded-t-none ${className}`}
+        className={`min-h-[500px] rounded-t-none font-mono ${className}`}
         placeholder={placeholder}
-        onSelect={() => {
-          if (textareaRef.current) {
-            setSelection({
-              start: textareaRef.current.selectionStart,
-              end: textareaRef.current.selectionEnd
-            });
-          }
-        }}
       />
     </div>
   );
