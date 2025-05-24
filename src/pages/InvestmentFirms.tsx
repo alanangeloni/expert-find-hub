@@ -1,7 +1,7 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { getInvestmentFirms, getUniqueStates, type FirmFilter } from '@/services/investmentFirmsService';
+import { getInvestmentFirms, type FirmFilter, type InvestmentFirm } from '@/services/investmentFirmsService';
 import { FirmList } from '@/components/firms/FirmList';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
@@ -11,40 +11,45 @@ import { Input } from '@/components/ui/input';
 const InvestmentFirms = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<FirmFilter>({});
-  const [states, setStates] = useState<string[]>([]);
   
   const formValues = {
-    state: filters.state || "all",
     minimumInvestment: filters.minimumInvestment || "all",
     assetClass: filters.assetClass || "all",
   };
 
-  // Fetch unique states for the dropdown
-  useEffect(() => {
-    const fetchStates = async () => {
-      try {
-        const uniqueStates = await getUniqueStates();
-        setStates(uniqueStates);
-      } catch (error) {
-        console.error("Failed to fetch states:", error);
-      }
-    };
-    
-    fetchStates();
-  }, []);
-
-  const { data: firms, isLoading } = useQuery({
+  // These will be populated from the actual data
+  const [assetClasses, setAssetClasses] = useState<string[]>([]);
+  
+  const { data: firms, isLoading } = useQuery<InvestmentFirm[]>({
     queryKey: ['firms', filters],
     queryFn: () => getInvestmentFirms(filters),
   });
 
+  // Function to properly format minimum investment values
+  const formatMinimumInvestment = (value: number | null | undefined): string => {
+    if (value === null || value === undefined) return "No minimum";
+    
+    // Convert value to string before using replace
+    const valueStr = value.toString();
+    return `$${valueStr.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+  };
+
+  // Update asset classes when firms data changes
+  React.useEffect(() => {
+    if (firms) {
+      const uniqueAssetClasses = new Set<string>();
+      firms.forEach(firm => {
+        if (firm.asset_classes) {
+          firm.asset_classes.forEach(ac => uniqueAssetClasses.add(ac));
+        }
+      });
+      setAssetClasses(Array.from(uniqueAssetClasses).sort());
+    }
+  }, [firms]);
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
     setFilters(prev => ({ ...prev, searchQuery: e.target.value }));
-  };
-
-  const handleStateChange = (value: string) => {
-    setFilters(prev => ({ ...prev, state: value === "all" ? undefined : value }));
   };
 
   const handleMinimumChange = (value: string) => {
@@ -59,33 +64,14 @@ const InvestmentFirms = () => {
     setFilters({ searchQuery });
   };
   
-  const assetClasses = [
-    "Stocks",
-    "Bonds", 
-    "Real Estate",
-    "Commodities",
-    "Cash Equivalents",
-    "Alternative Investments",
-    "Private Equity"
-  ];
-
   const minimumInvestmentOptions = [
-    "No Minimum", 
-    "Under $250k", 
-    "$250k - $500k", 
-    "$500k - $1M", 
-    "$1M - $5M",
-    "$5M+"
+    { label: "No Minimum", value: "0" },
+    { label: "Under $250k", value: "250000" },
+    { label: "$250k - $500k", value: "250000-500000" },
+    { label: "$500k - $1M", value: "500000-1000000" },
+    { label: "$1M - $5M", value: "1000000-5000000" },
+    { label: "$5M+", value: "5000000" }
   ];
-
-  // Function to properly format minimum investment values
-  const formatMinimumInvestment = (value: number | null | undefined): string => {
-    if (value === null || value === undefined) return "No minimum";
-    
-    // Convert value to string before using replace
-    const valueStr = value.toString();
-    return `$${valueStr.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
-  };
   
   return (
     <div className="container mx-auto py-8 px-4">
@@ -119,7 +105,7 @@ const InvestmentFirms = () => {
               <SelectContent className="rounded-md bg-white">
                 <SelectItem value="all">All Minimums</SelectItem>
                 {minimumInvestmentOptions.map((option) => (
-                  <SelectItem key={option} value={option}>{option}</SelectItem>
+                  <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -131,27 +117,18 @@ const InvestmentFirms = () => {
               </SelectTrigger>
               <SelectContent className="rounded-md bg-white">
                 <SelectItem value="all">All Classes</SelectItem>
-                {assetClasses.map((assetClass) => (
-                  <SelectItem key={assetClass} value={assetClass}>{assetClass}</SelectItem>
-                ))}
+                {assetClasses.length > 0 ? (
+                  assetClasses.map((assetClass) => (
+                    <SelectItem key={assetClass} value={assetClass}>{assetClass}</SelectItem>
+                  ))
+                ) : (
+                  <SelectItem value="all" disabled>Loading asset classes...</SelectItem>
+                )}
               </SelectContent>
             </Select>
             
-            {/* State Filter */}
-            <Select value={formValues.state} onValueChange={handleStateChange}>
-              <SelectTrigger className="w-[180px] rounded-[20px] h-12 bg-slate-50 border-slate-100">
-                <SelectValue placeholder="State" />
-              </SelectTrigger>
-              <SelectContent className="rounded-md bg-white">
-                <SelectItem value="all">All States</SelectItem>
-                {states.map((state) => (
-                  <SelectItem key={state} value={state}>{state}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
             {/* Clear Filters */}
-            {(formValues.state !== "all" || formValues.minimumInvestment !== "all" || formValues.assetClass !== "all") && (
+            {(formValues.minimumInvestment !== "all" || formValues.assetClass !== "all") && (
               <Button 
                 variant="outline" 
                 className="rounded-[20px] h-12 border-dashed"

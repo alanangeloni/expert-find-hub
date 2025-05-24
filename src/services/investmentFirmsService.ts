@@ -1,5 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import { Database } from "@/integrations/supabase/types";
 
 // Define types for investment firms
 export interface InvestmentFirm {
@@ -90,69 +91,100 @@ export interface FirmFilter {
   state?: string;
   minimumInvestment?: string;
   assetClass?: string;
+  asset_classes?: string[]; 
 }
+
+// Function to inspect the database table structure
+export const inspectTableStructure = async () => {
+  try {
+    // This is a direct query to the information_schema to get column details
+    const { data, error } = await supabase
+      .from('information_schema.columns')
+      .select('column_name, data_type, udt_name, is_nullable')
+      .eq('table_name', 'investment_firms');
+      
+    if (error) {
+      console.error('Error inspecting table structure:', error);
+      return null;
+    }
+    
+    console.log('Table structure:', data);
+    return data;
+  } catch (error) {
+    console.error('Error in inspectTableStructure:', error);
+    return null;
+  }
+};
 
 export const getInvestmentFirms = async (filters?: FirmFilter): Promise<InvestmentFirm[]> => {
   try {
-    let query = supabase.from('investment_firms').select('*');
+    console.log('Fetching investment firms with filters:', filters);
     
-    // Apply filters if provided
+    // First, fetch all firms without any filters to see what we're working with
+    let query = supabase
+      .from('investment_firms')
+      .select('*');
+    
+    // Apply search query filter
     if (filters?.searchQuery) {
       query = query.or(
-        `name.ilike.%${filters.searchQuery}%,headquarters.ilike.%${filters.searchQuery}%`
+        `name.ilike.%${filters.searchQuery}%,headquarters.ilike.%${filters.searchQuery}%,description.ilike.%${filters.searchQuery}%`
       );
     }
     
-    if (filters?.state && filters.state !== 'all') {
-      query = query.eq('headquarters', filters.state);
-    }
-    
-    // Handle minimum investment filter
+    // Apply minimum investment filter
     if (filters?.minimumInvestment && filters.minimumInvestment !== 'all') {
-      switch (filters.minimumInvestment) {
-        case 'No Minimum':
-          query = query.or('minimum_investment.is.null,minimum_investment.eq.0');
-          break;
-        case 'Under $250k':
-          query = query.lt('minimum_investment', 250000);
-          break;
-        case '$250k - $500k':
-          query = query.gte('minimum_investment', 250000).lt('minimum_investment', 500000);
-          break;
-        case '$500k - $1M':
-          query = query.gte('minimum_investment', 500000).lt('minimum_investment', 1000000);
-          break;
-        case '$1M - $5M':
-          query = query.gte('minimum_investment', 1000000).lt('minimum_investment', 5000000);
-          break;
-        case '$5M+':
-          query = query.gte('minimum_investment', 5000000);
-          break;
+      const minValue = parseInt(filters.minimumInvestment.split('-')[0]);
+      const maxValue = filters.minimumInvestment.includes('-') 
+        ? parseInt(filters.minimumInvestment.split('-')[1]) 
+        : null;
+      
+      if (maxValue) {
+        // For ranges like 250000-500000
+        query = query
+          .gte('minimum_investment', minValue)
+          .lte('minimum_investment', maxValue);
+      } else {
+        // For minimum values like 5000000 (for $5M+)
+        query = query.gte('minimum_investment', minValue);
       }
     }
     
-    // Handle asset class filter
-    let assetClassFilterApplied = false;
-    if (filters?.assetClass && filters.assetClass !== 'all') {
-      // Since asset_class is an array, we need to check if it contains the selected asset class
-      query = query.contains('asset_class', [filters.assetClass]);
-      assetClassFilterApplied = true;
-    }
-    
-    const { data, error } = await query;
+    // Execute the query to get the data
+    const { data: firmsData, error } = await query;
     
     if (error) {
       console.error('Error fetching investment firms:', error);
       return [];
     }
     
-    // Add asset_classes as empty array to match the required interface
-    const firmsWithAssetClasses = data?.map(firm => ({
-      ...firm,
-      asset_classes: firm.asset_class || [] // Use the database asset_class field or empty array
-    })) || [];
+    console.log('Fetched firms (before asset class filter):', firmsData);
     
-    return firmsWithAssetClasses;
+    // Process the data - handle asset_class as a string
+    let processedFirms = firmsData.map(firm => {
+      // Ensure asset_class is always a string
+      const assetClass = firm.asset_class || '';
+      const assetClasses = assetClass ? [assetClass] : [];
+      
+      return {
+        ...firm,
+        asset_classes: assetClasses,
+        asset_class: assetClass // Keep the original string value for backward compatibility
+      };
+    });
+    
+    // Apply asset class filter in-memory if needed
+    if (filters?.assetClass && filters.assetClass !== 'all') {
+      console.log('Filtering by asset class:', filters.assetClass);
+      processedFirms = processedFirms.filter(firm => {
+        const matches = firm.asset_class === filters.assetClass;
+        console.log(`Firm ${firm.name} (${firm.asset_class}) matches ${filters.assetClass}:`, matches);
+        return matches;
+      });
+      console.log('Firms after asset class filter:', processedFirms);
+    }
+    
+    return processedFirms as unknown as InvestmentFirm[];
   } catch (error) {
     console.error('Error in getInvestmentFirms:', error);
     return [];
@@ -204,15 +236,20 @@ export const getInvestmentFirmBySlug = async (slug: string): Promise<InvestmentF
       .eq('firm_id', firmData.id);
     
     // Combine all data into one firm object
-    const firm = {
+    const assetClasses = Array.isArray(firmData.asset_class) 
+      ? firmData.asset_class 
+      : firmData.asset_class ? [firmData.asset_class] : [];
+      
+    const firm: InvestmentFirm = {
       ...firmData,
-      asset_classes: [], // Add empty array to satisfy TypeScript
+      asset_classes: assetClasses,
+      asset_class: assetClasses, // Keep both for backward compatibility
       investment_firm_features: featuresData || [],
       investment_firm_leadership: leadershipData || [],
       money_making_methods: moneyMakingMethodsData || [],
       investment_firm_clients: clientsData || [],
       investment_firm_regulatory_info: regulatoryData || []
-    } as InvestmentFirm;
+    };
     
     return firm;
   } catch (error: any) {
@@ -271,13 +308,20 @@ export const getSimilarFirms = async (firmId: string): Promise<InvestmentFirm[]>
       return [];
     }
     
-    // Add asset_classes as empty array to satisfy the interface requirements
-    const firmsWithAssetClasses = firms.map(firm => ({
-      ...firm,
-      asset_classes: [] // Add empty array to satisfy TypeScript
-    }));
+    // Ensure asset_classes is always an array
+    const firmsWithAssetClasses = firms.map(firm => {
+      const assetClasses = Array.isArray(firm.asset_class) 
+        ? firm.asset_class 
+        : firm.asset_class ? [firm.asset_class] : [];
+        
+      return {
+        ...firm,
+        asset_classes: assetClasses,
+        asset_class: assetClasses // Keep both for backward compatibility
+      };
+    });
     
-    return firmsWithAssetClasses;
+    return firmsWithAssetClasses as unknown as InvestmentFirm[];
   } catch (error) {
     console.error('Error in getSimilarFirms:', error);
     return [];
