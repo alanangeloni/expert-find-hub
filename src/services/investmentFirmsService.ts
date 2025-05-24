@@ -94,45 +94,21 @@ export interface FirmFilter {
   asset_classes?: string[]; 
 }
 
-// Function to inspect the database table structure
-export const inspectTableStructure = async () => {
-  try {
-    // This is a direct query to the information_schema to get column details
-    const { data, error } = await supabase
-      .from('information_schema.columns')
-      .select('column_name, data_type, udt_name, is_nullable')
-      .eq('table_name', 'investment_firms');
-      
-    if (error) {
-      console.error('Error inspecting table structure:', error);
-      return null;
-    }
-    
-    console.log('Table structure:', data);
-    return data;
-  } catch (error) {
-    console.error('Error in inspectTableStructure:', error);
-    return null;
-  }
-};
-
 export const getInvestmentFirms = async (filters?: FirmFilter): Promise<InvestmentFirm[]> => {
   try {
     console.log('Fetching investment firms with filters:', filters);
     
-    // First, fetch all firms without any filters to see what we're working with
-    let query = supabase
-      .from('investment_firms')
-      .select('*');
+    // Start with a basic query
+    let queryBuilder = supabase.from('investment_firms').select('*');
     
     // Apply search query filter
     if (filters?.searchQuery) {
-      query = query.or(
+      queryBuilder = queryBuilder.or(
         `name.ilike.%${filters.searchQuery}%,headquarters.ilike.%${filters.searchQuery}%,description.ilike.%${filters.searchQuery}%`
       );
     }
     
-    // Apply minimum investment filter
+    // Apply minimum investment filter with numerical comparison
     if (filters?.minimumInvestment && filters.minimumInvestment !== 'all') {
       const minValue = parseInt(filters.minimumInvestment.split('-')[0]);
       const maxValue = filters.minimumInvestment.includes('-') 
@@ -141,17 +117,17 @@ export const getInvestmentFirms = async (filters?: FirmFilter): Promise<Investme
       
       if (maxValue) {
         // For ranges like 250000-500000
-        query = query
+        queryBuilder = queryBuilder
           .gte('minimum_investment', minValue)
           .lte('minimum_investment', maxValue);
       } else {
         // For minimum values like 5000000 (for $5M+)
-        query = query.gte('minimum_investment', minValue);
+        queryBuilder = queryBuilder.gte('minimum_investment', minValue);
       }
     }
     
     // Execute the query to get the data
-    const { data: firmsData, error } = await query;
+    const { data: firmsData, error } = await queryBuilder;
     
     if (error) {
       console.error('Error fetching investment firms:', error);
