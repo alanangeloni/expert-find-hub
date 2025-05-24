@@ -1,20 +1,19 @@
 
 import { z } from 'zod';
 
-// Define blog category enum
+// Use the existing blog_category enum from the database
 export const BlogCategoryEnum = z.enum([
-  'Technology',
-  'Finance',
-  'Investment',
-  'Market Analysis',
-  'Personal Finance',
-  'Business',
-  'Economics',
-  'Cryptocurrency',
-  'Real Estate',
+  'Banking',
+  'Business', 
+  'Loans',
+  'Investing',
   'Insurance',
-  'Retirement Planning',
-  'Tax Planning'
+  'Interview',
+  'Finance',
+  'Taxes',
+  'Real Estate',
+  'Retirement',
+  'Reviews'
 ]);
 
 export const blogPostSchema = z.object({
@@ -36,18 +35,17 @@ export interface BlogCategory {
   slug: string;
 }
 
-// Export the available categories as a constant
+// Export the available categories as a constant using the database enum values
 export const BLOG_CATEGORIES: BlogCategoryType[] = [
-  'Technology',
-  'Finance',
-  'Investment',
-  'Market Analysis',
-  'Personal Finance',
-  'Business',
-  'Economics',
-  'Cryptocurrency',
-  'Real Estate',
+  'Banking',
+  'Business', 
+  'Loans',
+  'Investing',
   'Insurance',
-  'Retirement Planning',
-  'Tax Planning'
+  'Interview',
+  'Finance',
+  'Taxes',
+  'Real Estate',
+  'Retirement',
+  'Reviews'
 ];
