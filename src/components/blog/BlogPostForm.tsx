@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Controller, Control, FieldErrors, UseFormSetValue } from 'react-hook-form';
 import { RichTextEditor } from '@/components/editor/RichTextEditor';
@@ -10,21 +9,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from '@/components/ui/card';
 import { toast } from '@/components/ui/use-toast';
 import { uploadBlogImage } from '@/services/blogService';
-
-interface BlogPostFormValues {
-  title: string;
-  slug: string;
-  content: string;
-  excerpt?: string;
-  cover_image_url?: string;
-  status: 'draft' | 'published';
-  categories?: string[];
-}
-
-interface BlogCategory {
-  id: string;
-  name: string;
-}
+import { type BlogPostFormValues, type BlogCategory } from '@/types/blog';
 
 interface BlogPostFormProps {
   control: Control<BlogPostFormValues>;

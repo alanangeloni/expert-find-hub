@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -10,20 +9,8 @@ import { BlogPostForm } from '@/components/blog/BlogPostForm';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/use-toast';
 import { Spinner } from '@/components/ui/spinner';
+import { blogPostSchema, type BlogPostFormValues } from '@/types/blog';
 
-const blogPostSchema = z.object({
-  title: z.string().min(3, { message: "Title must be at least 3 characters." }),
-  slug: z.string().min(3, { message: "Slug must be at least 3 characters." }),
-  content: z.string().min(10, { message: "Content must be at least 10 characters." }),
-  excerpt: z.string().optional(),
-  cover_image_url: z.string().optional(),
-  status: z.enum(['draft', 'published']),
-  categories: z.array(z.string()).optional(),
-});
-
-type BlogPostFormValues = z.infer<typeof blogPostSchema>;
-
-// Add these functions that were missing from blogService import
 const createBlogPost = async (postData: {
   title: string;
   slug: string;
