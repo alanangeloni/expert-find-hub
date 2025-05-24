@@ -11,7 +11,6 @@ const BlogEditor = () => {
     control,
     errors,
     setValue,
-    categories,
     coverImageUrl,
     setCoverImageUrl,
     handleSubmit,
@@ -33,7 +32,6 @@ const BlogEditor = () => {
             control={control}
             errors={errors}
             setValue={setValue}
-            categories={categories}
             coverImageUrl={coverImageUrl}
             setCoverImageUrl={setCoverImageUrl}
           />
