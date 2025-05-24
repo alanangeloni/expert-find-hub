@@ -21,7 +21,6 @@ export interface AdvisorFilter {
   specialty?: string;
   state?: string;
   minimumAssets?: string;
-  leadGenEnabled?: boolean;
   minExperience?: number;
   maxExperience?: number;
 }
@@ -56,10 +55,6 @@ export const getAdvisors = async (filters?: AdvisorFilter) => {
     let advisors = data || [];
     
     // Apply filters in memory to avoid TypeScript issues
-    if (filters?.leadGenEnabled !== undefined) {
-      advisors = advisors.filter(advisor => advisor.lead_gen_enabled === filters.leadGenEnabled);
-    }
-
     if (filters?.minExperience) {
       advisors = advisors.filter(advisor => (advisor.years_of_experience || 0) >= filters.minExperience!);
     }
