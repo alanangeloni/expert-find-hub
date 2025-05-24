@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { type Tables } from "@/integrations/supabase/types";
 
@@ -30,38 +29,24 @@ export interface AdvisorFilter {
 export const getAdvisors = async (filters?: AdvisorFilter) => {
   try {
     // Start with a basic query
-    let queryBuilder = supabase.from("financial_advisors").select("*");
+    const { data, error } = await supabase
+      .from("financial_advisors")
+      .select("*")
+      .then(async (query) => {
+        let result = query;
+        
+        // Apply filters
+        if (filters?.searchQuery) {
+          result = await supabase
+            .from("financial_advisors")
+            .select("*")
+            .or(`first_name.ilike.%${filters.searchQuery}%,last_name.ilike.%${filters.searchQuery}%,firm_name.ilike.%${filters.searchQuery}%,name.ilike.%${filters.searchQuery}%`);
+        } else {
+          result = await supabase.from("financial_advisors").select("*");
+        }
 
-    // Apply filters one by one
-    if (filters?.searchQuery) {
-      queryBuilder = queryBuilder.or(
-        `first_name.ilike.%${filters.searchQuery}%,last_name.ilike.%${filters.searchQuery}%,firm_name.ilike.%${filters.searchQuery}%,name.ilike.%${filters.searchQuery}%`
-      );
-    }
-
-    if (filters?.leadGenEnabled !== undefined) {
-      queryBuilder = queryBuilder.eq("lead_gen_enabled", filters.leadGenEnabled);
-    }
-
-    if (filters?.minExperience) {
-      queryBuilder = queryBuilder.gte("years_of_experience", filters.minExperience);
-    }
-
-    if (filters?.maxExperience) {
-      queryBuilder = queryBuilder.lte("years_of_experience", filters.maxExperience);
-    }
-
-    if (filters?.state && filters.state !== "all") {
-      queryBuilder = queryBuilder.eq("state_hq", filters.state);
-    }
-    
-    // Apply minimum assets filter
-    if (filters?.minimumAssets && filters.minimumAssets !== "all") {
-      queryBuilder = applyMinimumAssetsFilter(queryBuilder, filters.minimumAssets);
-    }
-
-    // Execute query
-    const { data, error } = await queryBuilder;
+        return result;
+      });
     
     if (error) {
       console.error("Error fetching advisors:", error);
@@ -70,6 +55,28 @@ export const getAdvisors = async (filters?: AdvisorFilter) => {
 
     let advisors = data || [];
     
+    // Apply filters in memory to avoid TypeScript issues
+    if (filters?.leadGenEnabled !== undefined) {
+      advisors = advisors.filter(advisor => advisor.lead_gen_enabled === filters.leadGenEnabled);
+    }
+
+    if (filters?.minExperience) {
+      advisors = advisors.filter(advisor => (advisor.years_of_experience || 0) >= filters.minExperience!);
+    }
+
+    if (filters?.maxExperience) {
+      advisors = advisors.filter(advisor => (advisor.years_of_experience || 0) <= filters.maxExperience!);
+    }
+
+    if (filters?.state && filters.state !== "all") {
+      advisors = advisors.filter(advisor => advisor.state_hq === filters.state);
+    }
+    
+    // Apply minimum assets filter
+    if (filters?.minimumAssets && filters.minimumAssets !== "all") {
+      advisors = applyMinimumAssetsFilter(advisors, filters.minimumAssets);
+    }
+
     // Apply specialty filter if needed
     if (filters?.specialty && filters.specialty !== "all") {
       advisors = await filterBySpecialty(advisors, filters.specialty);
@@ -82,49 +89,25 @@ export const getAdvisors = async (filters?: AdvisorFilter) => {
   }
 };
 
-// Helper function to apply minimum assets filter
-const applyMinimumAssetsFilter = (queryBuilder: any, minimumAssets: string) => {
-  switch (minimumAssets) {
-    case "No Minimum":
-      return queryBuilder.eq("minimum", "0");
-    case "Under $250k":
-      return queryBuilder.lt("minimum", "250000");
-    case "$250k - $500k":
-      return queryBuilder.gte("minimum", "250000").lt("minimum", "500000");
-    case "$500k - $1M":
-      return queryBuilder.gte("minimum", "500000").lt("minimum", "1000000");
-    case "$1M+":
-      return queryBuilder.gte("minimum", "1000000");
-    default:
-      return queryBuilder;
-  }
-};
-
-// Helper function to filter advisors by specialty
-const filterBySpecialty = async (advisors: Advisor[], specialty: string) => {
-  if (advisors.length === 0) return [];
-  
-  const advisorIds = advisors.map(advisor => advisor.id);
-  
-  const { data: servicesData } = await supabase
-    .from("advisor_services")
-    .select("*")
-    .in("advisor_id", advisorIds);
-    
-  if (!servicesData) return [];
-  
-  // Create a mapping of advisor_id -> services
-  const servicesMap = new Map();
-  servicesData.forEach(service => {
-    const services = servicesMap.get(service.advisor_id) || [];
-    services.push(service.service);
-    servicesMap.set(service.advisor_id, services);
-  });
-  
-  // Filter advisors based on specialty
+// Helper function to apply minimum assets filter in memory
+const applyMinimumAssetsFilter = (advisors: Advisor[], minimumAssets: string) => {
   return advisors.filter(advisor => {
-    const services = servicesMap.get(advisor.id) || [];
-    return services.includes(specialty);
+    const minimum = parseInt(advisor.minimum || "0");
+    
+    switch (minimumAssets) {
+      case "No Minimum":
+        return minimum === 0;
+      case "Under $250k":
+        return minimum < 250000;
+      case "$250k - $500k":
+        return minimum >= 250000 && minimum < 500000;
+      case "$500k - $1M":
+        return minimum >= 500000 && minimum < 1000000;
+      case "$1M+":
+        return minimum >= 1000000;
+      default:
+        return true;
+    }
   });
 };
 
@@ -228,4 +211,32 @@ export const getAdvisorCompensationTypes = async (advisorId: string): Promise<st
     console.error('Error in getAdvisorCompensationTypes:', error);
     return [];
   }
+};
+
+// Helper function to filter advisors by specialty
+const filterBySpecialty = async (advisors: Advisor[], specialty: string) => {
+  if (advisors.length === 0) return [];
+  
+  const advisorIds = advisors.map(advisor => advisor.id);
+  
+  const { data: servicesData } = await supabase
+    .from("advisor_services")
+    .select("*")
+    .in("advisor_id", advisorIds);
+    
+  if (!servicesData) return [];
+  
+  // Create a mapping of advisor_id -> services
+  const servicesMap = new Map();
+  servicesData.forEach(service => {
+    const services = servicesMap.get(service.advisor_id) || [];
+    services.push(service.service);
+    servicesMap.set(service.advisor_id, services);
+  });
+  
+  // Filter advisors based on specialty
+  return advisors.filter(advisor => {
+    const services = servicesMap.get(advisor.id) || [];
+    return services.includes(specialty);
+  });
 };
