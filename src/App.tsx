@@ -68,7 +68,7 @@ const AppRoutes = () => (
             <BlogEditor />
           </ProtectedRoute>
         } />
-        <Route path="/admin/blog/edit/:id" element={
+        <Route path="/admin/blog/edit/:slug" element={
           <ProtectedRoute>
             <BlogEditor />
           </ProtectedRoute>

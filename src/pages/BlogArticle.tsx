@@ -230,7 +230,7 @@ export default function BlogArticle() {
                   <div className="mb-8">
                     <Button 
                       variant="outline" 
-                      onClick={() => navigate(`/admin/blog/edit/${post.id}`)}
+                      onClick={() => navigate(`/admin/blog/edit/${post.slug}`)}
                     >
                       <Edit className="mr-2 h-4 w-4" /> Edit Post
                     </Button>

@@ -198,7 +198,7 @@ const AdminDashboard = () => {
                   <Button 
                     variant="outline" 
                     size="icon" 
-                    onClick={() => navigate(`/admin/blog/edit/${post.id}`)}
+                    onClick={() => navigate(`/admin/blog/edit/${post.slug}`)}
                   >
                     <Edit className="h-4 w-4" />
                   </Button>

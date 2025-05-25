@@ -4,24 +4,76 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { getBlogPostBySlug } from '@/services/blogService';
-import { createBlogPost, updateBlogPost } from '@/services/blogMutations';
+import { supabase } from '@/integrations/supabase/client';
+import { getPostCategories } from '@/utils/blogRelations';
+import { BlogPost } from '@/services/blogService';
+import { createBlogPost, updateBlogPost } from '@/services/blogService';
 import { toast } from '@/components/ui/use-toast';
 import { blogPostSchema, type BlogPostFormValues, type BlogCategoryType } from '@/types/blog';
 
 export const useBlogEditor = () => {
-  const { slug } = useParams<{ slug?: string }>();
+  // Get the slug from the URL params
+  const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [coverImageUrl, setCoverImageUrl] = useState<string>('');
 
-  const { data: existingPost, isLoading: isPostLoading } = useQuery({
-    queryKey: ['blogPost', slug],
-    queryFn: () => getBlogPostBySlug(slug || ''),
-    enabled: !!slug,
-  });
+  const [isPostLoading, setIsPostLoading] = useState(false);
+  const [existingPost, setExistingPost] = useState<BlogPost | null>(null);
 
-  const { control, handleSubmit, setValue, formState: { errors } } = useForm<BlogPostFormValues>({
+  // Fetch blog post data directly from Supabase by slug
+  useEffect(() => {
+    const fetchPost = async () => {
+      if (!slug) {
+        console.log('No slug provided, skipping fetch');
+        return;
+      }
+      
+      console.log('Fetching post with slug:', slug);
+      setIsPostLoading(true);
+      try {
+        // Fetch the post by slug
+        const { data: postData, error } = await supabase
+          .from('blog_posts')
+          .select('*')
+          .eq('slug', slug)
+          .single();
+
+        if (error) {
+          console.error('Error fetching post data:', error);
+          throw error;
+        }
+        
+        if (!postData) {
+          console.log('No post found with slug:', slug);
+          return;
+        }
+
+        console.log('Fetched post data:', postData);
+        
+        // Fetch categories
+        console.log('Fetching categories for post ID:', postData.id);
+        const categories = await getPostCategories(postData.id);
+        
+        const fullPost = {
+          ...postData,
+          categories,
+          status: postData.status as 'draft' | 'published'
+        };
+        
+        console.log('Full post data with categories:', fullPost);
+        setExistingPost(fullPost);
+      } catch (error) {
+        console.error('Error fetching blog post:', error);
+      } finally {
+        setIsPostLoading(false);
+      }
+    };
+
+    fetchPost();
+  }, [slug]);
+
+  const { control, handleSubmit, setValue, reset, formState: { errors } } = useForm<BlogPostFormValues>({
     resolver: zodResolver(blogPostSchema),
     defaultValues: {
       title: '',
@@ -35,17 +87,39 @@ export const useBlogEditor = () => {
   });
 
   useEffect(() => {
+    console.log('Existing post changed:', existingPost);
     if (existingPost) {
-      setValue('title', existingPost.title);
-      setValue('slug', existingPost.slug);
-      setValue('content', existingPost.content);
-      setValue('excerpt', existingPost.excerpt || '');
-      setValue('cover_image_url', existingPost.cover_image_url || '');
-      setValue('status', existingPost.status);
-      setValue('categories', existingPost.categories as BlogCategoryType[] || []);
+      const formData = {
+        title: existingPost.title,
+        slug: existingPost.slug,
+        content: existingPost.content,
+        excerpt: existingPost.excerpt || '',
+        cover_image_url: existingPost.cover_image_url || '',
+        status: existingPost.status,
+        categories: existingPost.categories as BlogCategoryType[] || [],
+      };
+      console.log('Resetting form with data:', formData);
+      
+      // Log the form state before reset
+      console.log('Form state before reset:', control._formValues);
+      
+      reset(formData, {
+        keepDirty: false,
+        keepErrors: false,
+        keepDefaultValues: false,
+      });
+      
+      // Log the form state after reset
+      setTimeout(() => {
+        console.log('Form state after reset:', control._formValues);
+      }, 0);
+      
       setCoverImageUrl(existingPost.cover_image_url || '');
+      console.log('Cover image URL set to:', existingPost.cover_image_url || '(empty)');
+    } else if (slug) {
+      console.log('No post found for slug:', slug);
     }
-  }, [existingPost, setValue]);
+  }, [existingPost, reset, slug]);
 
   const createPostMutation = useMutation({
     mutationFn: createBlogPost,

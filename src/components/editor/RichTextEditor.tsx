@@ -1,4 +1,3 @@
-
 import React, { useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -46,6 +45,7 @@ export function RichTextEditor({
       newText = value.substring(0, start) + prefix + selectedText + suffix + value.substring(end);
     }
     
+    console.log('insertMarkdown - newText before onChange:', newText);
     onChange(newText);
     
     // Set cursor position after the change
