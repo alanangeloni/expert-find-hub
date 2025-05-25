@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,9 +10,10 @@ interface FirmListProps {
   firms: InvestmentFirm[];
   isLoading: boolean;
   formatMinimumInvestment: (value: number | null | undefined) => string;
+  basePath: string;
 }
 
-export function FirmList({ firms, isLoading, formatMinimumInvestment }: FirmListProps) {
+export function FirmList({ firms, isLoading, formatMinimumInvestment, basePath }: FirmListProps) {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -91,7 +91,7 @@ export function FirmList({ firms, isLoading, formatMinimumInvestment }: FirmList
           
           <CardFooter className="pt-0 px-2 pb-2 mt-auto">
             <Button asChild variant="default" className="h-8 px-5 text-base rounded-full font-semibold" style={{ backgroundColor: '#004C6D', color: '#fff' }}>
-              <Link to={`/investment-firms/${firm.slug}`}>View Details</Link>
+              <Link to={`${basePath}/${firm.slug}`}>View Details</Link>
             </Button>
           </CardFooter>
         </Card>

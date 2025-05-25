@@ -189,6 +189,7 @@ export default function AccountingFirmsPage() {
           }))}
           isLoading={isLoading}
           formatMinimumInvestment={formatMinimumFee}
+          basePath="/accounting-firms"
         />
       </div>
     </div>

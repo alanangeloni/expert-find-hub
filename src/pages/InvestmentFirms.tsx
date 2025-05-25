@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getInvestmentFirms, type FirmFilter, type InvestmentFirm } from '@/services/investmentFirmsService';
@@ -151,6 +150,7 @@ const InvestmentFirms = () => {
             firms={firms || []}
             isLoading={isLoading}
             formatMinimumInvestment={formatMinimumInvestment}
+            basePath="/investment-firms"
           />
         </div>
       </div>
