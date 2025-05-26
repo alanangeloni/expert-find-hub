@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -72,16 +71,36 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
 
   const mutation = useMutation({
     mutationFn: async (data: AdvisorFormData) => {
+      const advisorData = {
+        name: data.name,
+        slug: data.slug,
+        firm_name: data.firm_name || null,
+        position: data.position || null,
+        personal_bio: data.personal_bio || null,
+        firm_bio: data.firm_bio || null,
+        email: data.email || null,
+        phone_number: data.phone_number || null,
+        years_of_experience: data.years_of_experience || null,
+        state_hq: data.state_hq || null,
+        city: data.city || null,
+        minimum: data.minimum || null,
+        website_url: data.website_url || null,
+        verified: data.verified,
+        premium: data.premium,
+        fiduciary: data.fiduciary,
+        first_session_is_free: data.first_session_is_free,
+      };
+
       if (advisor) {
         const { error } = await supabase
           .from('financial_advisors')
-          .update(data)
+          .update(advisorData)
           .eq('id', advisor.id);
         if (error) throw error;
       } else {
         const { error } = await supabase
           .from('financial_advisors')
-          .insert(data);
+          .insert(advisorData);
         if (error) throw error;
       }
     },

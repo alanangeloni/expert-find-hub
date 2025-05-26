@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -86,8 +85,22 @@ export function InvestmentFirmForm({ firm, onSuccess }: InvestmentFirmFormProps)
   const mutation = useMutation({
     mutationFn: async (data: FirmFormData) => {
       const firmData = {
-        ...data,
+        name: data.name,
+        slug: data.slug,
+        description: data.description || null,
+        long_description: data.long_description || null,
+        address: data.address || null,
+        website: data.website || null,
+        headquarters: data.headquarters || null,
+        aum: data.aum || null,
+        minimum_investment: data.minimum_investment || null,
         established: data.established ? new Date(data.established).toISOString().split('T')[0] : null,
+        asset_class: data.asset_class || null,
+        verified: data.verified,
+        rating: data.rating || null,
+        review_count: data.review_count || null,
+        fees: data.fees || null,
+        target_return: data.target_return || null,
       };
 
       if (firm) {
