@@ -509,6 +509,9 @@ export type Database = {
       financial_advisors: {
         Row: {
           advisor_sec_crd: string | null
+          advisor_services:
+            | Database["public"]["Enums"]["Advisor Services"][]
+            | null
           calls_booked: number | null
           city: string | null
           created_at: string | null
@@ -546,6 +549,9 @@ export type Database = {
         }
         Insert: {
           advisor_sec_crd?: string | null
+          advisor_services?:
+            | Database["public"]["Enums"]["Advisor Services"][]
+            | null
           calls_booked?: number | null
           city?: string | null
           created_at?: string | null
@@ -583,6 +589,9 @@ export type Database = {
         }
         Update: {
           advisor_sec_crd?: string | null
+          advisor_services?:
+            | Database["public"]["Enums"]["Advisor Services"][]
+            | null
           calls_booked?: number | null
           city?: string | null
           created_at?: string | null
@@ -999,6 +1008,37 @@ export type Database = {
         | "Payroll Services"
         | "Sales Tax"
         | "Tax Preparation"
+      "Advisor Services":
+        | "Alternative Investments"
+        | "Budgeting"
+        | "Business Succession Planning"
+        | "Cash Flow Analysis"
+        | "Cryptocurrency & NFTs"
+        | "Debt Management"
+        | "Divorce Planning"
+        | "Education Planning"
+        | "Elder Care"
+        | "Employee/Employer Benefits"
+        | "Environment, Social, and Governance"
+        | "Estate/Trust Planning"
+        | "Financial Planning"
+        | "Health Care"
+        | "Inheritance"
+        | "Insurance Planning"
+        | "Investment Management"
+        | "Life Transitions"
+        | "Long-term Care"
+        | "Philanthropy Planning"
+        | "Portfolio Construction"
+        | "Retirement Income Management"
+        | "Retirement Planning"
+        | "Small Business Planning"
+        | "Socially Responsible Investing"
+        | "Social Security Planning"
+        | "Sports and Entertainment"
+        | "Succession Planning"
+        | "Tax Planning"
+        | "Wealth Management"
       "Asset Class":
         | "Art"
         | "Asset Management"
@@ -1076,6 +1116,27 @@ export type Database = {
         | "Financial Planner"
         | "Investment Advisor"
         | "Retirement Planner"
+      professional_designations_for_advisors:
+        | "Accredited Estate Planner (AEP)"
+        | "Accredited Investment Fiduciary (AIF)"
+        | "Accredited Portfolio Manager Advisor (APMA)"
+        | "Certified Divorce Financial Analyst (CDFA)"
+        | "Certified Exit Planning Advisor (CEPA)"
+        | "Certified Financial Planner (CFP)"
+        | "Certified Kingdom Advisor (CKA)"
+        | "Certified Public Accountant (CPA)"
+        | "Certified Specialist in Planned Giving (CSPG)"
+        | "Certified Value Growth Advisor (CVGA)"
+        | "Chartered Financial Consultant (ChFC)"
+        | "Chartered Financial Analyst (CFA)"
+        | "Chartered Special Needs Consultant (ChSNC)"
+        | "Chartered Retirement Planning Counselor™ (CRPC®)"
+        | "Enrolled Agent (EA)"
+        | "Life Underwriting Training Council Fellow (LUTCF)"
+        | "Registered Financial Consultant (RFC)"
+        | "Registered Investment Advisor (RIA)"
+        | "Retirement Management Advisor (RMA®)"
+        | "Retirement Income Certified Professional (RICP)"
       return_type:
         | "Dividends"
         | "Dividends & Value"
@@ -1271,6 +1332,38 @@ export const Constants = {
         "Sales Tax",
         "Tax Preparation",
       ],
+      "Advisor Services": [
+        "Alternative Investments",
+        "Budgeting",
+        "Business Succession Planning",
+        "Cash Flow Analysis",
+        "Cryptocurrency & NFTs",
+        "Debt Management",
+        "Divorce Planning",
+        "Education Planning",
+        "Elder Care",
+        "Employee/Employer Benefits",
+        "Environment, Social, and Governance",
+        "Estate/Trust Planning",
+        "Financial Planning",
+        "Health Care",
+        "Inheritance",
+        "Insurance Planning",
+        "Investment Management",
+        "Life Transitions",
+        "Long-term Care",
+        "Philanthropy Planning",
+        "Portfolio Construction",
+        "Retirement Income Management",
+        "Retirement Planning",
+        "Small Business Planning",
+        "Socially Responsible Investing",
+        "Social Security Planning",
+        "Sports and Entertainment",
+        "Succession Planning",
+        "Tax Planning",
+        "Wealth Management",
+      ],
       "Asset Class": [
         "Art",
         "Asset Management",
@@ -1355,6 +1448,28 @@ export const Constants = {
         "Financial Planner",
         "Investment Advisor",
         "Retirement Planner",
+      ],
+      professional_designations_for_advisors: [
+        "Accredited Estate Planner (AEP)",
+        "Accredited Investment Fiduciary (AIF)",
+        "Accredited Portfolio Manager Advisor (APMA)",
+        "Certified Divorce Financial Analyst (CDFA)",
+        "Certified Exit Planning Advisor (CEPA)",
+        "Certified Financial Planner (CFP)",
+        "Certified Kingdom Advisor (CKA)",
+        "Certified Public Accountant (CPA)",
+        "Certified Specialist in Planned Giving (CSPG)",
+        "Certified Value Growth Advisor (CVGA)",
+        "Chartered Financial Consultant (ChFC)",
+        "Chartered Financial Analyst (CFA)",
+        "Chartered Special Needs Consultant (ChSNC)",
+        "Chartered Retirement Planning Counselor™ (CRPC®)",
+        "Enrolled Agent (EA)",
+        "Life Underwriting Training Council Fellow (LUTCF)",
+        "Registered Financial Consultant (RFC)",
+        "Registered Investment Advisor (RIA)",
+        "Retirement Management Advisor (RMA®)",
+        "Retirement Income Certified Professional (RICP)",
       ],
       return_type: [
         "Dividends",

@@ -25,6 +25,7 @@ import Header from "./components/layout/Header";
 
 // Admin pages
 import AdminDashboard from "./components/admin/AdminDashboard";
+import AdminEntityDashboard from "./pages/admin/AdminEntityDashboard";
 import BlogEditor from "./pages/admin/BlogEditor";
 
 const queryClient = new QueryClient({
@@ -61,6 +62,11 @@ const AppRoutes = () => (
         <Route path="/admin/blog" element={
           <ProtectedRoute>
             <AdminDashboard />
+          </ProtectedRoute>
+        } />
+        <Route path="/admin/entities" element={
+          <ProtectedRoute>
+            <AdminEntityDashboard />
           </ProtectedRoute>
         } />
         <Route path="/admin/blog/new" element={
