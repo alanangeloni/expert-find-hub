@@ -21,15 +21,18 @@ import {
 } from '@/components/ui/form';
 
 const assetClasses = [
-  'Real Estate',
-  'Private Equity',
-  'Venture Capital',
-  'Hedge Funds',
+  'Art',
+  'Asset Management',
+  'Collectibles',
   'Commodities',
-  'Fixed Income',
-  'Equities',
-  'Alternative Investments'
-];
+  'Cryptocurrency',
+  'Loans',
+  'Real Estate',
+  'Robo-Advisor',
+  'Savings',
+  'Startups',
+  'Trading'
+] as const;
 
 const firmSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -42,7 +45,7 @@ const firmSchema = z.object({
   aum: z.string().optional(),
   minimum_investment: z.number().min(0).optional(),
   established: z.string().optional(),
-  asset_class: z.string().optional(),
+  asset_class: z.enum(assetClasses).optional(),
   verified: z.boolean().default(false),
   rating: z.number().min(0).max(5).optional(),
   review_count: z.number().min(0).optional(),
@@ -71,7 +74,7 @@ export function InvestmentFirmForm({ firm, onSuccess }: InvestmentFirmFormProps)
       aum: firm?.aum || '',
       minimum_investment: firm?.minimum_investment || undefined,
       established: firm?.established || '',
-      asset_class: firm?.asset_class || '',
+      asset_class: firm?.asset_class || undefined,
       verified: firm?.verified || false,
       rating: firm?.rating || undefined,
       review_count: firm?.review_count || undefined,
@@ -96,7 +99,7 @@ export function InvestmentFirmForm({ firm, onSuccess }: InvestmentFirmFormProps)
       } else {
         const { error } = await supabase
           .from('investment_firms')
-          .insert([firmData]);
+          .insert(firmData);
         if (error) throw error;
       }
     },

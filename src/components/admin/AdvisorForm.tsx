@@ -81,7 +81,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
       } else {
         const { error } = await supabase
           .from('financial_advisors')
-          .insert([data]);
+          .insert(data);
         if (error) throw error;
       }
     },

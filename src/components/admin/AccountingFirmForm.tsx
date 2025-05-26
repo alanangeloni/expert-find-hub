@@ -80,7 +80,7 @@ export function AccountingFirmForm({ firm, onSuccess }: AccountingFirmFormProps)
       } else {
         const { error } = await supabase
           .from('accounting_firms')
-          .insert([firmData]);
+          .insert(firmData);
         if (error) throw error;
       }
     },
