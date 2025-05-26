@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,6 +18,15 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { X } from 'lucide-react';
 
 const advisorSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -36,6 +46,7 @@ const advisorSchema = z.object({
   premium: z.boolean().default(false),
   fiduciary: z.boolean().default(false),
   first_session_is_free: z.boolean().default(false),
+  advisor_services: z.array(z.string()).max(10, 'Maximum 10 services allowed').optional(),
 });
 
 type AdvisorFormData = z.infer<typeof advisorSchema>;
@@ -45,7 +56,29 @@ interface AdvisorFormProps {
   onSuccess: () => void;
 }
 
+const AVAILABLE_SERVICES = [
+  'Financial Planning',
+  'Retirement Planning',
+  'Investment Management',
+  'Estate Planning',
+  'Tax Planning',
+  'Insurance Planning',
+  'Education Planning',
+  'Business Planning',
+  'Wealth Management',
+  'Portfolio Management',
+  'Risk Management',
+  'Cash Flow Planning',
+  'Debt Management',
+  'College Planning',
+  'Social Security Planning'
+];
+
 export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
+  const [selectedServices, setSelectedServices] = React.useState<string[]>(
+    advisor?.advisor_services || []
+  );
+
   const form = useForm<AdvisorFormData>({
     resolver: zodResolver(advisorSchema),
     defaultValues: {
@@ -66,6 +99,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
       premium: advisor?.premium || false,
       fiduciary: advisor?.fiduciary || false,
       first_session_is_free: advisor?.first_session_is_free || false,
+      advisor_services: advisor?.advisor_services || [],
     },
   });
 
@@ -89,6 +123,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
         premium: data.premium,
         fiduciary: data.fiduciary,
         first_session_is_free: data.first_session_is_free,
+        advisor_services: selectedServices.length > 0 ? selectedServices : null,
       };
 
       if (advisor) {
@@ -122,6 +157,33 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
   const onSubmit = (data: AdvisorFormData) => {
     mutation.mutate(data);
   };
+
+  const addService = (service: string) => {
+    if (selectedServices.length >= 10) {
+      toast({
+        title: 'Maximum services reached',
+        description: 'You can only select up to 10 services.',
+        variant: 'destructive'
+      });
+      return;
+    }
+    
+    if (!selectedServices.includes(service)) {
+      const newServices = [...selectedServices, service];
+      setSelectedServices(newServices);
+      form.setValue('advisor_services', newServices);
+    }
+  };
+
+  const removeService = (service: string) => {
+    const newServices = selectedServices.filter(s => s !== service);
+    setSelectedServices(newServices);
+    form.setValue('advisor_services', newServices);
+  };
+
+  const availableServicesToAdd = AVAILABLE_SERVICES.filter(
+    service => !selectedServices.includes(service)
+  );
 
   return (
     <Form {...form}>
@@ -313,6 +375,46 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
             </FormItem>
           )}
         />
+
+        {/* Services Offered Section */}
+        <div className="space-y-4">
+          <div>
+            <FormLabel>Services Offered ({selectedServices.length}/10)</FormLabel>
+            <p className="text-sm text-gray-500 mb-2">Select up to 10 services this advisor offers</p>
+            
+            {selectedServices.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-3">
+                {selectedServices.map((service) => (
+                  <Badge key={service} variant="secondary" className="flex items-center gap-1">
+                    {service}
+                    <button
+                      type="button"
+                      onClick={() => removeService(service)}
+                      className="ml-1 hover:bg-gray-300 rounded-full p-0.5"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                ))}
+              </div>
+            )}
+
+            {availableServicesToAdd.length > 0 && selectedServices.length < 10 && (
+              <Select onValueChange={addService}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Add a service..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableServicesToAdd.map((service) => (
+                    <SelectItem key={service} value={service}>
+                      {service}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
+          </div>
+        </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <FormField
