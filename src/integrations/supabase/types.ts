@@ -863,6 +863,56 @@ export type Database = {
         }
         Relationships: []
       }
+      meeting_requests: {
+        Row: {
+          advisor_id: string
+          created_at: string
+          email: string
+          first_name: string
+          id: string
+          interested_in_discussing: string[] | null
+          last_name: string
+          message: string | null
+          phone_number: string | null
+          preferred_contact_method: string | null
+          updated_at: string
+        }
+        Insert: {
+          advisor_id: string
+          created_at?: string
+          email: string
+          first_name: string
+          id?: string
+          interested_in_discussing?: string[] | null
+          last_name: string
+          message?: string | null
+          phone_number?: string | null
+          preferred_contact_method?: string | null
+          updated_at?: string
+        }
+        Update: {
+          advisor_id?: string
+          created_at?: string
+          email?: string
+          first_name?: string
+          id?: string
+          interested_in_discussing?: string[] | null
+          last_name?: string
+          message?: string | null
+          phone_number?: string | null
+          preferred_contact_method?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "meeting_requests_advisor_id_fkey"
+            columns: ["advisor_id"]
+            isOneToOne: false
+            referencedRelation: "financial_advisors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       money_making_methods: {
         Row: {
           created_at: string | null

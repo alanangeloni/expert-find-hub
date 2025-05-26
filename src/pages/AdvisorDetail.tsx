@@ -1,17 +1,19 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { 
   getAdvisorBySlug, 
   getAdvisorServices, 
   getAdvisorProfessionalDesignations,
   getAdvisorCompensationTypes
 } from '@/services/advisorsService';
+import { MeetingRequestForm } from '@/components/advisors/MeetingRequestForm';
 import { 
   Calendar, 
   MapPin, 
@@ -23,11 +25,14 @@ import {
   Globe, 
   FileText, 
   DollarSign,
-  Shield 
+  Shield,
+  MessageCircle,
+  Users
 } from 'lucide-react';
 
 const AdvisorDetail = () => {
   const { slug } = useParams<{ slug: string }>();
+  const [isMeetingDialogOpen, setIsMeetingDialogOpen] = useState(false);
   
   const { data: advisor, isLoading: isLoadingAdvisor } = useQuery({
     queryKey: ['advisor', slug],
@@ -121,14 +126,34 @@ const AdvisorDetail = () => {
             </div>
           </div>
 
-          <div className="md:text-right">
+          <div className="md:text-right flex flex-col gap-3">
+            <Dialog open={isMeetingDialogOpen} onOpenChange={setIsMeetingDialogOpen}>
+              <DialogTrigger asChild>
+                <Button 
+                  className="bg-white text-blue-700 hover:bg-blue-50 w-full md:w-auto"
+                  size="lg"
+                >
+                  <Calendar className="h-4 w-4 mr-2" />
+                  Request Meeting
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                <MeetingRequestForm
+                  advisorId={advisor.id}
+                  advisorName={advisor.name}
+                  onSuccess={() => setIsMeetingDialogOpen(false)}
+                />
+              </DialogContent>
+            </Dialog>
+
             {advisor.scheduling_link && (
               <Button 
-                className="bg-white text-blue-700 hover:bg-blue-50 w-full md:w-auto"
+                className="bg-green-600 text-white hover:bg-green-700 w-full md:w-auto"
                 size="lg"
+                onClick={() => window.open(advisor.scheduling_link, '_blank')}
               >
-                <Calendar className="h-4 w-4 mr-2" />
-                Schedule a Meeting
+                <Users className="h-4 w-4 mr-2" />
+                Book Direct
               </Button>
             )}
           </div>
@@ -184,11 +209,11 @@ const AdvisorDetail = () => {
         </div>
 
         <div>
-          {/* Contact & Details Section */}
+          {/* Contact Section */}
           <Card className="mb-8 p-6">
-            <h3 className="text-xl font-bold mb-4">Contact Information</h3>
+            <h3 className="text-xl font-bold mb-4">Get in Touch</h3>
             
-            <div className="space-y-4">
+            <div className="space-y-3 mb-6">
               {advisor.phone_number && (
                 <div className="flex items-center">
                   <Phone className="h-5 w-5 mr-3 text-gray-500" />
@@ -216,6 +241,42 @@ const AdvisorDetail = () => {
                   </a>
                 </div>
               )}
+            </div>
+
+            <div className="flex flex-col gap-2">
+              {advisor.phone_number && (
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => window.open(`tel:${advisor.phone_number}`, '_self')}
+                >
+                  <Phone className="h-4 w-4 mr-2" />
+                  Call Now
+                </Button>
+              )}
+              
+              {advisor.email && (
+                <Button 
+                  variant="outline" 
+                  className="w-full justify-start"
+                  onClick={() => window.open(`mailto:${advisor.email}`, '_self')}
+                >
+                  <Mail className="h-4 w-4 mr-2" />
+                  Send Email
+                </Button>
+              )}
+
+              <Dialog open={isMeetingDialogOpen} onOpenChange={setIsMeetingDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    className="w-full justify-start"
+                  >
+                    <MessageCircle className="h-4 w-4 mr-2" />
+                    Request Meeting
+                  </Button>
+                </DialogTrigger>
+              </Dialog>
             </div>
           </Card>
 
@@ -292,18 +353,20 @@ const AdvisorDetail = () => {
           )}
 
           {/* CTA */}
-          {advisor.scheduling_link && (
-            <Card className="p-6 text-center">
-              <h3 className="text-xl font-bold mb-3">Ready to get started?</h3>
-              <p className="text-gray-600 mb-4">
-                Schedule a meeting to discuss your financial goals.
-              </p>
-              <Button className="w-full" size="lg">
-                <Calendar className="h-4 w-4 mr-2" />
-                Book a Meeting
-              </Button>
-            </Card>
-          )}
+          <Card className="p-6 text-center">
+            <h3 className="text-xl font-bold mb-3">Ready to get started?</h3>
+            <p className="text-gray-600 mb-4">
+              Schedule a meeting to discuss your financial goals.
+            </p>
+            <Dialog open={isMeetingDialogOpen} onOpenChange={setIsMeetingDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="w-full" size="lg">
+                  <Calendar className="h-4 w-4 mr-2" />
+                  Request Meeting
+                </Button>
+              </DialogTrigger>
+            </Dialog>
+          </Card>
         </div>
       </div>
     </div>
