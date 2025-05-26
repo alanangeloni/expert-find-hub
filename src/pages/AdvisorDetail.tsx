@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -213,71 +212,31 @@ const AdvisorDetail = () => {
           <Card className="mb-8 p-6">
             <h3 className="text-xl font-bold mb-4">Get in Touch</h3>
             
-            <div className="space-y-3 mb-6">
-              {advisor.phone_number && (
-                <div className="flex items-center">
-                  <Phone className="h-5 w-5 mr-3 text-gray-500" />
-                  <span>{advisor.phone_number}</span>
-                </div>
-              )}
-              
-              {advisor.email && (
-                <div className="flex items-center">
-                  <Mail className="h-5 w-5 mr-3 text-gray-500" />
-                  <span>{advisor.email}</span>
-                </div>
-              )}
-              
-              {advisor.website_url && (
-                <div className="flex items-center">
-                  <Globe className="h-5 w-5 mr-3 text-gray-500" />
-                  <a 
-                    href={advisor.website_url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="text-blue-600 hover:underline"
-                  >
-                    Visit Website
-                  </a>
-                </div>
-              )}
-            </div>
+            {advisor.website_url && (
+              <div className="flex items-center mb-6">
+                <Globe className="h-5 w-5 mr-3 text-gray-500" />
+                <a 
+                  href={advisor.website_url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:underline"
+                >
+                  Visit Website
+                </a>
+              </div>
+            )}
 
-            <div className="flex flex-col gap-2">
-              {advisor.phone_number && (
+            <Dialog open={isMeetingDialogOpen} onOpenChange={setIsMeetingDialogOpen}>
+              <DialogTrigger asChild>
                 <Button 
                   variant="outline" 
                   className="w-full justify-start"
-                  onClick={() => window.open(`tel:${advisor.phone_number}`, '_self')}
                 >
-                  <Phone className="h-4 w-4 mr-2" />
-                  Call Now
+                  <MessageCircle className="h-4 w-4 mr-2" />
+                  Request Meeting
                 </Button>
-              )}
-              
-              {advisor.email && (
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start"
-                  onClick={() => window.open(`mailto:${advisor.email}`, '_self')}
-                >
-                  <Mail className="h-4 w-4 mr-2" />
-                  Send Email
-                </Button>
-              )}
-
-              <Dialog open={isMeetingDialogOpen} onOpenChange={setIsMeetingDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button 
-                    variant="outline" 
-                    className="w-full justify-start"
-                  >
-                    <MessageCircle className="h-4 w-4 mr-2" />
-                    Request Meeting
-                  </Button>
-                </DialogTrigger>
-              </Dialog>
-            </div>
+              </DialogTrigger>
+            </Dialog>
           </Card>
 
           {/* Professional Details */}
