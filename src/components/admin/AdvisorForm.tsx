@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -122,33 +121,15 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
   const mutation = useMutation({
     mutationFn: async (data: AdvisorFormData) => {
       console.log('Submitting advisor data:', data);
-      console.log('Selected services:', selectedServices);
       
+      // Ensure we're using the selectedServices state
       const advisorData = {
-        name: data.name,
-        slug: data.slug,
-        firm_name: data.firm_name || null,
-        position: data.position || null,
-        personal_bio: data.personal_bio || null,
-        firm_bio: data.firm_bio || null,
-        email: data.email || null,
-        phone_number: data.phone_number || null,
-        years_of_experience: data.years_of_experience || null,
-        state_hq: data.state_hq || null,
-        city: data.city || null,
-        minimum: data.minimum || null,
-        website_url: data.website_url || null,
-        verified: data.verified,
-        premium: data.premium,
-        fiduciary: data.fiduciary,
-        first_session_is_free: data.first_session_is_free,
-        // Ensure the services array is properly formatted for PostgreSQL
-        advisor_services: selectedServices.length > 0 ? selectedServices : null,
+        ...data,
+        // Convert the array to a proper PostgreSQL array
+        advisor_services: selectedServices,
       };
 
       console.log('Final advisor data being sent:', advisorData);
-      console.log('Services array type:', typeof advisorData.advisor_services);
-      console.log('Services array value:', advisorData.advisor_services);
 
       if (advisor) {
         const { data: result, error } = await supabase
@@ -157,7 +138,6 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
           .eq('id', advisor.id)
           .select();
         
-        console.log('Update result:', result);
         if (error) {
           console.error('Update error:', error);
           throw error;
@@ -169,7 +149,6 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
           .insert(advisorData)
           .select();
         
-        console.log('Insert result:', result);
         if (error) {
           console.error('Insert error:', error);
           throw error;
@@ -217,17 +196,13 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
     
     if (!selectedServices.includes(service)) {
       const newServices = [...selectedServices, service];
-      console.log('Adding service, new services:', newServices);
       setSelectedServices(newServices);
-      form.setValue('advisor_services', newServices);
     }
   };
 
   const removeService = (service: string) => {
     const newServices = selectedServices.filter(s => s !== service);
-    console.log('Removing service, new services:', newServices);
     setSelectedServices(newServices);
-    form.setValue('advisor_services', newServices);
   };
 
   const availableServicesToAdd = AVAILABLE_SERVICES.filter(
