@@ -125,7 +125,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
         premium: data.premium,
         fiduciary: data.fiduciary,
         first_session_is_free: data.first_session_is_free,
-        advisor_services: selectedServices.length > 0 ? selectedServices : null,
+        advisor_services: selectedServices.length > 0 ? selectedServices as any : null,
       };
 
       console.log('Final advisor data being sent:', advisorData);
