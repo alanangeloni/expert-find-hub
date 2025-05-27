@@ -142,10 +142,13 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
         premium: data.premium,
         fiduciary: data.fiduciary,
         first_session_is_free: data.first_session_is_free,
+        // Ensure the services array is properly formatted for PostgreSQL
         advisor_services: selectedServices.length > 0 ? selectedServices : null,
       };
 
       console.log('Final advisor data being sent:', advisorData);
+      console.log('Services array type:', typeof advisorData.advisor_services);
+      console.log('Services array value:', advisorData.advisor_services);
 
       if (advisor) {
         const { data: result, error } = await supabase
@@ -193,7 +196,12 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
 
   const onSubmit = (data: AdvisorFormData) => {
     console.log('Form submission data:', data);
-    console.log('Current selected services:', selectedServices);
+    console.log('Current selected services before mutation:', selectedServices);
+    console.log('Services array length:', selectedServices.length);
+    console.log('Services array content:', JSON.stringify(selectedServices));
+    
+    // Update the form data with the current selected services
+    data.advisor_services = selectedServices;
     mutation.mutate(data);
   };
 
