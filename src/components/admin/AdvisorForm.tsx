@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -55,22 +56,38 @@ interface AdvisorFormProps {
   onSuccess: () => void;
 }
 
+// Use the exact enumerated values from the database schema
 const AVAILABLE_SERVICES = [
-  'Financial Planning',
-  'Retirement Planning',
-  'Investment Management',
-  'Estate Planning',
-  'Tax Planning',
-  'Insurance Planning',
-  'Education Planning',
-  'Business Planning',
-  'Wealth Management',
-  'Portfolio Management',
-  'Risk Management',
-  'Cash Flow Planning',
+  'Alternative Investments',
+  'Budgeting',
+  'Business Succession Planning',
+  'Cash Flow Analysis',
+  'Cryptocurrency & NFTs',
   'Debt Management',
-  'College Planning',
-  'Social Security Planning'
+  'Divorce Planning',
+  'Education Planning',
+  'Elder Care',
+  'Employee/Employer Benefits',
+  'Environment, Social, and Governance',
+  'Estate/Trust Planning',
+  'Financial Planning',
+  'Health Care',
+  'Inheritance',
+  'Insurance Planning',
+  'Investment Management',
+  'Life Transitions',
+  'Long-term Care',
+  'Philanthropy Planning',
+  'Portfolio Construction',
+  'Retirement Income Management',
+  'Retirement Planning',
+  'Small Business Planning',
+  'Socially Responsible Investing',
+  'Social Security Planning',
+  'Sports and Entertainment',
+  'Succession Planning',
+  'Tax Planning',
+  'Wealth Management'
 ];
 
 export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
@@ -125,7 +142,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
         premium: data.premium,
         fiduciary: data.fiduciary,
         first_session_is_free: data.first_session_is_free,
-        advisor_services: selectedServices.length > 0 ? selectedServices as any : null,
+        advisor_services: selectedServices.length > 0 ? selectedServices : null,
       };
 
       console.log('Final advisor data being sent:', advisorData);
@@ -142,6 +159,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
           console.error('Update error:', error);
           throw error;
         }
+        return result;
       } else {
         const { data: result, error } = await supabase
           .from('financial_advisors')
@@ -153,9 +171,11 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
           console.error('Insert error:', error);
           throw error;
         }
+        return result;
       }
     },
-    onSuccess: () => {
+    onSuccess: (result) => {
+      console.log('Mutation success, result:', result);
       toast({ 
         title: advisor ? 'Advisor updated successfully' : 'Advisor created successfully' 
       });
