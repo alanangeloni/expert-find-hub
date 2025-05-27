@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -105,6 +104,9 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
 
   const mutation = useMutation({
     mutationFn: async (data: AdvisorFormData) => {
+      console.log('Submitting advisor data:', data);
+      console.log('Selected services:', selectedServices);
+      
       const advisorData = {
         name: data.name,
         slug: data.slug,
@@ -126,17 +128,31 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
         advisor_services: selectedServices.length > 0 ? selectedServices : null,
       };
 
+      console.log('Final advisor data being sent:', advisorData);
+
       if (advisor) {
-        const { error } = await supabase
+        const { data: result, error } = await supabase
           .from('financial_advisors')
           .update(advisorData)
-          .eq('id', advisor.id);
-        if (error) throw error;
+          .eq('id', advisor.id)
+          .select();
+        
+        console.log('Update result:', result);
+        if (error) {
+          console.error('Update error:', error);
+          throw error;
+        }
       } else {
-        const { error } = await supabase
+        const { data: result, error } = await supabase
           .from('financial_advisors')
-          .insert(advisorData);
-        if (error) throw error;
+          .insert(advisorData)
+          .select();
+        
+        console.log('Insert result:', result);
+        if (error) {
+          console.error('Insert error:', error);
+          throw error;
+        }
       }
     },
     onSuccess: () => {
@@ -146,6 +162,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
       onSuccess();
     },
     onError: (error) => {
+      console.error('Mutation error:', error);
       toast({ 
         title: 'Error saving advisor', 
         description: error.message,
@@ -155,6 +172,8 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
   });
 
   const onSubmit = (data: AdvisorFormData) => {
+    console.log('Form submission data:', data);
+    console.log('Current selected services:', selectedServices);
     mutation.mutate(data);
   };
 
@@ -170,6 +189,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
     
     if (!selectedServices.includes(service)) {
       const newServices = [...selectedServices, service];
+      console.log('Adding service, new services:', newServices);
       setSelectedServices(newServices);
       form.setValue('advisor_services', newServices);
     }
@@ -177,6 +197,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
 
   const removeService = (service: string) => {
     const newServices = selectedServices.filter(s => s !== service);
+    console.log('Removing service, new services:', newServices);
     setSelectedServices(newServices);
     form.setValue('advisor_services', newServices);
   };
