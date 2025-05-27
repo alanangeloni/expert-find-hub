@@ -4,11 +4,20 @@ import { useNavigate } from "react-router-dom";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
+// Extend the User type to include our custom role in user_metadata
+interface UserWithRole extends User {
+  user_metadata: {
+    role?: string;
+    [key: string]: any;
+  };
+}
+
 interface AuthContextType {
-  user: User | null;
+  user: UserWithRole | null;
   session: Session | null;
   isLoading: boolean;
   signOut: () => Promise<void>;
+  isAdmin: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,7 +31,7 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<UserWithRole | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
@@ -54,11 +63,15 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     navigate("/");
   };
 
+  // Check if the current user is an admin
+  const isAdmin = user?.user_metadata?.role === 'admin';
+
   const value = {
     user,
     session,
     isLoading,
-    signOut
+    signOut,
+    isAdmin
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

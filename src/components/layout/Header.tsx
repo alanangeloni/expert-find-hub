@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import UserMenu from "@/components/auth/UserMenu";
 
 const Header = () => {
+  
   return <header className="bg-white shadow">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link to="/" className="flex items-center space-x-2">
