@@ -4,7 +4,7 @@ import UserMenu from "@/components/auth/UserMenu";
 
 const Header = () => {
   
-  return <header className="bg-white shadow">
+  return <header className="bg-white">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link to="/" className="flex items-center space-x-2">
           <span className="text-xl font-bold text-brand-blue">Financial Adviser</span>
