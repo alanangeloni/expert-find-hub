@@ -48,8 +48,6 @@ export default function AccountingFirmDetail() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <Header />
-      
       {/* Hero section */}
       <div className="bg-white border-b">
         <div className="container mx-auto py-8 px-4">

@@ -30,6 +30,21 @@ import { X } from 'lucide-react';
 
 import { CLIENT_TYPES, type ClientType } from '@/constants/clientTypes';
 
+// Define US states as a constant array
+const US_STATES = [
+  'Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 
+  'Colorado', 'Connecticut', 'Delaware', 'District of Columbia', 'Florida', 
+  'Georgia', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 
+  'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 
+  'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 
+  'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 
+  'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 
+  'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 
+  'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming'
+] as const satisfies readonly string[];
+
+type USState = typeof US_STATES[number];
+
 // Define professional designations as a const array
 const DESIGNATION_VALUES = [
   'Accredited Estate Planner (AEP)',
@@ -95,6 +110,7 @@ const advisorSchema = z.object({
   advisor_services: z.array(serviceEnum).max(10, 'Maximum 10 services allowed').optional(),
   professional_designations: z.array(designationEnum).max(10, 'Maximum 10 designations allowed').optional(),
   client_type: z.array(clientTypeEnum).max(10, 'Maximum 10 client types allowed').optional(),
+  states_registered_in: z.array(z.enum(US_STATES as unknown as [string, ...string[]])).max(50, 'Maximum 50 states allowed').optional(),
 });
 
 type AdvisorFormData = z.infer<typeof advisorSchema>;
@@ -133,6 +149,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
       advisor_services: advisor?.advisor_services || [],
       professional_designations: advisor?.professional_designations || [],
       client_type: advisor?.client_type || [],
+      states_registered_in: advisor?.states_registered_in || [],
     },
   });
 
@@ -140,6 +157,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
   const currentSelectedServices = form.watch('advisor_services') || [];
   const currentSelectedDesignations = form.watch('professional_designations') || [];
   const currentSelectedClientTypes = form.watch('client_type') || [];
+  const currentSelectedStates = form.watch('states_registered_in') || [];
 
   const mutation = useMutation({
     mutationFn: async (formData: AdvisorFormData) => {
@@ -167,7 +185,8 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
         // Cast arrays to proper types for Supabase
         advisor_services: formData.advisor_services as AdvisorService[] || null,
         professional_designations: formData.professional_designations as DesignationType[] || null,
-        client_type: formData.client_type as ClientType[] || null
+        client_type: formData.client_type as ClientType[] || null,
+        states_registered_in: formData.states_registered_in || null
       };
 
       console.log('Final advisor data being sent:', advisorData);
@@ -554,6 +573,61 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
                     size="sm"
                     className="ml-1 h-auto p-0"
                     onClick={() => removeClientType(type)}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </Badge>
+              ))}
+            </div>
+            <FormMessage />
+          </FormItem>
+
+          {/* States Registered In Multi-select */}
+          <FormItem className="md:col-span-2">
+            <FormLabel>States Registered In</FormLabel>
+            <Select 
+              onValueChange={(value: USState) => {
+                if (!currentSelectedStates.includes(value)) {
+                  const newStates = [...currentSelectedStates, value] as USState[];
+                  form.setValue('states_registered_in', newStates, { shouldValidate: true, shouldDirty: true });
+                } else {
+                  toast({
+                    title: 'State already added',
+                    description: 'This state has already been added.',
+                    variant: 'destructive'
+                  });
+                }
+              }}
+              value=""
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a state" />
+              </SelectTrigger>
+              <SelectContent>
+                {US_STATES.map((state) => (
+                  <SelectItem 
+                    key={state} 
+                    value={state}
+                    disabled={currentSelectedStates.includes(state as USState)}
+                  >
+                    {state}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {currentSelectedStates.map((state: string) => (
+                <Badge key={state} variant="secondary" className="pr-1">
+                  {state}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="ml-1 h-auto p-0"
+                    onClick={() => {
+                      const newStates = currentSelectedStates.filter(s => s !== state) as USState[];
+                      form.setValue('states_registered_in', newStates, { shouldValidate: true, shouldDirty: true });
+                    }}
                   >
                     <X className="h-3 w-3" />
                   </Button>

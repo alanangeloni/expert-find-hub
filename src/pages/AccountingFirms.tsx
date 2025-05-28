@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { Building, ChevronRight, DollarSign, Star, ChevronDown } from "lucide-react";
+import { Building, ChevronRight, DollarSign, Star, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 import { getAccountingFirms } from "@/services/accountingFirmsService";
 import { Button } from "@/components/ui/button";
 import { FilterBar } from "@/components/filters/FilterBar";
@@ -105,92 +105,137 @@ export default function AccountingFirmsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
-      <div className="container mx-auto py-6 md:py-8 px-4 md:px-6">
-        {/* Page Header */}
-        <div className="mb-6 md:mb-10">
-          <h1 className="text-2xl md:text-4xl font-bold mb-2 md:mb-4">Accounting Firms</h1>
-          <p className="text-slate-600 max-w-3xl text-sm md:text-base">
-            Connect with top accounting firms offering a range of professional services tailored to
-            meet your business and personal financial needs.
-          </p>
-        </div>
-
-        {/* Search and Filter */}
-        <FilterBar
-          searchPlaceholder="Search accounting firms..."
-          searchQuery={searchQuery}
-          onSearchChange={(e) => setSearchQuery(e.target.value)}
-        >
-          <div className="flex flex-wrap items-center gap-3">
-            {/* Fee Filter */}
-            <Select value={selectedMinimumFee} onValueChange={setSelectedMinimumFee}>
-              <SelectTrigger className="w-[140px] rounded-[20px] h-12 bg-slate-50 border-slate-100">
-                <SelectValue placeholder="Fee" />
-              </SelectTrigger>
-              <SelectContent className="rounded-md bg-white">
-                <SelectItem value="All">All Fees</SelectItem>
-                <SelectItem value="No Minimum">No Minimum</SelectItem>
-                <SelectItem value="Under $250/mo">Under $250/mo</SelectItem>
-                <SelectItem value="$250/mo+">$250/mo+</SelectItem>
-              </SelectContent>
-            </Select>
-            
-            {/* Service Filter */}
-            <Select value={selectedService} onValueChange={setSelectedService}>
-              <SelectTrigger className="w-[180px] rounded-[20px] h-12 bg-slate-50 border-slate-100">
-                <SelectValue placeholder="Service" />
-              </SelectTrigger>
-              <SelectContent className="rounded-md bg-white">
-                {services.map((service) => (
-                  <SelectItem key={service} value={service}>
-                    {service}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            
-            {/* Specialty Filter */}
-            <Select value={selectedSpecialty} onValueChange={setSelectedSpecialty}>
-              <SelectTrigger className="w-[180px] rounded-[20px] h-12 bg-slate-50 border-slate-100">
-                <SelectValue placeholder="Specialty" />
-              </SelectTrigger>
-              <SelectContent className="rounded-md bg-white">
-                {specialties.map((specialty) => (
-                  <SelectItem key={specialty} value={specialty}>
-                    {specialty}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* Clear Filters */}
-            {(selectedMinimumFee !== "All" || selectedService !== "All" || selectedSpecialty !== "All") && (
-              <Button 
-                variant="outline" 
-                className="rounded-[20px] h-12 border-dashed"
-                onClick={() => {
-                  setSelectedMinimumFee("All");
-                  setSelectedService("All");
-                  setSelectedSpecialty("All");
-                }}
-              >
-                Clear Filters
-              </Button>
-            )}
+    <div className="container mx-auto py-8 px-4">
+      <div className="text-center mb-8">
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Find Accounting Firms</h1>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          Connect with top accounting firms that can help manage your business finances
+        </p>
+      </div>
+      
+      <div className="bg-white rounded-[20px] shadow-sm border border-slate-100 p-4 md:p-5 mb-8">
+        <div className="flex flex-wrap items-center gap-3 md:gap-4">
+          <div className="relative flex-1 min-w-[240px]">
+            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+              <Search className="h-4 w-4 text-slate-400" />
+            </div>
+            <Input
+              type="text"
+              placeholder="Search firms by name or services..."
+              className="pl-10 h-12 w-full rounded-[20px] bg-slate-50 border-slate-200 focus-visible:ring-brand-blue"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
-        </FilterBar>
-
-        {/* Firm List */}
-        <FirmList
-          firms={filteredFirms.map(firm => ({
-            ...firm,
-            minimum_fee: firm.minimum_fee ? parseInt(firm.minimum_fee.replace(/[^\d]/g, ''), 10) : undefined
-          }))}
-          isLoading={isLoading}
-          formatMinimumInvestment={formatMinimumFee}
-          basePath="/accounting-firms"
-        />
+          <Select value={selectedMinimumFee} onValueChange={setSelectedMinimumFee}>
+            <SelectTrigger className="w-[140px] rounded-[20px] h-12 bg-slate-50 border-slate-100">
+              <SelectValue placeholder="Fee" />
+            </SelectTrigger>
+            <SelectContent className="rounded-md bg-white">
+              <SelectItem value="All">All Fees</SelectItem>
+              <SelectItem value="No Minimum">No Minimum</SelectItem>
+              <SelectItem value="Under $250/mo">Under $250/mo</SelectItem>
+              <SelectItem value="$250/mo+">$250/mo+</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={selectedService} onValueChange={setSelectedService}>
+            <SelectTrigger className="w-[180px] rounded-[20px] h-12 bg-slate-50 border-slate-100">
+              <SelectValue placeholder="Service" />
+            </SelectTrigger>
+            <SelectContent className="rounded-md bg-white">
+              {services.map((service) => (
+                <SelectItem key={service} value={service}>
+                  {service}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={selectedSpecialty} onValueChange={setSelectedSpecialty}>
+            <SelectTrigger className="w-[180px] rounded-[20px] h-12 bg-slate-50 border-slate-100">
+              <SelectValue placeholder="Specialty" />
+            </SelectTrigger>
+            <SelectContent className="rounded-md bg-white">
+              {specialties.map((specialty) => (
+                <SelectItem key={specialty} value={specialty}>
+                  {specialty}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {(selectedMinimumFee !== "All" || selectedService !== "All" || selectedSpecialty !== "All") && (
+            <Button 
+              variant="outline" 
+              className="rounded-[20px] h-12 border-dashed"
+              onClick={() => {
+                setSelectedMinimumFee("All");
+                setSelectedService("All");
+                setSelectedSpecialty("All");
+              }}
+            >
+              Clear Filters
+            </Button>
+          )}
+        </div>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {filteredFirms.map((firm) => (
+          <Link 
+            key={firm.id} 
+            to={`/accounting-firms/${firm.slug}`}
+            className="block h-full hover:shadow-md transition-shadow rounded-lg"
+          >
+            <Card className="h-full flex flex-col overflow-hidden border border-gray-200 hover:border-gray-300">
+              <CardContent className="p-6 flex-1 flex flex-col">
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <h3 className="font-semibold text-lg text-gray-900">{firm.name}</h3>
+                  {firm.headquarters && (
+                    <p className="text-sm text-gray-500">{firm.headquarters}</p>
+                  )}
+                </div>
+                {firm.rating && (
+                  <div className="flex items-center bg-yellow-50 text-yellow-700 rounded-full px-2 py-1">
+                    <Star className="h-4 w-4 text-yellow-500 fill-current" />
+                    <span className="ml-1 text-sm font-medium">{firm.rating}</span>
+                  </div>
+                )}
+              </div>
+              
+              <div className="mb-4">
+                <p className="text-sm text-gray-600 line-clamp-3">
+                  {firm.description}
+                </p>
+              </div>
+              
+              <div className="mt-auto">
+                <div className="flex flex-wrap gap-2 mb-4">
+                  {firm.specialties?.slice(0, 3).map((specialty) => (
+                    <Badge 
+                      key={specialty} 
+                      variant="outline" 
+                      className="bg-white text-gray-700 border-slate-200 hover:bg-slate-50"
+                    >
+                      {specialty}
+                    </Badge>
+                  ))}
+                </div>
+                
+                <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                  <div className="flex items-center text-sm">
+                    <DollarSign className="h-4 w-4 mr-1 text-gray-500" />
+                    <span className="text-gray-700 font-medium">
+                      {firm.minimum_fee ? `From ${firm.minimum_fee}` : 'Contact for pricing'}
+                    </span>
+                  </div>
+<div className="text-sm font-medium text-brand-blue flex items-center">
+                    View details <ChevronRight className="h-4 w-4 ml-1" />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+        ))}
       </div>
     </div>
   );
