@@ -64,7 +64,6 @@ const SERVICE_VALUES = ADVISOR_SERVICES;
 type ServiceType = AdvisorService;
 type DesignationType = typeof DESIGNATION_VALUES[number];
 
-
 // Create Zod enums from the values
 const serviceValues = [...SERVICE_VALUES] as const;
 const serviceEnum = z.enum(serviceValues as unknown as [string, ...string[]]);
@@ -131,9 +130,9 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
       premium: advisor?.premium || false,
       fiduciary: advisor?.fiduciary || false,
       first_session_is_free: advisor?.first_session_is_free || false,
-      advisor_services: advisor?.advisor_services || [], // Initialize with existing services
-      professional_designations: advisor?.professional_designations || [], // Initialize with existing designations
-      client_type: advisor?.client_type || [], // Initialize with existing client types
+      advisor_services: advisor?.advisor_services || [],
+      professional_designations: advisor?.professional_designations || [],
+      client_type: advisor?.client_type || [],
     },
   });
 
@@ -165,15 +164,9 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
         premium: formData.premium,
         fiduciary: formData.fiduciary,
         first_session_is_free: formData.first_session_is_free,
-        advisor_services: formData.advisor_services?.map(service => 
-          typeof service === 'string' ? service as ServiceType : service
-        ),
-        professional_designations: formData.professional_designations?.map(designation =>
-          typeof designation === 'string' ? designation as DesignationType : designation
-        ),
-        client_type: formData.client_type?.map(type =>
-          typeof type === 'string' ? type as ClientType : type
-        )
+        advisor_services: formData.advisor_services as ServiceType[] | undefined,
+        professional_designations: formData.professional_designations as DesignationType[] | undefined,
+        client_type: formData.client_type as ClientType[] | undefined
       };
 
       console.log('Final advisor data being sent:', advisorData);
@@ -225,14 +218,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
     console.log('Services array length:', data.advisor_services?.length);
     console.log('Services array content:', JSON.stringify(data.advisor_services));
     
-    // Ensure advisor_services is properly typed when submitting
-    const formData = {
-      ...data,
-      advisor_services: data.advisor_services as ServiceType[] | undefined
-    };
-    
-    console.log('Calling mutation.mutate with data:', formData);
-    mutation.mutate(formData as unknown as AdvisorFormData);
+    mutation.mutate(data);
   };
 
   const addService = (service: ServiceType) => {
@@ -302,6 +288,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Basic form fields */}
           <FormField
             control={form.control}
             name="name"
