@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -157,7 +156,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
         email: formData.email || null,
         phone_number: formData.phone_number || null,
         years_of_experience: formData.years_of_experience || null,
-        state_hq: formData.state_hq || null,
+        state_hq: formData.state_hq as any || null,
         city: formData.city || null,
         minimum: formData.minimum || null,
         website_url: formData.website_url || null,
