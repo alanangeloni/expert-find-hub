@@ -1,8 +1,31 @@
 import { supabase } from "@/integrations/supabase/client";
-import { type Tables } from "@/integrations/supabase/types";
 
-// Define Advisor type based on the financial_advisors table
-export type Advisor = Tables<"financial_advisors">;
+// Define Advisor interface based on the financial_advisors table
+export interface Advisor {
+  id: string;
+  name: string;
+  slug: string;
+  firm_name?: string;
+  position?: string;
+  personal_bio?: string;
+  firm_bio?: string;
+  email?: string | null;
+  phone_number?: string | null;
+  years_of_experience?: number;
+  state_hq?: string;
+  city?: string;
+  minimum?: string;
+  website_url?: string | null;
+  verified?: boolean;
+  premium?: boolean;
+  fiduciary?: boolean;
+  first_session_is_free?: boolean;
+  advisor_services?: string[];
+  professional_designations?: string[];
+  client_type?: string[];
+  created_at?: string;
+  updated_at?: string;
+}
 
 // Define an AdvisorSpecialty type to match the allowed values
 export type AdvisorSpecialty = 
@@ -18,11 +41,12 @@ export type AdvisorSpecialty =
 // Define the filter interface for advisor search
 export interface AdvisorFilter {
   searchQuery?: string;
-  specialty?: string;
+  specialties?: string[];
   state?: string;
   minimumAssets?: string;
   minExperience?: number;
   maxExperience?: number;
+  clientType?: string;
 }
 
 export const getAdvisors = async (filters?: AdvisorFilter) => {
@@ -72,9 +96,42 @@ export const getAdvisors = async (filters?: AdvisorFilter) => {
       advisors = applyMinimumAssetsFilter(advisors, filters.minimumAssets);
     }
 
+    // Attach services to each advisor
+    advisors = advisors.map(advisor => {
+      // Check if services are stored directly on the advisor
+      if (advisor.advisor_services && Array.isArray(advisor.advisor_services)) {
+        return {
+          ...advisor,
+          services: advisor.advisor_services
+        };
+      }
+      
+      // Fallback to empty array if no services found
+      return {
+        ...advisor,
+        services: []
+      };
+    });
+
     // Apply specialty filter if needed
-    if (filters?.specialty && filters.specialty !== "all") {
-      advisors = await filterBySpecialty(advisors, filters.specialty);
+    if (filters?.specialties && filters.specialties.length > 0) {
+      advisors = advisors.filter(advisor => {
+        if (!advisor.services || advisor.services.length === 0) return false;
+        return filters.specialties?.some(specialty => 
+          advisor.services?.includes(specialty)
+        );
+      });
+    }
+
+    // Apply client type filter if needed
+    if (filters?.clientType && filters.clientType !== "all") {
+      advisors = advisors.filter(advisor => {
+        // Check if client_type is defined and is an array before calling includes
+        const clientTypes = Array.isArray(advisor.client_type) 
+          ? advisor.client_type 
+          : [];
+        return clientTypes.includes(filters.clientType!);
+      });
     }
 
     return advisors;

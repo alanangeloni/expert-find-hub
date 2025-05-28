@@ -16,6 +16,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from '@/components/ui/form';
 import {
   Select,
@@ -26,6 +27,53 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
+
+import { CLIENT_TYPES, type ClientType } from '@/constants/clientTypes';
+
+// Define professional designations as a const array
+const DESIGNATION_VALUES = [
+  'Accredited Estate Planner (AEP)',
+  'Accredited Investment Fiduciary (AIF)',
+  'Accredited Portfolio Manager Advisor (APMA)',
+  'Certified Divorce Financial Analyst (CDFA)',
+  'Certified Exit Planning Advisor (CEPA)',
+  'Certified Financial Planner (CFP)',
+  'Certified Kingdom Advisor (CKA)',
+  'Certified Public Accountant (CPA)',
+  'Certified Specialist in Planned Giving (CSPG)',
+  'Certified Value Growth Advisor (CVGA)',
+  'Chartered Financial Consultant (ChFC)',
+  'Chartered Financial Analyst (CFA)',
+  'Chartered Special Needs Consultant (ChSNC)',
+  'Chartered Retirement Planning Counselor™ (CRPC®)',
+  'Enrolled Agent (EA)',
+  'Life Underwriting Training Council Fellow (LUTCF)',
+  'Registered Financial Consultant (RFC)',
+  'Registered Investment Advisor (RIA)',
+  'Retirement Management Advisor (RMA®)',
+  'Retirement Income Certified Professional (RICP)'
+] as const;
+
+// Import shared services constant
+import { ADVISOR_SERVICES, type AdvisorService } from '@/constants/advisorServices';
+
+// Define service values using the shared constant
+const SERVICE_VALUES = ADVISOR_SERVICES;
+
+// Create types from the array values
+type ServiceType = AdvisorService;
+type DesignationType = typeof DESIGNATION_VALUES[number];
+
+
+// Create Zod enums from the values
+const serviceValues = [...SERVICE_VALUES] as const;
+const serviceEnum = z.enum(serviceValues as unknown as [string, ...string[]]);
+
+const designationValues = [...DESIGNATION_VALUES] as const;
+const designationEnum = z.enum(designationValues as unknown as [string, ...string[]]);
+
+const clientTypeValues = [...CLIENT_TYPES] as const;
+const clientTypeEnum = z.enum(clientTypeValues as unknown as [string, ...string[]]);
 
 const advisorSchema = z.object({
   name: z.string().min(1, 'Name is required'),
@@ -45,7 +93,9 @@ const advisorSchema = z.object({
   premium: z.boolean().default(false),
   fiduciary: z.boolean().default(false),
   first_session_is_free: z.boolean().default(false),
-  advisor_services: z.array(z.string()).max(10, 'Maximum 10 services allowed').optional(),
+  advisor_services: z.array(serviceEnum).max(10, 'Maximum 10 services allowed').optional(),
+  professional_designations: z.array(designationEnum).max(10, 'Maximum 10 designations allowed').optional(),
+  client_type: z.array(clientTypeEnum).max(10, 'Maximum 10 client types allowed').optional(),
 });
 
 type AdvisorFormData = z.infer<typeof advisorSchema>;
@@ -56,44 +106,11 @@ interface AdvisorFormProps {
 }
 
 // Use the exact enumerated values from the database schema
-const AVAILABLE_SERVICES = [
-  'Alternative Investments',
-  'Budgeting',
-  'Business Succession Planning',
-  'Cash Flow Analysis',
-  'Cryptocurrency & NFTs',
-  'Debt Management',
-  'Divorce Planning',
-  'Education Planning',
-  'Elder Care',
-  'Employee/Employer Benefits',
-  'Environment, Social, and Governance',
-  'Estate/Trust Planning',
-  'Financial Planning',
-  'Health Care',
-  'Inheritance',
-  'Insurance Planning',
-  'Investment Management',
-  'Life Transitions',
-  'Long-term Care',
-  'Philanthropy Planning',
-  'Portfolio Construction',
-  'Retirement Income Management',
-  'Retirement Planning',
-  'Small Business Planning',
-  'Socially Responsible Investing',
-  'Social Security Planning',
-  'Sports and Entertainment',
-  'Succession Planning',
-  'Tax Planning',
-  'Wealth Management'
-];
+const AVAILABLE_SERVICES: ServiceType[] = [...SERVICE_VALUES];
+const AVAILABLE_DESIGNATIONS: DesignationType[] = [...DESIGNATION_VALUES];
+const AVAILABLE_CLIENT_TYPES: ClientType[] = [...CLIENT_TYPES];
 
 export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
-  const [selectedServices, setSelectedServices] = React.useState<string[]>(
-    advisor?.advisor_services || []
-  );
-
   const form = useForm<AdvisorFormData>({
     resolver: zodResolver(advisorSchema),
     defaultValues: {
@@ -114,19 +131,49 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
       premium: advisor?.premium || false,
       fiduciary: advisor?.fiduciary || false,
       first_session_is_free: advisor?.first_session_is_free || false,
-      advisor_services: advisor?.advisor_services || [],
+      advisor_services: advisor?.advisor_services || [], // Initialize with existing services
+      professional_designations: advisor?.professional_designations || [], // Initialize with existing designations
+      client_type: advisor?.client_type || [], // Initialize with existing client types
     },
   });
 
+  // Get the current values from the form state
+  const currentSelectedServices = form.watch('advisor_services') || [];
+  const currentSelectedDesignations = form.watch('professional_designations') || [];
+  const currentSelectedClientTypes = form.watch('client_type') || [];
+
   const mutation = useMutation({
-    mutationFn: async (data: AdvisorFormData) => {
-      console.log('Submitting advisor data:', data);
+    mutationFn: async (formData: AdvisorFormData) => {
+      console.log('Submitting advisor data:', formData);
       
-      // Ensure we're using the selectedServices state
+      // Create a properly typed advisor data object
       const advisorData = {
-        ...data,
-        // Convert the array to a proper PostgreSQL array
-        advisor_services: selectedServices,
+        name: formData.name,
+        slug: formData.slug,
+        firm_name: formData.firm_name,
+        position: formData.position,
+        personal_bio: formData.personal_bio,
+        firm_bio: formData.firm_bio,
+        email: formData.email || null,
+        phone_number: formData.phone_number || null,
+        years_of_experience: formData.years_of_experience,
+        state_hq: formData.state_hq,
+        city: formData.city,
+        minimum: formData.minimum,
+        website_url: formData.website_url || null,
+        verified: formData.verified,
+        premium: formData.premium,
+        fiduciary: formData.fiduciary,
+        first_session_is_free: formData.first_session_is_free,
+        advisor_services: formData.advisor_services?.map(service => 
+          typeof service === 'string' ? service as ServiceType : service
+        ),
+        professional_designations: formData.professional_designations?.map(designation =>
+          typeof designation === 'string' ? designation as DesignationType : designation
+        ),
+        client_type: formData.client_type?.map(type =>
+          typeof type === 'string' ? type as ClientType : type
+        )
       };
 
       console.log('Final advisor data being sent:', advisorData);
@@ -146,7 +193,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
       } else {
         const { data: result, error } = await supabase
           .from('financial_advisors')
-          .insert(advisorData)
+          .insert([advisorData])
           .select();
         
         if (error) {
@@ -174,18 +221,22 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
   });
 
   const onSubmit = (data: AdvisorFormData) => {
-    console.log('Form submission data:', data);
-    console.log('Current selected services before mutation:', selectedServices);
-    console.log('Services array length:', selectedServices.length);
-    console.log('Services array content:', JSON.stringify(selectedServices));
+    console.log('onSubmit called. Form submission data:', data);
+    console.log('Services array length:', data.advisor_services?.length);
+    console.log('Services array content:', JSON.stringify(data.advisor_services));
     
-    // Update the form data with the current selected services
-    data.advisor_services = selectedServices;
-    mutation.mutate(data);
+    // Ensure advisor_services is properly typed when submitting
+    const formData = {
+      ...data,
+      advisor_services: data.advisor_services as ServiceType[] | undefined
+    };
+    
+    console.log('Calling mutation.mutate with data:', formData);
+    mutation.mutate(formData as unknown as AdvisorFormData);
   };
 
-  const addService = (service: string) => {
-    if (selectedServices.length >= 10) {
+  const addService = (service: ServiceType) => {
+    if (currentSelectedServices.length >= 10) {
       toast({
         title: 'Maximum services reached',
         description: 'You can only select up to 10 services.',
@@ -194,25 +245,63 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
       return;
     }
     
-    if (!selectedServices.includes(service)) {
-      const newServices = [...selectedServices, service];
-      setSelectedServices(newServices);
+    if (!currentSelectedServices.includes(service)) {
+      const newServices = [...currentSelectedServices, service];
+      form.setValue('advisor_services', newServices, { shouldValidate: true, shouldDirty: true });
     }
   };
 
-  const removeService = (service: string) => {
-    const newServices = selectedServices.filter(s => s !== service);
-    setSelectedServices(newServices);
+  const removeService = (serviceToRemove: ServiceType) => {
+    const newServices = currentSelectedServices.filter(service => service !== serviceToRemove);
+    form.setValue('advisor_services', newServices, { shouldValidate: true, shouldDirty: true });
   };
 
-  const availableServicesToAdd = AVAILABLE_SERVICES.filter(
-    service => !selectedServices.includes(service)
-  );
+  const addDesignation = (designation: DesignationType) => {
+    if (currentSelectedDesignations.length >= 10) {
+      toast({
+        title: 'Maximum designations reached',
+        description: 'You can only select up to 10 designations.',
+        variant: 'destructive'
+      });
+      return;
+    }
+    
+    if (!currentSelectedDesignations.includes(designation)) {
+      const newDesignations = [...currentSelectedDesignations, designation];
+      form.setValue('professional_designations', newDesignations, { shouldValidate: true, shouldDirty: true });
+    }
+  };
+
+  const removeDesignation = (designationToRemove: DesignationType) => {
+    const newDesignations = currentSelectedDesignations.filter(designation => designation !== designationToRemove);
+    form.setValue('professional_designations', newDesignations, { shouldValidate: true, shouldDirty: true });
+  };
+
+  const addClientType = (clientType: ClientType) => {
+    if (currentSelectedClientTypes.length >= 10) {
+      toast({
+        title: 'Maximum client types reached',
+        description: 'You can only select up to 10 client types.',
+        variant: 'destructive'
+      });
+      return;
+    }
+    
+    if (!currentSelectedClientTypes.includes(clientType)) {
+      const newClientTypes = [...currentSelectedClientTypes, clientType];
+      form.setValue('client_type', newClientTypes, { shouldValidate: true, shouldDirty: true });
+    }
+  };
+
+  const removeClientType = (clientTypeToRemove: ClientType) => {
+    const newClientTypes = currentSelectedClientTypes.filter(type => type !== clientTypeToRemove);
+    form.setValue('client_type', newClientTypes, { shouldValidate: true, shouldDirty: true });
+  };
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <FormField
             control={form.control}
             name="name"
@@ -304,11 +393,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
               <FormItem>
                 <FormLabel>Years of Experience</FormLabel>
                 <FormControl>
-                  <Input 
-                    type="number" 
-                    {...field} 
-                    onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
-                  />
+                  <Input type="number" {...field} onChange={e => field.onChange(e.target.value === '' ? undefined : Number(e.target.value))} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -320,7 +405,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
             name="state_hq"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>State</FormLabel>
+                <FormLabel>State HQ</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -364,111 +449,9 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
               <FormItem>
                 <FormLabel>Website URL</FormLabel>
                 <FormControl>
-                  <Input type="url" {...field} />
+                  <Input {...field} />
                 </FormControl>
                 <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-
-        <FormField
-          control={form.control}
-          name="personal_bio"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Personal Bio</FormLabel>
-              <FormControl>
-                <Textarea {...field} rows={3} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        <FormField
-          control={form.control}
-          name="firm_bio"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Firm Bio</FormLabel>
-              <FormControl>
-                <Textarea {...field} rows={3} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Services Offered Section */}
-        <div className="space-y-4">
-          <div>
-            <FormLabel>Services Offered ({selectedServices.length}/10)</FormLabel>
-            <p className="text-sm text-gray-500 mb-2">Select up to 10 services this advisor offers</p>
-            
-            {selectedServices.length > 0 && (
-              <div className="flex flex-wrap gap-2 mb-3">
-                {selectedServices.map((service) => (
-                  <Badge key={service} variant="secondary" className="flex items-center gap-1">
-                    {service}
-                    <button
-                      type="button"
-                      onClick={() => removeService(service)}
-                      className="ml-1 hover:bg-gray-300 rounded-full p-0.5"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
-                  </Badge>
-                ))}
-              </div>
-            )}
-
-            {availableServicesToAdd.length > 0 && selectedServices.length < 10 && (
-              <Select onValueChange={addService}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Add a service..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableServicesToAdd.map((service) => (
-                    <SelectItem key={service} value={service}>
-                      {service}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <FormField
-            control={form.control}
-            name="verified"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <FormLabel>Verified</FormLabel>
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="premium"
-            render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                </FormControl>
-                <FormLabel>Premium</FormLabel>
               </FormItem>
             )}
           />
@@ -477,40 +460,159 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
             control={form.control}
             name="fiduciary"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+              <FormItem className="flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 shadow-sm">
                 <FormControl>
                   <Checkbox
                     checked={field.value}
                     onCheckedChange={field.onChange}
                   />
                 </FormControl>
-                <FormLabel>Fiduciary</FormLabel>
+                <div className="space-y-1 leading-none">
+                  <FormLabel>Fiduciary</FormLabel>
+                  <FormDescription>
+                    Mark this advisor as a fiduciary.
+                  </FormDescription>
+                </div>
               </FormItem>
             )}
           />
 
+          {/* Personal Bio */}
           <FormField
             control={form.control}
-            name="first_session_is_free"
+            name="personal_bio"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+              <FormItem className="md:col-span-2">
+                <FormLabel>Personal Bio</FormLabel>
                 <FormControl>
-                  <Checkbox
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
+                  <Textarea {...field} rows={5} />
                 </FormControl>
-                <FormLabel>Free First Session</FormLabel>
+                <FormMessage />
               </FormItem>
             )}
           />
+
+          {/* Firm Bio */}
+          <FormField
+            control={form.control}
+            name="firm_bio"
+            render={({ field }) => (
+              <FormItem className="md:col-span-2">
+                <FormLabel>Firm Bio</FormLabel>
+                <FormControl>
+                  <Textarea {...field} rows={5} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Advisor Services Multi-select */}
+          <FormItem className="md:col-span-2">
+            <FormLabel>Advisor Services</FormLabel>
+            <Select onValueChange={addService}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select services" />
+              </SelectTrigger>
+              <SelectContent>
+                {AVAILABLE_SERVICES.map((service) => (
+                  <SelectItem key={service} value={service}>
+                    {service}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {currentSelectedServices.map((service: ServiceType) => (
+                <Badge key={service} variant="secondary" className="pr-1">
+                  {service}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="ml-1 h-auto p-0"
+                    onClick={() => removeService(service)}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </Badge>
+              ))}
+            </div>
+            <FormMessage />
+          </FormItem>
+
+          {/* Client Types Multi-select */}
+          <FormItem className="md:col-span-2">
+            <FormLabel>Client Types</FormLabel>
+            <Select onValueChange={addClientType}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select client types" />
+              </SelectTrigger>
+              <SelectContent>
+                {AVAILABLE_CLIENT_TYPES.map((type) => (
+                  <SelectItem key={type} value={type}>
+                    {type}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {currentSelectedClientTypes.map((type: ClientType) => (
+                <Badge key={type} variant="secondary" className="pr-1">
+                  {type}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="ml-1 h-auto p-0"
+                    onClick={() => removeClientType(type)}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </Badge>
+              ))}
+            </div>
+            <FormMessage />
+          </FormItem>
+
+          {/* Professional Designations Multi-select */}
+          <FormItem className="md:col-span-2">
+            <FormLabel>Professional Designations</FormLabel>
+            <Select onValueChange={addDesignation}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select professional designations" />
+              </SelectTrigger>
+              <SelectContent>
+                {AVAILABLE_DESIGNATIONS.map((designation) => (
+                  <SelectItem key={designation} value={designation}>
+                    {designation}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {currentSelectedDesignations.map((designation: DesignationType) => (
+                <Badge key={designation} variant="secondary" className="pr-1">
+                  {designation}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="ml-1 h-auto p-0"
+                    onClick={() => removeDesignation(designation)}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </Badge>
+              ))}
+            </div>
+            <FormMessage />
+          </FormItem>
         </div>
 
-        <div className="flex justify-end gap-2 pt-4">
-          <Button type="submit" disabled={mutation.isPending}>
-            {mutation.isPending ? 'Saving...' : (advisor ? 'Update' : 'Create')}
-          </Button>
-        </div>
+        <Button type="submit" disabled={mutation.isPending}>
+          {mutation.isPending ? 'Saving...' : 'Save Advisor'}
+        </Button>
       </form>
     </Form>
   );

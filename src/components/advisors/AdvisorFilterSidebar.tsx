@@ -25,11 +25,13 @@ interface AdvisorFilterSidebarProps {
   onStateChange: (value: string) => void;
   onMinimumChange: (value: string) => void;
   onSpecialtyChange: (value: string) => void;
+  onClientTypeChange: (value: string) => void;
   clearFilters: () => void;
   formValues: {
     state: string;
     minimumAssets: string;
     specialty: string;
+    clientType: string;
   };
 }
 
@@ -40,11 +42,17 @@ export const AdvisorFilterSidebar = ({
   onStateChange,
   onMinimumChange,
   onSpecialtyChange,
+  onClientTypeChange,
   clearFilters,
   formValues,
 }: AdvisorFilterSidebarProps) => {
   const form = useForm({
-    defaultValues: formValues
+    defaultValues: {
+      state: formValues.state || '',
+      minimumAssets: formValues.minimumAssets || 'all',
+      specialty: formValues.specialty || 'all',
+      clientType: formValues.clientType || 'all'
+    }
   });
 
   return (
@@ -56,7 +64,13 @@ export const AdvisorFilterSidebar = ({
           {/* State Filter */}
           <div className="space-y-2">
             <FormLabel>State</FormLabel>
-            <Select value={form.watch("state")} onValueChange={onStateChange}>
+            <Select 
+              value={form.watch("state") || 'all'}
+              onValueChange={(value) => {
+                form.setValue('state', value);
+                onStateChange(value);
+              }}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select state" />
               </SelectTrigger>
@@ -65,6 +79,42 @@ export const AdvisorFilterSidebar = ({
                 {states.map((state) => (
                   <SelectItem key={state} value={state}>{state}</SelectItem>
                 ))}
+              </SelectContent>
+            </Select>
+          </div>
+          
+          <Separator />
+          
+          {/* Client Type Filter */}
+          <div className="space-y-2">
+            <FormLabel>Client Type</FormLabel>
+            <Select 
+              value={form.watch("clientType") || 'all'}
+              onValueChange={(value) => {
+                form.setValue('clientType', value);
+                onClientTypeChange(value);
+              }}
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Select client type" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Client Types</SelectItem>
+                <SelectItem value="Individuals">Individuals</SelectItem>
+                <SelectItem value="Business Owners">Business Owners</SelectItem>
+                <SelectItem value="High Net Worth Individuals">High Net Worth</SelectItem>
+                <SelectItem value="Non-Profit Organizations">Non-Profits</SelectItem>
+                <SelectItem value="Corporate Executives">Corporate Executives</SelectItem>
+                <SelectItem value="Retirees">Retirees</SelectItem>
+                <SelectItem value="Young Professionals">Young Professionals</SelectItem>
+                <SelectItem value="Families">Families</SelectItem>
+                <SelectItem value="Medical Professionals">Medical Professionals</SelectItem>
+                <SelectItem value="Legal Professionals">Legal Professionals</SelectItem>
+                <SelectItem value="Small Business Owners">Small Business Owners</SelectItem>
+                <SelectItem value="Entrepreneurs">Entrepreneurs</SelectItem>
+                <SelectItem value="Real Estate Investors">Real Estate Investors</SelectItem>
+                <SelectItem value="Divorced Individuals">Divorced Individuals</SelectItem>
+                <SelectItem value="Widows/Widowers">Widows/Widowers</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -112,7 +162,7 @@ export const AdvisorFilterSidebar = ({
           </div>
           
           {/* Clear Filters Button */}
-          {(form.watch("state") || form.watch("minimumAssets") || form.watch("specialty")) && (
+          {(form.watch("state") || form.watch("minimumAssets") || form.watch("specialty") || form.watch("clientType")) && (
             <div className="pt-2">
               <button
                 onClick={clearFilters}

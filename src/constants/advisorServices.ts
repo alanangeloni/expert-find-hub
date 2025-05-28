@@ -1,0 +1,35 @@
+// Advisor services as a const array
+export const ADVISOR_SERVICES = [
+  'Alternative Investments',
+  'Budgeting',
+  'Business Succession Planning',
+  'Cash Flow Analysis',
+  'Cryptocurrency & NFTs',
+  'Debt Management',
+  'Divorce Planning',
+  'Education Planning',
+  'Elder Care',
+  'Employee/Employer Benefits',
+  'Environment, Social, and Governance',
+  'Estate/Trust Planning',
+  'Financial Planning',
+  'Health Care',
+  'Inheritance',
+  'Insurance Planning',
+  'Investment Management',
+  'Life Transitions',
+  'Long-term Care',
+  'Philanthropy Planning',
+  'Portfolio Construction',
+  'Retirement Income Management',
+  'Retirement Planning',
+  'Small Business Planning',
+  'Socially Responsible Investing',
+  'Social Security Planning',
+  'Sports and Entertainment',
+  'Succession Planning',
+  'Tax Planning',
+  'Wealth Management'
+] as const;
+
+export type AdvisorService = typeof ADVISOR_SERVICES[number];

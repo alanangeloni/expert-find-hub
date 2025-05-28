@@ -7,7 +7,12 @@ import { AdvisorSearchForm } from '@/components/advisors/AdvisorSearchForm';
 
 const AdvisorSearch = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [filters, setFilters] = useState<AdvisorFilter>({});
+  const [filters, setFilters] = useState<AdvisorFilter>({
+    state: 'all',
+    minimumAssets: 'all',
+    specialties: [],
+    clientType: 'all'
+  } as AdvisorFilter);
   const [states, setStates] = useState<string[]>([]);
 
   // Fetch unique states for the dropdown
@@ -42,12 +47,25 @@ const AdvisorSearch = () => {
     setFilters(prev => ({ ...prev, minimumAssets: value === "all" ? undefined : value }));
   };
 
-  const handleSpecialtyChange = (value: string) => {
-    setFilters(prev => ({ ...prev, specialty: value === "all" ? undefined : value }));
+  const handleSpecialtyChange = (specialties: string[]) => {
+    setFilters(prev => ({ 
+      ...prev, 
+      specialties: specialties.length === 0 ? undefined : specialties 
+    }));
+  };
+
+  const handleClientTypeChange = (value: string) => {
+    setFilters(prev => ({ ...prev, clientType: value === "all" ? undefined : value }));
   };
 
   const clearFilters = () => {
-    setFilters({ searchQuery });
+    setFilters({
+      state: 'all',
+      minimumAssets: 'all',
+      specialties: [],
+      clientType: 'all',
+      searchQuery
+    });
   };
   
   return (
@@ -67,6 +85,7 @@ const AdvisorSearch = () => {
         onStateChange={handleStateChange}
         onMinimumChange={handleMinimumChange}
         onSpecialtyChange={handleSpecialtyChange}
+        onClientTypeChange={handleClientTypeChange}
         clearFilters={clearFilters}
       />
       
