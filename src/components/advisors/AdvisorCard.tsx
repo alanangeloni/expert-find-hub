@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { MapPin, Award, Check, DollarSign } from 'lucide-react';
 import { Advisor } from '@/services/advisorsService';
+import { ADVISOR_SERVICES } from '@/constants/advisorServices';
 
 interface AdvisorCardProps {
   advisor: Advisor;
@@ -54,8 +55,23 @@ export const AdvisorCard = ({ advisor }: AdvisorCardProps) => {
             </div>
           </div>
           
-          <div className="mt-4 pt-4 border-t border-gray-100">
-            <div className="flex justify-between items-center">
+          <div className="mt-3 pt-3 border-t border-gray-100">
+            {/* Display up to 3 specialties */}
+            {advisor.advisor_services && advisor.advisor_services.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mb-2">
+                {advisor.advisor_services.slice(0, 3).map((service, index) => (
+                  <Badge 
+                    key={index}
+                    variant="outline" 
+                    className="px-2 py-0.5 text-xs bg-blue-50 text-blue-700 border-blue-200"
+                  >
+                    {service}
+                  </Badge>
+                ))}
+              </div>
+            )}
+            
+            <div className="flex justify-between items-center mt-2">
               <div>
                 {advisor.minimum && (
                   <p className="text-xs text-gray-500">
