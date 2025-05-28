@@ -164,9 +164,10 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
         premium: formData.premium,
         fiduciary: formData.fiduciary,
         first_session_is_free: formData.first_session_is_free,
-        advisor_services: formData.advisor_services || null,
-        professional_designations: formData.professional_designations || null,
-        client_type: formData.client_type || null
+        // Cast arrays to proper types for Supabase
+        advisor_services: formData.advisor_services as AdvisorService[] || null,
+        professional_designations: formData.professional_designations as string[] || null,
+        client_type: formData.client_type as ClientType[] || null
       };
 
       console.log('Final advisor data being sent:', advisorData);

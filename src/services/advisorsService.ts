@@ -1,5 +1,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import { AdvisorService } from "@/constants/advisorServices";
+import { ClientType } from "@/constants/clientTypes";
 
 // Define Advisor interface based on the financial_advisors table
 export interface Advisor {
@@ -21,9 +23,9 @@ export interface Advisor {
   premium?: boolean;
   fiduciary?: boolean;
   first_session_is_free?: boolean;
-  advisor_services?: string[];
+  advisor_services?: AdvisorService[];
   professional_designations?: string[];
-  client_type?: string[];
+  client_type?: ClientType[];
   created_at?: string;
   updated_at?: string;
   // Additional fields from database
@@ -93,7 +95,7 @@ export const getAdvisors = async (filters?: AdvisorFilter) => {
       return [];
     }
 
-    let advisors = data || [];
+    let advisors = (data || []) as Advisor[];
     
     // Apply filters in memory to avoid TypeScript issues
     if (filters?.minExperience) {
@@ -118,7 +120,7 @@ export const getAdvisors = async (filters?: AdvisorFilter) => {
       advisors = advisors.filter(advisor => {
         if (!advisor.advisor_services || advisor.advisor_services.length === 0) return false;
         return filters.specialties?.some(specialty => 
-          advisor.advisor_services?.includes(specialty)
+          advisor.advisor_services?.includes(specialty as AdvisorService)
         );
       });
     }
@@ -130,7 +132,7 @@ export const getAdvisors = async (filters?: AdvisorFilter) => {
         const clientTypes = Array.isArray(advisor.client_type) 
           ? advisor.client_type 
           : [];
-        return clientTypes.includes(filters.clientType!);
+        return clientTypes.includes(filters.clientType as ClientType);
       });
     }
 
@@ -176,7 +178,7 @@ export const getAdvisorBySlug = async (slug: string): Promise<Advisor | null> =>
       return null;
     }
 
-    return data;
+    return data as Advisor;
   } catch (error: any) {
     console.error(`Error fetching advisor with slug ${slug}:`, error);
     return null;
@@ -205,7 +207,7 @@ export const getUniqueStates = async (): Promise<string[]> => {
   }
 };
 
-// Function to get advisor services (since the table doesn't exist, return from advisor_services array)
+// Function to get advisor services from advisor_services array
 export const getAdvisorServices = async (advisorId: string): Promise<string[]> => {
   try {
     const { data, error } = await supabase
@@ -265,6 +267,6 @@ const filterBySpecialty = async (advisors: Advisor[], specialty: string) => {
   // Filter based on advisor_services array in the main table
   return advisors.filter(advisor => {
     const services = advisor.advisor_services || [];
-    return services.includes(specialty);
+    return services.includes(specialty as AdvisorService);
   });
 };
