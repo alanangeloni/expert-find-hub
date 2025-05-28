@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 
 // Define Advisor interface based on the financial_advisors table
@@ -25,6 +26,22 @@ export interface Advisor {
   client_type?: string[];
   created_at?: string;
   updated_at?: string;
+  // Additional fields from database
+  headshot_url?: string | null;
+  firm_logo_url?: string | null;
+  scheduling_link?: string | null;
+  firm_address?: string;
+  firm_aum?: string;
+  advisor_sec_crd?: string;
+  firm_sec_crd?: string;
+  link_to_firm_sec?: string;
+  link_to_advisor_sec?: string;
+  youtube_video_id?: string;
+  primary_education?: string;
+  secondary_education?: string;
+  username?: string;
+  calls_booked?: number;
+  rating?: number;
 }
 
 // Define an AdvisorSpecialty type to match the allowed values
@@ -96,29 +113,12 @@ export const getAdvisors = async (filters?: AdvisorFilter) => {
       advisors = applyMinimumAssetsFilter(advisors, filters.minimumAssets);
     }
 
-    // Attach services to each advisor
-    advisors = advisors.map(advisor => {
-      // Check if services are stored directly on the advisor
-      if (advisor.advisor_services && Array.isArray(advisor.advisor_services)) {
-        return {
-          ...advisor,
-          services: advisor.advisor_services
-        };
-      }
-      
-      // Fallback to empty array if no services found
-      return {
-        ...advisor,
-        services: []
-      };
-    });
-
     // Apply specialty filter if needed
     if (filters?.specialties && filters.specialties.length > 0) {
       advisors = advisors.filter(advisor => {
-        if (!advisor.services || advisor.services.length === 0) return false;
+        if (!advisor.advisor_services || advisor.advisor_services.length === 0) return false;
         return filters.specialties?.some(specialty => 
-          advisor.services?.includes(specialty)
+          advisor.advisor_services?.includes(specialty)
         );
       });
     }
@@ -205,20 +205,21 @@ export const getUniqueStates = async (): Promise<string[]> => {
   }
 };
 
-// Function to get advisor services
+// Function to get advisor services (since the table doesn't exist, return from advisor_services array)
 export const getAdvisorServices = async (advisorId: string): Promise<string[]> => {
   try {
     const { data, error } = await supabase
-      .from('advisor_services')
-      .select('service')
-      .eq('advisor_id', advisorId);
+      .from('financial_advisors')
+      .select('advisor_services')
+      .eq('id', advisorId)
+      .single();
     
     if (error) {
       console.error('Error fetching advisor services:', error);
       return [];
     }
     
-    return data.map(item => item.service);
+    return data?.advisor_services || [];
   } catch (error) {
     console.error('Error in getAdvisorServices:', error);
     return [];
@@ -229,36 +230,28 @@ export const getAdvisorServices = async (advisorId: string): Promise<string[]> =
 export const getAdvisorProfessionalDesignations = async (advisorId: string): Promise<string[]> => {
   try {
     const { data, error } = await supabase
-      .from('advisor_professional_designations')
-      .select('designation')
-      .eq('advisor_id', advisorId);
+      .from('financial_advisors')
+      .select('professional_designations')
+      .eq('id', advisorId)
+      .single();
     
     if (error) {
       console.error('Error fetching advisor designations:', error);
       return [];
     }
     
-    return data.map(item => item.designation);
+    return data?.professional_designations || [];
   } catch (error) {
     console.error('Error in getAdvisorProfessionalDesignations:', error);
     return [];
   }
 };
 
-// Function to get advisor compensation types
+// Function to get advisor compensation types (placeholder since no separate table exists)
 export const getAdvisorCompensationTypes = async (advisorId: string): Promise<string[]> => {
   try {
-    const { data, error } = await supabase
-      .from('advisor_compensation_types')
-      .select('compensation_type')
-      .eq('advisor_id', advisorId);
-    
-    if (error) {
-      console.error('Error fetching advisor compensation types:', error);
-      return [];
-    }
-    
-    return data.map(item => item.compensation_type);
+    // Since there's no separate compensation table, return empty array for now
+    return [];
   } catch (error) {
     console.error('Error in getAdvisorCompensationTypes:', error);
     return [];
@@ -269,26 +262,9 @@ export const getAdvisorCompensationTypes = async (advisorId: string): Promise<st
 const filterBySpecialty = async (advisors: Advisor[], specialty: string) => {
   if (advisors.length === 0) return [];
   
-  const advisorIds = advisors.map(advisor => advisor.id);
-  
-  const { data: servicesData } = await supabase
-    .from("advisor_services")
-    .select("*")
-    .in("advisor_id", advisorIds);
-    
-  if (!servicesData) return [];
-  
-  // Create a mapping of advisor_id -> services
-  const servicesMap = new Map();
-  servicesData.forEach(service => {
-    const services = servicesMap.get(service.advisor_id) || [];
-    services.push(service.service);
-    servicesMap.set(service.advisor_id, services);
-  });
-  
-  // Filter advisors based on specialty
+  // Filter based on advisor_services array in the main table
   return advisors.filter(advisor => {
-    const services = servicesMap.get(advisor.id) || [];
+    const services = advisor.advisor_services || [];
     return services.includes(specialty);
   });
 };

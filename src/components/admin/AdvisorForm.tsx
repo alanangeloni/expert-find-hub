@@ -145,28 +145,28 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
     mutationFn: async (formData: AdvisorFormData) => {
       console.log('Submitting advisor data:', formData);
       
-      // Create a properly typed advisor data object
+      // Create a properly typed advisor data object with explicit type casting
       const advisorData = {
         name: formData.name,
         slug: formData.slug,
-        firm_name: formData.firm_name,
-        position: formData.position,
-        personal_bio: formData.personal_bio,
-        firm_bio: formData.firm_bio,
+        firm_name: formData.firm_name || null,
+        position: formData.position || null,
+        personal_bio: formData.personal_bio || null,
+        firm_bio: formData.firm_bio || null,
         email: formData.email || null,
         phone_number: formData.phone_number || null,
-        years_of_experience: formData.years_of_experience,
-        state_hq: formData.state_hq,
-        city: formData.city,
-        minimum: formData.minimum,
+        years_of_experience: formData.years_of_experience || null,
+        state_hq: formData.state_hq || null,
+        city: formData.city || null,
+        minimum: formData.minimum || null,
         website_url: formData.website_url || null,
         verified: formData.verified,
         premium: formData.premium,
         fiduciary: formData.fiduciary,
         first_session_is_free: formData.first_session_is_free,
-        advisor_services: formData.advisor_services as ServiceType[] | undefined,
-        professional_designations: formData.professional_designations as DesignationType[] | undefined,
-        client_type: formData.client_type as ClientType[] | undefined
+        advisor_services: formData.advisor_services || null,
+        professional_designations: formData.professional_designations || null,
+        client_type: formData.client_type || null
       };
 
       console.log('Final advisor data being sent:', advisorData);
@@ -186,7 +186,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
       } else {
         const { data: result, error } = await supabase
           .from('financial_advisors')
-          .insert([advisorData])
+          .insert(advisorData)
           .select();
         
         if (error) {
