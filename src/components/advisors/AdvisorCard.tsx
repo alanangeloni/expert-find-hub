@@ -55,7 +55,7 @@ export const AdvisorCard = ({ advisor }: AdvisorCardProps) => {
             </div>
           </div>
           
-          <div className="mt-3 pt-3 border-t border-gray-100">
+          <div className="mt-3 pt-3">
             {/* Display up to 3 specialties */}
             {advisor.advisor_services && advisor.advisor_services.length > 0 && (
               <div className="flex flex-wrap gap-1.5 mb-2">
@@ -63,7 +63,7 @@ export const AdvisorCard = ({ advisor }: AdvisorCardProps) => {
                   <Badge 
                     key={index}
                     variant="outline" 
-                    className="px-2 py-0.5 text-xs bg-blue-50 text-blue-700 border-blue-200"
+                    className="px-2 py-0.5 text-xs bg-mint-50 text-mint-800 border-mint-200 hover:bg-mint-100 transition-colors"
                   >
                     {service}
                   </Badge>

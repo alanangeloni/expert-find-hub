@@ -1,4 +1,5 @@
 import type { Config } from "tailwindcss";
+import colors from 'tailwindcss/colors';
 
 export default {
 	darkMode: ["class"],
@@ -34,6 +35,20 @@ export default {
 				foreground: 'hsl(var(--foreground))',
 				"brand-blue": "#1A365D",
 				"brand-teal": "#2DD4BF",
+				"mint": {
+					DEFAULT: "#31d6aa",
+					50: "#f0fdf9",
+					100: "#ccfcef",
+					200: "#99f9e0",
+					300: "#5ef0d0",
+					400: "#31d6aa",
+					500: "#10b98d",
+					600: "#059669",
+					700: "#047857",
+					800: "#065f46",
+					900: "#064e3b",
+					950: "#022c22",
+				},
 				primary: {
 					DEFAULT: 'hsl(var(--primary))',
 					foreground: 'hsl(var(--primary-foreground))'

@@ -13,6 +13,7 @@ import {
   getAdvisorCompensationTypes
 } from '@/services/advisorsService';
 import { MeetingRequestForm } from '@/components/advisors/MeetingRequestForm';
+import { AdvisorServices } from '@/components/advisors/AdvisorServices';
 import { 
   Calendar, 
   MapPin, 
@@ -173,16 +174,9 @@ const AdvisorDetail = () => {
 
           {/* Services Section */}
           {services.length > 0 && (
-            <Card className="mb-8 p-6">
-              <h2 className="text-2xl font-bold mb-4">Services Offered</h2>
-              <div className="flex flex-wrap gap-2">
-                {services.map((service, index) => (
-                  <Badge key={index} variant="secondary" className="text-sm py-1 px-3">
-                    {service}
-                  </Badge>
-                ))}
-              </div>
-            </Card>
+            <div className="mb-8">
+              <AdvisorServices services={services} advisorName={advisor.name} />
+            </div>
           )}
 
           {/* About Firm Section */}

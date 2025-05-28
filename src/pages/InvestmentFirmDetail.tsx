@@ -126,7 +126,7 @@ export default function InvestmentFirmDetailPage() {
   const firmType = (firm.asset_classes && firm.asset_classes.length > 0) ? firm.asset_classes.join(', ') : "N/A";
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-white">
       <div className="container max-w-6xl mx-auto py-8 px-4 md:px-6">
         <div className="mb-6">
           <Link
@@ -138,69 +138,102 @@ export default function InvestmentFirmDetailPage() {
           </Link>
         </div>
 
-        <div className="bg-white p-6 sm:p-8 rounded-xl shadow-lg mb-8">
-          <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start mb-6">
-            <div className="flex items-start gap-4 flex-shrink-0">
-              <Avatar className="h-20 w-20 md:h-24 md:w-24 rounded-lg border bg-slate-100">
-                <AvatarImage src={firm.logo_url || undefined} alt={firm.name} className="object-contain p-2" />
-                <AvatarFallback className="text-2xl bg-slate-200 text-slate-500">
-                  {firm.name ? firm.name.substring(0, 2).toUpperCase() : "--"}
-                </AvatarFallback>
-              </Avatar>
-              <div className="mt-1">
-                <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">{firm.name}</h1>
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-slate-600 mt-1.5">
-                  {firm.rating && (
-                    <div className="flex items-center gap-1 text-yellow-500">
-                      <Star className="h-4 w-4 fill-current" />
-                      <span className="font-medium">{firm.rating.toFixed(1)}</span>
-                    </div>
-                  )}
-                  {firm.rating && firmType !== "N/A" && <span className="text-slate-300">•</span>}
-                  {firmType !== "N/A" && (
-                    <div className="flex items-center gap-1.5">
-                      <Briefcase className="h-4 w-4" />
-                      <span>{firmType}</span>
-                    </div>
-                  )}
-                </div>
-                {firm.verified && (
-                    <Badge variant="default" className="mt-2.5 bg-blue-100 text-blue-700 border-blue-200 hover:bg-blue-100 cursor-default">
-                        <CheckCircle className="mr-1.5 h-3.5 w-3.5" /> Verified
-                    </Badge>
+        <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
+          <div className="container mx-auto p-6 sm:p-8">
+            <div className="flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8">
+              <div className="h-16 w-16 md:h-24 md:w-24 bg-slate-100 rounded-lg flex items-center justify-center">
+                {firm.logo_url ? (
+                  <img src={firm.logo_url} alt={firm.name} className="h-12 w-12 md:h-16 md:w-16 object-contain" />
+                ) : (
+                  <Building className="h-8 w-8 md:h-10 md:w-10 text-slate-400" />
                 )}
               </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 md:gap-4 md:ml-auto pt-1 w-full md:w-auto md:max-w-xs flex-shrink-0">
-              <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                <div className="flex items-center text-xs text-slate-500 mb-0.5 uppercase tracking-wider">
-                  <PiggyBank className="h-3.5 w-3.5 mr-1.5 flex-shrink-0" />
-                  Min. Invest
+              <div className="flex-1">
+                <div className="flex items-center gap-2">
+                  <h1 className="text-2xl md:text-4xl font-bold">{firm.name}</h1>
+                  {firm.verified && (
+                    <span className="text-blue-500 mt-1 md:mt-2">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="currentColor"
+                        className="w-5 h-5 md:w-6 md:h-6"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M8.603 3.799A4.49 4.49 0 0112 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 013.498 1.307 4.491 4.491 0 011.307 3.497A4.49 4.49 0 0121.75 12a4.49 4.49 0 01-1.549 3.397 4.491 4.491 0 01-1.307 3.497 4.491 4.491 0 01-3.497 1.307A4.49 4.49 0 0112 21.75a4.49 4.49 0 01-3.397-1.549 4.49 4.49 0 01-3.498-1.306 4.491 4.491 0 01-1.307-3.498A4.49 4.49 0 012.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 011.307-3.497 4.49 4.49 0 013.497-1.307zm7.007 6.387a.75.75 0 10-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 00-1.06 1.06l2.25 2.25a.75.75 0 001.14-.094l3.75-5.25z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </span>
+                  )}
                 </div>
-                <p className="text-base sm:text-lg font-semibold text-slate-800">{firm.minimum_investment || "N/A"}</p>
+                
+                <div className="flex items-center gap-2 mt-2">
+                  {firm.rating && (
+                    <div className="flex">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`h-4 w-4 md:h-5 md:w-5 ${
+                            i < Math.floor(Number(firm.rating) || 0)
+                              ? "fill-yellow-400 text-yellow-400"
+                              : "text-gray-300"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  )}
+                  {firm.rating && <span className="text-sm md:text-base font-medium">{firm.rating.toFixed(1)}</span>}
+                  {firm.rating && firm.review_count && (
+                    <span className="text-xs md:text-sm text-gray-500">({firm.review_count} reviews)</span>
+                  )}
+                </div>
+                
+                {firm.description && (
+                  <div className="mt-2 text-sm md:text-base text-gray-600">{firm.description}</div>
+                )}
+                
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {firm.asset_classes?.map((assetClass: string, index: number) => (
+                    <Badge key={index} variant="secondary" className="bg-slate-100">
+                      {assetClass}
+                    </Badge>
+                  ))}
+                </div>
               </div>
-              <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
-                <div className="flex items-center text-xs text-slate-500 mb-0.5 uppercase tracking-wider">
-                  <TrendingUp className="h-3.5 w-3.5 mr-1.5 flex-shrink-0" />
-                  Target Return
+
+              <div className="w-full md:w-auto flex flex-col gap-3 mt-4 md:mt-0">
+                <div className="grid grid-cols-2 gap-3 w-full">
+                  <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                    <div className="flex items-center text-xs text-slate-500 mb-0.5 uppercase tracking-wider">
+                      <PiggyBank className="h-3.5 w-3.5 mr-1.5 flex-shrink-0" />
+                      Min. Invest
+                    </div>
+                    <p className="text-base font-semibold text-slate-800">{firm.minimum_investment || "N/A"}</p>
+                  </div>
+                  <div className="p-3 bg-slate-50 rounded-lg border border-slate-200">
+                    <div className="flex items-center text-xs text-slate-500 mb-0.5 uppercase tracking-wider">
+                      <TrendingUp className="h-3.5 w-3.5 mr-1.5 flex-shrink-0" />
+                      Target Return
+                    </div>
+                    <p className="text-base font-semibold text-slate-800">{firm.target_return || "N/A"}</p>
+                  </div>
                 </div>
-                <p className="text-base sm:text-lg font-semibold text-slate-800">{firm.target_return || "N/A"}</p>
+                <Button size="lg" className="bg-brand-blue hover:bg-brand-blue/90 text-white">
+                  Invest Now
+                  <ChevronRight className="ml-2 h-4 w-4" />
+                </Button>
               </div>
             </div>
           </div>
-          {firm.description && (
-            <div className="prose prose-slate max-w-none mb-6 text-slate-700 leading-relaxed">
-              <p>{firm.description}</p>
-            </div>
-          )}
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Button size="lg" className="bg-blue-600 hover:bg-blue-700 flex-grow sm:flex-grow-0 min-w-[150px]">
-              Invest Now
-              <ChevronRight className="ml-2 h-4 w-4" />
-            </Button>
+        </div>
+
+        {/* Main content */}
+        <div className="container mx-auto py-8 px-4 bg-white">
+          <div className="flex flex-col sm:flex-row gap-3 mb-6">
             {firm.website_url && (
-              <Button asChild size="lg" variant="outline" className="text-blue-600 border-blue-300 hover:bg-blue-50 hover:text-blue-700 flex-grow sm:flex-grow-0 min-w-[150px]">
+              <Button asChild size="lg" variant="outline" className="text-brand-blue border-brand-blue/50 hover:bg-brand-blue/5 hover:text-brand-blue hover:border-brand-blue flex-grow sm:flex-grow-0 min-w-[150px]">
                 <a href={firm.website_url} target="_blank" rel="noopener noreferrer">
                   Visit Website
                   <ExternalLinkIcon className="ml-2 h-4 w-4" />

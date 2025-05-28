@@ -177,66 +177,13 @@ export default function AccountingFirmsPage() {
           )}
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredFirms.map((firm) => (
-          <Link 
-            key={firm.id} 
-            to={`/accounting-firms/${firm.slug}`}
-            className="block h-full hover:shadow-md transition-shadow rounded-lg"
-          >
-            <Card className="h-full flex flex-col overflow-hidden border border-gray-200 hover:border-gray-300">
-              <CardContent className="p-6 flex-1 flex flex-col">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h3 className="font-semibold text-lg text-gray-900">{firm.name}</h3>
-                  {firm.headquarters && (
-                    <p className="text-sm text-gray-500">{firm.headquarters}</p>
-                  )}
-                </div>
-                {firm.rating && (
-                  <div className="flex items-center bg-yellow-50 text-yellow-700 rounded-full px-2 py-1">
-                    <Star className="h-4 w-4 text-yellow-500 fill-current" />
-                    <span className="ml-1 text-sm font-medium">{firm.rating}</span>
-                  </div>
-                )}
-              </div>
-              
-              <div className="mb-4">
-                <p className="text-sm text-gray-600 line-clamp-3">
-                  {firm.description}
-                </p>
-              </div>
-              
-              <div className="mt-auto">
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {firm.specialties?.slice(0, 3).map((specialty) => (
-                    <Badge 
-                      key={specialty} 
-                      variant="outline" 
-                      className="bg-white text-gray-700 border-slate-200 hover:bg-slate-50"
-                    >
-                      {specialty}
-                    </Badge>
-                  ))}
-                </div>
-                
-                <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-                  <div className="flex items-center text-sm">
-                    <DollarSign className="h-4 w-4 mr-1 text-gray-500" />
-                    <span className="text-gray-700 font-medium">
-                      {firm.minimum_fee ? `From ${firm.minimum_fee}` : 'Contact for pricing'}
-                    </span>
-                  </div>
-<div className="text-sm font-medium text-brand-blue flex items-center">
-                    View details <ChevronRight className="h-4 w-4 ml-1" />
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </Link>
-        ))}
-      </div>
+      <FirmList 
+        firms={filteredFirms}
+        isLoading={isLoading}
+        formatMinimumInvestment={formatMinimumFee}
+        basePath="/accounting-firms"
+        firmType="accounting"
+      />
     </div>
   );
 }
