@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -166,7 +167,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
         first_session_is_free: formData.first_session_is_free,
         // Cast arrays to proper types for Supabase
         advisor_services: formData.advisor_services as AdvisorService[] || null,
-        professional_designations: formData.professional_designations as string[] || null,
+        professional_designations: formData.professional_designations as DesignationType[] || null,
         client_type: formData.client_type as ClientType[] || null
       };
 
