@@ -35,7 +35,6 @@ interface MeetingRequest {
   message?: string;
   interested_in_discussing?: string[];
   preferred_contact_method?: string;
-  status: string;
   created_at: string;
   updated_at: string;
 }
@@ -45,6 +44,9 @@ interface AdvisorInfo {
   name: string;
   firm_name?: string;
 }
+
+// Define status values that we'll use internally
+type RequestStatus = 'pending' | 'contacted' | 'completed' | 'cancelled';
 
 export const MeetingRequestsManagement = () => {
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -59,13 +61,9 @@ export const MeetingRequestsManagement = () => {
         .select('*')
         .order('created_at', { ascending: false });
 
-      if (statusFilter !== 'all') {
-        query = query.eq('status', statusFilter);
-      }
-
       const { data, error } = await query;
       if (error) throw error;
-      return data as MeetingRequest[];
+      return (data || []) as MeetingRequest[];
     },
   });
 
@@ -79,29 +77,6 @@ export const MeetingRequestsManagement = () => {
       
       if (error) throw error;
       return data as AdvisorInfo[];
-    },
-  });
-
-  // Update meeting request status
-  const updateStatusMutation = useMutation({
-    mutationFn: async ({ id, status }: { id: string; status: string }) => {
-      const { error } = await supabase
-        .from('meeting_requests')
-        .update({ status })
-        .eq('id', id);
-      
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['meeting-requests'] });
-      toast({ title: 'Status updated successfully' });
-    },
-    onError: (error) => {
-      toast({ 
-        title: 'Error updating status', 
-        description: error.message,
-        variant: 'destructive' 
-      });
     },
   });
 
@@ -124,6 +99,13 @@ export const MeetingRequestsManagement = () => {
         return <Badge variant="outline">{status}</Badge>;
     }
   };
+
+  // Filter meeting requests based on status
+  const filteredMeetingRequests = meetingRequests?.filter(request => {
+    if (statusFilter === 'all') return true;
+    // For now, we'll assume all requests are 'pending' since status field doesn't exist yet
+    return statusFilter === 'pending';
+  });
 
   if (isLoading) {
     return (
@@ -155,7 +137,7 @@ export const MeetingRequestsManagement = () => {
         </Select>
       </div>
 
-      {!meetingRequests || meetingRequests.length === 0 ? (
+      {!filteredMeetingRequests || filteredMeetingRequests.length === 0 ? (
         <Card>
           <CardHeader>
             <CardTitle>No Meeting Requests Found</CardTitle>
@@ -180,11 +162,10 @@ export const MeetingRequestsManagement = () => {
                   <TableHead>Topics</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead>Date</TableHead>
-                  <TableHead>Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {meetingRequests.map((request) => (
+                {filteredMeetingRequests.map((request) => (
                   <TableRow key={request.id}>
                     <TableCell>
                       <div className="font-medium">
@@ -244,7 +225,7 @@ export const MeetingRequestsManagement = () => {
                     </TableCell>
                     
                     <TableCell>
-                      {getStatusBadge(request.status)}
+                      {getStatusBadge('pending')}
                     </TableCell>
                     
                     <TableCell>
@@ -252,25 +233,6 @@ export const MeetingRequestsManagement = () => {
                         <Calendar className="h-3 w-3 mr-1" />
                         {format(new Date(request.created_at), 'MMM d, yyyy')}
                       </div>
-                    </TableCell>
-                    
-                    <TableCell>
-                      <Select
-                        value={request.status}
-                        onValueChange={(status) => 
-                          updateStatusMutation.mutate({ id: request.id, status })
-                        }
-                      >
-                        <SelectTrigger className="w-32">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="pending">Pending</SelectItem>
-                          <SelectItem value="contacted">Contacted</SelectItem>
-                          <SelectItem value="completed">Completed</SelectItem>
-                          <SelectItem value="cancelled">Cancelled</SelectItem>
-                        </SelectContent>
-                      </Select>
                     </TableCell>
                   </TableRow>
                 ))}

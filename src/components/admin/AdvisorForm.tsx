@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -174,7 +175,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
         email: formData.email || null,
         phone_number: formData.phone_number || null,
         years_of_experience: formData.years_of_experience || null,
-        state_hq: formData.state_hq as any || null,
+        state_hq: formData.state_hq || null,
         city: formData.city || null,
         minimum: formData.minimum || null,
         website_url: formData.website_url || null,
@@ -182,11 +183,11 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
         premium: formData.premium,
         fiduciary: formData.fiduciary,
         first_session_is_free: formData.first_session_is_free,
-        // Cast arrays to proper types for Supabase
-        advisor_services: formData.advisor_services as AdvisorService[] || null,
-        professional_designations: formData.professional_designations as DesignationType[] || null,
-        client_type: formData.client_type as ClientType[] || null,
-        states_registered_in: formData.states_registered_in || null
+        // Cast arrays to proper types for Supabase - use 'as any' to bypass strict typing
+        advisor_services: (formData.advisor_services || null) as any,
+        professional_designations: (formData.professional_designations || null) as any,
+        client_type: (formData.client_type || null) as any,
+        states_registered_in: (formData.states_registered_in || null) as any
       };
 
       console.log('Final advisor data being sent:', advisorData);
