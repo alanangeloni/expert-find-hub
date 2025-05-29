@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -11,6 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { AdvisorManagement } from '@/components/admin/AdvisorManagement';
 import { AccountingFirmManagement } from '@/components/admin/AccountingFirmManagement';
 import { InvestmentFirmManagement } from '@/components/admin/InvestmentFirmManagement';
+import { MeetingRequestsManagement } from '@/components/admin/MeetingRequestsManagement';
 
 const AdminEntityDashboard = () => {
   const { user } = useAuth();
@@ -75,14 +75,15 @@ const AdminEntityDashboard = () => {
     <div className="container mx-auto py-8 px-4">
       <div className="mb-8">
         <h1 className="text-2xl md:text-3xl font-bold mb-2">Entity Management Dashboard</h1>
-        <p className="text-gray-600">Manage financial advisors, accounting firms, and investment firms</p>
+        <p className="text-gray-600">Manage financial advisors, accounting firms, investment firms, and meeting requests</p>
       </div>
 
       <Tabs defaultValue="advisors" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
           <TabsTrigger value="advisors">Financial Advisors</TabsTrigger>
           <TabsTrigger value="accounting">Accounting Firms</TabsTrigger>
           <TabsTrigger value="investment">Investment Firms</TabsTrigger>
+          <TabsTrigger value="meetings">Meeting Requests</TabsTrigger>
         </TabsList>
 
         <TabsContent value="advisors" className="mt-6">
@@ -95,6 +96,10 @@ const AdminEntityDashboard = () => {
 
         <TabsContent value="investment" className="mt-6">
           <InvestmentFirmManagement />
+        </TabsContent>
+
+        <TabsContent value="meetings" className="mt-6">
+          <MeetingRequestsManagement />
         </TabsContent>
       </Tabs>
     </div>
