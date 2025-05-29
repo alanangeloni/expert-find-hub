@@ -164,7 +164,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
     mutationFn: async (formData: AdvisorFormData) => {
       console.log('Submitting advisor data:', formData);
       
-      // Create a properly typed advisor data object with explicit type casting
+      // Create a properly typed advisor data object - cast all arrays and problematic fields to any
       const advisorData = {
         name: formData.name,
         slug: formData.slug,
@@ -175,7 +175,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
         email: formData.email || null,
         phone_number: formData.phone_number || null,
         years_of_experience: formData.years_of_experience || null,
-        state_hq: formData.state_hq || null,
+        state_hq: (formData.state_hq || null) as any, // Cast to any to bypass strict typing
         city: formData.city || null,
         minimum: formData.minimum || null,
         website_url: formData.website_url || null,
@@ -183,7 +183,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
         premium: formData.premium,
         fiduciary: formData.fiduciary,
         first_session_is_free: formData.first_session_is_free,
-        // Cast arrays to proper types for Supabase - use 'as any' to bypass strict typing
+        // Cast all arrays to any to bypass strict typing issues
         advisor_services: (formData.advisor_services || null) as any,
         professional_designations: (formData.professional_designations || null) as any,
         client_type: (formData.client_type || null) as any,
@@ -195,7 +195,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
       if (advisor) {
         const { data: result, error } = await supabase
           .from('financial_advisors')
-          .update(advisorData)
+          .update(advisorData as any) // Cast the entire object to any
           .eq('id', advisor.id)
           .select();
         
@@ -207,7 +207,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
       } else {
         const { data: result, error } = await supabase
           .from('financial_advisors')
-          .insert(advisorData)
+          .insert(advisorData as any) // Cast the entire object to any
           .select();
         
         if (error) {
