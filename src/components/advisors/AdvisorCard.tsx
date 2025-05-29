@@ -17,7 +17,7 @@ export const AdvisorCard = ({ advisor }: AdvisorCardProps) => {
       <Card className="h-full overflow-hidden hover:shadow-lg transition-shadow duration-300">
         <div className="p-4">
           <div className="flex items-start gap-4">
-            <div className="w-20 h-20 rounded-full bg-slate-200 overflow-hidden flex-shrink-0">
+            <div className="w-20 h-20 bg-slate-200 overflow-hidden flex-shrink-0 rounded-lg">
               {advisor.headshot_url ? (
                 <img 
                   src={advisor.headshot_url} 
@@ -40,9 +40,11 @@ export const AdvisorCard = ({ advisor }: AdvisorCardProps) => {
                   </Badge>
                 )}
               </h3>
-              <p className="text-sm text-gray-600">
-                {advisor.position || "Financial Advisor"}
-              </p>
+              {advisor.position && (
+                <p className="text-sm text-gray-600">
+                  {advisor.position}
+                </p>
+              )}
               <p className="text-sm font-medium text-gray-700 mt-1">
                 {advisor.firm_name || "Independent Advisor"}
               </p>

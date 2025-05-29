@@ -14,7 +14,7 @@ const Index = () => {
     }, 3000);
     return () => clearInterval(interval);
   }, []);
-  return <div className="flex min-h-screen flex-col">
+  return <div className="flex flex-col">
       {/* Hero Section */}
       <section className="bg-white py-12 md:py-20 text-center">
         <div className="container mx-auto px-4">
@@ -214,7 +214,11 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between">
             <div className="mb-6 md:mb-0">
-              <h2 className="text-xl font-bold">Financial Adviser</h2>
+              <img 
+                src="https://wqtvpeuhjgqcjbdozzuv.supabase.co/storage/v1/object/public/website-wide-images//630a5745c93c976e2ba4b72d_Fin%20Pro%20Logo%20with%20words.png" 
+                alt="Financial Pro Logo" 
+                className="h-10 mb-2"
+              />
               <p className="mt-2 text-gray-300 text-sm">Connecting you with financial experts</p>
             </div>
             <div className="grid grid-cols-2 gap-8 md:grid-cols-3">

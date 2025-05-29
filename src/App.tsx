@@ -21,7 +21,7 @@ import SignIn from "./pages/auth/SignIn";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Header from "./components/layout/Header";
+import PageLayout from "@/components/layout/PageLayout";
 
 // Admin pages
 import AdminDashboard from "./components/admin/AdminDashboard";
@@ -38,9 +38,7 @@ const queryClient = new QueryClient({
 });
 
 const AppRoutes = () => (
-  <div className="flex flex-col min-h-screen">
-    <Header />
-    <div className="flex-grow">
+  <PageLayout>
       <Routes>
         <Route path="/" element={<Index />} />
         <Route path="/blog" element={<Blog />} />
@@ -83,8 +81,7 @@ const AppRoutes = () => (
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
-    </div>
-  </div>
+  </PageLayout>
 );
 
 const App = () => (

@@ -38,12 +38,12 @@ export const AdvisorServices = ({ services, advisorName = 'This Advisor' }: Prop
           return (
             <div 
               key={serviceId}
-              className="flex items-center p-4 border border-gray-200 rounded-lg hover:border-blue-200 hover:bg-blue-50 transition-colors"
+              className="flex items-center p-4 border border-slate-200 rounded-lg hover:border-mint-300 hover:bg-mint-50 transition-colors"
             >
-              <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center mr-4">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              <div className="w-10 h-10 rounded-full bg-mint-50 flex items-center justify-center mr-4">
+                <div className="w-2 h-2 bg-mint-600 rounded-full"></div>
               </div>
-              <span className="text-gray-800 font-medium">{serviceName}</span>
+              <span className="text-mint-900 font-medium">{serviceName}</span>
             </div>
           );
         })}

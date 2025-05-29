@@ -6,7 +6,11 @@ const Header = () => {
     <header className="bg-white">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <Link to="/" className="flex items-center space-x-2">
-          <span className="text-xl font-bold text-brand-blue">Financial Adviser</span>
+          <img 
+            src="https://wqtvpeuhjgqcjbdozzuv.supabase.co/storage/v1/object/public/website-wide-images//630a5745c93c976e2ba4b72d_Fin%20Pro%20Logo%20with%20words.png" 
+            alt="Financial Pro Logo" 
+            className="h-10" 
+          />
         </Link>
 
         <nav className="hidden md:flex items-center space-x-6">
