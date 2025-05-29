@@ -16,7 +16,7 @@ export const AdvisorCard = ({ advisor }: AdvisorCardProps) => {
     <Link to={`/advisors/${advisor.slug}`}>
       <Card className="h-full overflow-hidden hover:shadow-lg transition-shadow duration-300">
         <div className="p-4">
-          <div className="flex items-start gap-4">
+          <div className="flex items-center gap-4">
             <div className="w-20 h-20 bg-slate-200 overflow-hidden flex-shrink-0 rounded-lg">
               {advisor.headshot_url ? (
                 <img 
@@ -31,7 +31,7 @@ export const AdvisorCard = ({ advisor }: AdvisorCardProps) => {
               )}
             </div>
             <div className="flex-1">
-              <h3 className="text-lg font-semibold text-gray-900 line-clamp-1">
+              <h3 className="text-lg font-semibold text-gray-900 line-clamp-1 leading-none">
                 {advisor.name}
                 {advisor.verified && (
                   <Badge variant="outline" className="ml-2 bg-blue-50 text-blue-700 border-blue-200">
@@ -41,7 +41,7 @@ export const AdvisorCard = ({ advisor }: AdvisorCardProps) => {
                 )}
               </h3>
               {advisor.position && (
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-gray-600 mt-1">
                   {advisor.position}
                 </p>
               )}
@@ -49,7 +49,7 @@ export const AdvisorCard = ({ advisor }: AdvisorCardProps) => {
                 {advisor.firm_name || "Independent Advisor"}
               </p>
               {advisor.city && advisor.state_hq && (
-                <div className="flex items-center mt-2 text-sm text-gray-500">
+                <div className="flex items-center text-sm text-gray-500 mt-1">
                   <MapPin className="h-4 w-4 mr-1 text-gray-400" />
                   <span>{advisor.city}, {advisor.state_hq}</span>
                 </div>
@@ -57,7 +57,7 @@ export const AdvisorCard = ({ advisor }: AdvisorCardProps) => {
             </div>
           </div>
           
-          <div className="mt-3 pt-3">
+          <div className="mt-3">
             {/* Display up to 3 specialties */}
             {advisor.advisor_services && advisor.advisor_services.length > 0 && (
               <div className="flex flex-wrap gap-1.5 mb-2">
