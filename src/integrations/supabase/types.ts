@@ -616,7 +616,15 @@ export type Database = {
           years_of_experience?: number | null
           youtube_video_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "fk_financial_advisors_linked_firm"
+            columns: ["linked_firm"]
+            isOneToOne: false
+            referencedRelation: "investment_firms"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       investment_firm_clients: {
         Row: {

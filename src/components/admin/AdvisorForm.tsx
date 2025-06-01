@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -108,6 +107,7 @@ const advisorSchema = z.object({
   premium: z.boolean().default(false),
   fiduciary: z.boolean().default(false),
   first_session_is_free: z.boolean().default(false),
+  linked_firm: z.string().optional(),
   advisor_services: z.array(serviceEnum).max(10, 'Maximum 10 services allowed').optional(),
   professional_designations: z.array(designationEnum).max(10, 'Maximum 10 designations allowed').optional(),
   client_type: z.array(clientTypeEnum).max(10, 'Maximum 10 client types allowed').optional(),
@@ -147,10 +147,25 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
       premium: advisor?.premium || false,
       fiduciary: advisor?.fiduciary || false,
       first_session_is_free: advisor?.first_session_is_free || false,
+      linked_firm: advisor?.linked_firm || '',
       advisor_services: advisor?.advisor_services || [],
       professional_designations: advisor?.professional_designations || [],
       client_type: advisor?.client_type || [],
       states_registered_in: advisor?.states_registered_in || [],
+    },
+  });
+
+  // Fetch investment firms for the dropdown
+  const { data: investmentFirms } = useQuery({
+    queryKey: ['investment-firms'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('investment_firms')
+        .select('id, name')
+        .order('name');
+      
+      if (error) throw error;
+      return data;
     },
   });
 
@@ -183,6 +198,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
         premium: formData.premium,
         fiduciary: formData.fiduciary,
         first_session_is_free: formData.first_session_is_free,
+        linked_firm: formData.linked_firm || null,
         // Cast all arrays to any to bypass strict typing issues
         advisor_services: (formData.advisor_services || null) as any,
         professional_designations: (formData.professional_designations || null) as any,
@@ -459,6 +475,33 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* Linked Investment Firm */}
+          <FormField
+            control={form.control}
+            name="linked_firm"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Linked Investment Firm</FormLabel>
+                <Select onValueChange={field.onChange} value={field.value}>
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select an investment firm" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="">No firm linked</SelectItem>
+                    {investmentFirms?.map((firm) => (
+                      <SelectItem key={firm.id} value={firm.id}>
+                        {firm.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}

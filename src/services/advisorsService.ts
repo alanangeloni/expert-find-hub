@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { AdvisorService } from "@/constants/advisorServices";
 import { ClientType } from "@/constants/clientTypes";
@@ -23,6 +22,7 @@ export interface Advisor {
   premium?: boolean;
   fiduciary?: boolean;
   first_session_is_free?: boolean;
+  linked_firm?: string | null;
   advisor_services?: AdvisorService[];
   professional_designations?: string[];
   client_type?: ClientType[];
@@ -44,6 +44,15 @@ export interface Advisor {
   username?: string;
   calls_booked?: number;
   rating?: number;
+  // Linked investment firm data
+  investment_firm?: {
+    id: string;
+    name: string;
+    slug?: string;
+    description?: string;
+    logo_url?: string;
+    website?: string;
+  };
 }
 
 // Define an AdvisorSpecialty type to match the allowed values
@@ -70,25 +79,27 @@ export interface AdvisorFilter {
 
 export const getAdvisors = async (filters?: AdvisorFilter) => {
   try {
-    // Start with a basic query
-    const { data, error } = await supabase
+    // Start with a basic query that includes linked investment firm data
+    let query = supabase
       .from("financial_advisors")
-      .select("*")
-      .then(async (query) => {
-        let result = query;
-        
-        // Apply filters
-        if (filters?.searchQuery) {
-          result = await supabase
-            .from("financial_advisors")
-            .select("*")
-            .or(`first_name.ilike.%${filters.searchQuery}%,last_name.ilike.%${filters.searchQuery}%,firm_name.ilike.%${filters.searchQuery}%,name.ilike.%${filters.searchQuery}%`);
-        } else {
-          result = await supabase.from("financial_advisors").select("*");
-        }
+      .select(`
+        *,
+        investment_firm:investment_firms!linked_firm(
+          id,
+          name,
+          slug,
+          description,
+          logo_url,
+          website
+        )
+      `);
+    
+    // Apply search filter if provided
+    if (filters?.searchQuery) {
+      query = query.or(`name.ilike.%${filters.searchQuery}%,firm_name.ilike.%${filters.searchQuery}%`);
+    }
 
-        return result;
-      });
+    const { data, error } = await query;
     
     if (error) {
       console.error("Error fetching advisors:", error);
@@ -169,7 +180,20 @@ export const getAdvisorBySlug = async (slug: string): Promise<Advisor | null> =>
   try {
     const { data, error } = await supabase
       .from('financial_advisors')
-      .select('*')
+      .select(`
+        *,
+        investment_firm:investment_firms!linked_firm(
+          id,
+          name,
+          slug,
+          description,
+          logo_url,
+          website,
+          headquarters,
+          aum,
+          established
+        )
+      `)
       .eq('slug', slug)
       .single();
 
