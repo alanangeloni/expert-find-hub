@@ -177,60 +177,72 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
 
   const mutation = useMutation({
     mutationFn: async (formData: AdvisorFormData) => {
-      console.log('Submitting advisor data:', formData);
-      
-      // Create a properly typed advisor data object - cast all arrays and problematic fields to any
-      const advisorData = {
-        name: formData.name,
-        slug: formData.slug,
-        firm_name: formData.firm_name || null,
-        position: formData.position || null,
-        personal_bio: formData.personal_bio || null,
-        firm_bio: formData.firm_bio || null,
-        email: formData.email || null,
-        phone_number: formData.phone_number || null,
-        years_of_experience: formData.years_of_experience || null,
-        state_hq: (formData.state_hq || null) as any, // Cast to any to bypass strict typing
-        city: formData.city || null,
-        minimum: formData.minimum || null,
-        website_url: formData.website_url || null,
-        verified: formData.verified,
-        premium: formData.premium,
-        fiduciary: formData.fiduciary,
-        first_session_is_free: formData.first_session_is_free,
-        linked_firm: formData.linked_firm || null,
-        // Cast all arrays to any to bypass strict typing issues
-        advisor_services: (formData.advisor_services || null) as any,
-        professional_designations: (formData.professional_designations || null) as any,
-        client_type: (formData.client_type || null) as any,
-        states_registered_in: (formData.states_registered_in || null) as any
-      };
-
-      console.log('Final advisor data being sent:', advisorData);
-
-      if (advisor) {
-        const { data: result, error } = await supabase
-          .from('financial_advisors')
-          .update(advisorData as any) // Cast the entire object to any
-          .eq('id', advisor.id)
-          .select();
+      try {
+        console.log('Submitting advisor data:', formData);
         
-        if (error) {
-          console.error('Update error:', error);
-          throw error;
+        // Create a properly typed advisor data object - cast all arrays and problematic fields to any
+        const advisorData = {
+          name: formData.name,
+          slug: formData.slug,
+          firm_name: formData.firm_name || null,
+          position: formData.position || null,
+          personal_bio: formData.personal_bio || null,
+          firm_bio: formData.firm_bio || null,
+          email: formData.email || null,
+          phone_number: formData.phone_number || null,
+          years_of_experience: formData.years_of_experience || null,
+          state_hq: (formData.state_hq || null) as any, // Cast to any to bypass strict typing
+          city: formData.city || null,
+          minimum: formData.minimum || null,
+          website_url: formData.website_url || null,
+          verified: formData.verified || false,
+          premium: formData.premium || false,  // Fixed typo from premum to premium
+          fiduciary: formData.fiduciary || false,
+          // Cast all arrays to any to bypass strict typing issues
+          advisor_services: (formData.advisor_services || null) as any,
+          professional_designations: (formData.professional_designations || null) as any,
+          client_type: (formData.client_type || null) as any,
+          states_registered_in: (formData.states_registered_in || null) as any
+        };
+
+        console.log('Final advisor data being sent:', advisorData);
+
+        // Ensure required fields are present
+        if (!advisorData.name || !advisorData.slug) {
+          throw new Error('Name and slug are required fields');
         }
-        return result;
-      } else {
-        const { data: result, error } = await supabase
-          .from('financial_advisors')
-          .insert(advisorData as any) // Cast the entire object to any
-          .select();
-        
-        if (error) {
-          console.error('Insert error:', error);
-          throw error;
+
+        if (advisor) {
+          console.log('Updating advisor with ID:', advisor.id);
+          const { data: result, error } = await supabase
+            .from('financial_advisors')
+            .update(advisorData as any)
+            .eq('id', advisor.id)
+            .select();
+          
+          if (error) {
+            console.error('Update error:', error);
+            throw new Error(error.message || 'Failed to update advisor');
+          }
+          console.log('Update successful, result:', result);
+          return result;
+        } else {
+          console.log('Creating new advisor');
+          const { data: result, error } = await supabase
+            .from('financial_advisors')
+            .insert(advisorData as any)
+            .select();
+          
+          if (error) {
+            console.error('Insert error:', error);
+            throw new Error(error.message || 'Failed to create advisor');
+          }
+          console.log('Create successful, result:', result);
+          return result;
         }
-        return result;
+      } catch (error) {
+        console.error('Error in mutation function:', error);
+        throw error; // Re-throw to be caught by onError
       }
     },
     onSuccess: (result) => {

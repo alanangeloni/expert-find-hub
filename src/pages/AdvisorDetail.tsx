@@ -292,19 +292,6 @@ const AdvisorDetail = () => {
             </div>
           </Card>
 
-          {/* First Session Info */}
-          {advisor.first_session_is_free && (
-            <Card className="bg-green-50 border-green-200 mb-8 p-6">
-              <h3 className="text-xl font-bold mb-2 flex items-center text-green-800">
-                <Check className="h-5 w-5 mr-2" />
-                First Session is Free
-              </h3>
-              <p className="text-green-700">
-                Schedule your complimentary initial consultation to see if this advisor is right for you.
-              </p>
-            </Card>
-          )}
-
           {/* CTA */}
           <Card className="p-6 text-center">
             <h3 className="text-xl font-bold mb-3">Ready to get started?</h3>

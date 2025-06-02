@@ -79,7 +79,9 @@ export interface AdvisorFilter {
 
 export const getAdvisors = async (filters?: AdvisorFilter) => {
   try {
-    // Start with a basic query that includes linked investment firm data
+    console.log('Fetching advisors with filters:', filters);
+    
+    // Start with a query that includes linked investment firm data
     let query = supabase
       .from("financial_advisors")
       .select(`
@@ -96,9 +98,8 @@ export const getAdvisors = async (filters?: AdvisorFilter) => {
     
     // Apply search filter if provided
     if (filters?.searchQuery) {
-      query = query.or(`name.ilike.%${filters.searchQuery}%,firm_name.ilike.%${filters.searchQuery}%`);
+      query = query.or(`first_name.ilike.%${filters.searchQuery}%,last_name.ilike.%${filters.searchQuery}%,firm_name.ilike.%${filters.searchQuery}%,name.ilike.%${filters.searchQuery}%`);
     }
-
     const { data, error } = await query;
     
     if (error) {
@@ -106,7 +107,20 @@ export const getAdvisors = async (filters?: AdvisorFilter) => {
       return [];
     }
 
-    let advisors = (data || []) as Advisor[];
+    // Process the data to ensure advisor_services is always an array
+    let advisors = (data || []).map(advisor => ({
+      ...advisor,
+      advisor_services: Array.isArray(advisor.advisor_services) 
+        ? advisor.advisor_services.filter(Boolean) // Remove any null/undefined values
+        : []
+    })) as Advisor[];
+    
+    console.log('Processed advisors:', advisors.map(a => ({
+      id: a.id,
+      name: a.name,
+      services: a.advisor_services,
+      servicesCount: a.advisor_services?.length
+    })));
     
     // Apply filters in memory to avoid TypeScript issues
     if (filters?.minExperience) {
@@ -129,9 +143,10 @@ export const getAdvisors = async (filters?: AdvisorFilter) => {
     // Apply specialty filter if needed
     if (filters?.specialties && filters.specialties.length > 0) {
       advisors = advisors.filter(advisor => {
-        if (!advisor.advisor_services || advisor.advisor_services.length === 0) return false;
-        return filters.specialties?.some(specialty => 
-          advisor.advisor_services?.includes(specialty as AdvisorService)
+        const services = advisor.advisor_services || [];
+        console.log(`Checking advisor ${advisor.name} (${advisor.id}) with services:`, services);
+        return services.some(service => 
+          filters.specialties?.includes(service as AdvisorService)
         );
       });
     }
@@ -178,6 +193,7 @@ const applyMinimumAssetsFilter = (advisors: Advisor[], minimumAssets: string) =>
 
 export const getAdvisorBySlug = async (slug: string): Promise<Advisor | null> => {
   try {
+    console.log('Fetching advisor with slug:', slug);
     const { data, error } = await supabase
       .from('financial_advisors')
       .select(`
@@ -202,7 +218,19 @@ export const getAdvisorBySlug = async (slug: string): Promise<Advisor | null> =>
       return null;
     }
 
-    return data as Advisor;
+    console.log('Raw advisor data from DB:', JSON.stringify(data, null, 2));
+    console.log('Advisor services:', data.advisor_services);
+    console.log('Advisor services type:', typeof data.advisor_services);
+    console.log('Advisor services length:', data.advisor_services?.length);
+
+    // Ensure advisor_services is an array
+    const advisor = {
+      ...data,
+      advisor_services: Array.isArray(data.advisor_services) ? data.advisor_services : []
+    } as Advisor;
+
+    console.log('Processed advisor services:', advisor.advisor_services);
+    return advisor;
   } catch (error: any) {
     console.error(`Error fetching advisor with slug ${slug}:`, error);
     return null;

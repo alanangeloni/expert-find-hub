@@ -58,18 +58,30 @@ export const AdvisorCard = ({ advisor }: AdvisorCardProps) => {
           </div>
           
           <div className="mt-3">
+            {/* Debug info - will remove later */}
+            <div className="hidden">
+              <p>Advisor: {advisor.name}</p>
+              <p>Services count: {advisor.advisor_services?.length || 0}</p>
+              <p>Services: {JSON.stringify(advisor.advisor_services)}</p>
+              <p>Services type: {typeof advisor.advisor_services}</p>
+            </div>
+            
             {/* Display up to 3 specialties */}
-            {advisor.advisor_services && advisor.advisor_services.length > 0 && (
+            {advisor.advisor_services && Array.isArray(advisor.advisor_services) && advisor.advisor_services.length > 0 && (
               <div className="flex flex-wrap gap-1.5 mb-2">
-                {advisor.advisor_services.slice(0, 3).map((service, index) => (
-                  <Badge 
-                    key={index}
-                    variant="outline" 
-                    className="px-2 py-0.5 text-xs bg-mint-50 text-mint-800 border-mint-200 hover:bg-mint-100 transition-colors"
-                  >
-                    {service}
-                  </Badge>
-                ))}
+                {advisor.advisor_services.slice(0, 3).map((service, index) => {
+                  // Ensure service is a string before rendering
+                  const serviceText = typeof service === 'string' ? service : String(service);
+                  return (
+                    <Badge 
+                      key={index}
+                      variant="outline" 
+                      className="px-2 py-0.5 text-xs bg-mint-50 text-mint-800 border-mint-200 hover:bg-mint-100 transition-colors"
+                    >
+                      {serviceText}
+                    </Badge>
+                  );
+                })}
               </div>
             )}
             

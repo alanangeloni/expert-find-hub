@@ -495,7 +495,6 @@ export type Database = {
           firm_logo_url: string | null
           firm_name: string | null
           firm_sec_crd: string | null
-          first_session_is_free: boolean | null
           headshot_url: string | null
           id: string
           link_to_advisor_sec: string | null
