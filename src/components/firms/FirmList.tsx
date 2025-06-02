@@ -88,12 +88,12 @@ export function FirmList({ firms, isLoading, formatMinimumInvestment, basePath, 
                 ) : (
                   <>
                     {firm.minimum_investment !== null && (
-                      <Badge variant="outline" className="px-2 py-0.5 text-xs bg-blue-50 text-blue-700 border-blue-200">
+                      <Badge variant="outline" className="px-2 py-0.5 text-xs bg-mint-50 text-mint-900 border-mint-200">
                         Min: {formatMinimumInvestment(firm.minimum_investment)}
                       </Badge>
                     )}
                     {firm.aum && (
-                      <Badge variant="outline" className="px-2 py-0.5 text-xs bg-purple-50 text-purple-700 border-purple-200">
+                      <Badge variant="outline" className="px-2 py-0.5 text-xs bg-mint-50 text-mint-900 border-mint-200">
                         AUM: {firm.aum}
                       </Badge>
                     )}
@@ -101,7 +101,7 @@ export function FirmList({ firms, isLoading, formatMinimumInvestment, basePath, 
                       <Badge 
                         key={index} 
                         variant="outline" 
-                        className="px-2 py-0.5 text-xs bg-amber-50 text-amber-700 border-amber-200"
+                        className="px-2 py-0.5 text-xs bg-mint-50 text-mint-900 border-mint-200"
                       >
                         {assetClass}
                       </Badge>
