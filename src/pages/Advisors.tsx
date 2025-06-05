@@ -5,6 +5,12 @@ import { getAdvisors, getUniqueStates, type AdvisorFilter } from '@/services/adv
 import { AdvisorList } from '@/components/advisors/AdvisorList';
 import { AdvisorSearchForm } from '@/components/advisors/AdvisorSearchForm';
 
+type PaginationState = {
+  page: number;
+  pageSize: number;
+  totalCount: number;
+};
+
 const AdvisorSearch = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<AdvisorFilter>({
@@ -13,7 +19,12 @@ const AdvisorSearch = () => {
     specialties: [],
     clientType: 'all'
   } as AdvisorFilter);
-  const [states, setStates] = useState<string[]>([]);
+    const [states, setStates] = useState<string[]>([]);
+  const [pagination, setPagination] = useState<PaginationState>({
+    page: 1,
+    pageSize: 15,
+    totalCount: 0
+  });
 
   // Fetch unique states for the dropdown
   useEffect(() => {
@@ -29,10 +40,37 @@ const AdvisorSearch = () => {
     fetchStates();
   }, []);
 
-  const { data: advisors, isLoading } = useQuery({
-    queryKey: ['advisors', filters],
-    queryFn: () => getAdvisors(filters),
+  // Get advisors with pagination
+  const { data, isLoading } = useQuery({
+    queryKey: ['advisors', { ...filters, page: pagination.page }],
+    queryFn: () => getAdvisors({
+      ...filters,
+      page: pagination.page,
+      pageSize: pagination.pageSize
+    })
   });
+
+  // Update pagination when data changes
+  useEffect(() => {
+    if (data) {
+      setPagination(prev => ({
+        ...prev,
+        totalCount: data.count || 0
+      }));
+    }
+  }, [data]);
+
+  const handlePageChange = (newPage: number) => {
+    setPagination(prev => ({
+      ...prev,
+      page: newPage
+    }));
+    // Scroll to top of the list when changing pages
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Get advisors from response or empty array if not available
+  const advisors = data?.data || [];
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
@@ -66,6 +104,11 @@ const AdvisorSearch = () => {
       clientType: 'all',
       searchQuery
     });
+    // Reset to first page when filters are cleared
+    setPagination(prev => ({
+      ...prev,
+      page: 1
+    }));
   };
   
   return (
@@ -96,8 +139,12 @@ const AdvisorSearch = () => {
         
         <div className="col-span-1 lg:col-span-4">
           <AdvisorList 
-            advisors={advisors || []}
+            advisors={advisors}
             isLoading={isLoading}
+            currentPage={pagination.page}
+            totalCount={pagination.totalCount}
+            pageSize={pagination.pageSize}
+            onPageChange={handlePageChange}
           />
         </div>
       </div>

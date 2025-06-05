@@ -91,10 +91,20 @@ export interface FirmFilter {
   state?: string;
   minimumInvestment?: string;
   assetClass?: string;
-  asset_classes?: string[]; 
+  asset_classes?: string[];
+  page?: number;
+  pageSize?: number;
 }
 
-export const getInvestmentFirms = async (filters?: FirmFilter): Promise<InvestmentFirm[]> => {
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export const getInvestmentFirms = async (filters?: FirmFilter): Promise<PaginatedResponse<InvestmentFirm>> => {
   try {
     console.log('Fetching investment firms with filters:', filters);
     
@@ -126,33 +136,61 @@ export const getInvestmentFirms = async (filters?: FirmFilter): Promise<Investme
       }
     }
     
-    // Execute the query to get the data
-    const { data: firmsData, error } = await queryBuilder;
-    
-    if (error) {
-      console.error('Error fetching investment firms:', error);
-      return [];
+    // First, get the total count with all filters applied
+    let countQuery = supabase
+      .from('investment_firms')
+      .select('*', { count: 'exact', head: true });
+      
+    // Apply the same filters to the count query as the main query
+    if (filters?.searchQuery) {
+      countQuery = countQuery.or(
+        `name.ilike.%${filters.searchQuery}%,headquarters.ilike.%${filters.searchQuery}%,description.ilike.%${filters.searchQuery}%`
+      );
     }
     
-    console.log('Fetched firms (before asset class filter):', firmsData);
+    if (filters?.minimumInvestment && filters.minimumInvestment !== 'all') {
+      const minValue = parseInt(filters.minimumInvestment.split('-')[0]);
+      const maxValue = filters.minimumInvestment.includes('-') 
+        ? parseInt(filters.minimumInvestment.split('-')[1]) 
+        : null;
+      
+      if (maxValue) {
+        countQuery = countQuery.gte('minimum_investment', minValue).lte('minimum_investment', maxValue);
+      } else {
+        countQuery = countQuery.gte('minimum_investment', minValue);
+      }
+    }
+    
+    // Execute the count query
+    const { count, error: countError } = await countQuery;
+    if (countError) {
+      console.error('Error counting firms:', countError);
+      throw countError;
+    }
+    
+    const totalCount = count || 0;
+    console.log('Total firms count:', totalCount, 'for filters:', filters);
+    
+    // Apply pagination
+    const page = filters?.page || 1;
+    const pageSize = filters?.pageSize || 15;
+    const from = (page - 1) * pageSize;
+    
+    // Execute the query with pagination
+    const { data, error } = await queryBuilder.range(from, from + pageSize - 1);
+    
+    if (error) {
+      console.error('Error fetching paginated firms:', error);
+      throw error;
+    }
     
     // Process the data - handle asset_class as a string
-    let processedFirms = firmsData.map(firm => {
-      // Ensure asset_class is always a string
-      const assetClass = firm.asset_class || '';
-      const assetClasses = assetClass ? [assetClass] : [];
-      
-      return {
-        ...firm,
-        asset_classes: assetClasses,
-        asset_class: assetClass // Keep the original string value for backward compatibility
-      };
-    });
+    let processedFirms = data || [];
     
     // Apply asset class filter in-memory if needed
     if (filters?.assetClass && filters.assetClass !== 'all') {
-      console.log('Filtering by asset class:', filters.assetClass);
-      processedFirms = processedFirms.filter(firm => {
+      console.log('Applying asset class filter:', filters.assetClass);
+      processedFirms = processedFirms.filter((firm: any) => {
         const matches = firm.asset_class === filters.assetClass;
         console.log(`Firm ${firm.name} (${firm.asset_class}) matches ${filters.assetClass}:`, matches);
         return matches;
@@ -160,10 +198,36 @@ export const getInvestmentFirms = async (filters?: FirmFilter): Promise<Investme
       console.log('Firms after asset class filter:', processedFirms);
     }
     
-    return processedFirms as unknown as InvestmentFirm[];
+    // Process the firms data
+    const processedData = processedFirms.map((firm: any) => {
+      const assetClasses = Array.isArray(firm.asset_class) 
+        ? firm.asset_class 
+        : firm.asset_class ? [firm.asset_class] : [];
+        
+      return {
+        ...firm,
+        asset_classes: assetClasses,
+        asset_class: assetClasses[0] || '' // Keep the first one as string for backward compatibility
+      };
+    }) as InvestmentFirm[];
+    
+    // Return paginated response
+    return {
+      data: processedData,
+      total: totalCount,
+      page,
+      pageSize,
+      totalPages: Math.ceil(totalCount / pageSize)
+    };
   } catch (error) {
     console.error('Error in getInvestmentFirms:', error);
-    return [];
+    return {
+      data: [],
+      total: 0,
+      page: 1,
+      pageSize: filters?.pageSize || 15,
+      totalPages: 0
+    };
   }
 };
 

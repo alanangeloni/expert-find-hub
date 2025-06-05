@@ -19,10 +19,15 @@ const InvestmentFirms = () => {
   // These will be populated from the actual data
   const [assetClasses, setAssetClasses] = useState<string[]>([]);
   
-  const { data: firms, isLoading } = useQuery<InvestmentFirm[]>({
-    queryKey: ['firms', filters],
-    queryFn: () => getInvestmentFirms(filters),
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 15;
+  
+  const { data: firmsData, isLoading } = useQuery({
+    queryKey: ['firms', filters, currentPage],
+    queryFn: () => getInvestmentFirms({ ...filters, page: currentPage, pageSize }),
   });
+  
+  const firms = firmsData?.data || [];
 
   // Function to properly format minimum investment values
   const formatMinimumInvestment = (value: number | null | undefined): string => {
@@ -146,11 +151,15 @@ const InvestmentFirms = () => {
         </div>
         
         <div className="col-span-1 lg:col-span-4">
-          <FirmList 
-            firms={firms || []}
+<FirmList 
+            firms={firms}
             isLoading={isLoading}
             formatMinimumInvestment={formatMinimumInvestment}
             basePath="/investment-firms"
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+            totalCount={firmsData?.total || 0}
+            pageSize={pageSize}
           />
         </div>
       </div>

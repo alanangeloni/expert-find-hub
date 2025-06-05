@@ -3,7 +3,8 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link } from 'react-router-dom';
 import { Spinner } from "@/components/ui/spinner";
-import { DollarSign, ChevronRight } from 'lucide-react';
+import { DollarSign, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface FirmListProps {
   firms: any[];
@@ -11,9 +12,24 @@ interface FirmListProps {
   formatMinimumInvestment: (value: number | null | undefined) => string;
   basePath: string;
   firmType?: 'investment' | 'accounting';
+  currentPage?: number;
+  onPageChange?: (page: number) => void;
+  totalCount?: number;
+  pageSize?: number;
 }
 
-export function FirmList({ firms, isLoading, formatMinimumInvestment, basePath, firmType = 'investment' }: FirmListProps) {
+export function FirmList({ 
+  firms, 
+  isLoading, 
+  formatMinimumInvestment, 
+  basePath, 
+  firmType = 'investment',
+  currentPage = 1,
+  onPageChange = () => {},
+  totalCount = 0,
+  pageSize = 15
+}: FirmListProps) {
+  const totalPages = Math.ceil(totalCount / pageSize);
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -32,7 +48,8 @@ export function FirmList({ firms, isLoading, formatMinimumInvestment, basePath, 
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="w-full space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {firms.map((firm) => (
         <Link 
           key={firm.id} 
@@ -112,7 +129,71 @@ export function FirmList({ firms, isLoading, formatMinimumInvestment, basePath, 
             </CardContent>
           </Card>
         </Link>
-      ))}
+        ))}
+      </div>
+      
+      {totalPages > 1 && (
+        <div className="w-full flex items-center justify-between mt-8 px-4 py-3 bg-white rounded-lg shadow-sm border border-gray-100">
+          <Button
+            variant="outline"
+            onClick={() => onPageChange(Math.max(1, currentPage - 1))}
+            disabled={currentPage === 1}
+            className="flex items-center gap-2 border-gray-200 hover:bg-gray-50"
+          >
+            <ChevronLeft className="h-4 w-4" />
+            Previous
+          </Button>
+          
+          <div className="flex items-center gap-2">
+            {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+              // Show pages around current page
+              let pageNum = i + 1;
+              if (totalPages > 5) {
+                if (currentPage <= 3) {
+                  pageNum = i + 1;
+                } else if (currentPage >= totalPages - 2) {
+                  pageNum = totalPages - 4 + i;
+                } else {
+                  pageNum = currentPage - 2 + i;
+                }
+              }
+              
+              return (
+                <Button
+                  key={pageNum}
+                  variant={pageNum === currentPage ? "default" : "outline"}
+                  onClick={() => onPageChange(pageNum)}
+                  className={`w-10 h-10 p-0 flex items-center justify-center ${pageNum === currentPage ? 'bg-brand-blue text-white hover:bg-brand-blue/90' : 'hover:bg-gray-50 border-gray-200'}`}
+                >
+                  {pageNum}
+                </Button>
+              );
+            })}
+            {totalPages > 5 && currentPage < totalPages - 2 && (
+              <span className="px-2">...</span>
+            )}
+            {totalPages > 5 && currentPage < totalPages - 1 && (
+              <Button
+                variant={currentPage === totalPages ? "default" : "outline"}
+                onClick={() => onPageChange(totalPages)}
+                className={`w-10 h-10 p-0 flex items-center justify-center ${currentPage === totalPages ? 'bg-brand-blue text-white hover:bg-brand-blue/90' : 'hover:bg-gray-50 border-gray-200'}`}
+              >
+                {totalPages}
+              </Button>
+            )}
+          </div>
+          
+          <Button
+            variant="outline"
+            onClick={() => onPageChange(Math.min(totalPages, currentPage + 1))}
+            disabled={currentPage === totalPages}
+            className="flex items-center gap-2 border-gray-200 hover:bg-gray-50"
+          >
+            Next
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

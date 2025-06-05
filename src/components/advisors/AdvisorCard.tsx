@@ -40,11 +40,6 @@ export const AdvisorCard = ({ advisor }: AdvisorCardProps) => {
                   </Badge>
                 )}
               </h3>
-              {advisor.position && (
-                <p className="text-sm text-gray-600 mt-1">
-                  {advisor.position}
-                </p>
-              )}
               <p className="text-sm font-medium text-gray-700 mt-1">
                 {advisor.firm_name || "Independent Advisor"}
               </p>

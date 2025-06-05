@@ -78,9 +78,19 @@ export interface AdvisorFilter {
   clientType?: string;
 }
 
-export const getAdvisors = async (filters?: AdvisorFilter) => {
+export interface AdvisorsResponse {
+  data: Advisor[];
+  count: number;
+}
+
+export const getAdvisors = async (filters?: AdvisorFilter & { page?: number; pageSize?: number }): Promise<AdvisorsResponse> => {
   try {
     console.log('Fetching advisors with filters:', filters);
+    
+    const page = filters?.page || 1;
+    const pageSize = filters?.pageSize || 15;
+    const start = (page - 1) * pageSize;
+    const end = start + pageSize - 1;
     
     // Start with a query that includes linked investment firm data
     let query = supabase
@@ -95,17 +105,18 @@ export const getAdvisors = async (filters?: AdvisorFilter) => {
           logo_url,
           website
         )
-      `);
+      `, { count: 'exact' })
+      .range(start, end);
     
     // Apply search filter if provided
     if (filters?.searchQuery) {
       query = query.or(`first_name.ilike.%${filters.searchQuery}%,last_name.ilike.%${filters.searchQuery}%,firm_name.ilike.%${filters.searchQuery}%,name.ilike.%${filters.searchQuery}%`);
     }
-    const { data, error } = await query;
+    const { data, error, count } = await query;
     
     if (error) {
       console.error("Error fetching advisors:", error);
-      return [];
+      return { data: [], count: 0 };
     }
 
     // Process the data to ensure advisor_services is always an array
@@ -116,14 +127,10 @@ export const getAdvisors = async (filters?: AdvisorFilter) => {
         : []
     })) as Advisor[];
     
-    console.log('Processed advisors:', advisors.map(a => ({
-      id: a.id,
-      name: a.name,
-      services: a.advisor_services,
-      servicesCount: a.advisor_services?.length
-    })));
+    // Log the number of advisors found
+    console.log(`Found ${advisors.length} advisors after filtering`);
     
-    // Apply filters in memory to avoid TypeScript issues
+    // Apply filters in memory
     if (filters?.minExperience) {
       advisors = advisors.filter(advisor => (advisor.years_of_experience || 0) >= filters.minExperience!);
     }
@@ -142,10 +149,9 @@ export const getAdvisors = async (filters?: AdvisorFilter) => {
     }
 
     // Apply specialty filter if needed
-    if (filters?.specialties && filters.specialties.length > 0) {
+    if (filters?.specialties?.length) {
       advisors = advisors.filter(advisor => {
         const services = advisor.advisor_services || [];
-        console.log(`Checking advisor ${advisor.name} (${advisor.id}) with services:`, services);
         return services.some(service => 
           filters.specialties?.includes(service as AdvisorService)
         );
@@ -155,18 +161,15 @@ export const getAdvisors = async (filters?: AdvisorFilter) => {
     // Apply client type filter if needed
     if (filters?.clientType && filters.clientType !== "all") {
       advisors = advisors.filter(advisor => {
-        // Check if client_type is defined and is an array before calling includes
-        const clientTypes = Array.isArray(advisor.client_type) 
-          ? advisor.client_type 
-          : [];
+        const clientTypes = Array.isArray(advisor.client_type) ? advisor.client_type : [];
         return clientTypes.includes(filters.clientType as ClientType);
       });
     }
 
-    return advisors;
+    return { data: advisors, count: count || 0 };
   } catch (error) {
     console.error("Error in getAdvisors:", error);
-    return [];
+    return { data: [], count: 0 };
   }
 };
 
