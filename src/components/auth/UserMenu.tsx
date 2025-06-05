@@ -47,7 +47,7 @@ const UserMenu = () => {
           <Button variant="outline">Sign in</Button>
         </Link>
         <Link to="/auth/signup">
-          <Button>Sign up</Button>
+          <Button className="bg-mint-500 hover:bg-mint-600">Sign up</Button>
         </Link>
       </div>
     );

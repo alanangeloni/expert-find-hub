@@ -257,7 +257,7 @@ export default function BlogArticle() {
           {/* Sidebar */}
           <aside className="w-full lg:w-1/3 flex-shrink-0 flex flex-col gap-6">
             {/* Personalized Advice CTA */}
-            <div className="bg-blue-600 rounded-2xl p-6 mb-2 text-white shadow">
+            <div className="bg-brand-blue rounded-2xl p-6 mb-2 text-white shadow">
               <h4 className="font-bold text-lg mb-2">Need Personalized Advice?</h4>
               <p className="mb-4 text-blue-100">Our financial advisors can help you create a retirement plan tailored to your specific needs and goals.</p>
               <button className="w-full bg-white text-blue-700 font-semibold rounded-lg py-2 hover:bg-blue-50 transition flex items-center justify-center gap-2">

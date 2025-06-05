@@ -29,9 +29,11 @@ export interface Advisor {
   created_at?: string;
   updated_at?: string;
   // Additional fields from database
+  review_count?: number;
+  rating?: number | string;
   headshot_url?: string | null;
-  firm_logo_url?: string | null;
   scheduling_link?: string | null;
+  firm_logo_url?: string | null;
   firm_address?: string;
   firm_aum?: string;
   advisor_sec_crd?: string;
@@ -43,7 +45,6 @@ export interface Advisor {
   secondary_education?: string;
   username?: string;
   calls_booked?: number;
-  rating?: number;
   // Linked investment firm data
   investment_firm?: {
     id: string;

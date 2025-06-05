@@ -162,13 +162,13 @@ export const AdvisorSearchForm = ({
           {selectedSpecialties.map(specialty => (
             <div 
               key={specialty}
-              className="bg-blue-100 text-blue-800 text-sm px-3 py-1.5 rounded-full flex items-center gap-2 border border-blue-200"
+              className="bg-emerald-50 text-emerald-900 text-sm px-3 py-1.5 rounded-full flex items-center gap-2 border border-emerald-200"
             >
               <span>{specialty}</span>
               <button 
                 type="button"
                 onClick={() => removeSpecialty(specialty)}
-                className="text-blue-600 hover:text-blue-800 focus:outline-none"
+                className="text-emerald-600 hover:text-emerald-800 focus:outline-none"
                 aria-label={`Remove ${specialty}`}
               >
                 <X className="h-3 w-3" />
