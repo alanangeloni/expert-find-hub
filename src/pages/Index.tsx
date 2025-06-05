@@ -3,9 +3,84 @@ import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Star } from "lucide-react";
+import SpecialtyBubbles from "@/components/home/SpecialtyBubbles";
+import { AdvisorCard } from "@/components/advisors/AdvisorCard";
+import { getAdvisors } from "@/services/advisorsService";
 
 // Professional type that rotates in the hero section
 const professionalTypes = ["Financial Professional", "Financial Advisor", "Accountant", "Tax Specialist"];
+
+// Component to fetch and display advisor grid
+const AdvisorGrid = () => {
+  const [advisors, setAdvisors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchRandomAdvisors = async () => {
+      try {
+        setLoading(true);
+        // First, get the total count of advisors
+        const { count } = await getAdvisors({ 
+          page: 1, 
+          pageSize: 1, // We just need the count
+        });
+        
+        if (count > 0) {
+          // Fetch all advisors
+          const { data } = await getAdvisors({ 
+            page: 1, 
+            pageSize: count, // Fetch all advisors
+            // You might want to add additional filters here to ensure quality advisors
+          });
+          
+          if (data && data.length > 0) {
+            // Shuffle all advisors and take first 3
+            const shuffled = [...data].sort(() => 0.5 - Math.random());
+            setAdvisors(shuffled.slice(0, 3));
+          } else {
+            setAdvisors([]);
+          }
+        } else {
+          setAdvisors([]);
+        }
+      } catch (err) {
+        console.error('Error fetching advisors:', err);
+        setError('Failed to load advisors');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRandomAdvisors();
+  }, []);
+
+  if (loading) {
+    return <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {[1, 2, 3].map((i) => (
+        <div key={i} className="h-64 bg-gray-200 rounded-lg animate-pulse"></div>
+      ))}
+    </div>;
+  }
+
+  if (error) {
+    return <div className="text-center text-red-500 py-8">{error}</div>;
+  }
+
+  if (advisors.length === 0) {
+    return <div className="text-center text-gray-500 py-8">No advisors found</div>;
+  }
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {advisors.map((advisor) => (
+        <div key={advisor.id} className="h-full">
+          <AdvisorCard advisor={advisor} />
+        </div>
+      ))}
+    </div>
+  );
+};
 const Index = () => {
   const [professionalTypeIndex, setProfessionalTypeIndex] = useState(0);
   useEffect(() => {
@@ -38,6 +113,9 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Specialties Section */}
+      <SpecialtyBubbles />
+
       {/* Top Financial Advisors Section */}
       <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
@@ -45,140 +123,12 @@ const Index = () => {
             <h2 className="text-2xl font-bold text-brand-blue">
               Top Financial Advisors
             </h2>
-            <Link to="/investment-firms" className="text-emerald-400 flex items-center">
+            <Link to="/advisors" className="text-emerald-400 flex items-center">
               View all advisors →
             </Link>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Advisor Card 1 */}
-            <Card className="overflow-hidden">
-              <CardContent className="p-6">
-                <div className="flex items-center space-x-4 mb-4">
-                  <div className="h-16 w-16 rounded-full bg-gray-200"></div>
-                  <div>
-                    <h3 className="text-lg font-semibold">Jennifer Wilson, CFP®</h3>
-                    <p className="text-emerald-500">Wealth Management</p>
-                    <div className="flex items-center mt-1">
-                      {[1, 2, 3, 4, 5].map(star => <Star key={star} className="h-4 w-4 fill-yellow-400 text-yellow-400" />)}
-                      <span className="text-xs text-gray-500 ml-2">5.0 (48 reviews)</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="space-y-2 mb-4 text-sm text-gray-500">
-                  <div className="flex items-center">
-                    <span>New York, NY (Remote Available)</span>
-                  </div>
-                  <div className="flex items-center">
-                    <span>15+ years experience</span>
-                  </div>
-                  <div className="flex items-center">
-                    <span>Specializes in High Net Worth Individuals</span>
-                  </div>
-                </div>
-                
-                <p className="text-sm text-gray-600 mb-4">
-                  Helping clients build and preserve wealth through comprehensive financial planning and investment management strategies.
-                </p>
-                
-                <div className="flex space-x-3 mt-4">
-                  <Link to="/investment-firms/jennifer-wilson" className="px-4 py-2 border border-brand-blue text-brand-blue rounded hover:bg-gray-50">
-                    View Profile
-                  </Link>
-                  <button className="px-4 py-2 border border-gray-300 text-gray-600 rounded hover:bg-gray-50">
-                    Contact
-                  </button>
-                </div>
-              </CardContent>
-            </Card>
-            
-            {/* Advisor Card 2 */}
-            <Card className="overflow-hidden">
-              <CardContent className="p-6">
-                <div className="flex items-center space-x-4 mb-4">
-                  <div className="h-16 w-16 rounded-full bg-gray-200"></div>
-                  <div>
-                    <h3 className="text-lg font-semibold">Michael Chen, CFA</h3>
-                    <p className="text-emerald-500">Investment Advisory</p>
-                    <div className="flex items-center mt-1">
-                      {[1, 2, 3, 4].map(star => <Star key={star} className="h-4 w-4 fill-yellow-400 text-yellow-400" />)}
-                      <Star className="h-4 w-4 fill-yellow-200 text-yellow-400" />
-                      <span className="text-xs text-gray-500 ml-2">4.5 (39 reviews)</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="space-y-2 mb-4 text-sm text-gray-500">
-                  <div className="flex items-center">
-                    <span>San Francisco, CA (Remote Available)</span>
-                  </div>
-                  <div className="flex items-center">
-                    <span>12+ years experience</span>
-                  </div>
-                  <div className="flex items-center">
-                    <span>Specializes in Portfolio Management</span>
-                  </div>
-                </div>
-                
-                <p className="text-sm text-gray-600 mb-4">
-                  Expert in creating diversified investment portfolios tailored to client goals with a focus on long-term growth and risk management.
-                </p>
-                
-                <div className="flex space-x-3 mt-4">
-                  <Link to="/investment-firms/michael-chen" className="px-4 py-2 border border-brand-blue text-brand-blue rounded hover:bg-gray-50">
-                    View Profile
-                  </Link>
-                  <button className="px-4 py-2 border border-gray-300 text-gray-600 rounded hover:bg-gray-50">
-                    Contact
-                  </button>
-                </div>
-              </CardContent>
-            </Card>
-            
-            {/* Advisor Card 3 */}
-            <Card className="overflow-hidden">
-              <CardContent className="p-6">
-                <div className="flex items-center space-x-4 mb-4">
-                  <div className="h-16 w-16 rounded-full bg-gray-200"></div>
-                  <div>
-                    <h3 className="text-lg font-semibold">Sarah Johnson, ChFC</h3>
-                    <p className="text-emerald-500">Retirement Planning</p>
-                    <div className="flex items-center mt-1">
-                      {[1, 2, 3, 4].map(star => <Star key={star} className="h-4 w-4 fill-yellow-400 text-yellow-400" />)}
-                      <Star className="h-4 w-4 fill-yellow-200 text-yellow-400" />
-                      <span className="text-xs text-gray-500 ml-2">4.7 (52 reviews)</span>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="space-y-2 mb-4 text-sm text-gray-500">
-                  <div className="flex items-center">
-                    <span>Chicago, IL (Remote Available)</span>
-                  </div>
-                  <div className="flex items-center">
-                    <span>18+ years experience</span>
-                  </div>
-                  <div className="flex items-center">
-                    <span>Specializes in Retirement Strategies</span>
-                  </div>
-                </div>
-                
-                <p className="text-sm text-gray-600 mb-4">
-                  Dedicated to helping clients create sustainable retirement income plans and optimize their Social Security benefits.
-                </p>
-                
-                <div className="flex space-x-3 mt-4">
-                  <Link to="/investment-firms/sarah-johnson" className="px-4 py-2 border border-brand-blue text-brand-blue rounded hover:bg-gray-50">
-                    View Profile
-                  </Link>
-                  <button className="px-4 py-2 border border-gray-300 text-gray-600 rounded hover:bg-gray-50">
-                    Contact
-                  </button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+          <AdvisorGrid />
         </div>
       </section>
 
