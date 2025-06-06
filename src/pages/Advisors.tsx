@@ -14,12 +14,13 @@ type PaginationState = {
 const AdvisorSearch = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<AdvisorFilter>({
-    state: 'all',
-    minimumAssets: 'all',
+    state: undefined,
+    minimumAssets: undefined,
     specialties: [],
-    clientType: 'all'
-  } as AdvisorFilter);
-    const [states, setStates] = useState<string[]>([]);
+    clientType: undefined,
+    searchQuery: ''
+  });
+  const [states, setStates] = useState<string[]>([]);
   const [pagination, setPagination] = useState<PaginationState>({
     page: 1,
     pageSize: 15,
@@ -42,9 +43,10 @@ const AdvisorSearch = () => {
 
   // Get advisors with pagination
   const { data, isLoading } = useQuery({
-    queryKey: ['advisors', { ...filters, page: pagination.page }],
+    queryKey: ['advisors', { ...filters, searchQuery, page: pagination.page }],
     queryFn: () => getAdvisors({
       ...filters,
+      searchQuery: searchQuery || undefined,
       page: pagination.page,
       pageSize: pagination.pageSize
     })
@@ -73,16 +75,20 @@ const AdvisorSearch = () => {
   const advisors = data?.data || [];
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-    setFilters(prev => ({ ...prev, searchQuery: e.target.value }));
+    const value = e.target.value;
+    setSearchQuery(value);
+    // Reset to first page when search changes
+    setPagination(prev => ({ ...prev, page: 1 }));
   };
 
   const handleStateChange = (value: string) => {
     setFilters(prev => ({ ...prev, state: value === "all" ? undefined : value }));
+    setPagination(prev => ({ ...prev, page: 1 }));
   };
 
   const handleMinimumChange = (value: string) => {
     setFilters(prev => ({ ...prev, minimumAssets: value === "all" ? undefined : value }));
+    setPagination(prev => ({ ...prev, page: 1 }));
   };
 
   const handleSpecialtyChange = (specialties: string[]) => {
@@ -90,25 +96,25 @@ const AdvisorSearch = () => {
       ...prev, 
       specialties: specialties.length === 0 ? undefined : specialties 
     }));
+    setPagination(prev => ({ ...prev, page: 1 }));
   };
 
   const handleClientTypeChange = (value: string) => {
     setFilters(prev => ({ ...prev, clientType: value === "all" ? undefined : value }));
+    setPagination(prev => ({ ...prev, page: 1 }));
   };
 
   const clearFilters = () => {
+    setSearchQuery('');
     setFilters({
-      state: 'all',
-      minimumAssets: 'all',
+      state: undefined,
+      minimumAssets: undefined,
       specialties: [],
-      clientType: 'all',
-      searchQuery
+      clientType: undefined,
+      searchQuery: ''
     });
     // Reset to first page when filters are cleared
-    setPagination(prev => ({
-      ...prev,
-      page: 1
-    }));
+    setPagination(prev => ({ ...prev, page: 1 }));
   };
   
   return (

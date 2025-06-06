@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
@@ -31,10 +32,21 @@ export const AdvisorSearchForm = ({
   onClientTypeChange,
   clearFilters
 }: AdvisorSearchFormProps) => {
+  const [searchParams] = useSearchParams();
   const [selectedSpecialties, setSelectedSpecialties] = useState<string[]>([]);
   const [localState, setLocalState] = useState("all");
   const [localMinimumAssets, setLocalMinimumAssets] = useState("all");
   const [localClientType, setLocalClientType] = useState("all");
+
+  // Initialize from URL parameters on component mount
+  useEffect(() => {
+    const urlSpecialties = searchParams.get('specialties');
+    if (urlSpecialties) {
+      const specialtiesArray = decodeURIComponent(urlSpecialties).split(',').filter(Boolean);
+      setSelectedSpecialties(specialtiesArray);
+      onSpecialtyChange(specialtiesArray);
+    }
+  }, [searchParams, onSpecialtyChange]);
 
   // Sync local state with filters
   useEffect(() => {

@@ -105,13 +105,33 @@ export const getAdvisors = async (filters?: AdvisorFilter & { page?: number; pag
           logo_url,
           website
         )
-      `, { count: 'exact' })
-      .range(start, end);
+      `, { count: 'exact' });
     
     // Apply search filter if provided
     if (filters?.searchQuery) {
-      query = query.or(`first_name.ilike.%${filters.searchQuery}%,last_name.ilike.%${filters.searchQuery}%,firm_name.ilike.%${filters.searchQuery}%,name.ilike.%${filters.searchQuery}%`);
+      query = query.or(`name.ilike.%${filters.searchQuery}%,firm_name.ilike.%${filters.searchQuery}%`);
     }
+
+    // Apply state filter at database level
+    if (filters?.state && filters.state !== "all") {
+      query = query.eq('state_hq', filters.state);
+    }
+
+    // Apply specialty filter at database level if provided
+    if (filters?.specialties?.length) {
+      // Use overlaps operator to check if any of the filter specialties exist in the advisor's services array
+      query = query.overlaps('advisor_services', filters.specialties);
+    }
+
+    // Apply client type filter at database level if provided
+    if (filters?.clientType && filters.clientType !== "all") {
+      // Use contains operator to check if the advisor's client_type array contains the filter value
+      query = query.contains('client_type', [filters.clientType]);
+    }
+
+    // Apply pagination
+    query = query.range(start, end);
+    
     const { data, error, count } = await query;
     
     if (error) {
@@ -127,10 +147,7 @@ export const getAdvisors = async (filters?: AdvisorFilter & { page?: number; pag
         : []
     })) as Advisor[];
     
-    // Log the number of advisors found
-    console.log(`Found ${advisors.length} advisors after filtering`);
-    
-    // Apply filters in memory
+    // Apply remaining filters in memory (only minimum assets and experience now)
     if (filters?.minExperience) {
       advisors = advisors.filter(advisor => (advisor.years_of_experience || 0) >= filters.minExperience!);
     }
@@ -138,34 +155,14 @@ export const getAdvisors = async (filters?: AdvisorFilter & { page?: number; pag
     if (filters?.maxExperience) {
       advisors = advisors.filter(advisor => (advisor.years_of_experience || 0) <= filters.maxExperience!);
     }
-
-    if (filters?.state && filters.state !== "all") {
-      advisors = advisors.filter(advisor => advisor.state_hq === filters.state);
-    }
     
     // Apply minimum assets filter
     if (filters?.minimumAssets && filters.minimumAssets !== "all") {
       advisors = applyMinimumAssetsFilter(advisors, filters.minimumAssets);
     }
 
-    // Apply specialty filter if needed
-    if (filters?.specialties?.length) {
-      advisors = advisors.filter(advisor => {
-        const services = advisor.advisor_services || [];
-        return services.some(service => 
-          filters.specialties?.includes(service as AdvisorService)
-        );
-      });
-    }
-
-    // Apply client type filter if needed
-    if (filters?.clientType && filters.clientType !== "all") {
-      advisors = advisors.filter(advisor => {
-        const clientTypes = Array.isArray(advisor.client_type) ? advisor.client_type : [];
-        return clientTypes.includes(filters.clientType as ClientType);
-      });
-    }
-
+    console.log(`Found ${advisors.length} advisors after filtering`);
+    
     return { data: advisors, count: count || 0 };
   } catch (error) {
     console.error("Error in getAdvisors:", error);

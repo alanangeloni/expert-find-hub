@@ -258,35 +258,6 @@ export type Database = {
           },
         ]
       }
-      advisor_licenses: {
-        Row: {
-          advisor_id: string
-          created_at: string | null
-          id: string
-          license: string
-        }
-        Insert: {
-          advisor_id: string
-          created_at?: string | null
-          id?: string
-          license: string
-        }
-        Update: {
-          advisor_id?: string
-          created_at?: string | null
-          id?: string
-          license?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "advisor_licenses_advisor_id_fkey"
-            columns: ["advisor_id"]
-            isOneToOne: false
-            referencedRelation: "financial_advisors"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       advisor_professional_designations: {
         Row: {
           advisor_id: string
@@ -483,7 +454,6 @@ export type Database = {
           advisor_services:
             | Database["public"]["Enums"]["Advisor Services"][]
             | null
-          calls_booked: number | null
           city: string | null
           client_type: Database["public"]["Enums"]["clientele_type"][] | null
           created_at: string | null
@@ -497,6 +467,7 @@ export type Database = {
           firm_sec_crd: string | null
           headshot_url: string | null
           id: string
+          licenses: Database["public"]["Enums"]["advisors_licenses"][] | null
           link_to_advisor_sec: string | null
           link_to_firm_sec: string | null
           linked_firm: string | null
@@ -510,14 +481,12 @@ export type Database = {
           professional_designations:
             | Database["public"]["Enums"]["professional_designations_for_advisors"][]
             | null
-          rating: number | null
           scheduling_link: string | null
           secondary_education: string | null
           slug: string
           state_hq: Database["public"]["Enums"]["States"] | null
           states_registered_in: Database["public"]["Enums"]["States"][] | null
           updated_at: string | null
-          username: string | null
           verified: boolean | null
           website_url: string | null
           years_of_experience: number | null
@@ -528,7 +497,6 @@ export type Database = {
           advisor_services?:
             | Database["public"]["Enums"]["Advisor Services"][]
             | null
-          calls_booked?: number | null
           city?: string | null
           client_type?: Database["public"]["Enums"]["clientele_type"][] | null
           created_at?: string | null
@@ -540,9 +508,9 @@ export type Database = {
           firm_logo_url?: string | null
           firm_name?: string | null
           firm_sec_crd?: string | null
-          first_session_is_free?: boolean | null
           headshot_url?: string | null
           id?: string
+          licenses?: Database["public"]["Enums"]["advisors_licenses"][] | null
           link_to_advisor_sec?: string | null
           link_to_firm_sec?: string | null
           linked_firm?: string | null
@@ -556,14 +524,12 @@ export type Database = {
           professional_designations?:
             | Database["public"]["Enums"]["professional_designations_for_advisors"][]
             | null
-          rating?: number | null
           scheduling_link?: string | null
           secondary_education?: string | null
           slug: string
           state_hq?: Database["public"]["Enums"]["States"] | null
           states_registered_in?: Database["public"]["Enums"]["States"][] | null
           updated_at?: string | null
-          username?: string | null
           verified?: boolean | null
           website_url?: string | null
           years_of_experience?: number | null
@@ -574,7 +540,6 @@ export type Database = {
           advisor_services?:
             | Database["public"]["Enums"]["Advisor Services"][]
             | null
-          calls_booked?: number | null
           city?: string | null
           client_type?: Database["public"]["Enums"]["clientele_type"][] | null
           created_at?: string | null
@@ -586,9 +551,9 @@ export type Database = {
           firm_logo_url?: string | null
           firm_name?: string | null
           firm_sec_crd?: string | null
-          first_session_is_free?: boolean | null
           headshot_url?: string | null
           id?: string
+          licenses?: Database["public"]["Enums"]["advisors_licenses"][] | null
           link_to_advisor_sec?: string | null
           link_to_firm_sec?: string | null
           linked_firm?: string | null
@@ -602,14 +567,12 @@ export type Database = {
           professional_designations?:
             | Database["public"]["Enums"]["professional_designations_for_advisors"][]
             | null
-          rating?: number | null
           scheduling_link?: string | null
           secondary_education?: string | null
           slug?: string
           state_hq?: Database["public"]["Enums"]["States"] | null
           states_registered_in?: Database["public"]["Enums"]["States"][] | null
           updated_at?: string | null
-          username?: string | null
           verified?: boolean | null
           website_url?: string | null
           years_of_experience?: number | null
@@ -1091,6 +1054,28 @@ export type Database = {
         | "Succession Planning"
         | "Tax Planning"
         | "Wealth Management"
+      advisors_licenses:
+        | "Annuities"
+        | "Health/Disability Insurance"
+        | "Home & Auto"
+        | "Insurance"
+        | "Life/Accident/Health"
+        | "Life & Health"
+        | "Life & Disability"
+        | "Life Insurance"
+        | "Long Term Care"
+        | "Series 3"
+        | "Series 6"
+        | "Series 7"
+        | "Series 24"
+        | "Series 26"
+        | "Series 31"
+        | "Series 63"
+        | "Series 65"
+        | "Series 66"
+        | "Series 79"
+        | "Series 99"
+        | "SIE"
       "Asset Class":
         | "Art"
         | "Asset Management"
@@ -1406,6 +1391,29 @@ export const Constants = {
         "Succession Planning",
         "Tax Planning",
         "Wealth Management",
+      ],
+      advisors_licenses: [
+        "Annuities",
+        "Health/Disability Insurance",
+        "Home & Auto",
+        "Insurance",
+        "Life/Accident/Health",
+        "Life & Health",
+        "Life & Disability",
+        "Life Insurance",
+        "Long Term Care",
+        "Series 3",
+        "Series 6",
+        "Series 7",
+        "Series 24",
+        "Series 26",
+        "Series 31",
+        "Series 63",
+        "Series 65",
+        "Series 66",
+        "Series 79",
+        "Series 99",
+        "SIE",
       ],
       "Asset Class": [
         "Art",
