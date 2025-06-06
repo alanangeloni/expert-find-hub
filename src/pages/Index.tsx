@@ -15,25 +15,26 @@ const AdvisorGrid = () => {
   const [advisors, setAdvisors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
   useEffect(() => {
     const fetchRandomAdvisors = async () => {
       try {
         setLoading(true);
         // First, get the total count of advisors
-        const { count } = await getAdvisors({ 
-          page: 1, 
-          pageSize: 1, // We just need the count
+        const {
+          count
+        } = await getAdvisors({
+          page: 1,
+          pageSize: 1 // We just need the count
         });
-        
         if (count > 0) {
           // Fetch all advisors
-          const { data } = await getAdvisors({ 
-            page: 1, 
-            pageSize: count, // Fetch all advisors
+          const {
+            data
+          } = await getAdvisors({
+            page: 1,
+            pageSize: count // Fetch all advisors
             // You might want to add additional filters here to ensure quality advisors
           });
-          
           if (data && data.length > 0) {
             // Shuffle all advisors and take first 6
             const shuffled = [...data].sort(() => 0.5 - Math.random());
@@ -51,35 +52,24 @@ const AdvisorGrid = () => {
         setLoading(false);
       }
     };
-
     fetchRandomAdvisors();
   }, []);
-
   if (loading) {
     return <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-      {[1, 2, 3, 4, 5, 6].map((i) => (
-        <div key={i} className="h-64 bg-gray-200 rounded-lg animate-pulse"></div>
-      ))}
+      {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="h-64 bg-gray-200 rounded-lg animate-pulse"></div>)}
     </div>;
   }
-
   if (error) {
     return <div className="text-center text-red-500 py-8">{error}</div>;
   }
-
   if (advisors.length === 0) {
     return <div className="text-center text-gray-500 py-8">No advisors found</div>;
   }
-
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-      {advisors.map((advisor) => (
-        <div key={advisor.id} className="h-full">
+  return <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {advisors.map(advisor => <div key={advisor.id} className="h-full">
           <AdvisorCard advisor={advisor} />
-        </div>
-      ))}
-    </div>
-  );
+        </div>)}
+    </div>;
 };
 const Index = () => {
   const [professionalTypeIndex, setProfessionalTypeIndex] = useState(0);
@@ -133,42 +123,13 @@ const Index = () => {
       <SpecialtyBubbles />
 
       {/* Categories Section */}
-      <section className="py-16 bg-white">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center text-brand-blue mb-12">
-            Find the right expert for your needs
-          </h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-            <div className="bg-gray-50 p-6 rounded-lg">
-              <h3 className="text-lg font-semibold text-brand-blue mb-2">Tax Planning</h3>
-              <p className="text-gray-600">Optimize your tax strategy</p>
-            </div>
-            <div className="bg-gray-50 p-6 rounded-lg">
-              <h3 className="text-lg font-semibold text-brand-blue mb-2">Wealth Management</h3>
-              <p className="text-gray-600">Grow and protect your assets</p>
-            </div>
-            <div className="bg-gray-50 p-6 rounded-lg">
-              <h3 className="text-lg font-semibold text-brand-blue mb-2">Retirement Planning</h3>
-              <p className="text-gray-600">Secure your financial future</p>
-            </div>
-            <div className="bg-gray-50 p-6 rounded-lg">
-              <h3 className="text-lg font-semibold text-brand-blue mb-2">Business Accounting</h3>
-              <p className="text-gray-600">Streamline your finances</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      
 
       <footer className="bg-gray-800 text-white py-8">
         <div className="container mx-auto px-4">
           <div className="flex flex-col md:flex-row justify-between">
             <div className="mb-6 md:mb-0">
-              <img 
-                src="https://wqtvpeuhjgqcjbdozzuv.supabase.co/storage/v1/object/public/website-wide-images//630a5745c93c976e2ba4b72d_Fin%20Pro%20Logo%20with%20words.png" 
-                alt="Financial Pro Logo" 
-                className="h-10 mb-2"
-              />
+              <img src="https://wqtvpeuhjgqcjbdozzuv.supabase.co/storage/v1/object/public/website-wide-images//630a5745c93c976e2ba4b72d_Fin%20Pro%20Logo%20with%20words.png" alt="Financial Pro Logo" className="h-10 mb-2" />
               <p className="mt-2 text-gray-300 text-sm">Connecting you with financial experts</p>
             </div>
             <div className="grid grid-cols-2 gap-8 md:grid-cols-3">
