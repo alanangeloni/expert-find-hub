@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { AdvisorService } from "@/constants/advisorServices";
 import { ClientType } from "@/constants/clientTypes";
@@ -112,9 +113,9 @@ export const getAdvisors = async (filters?: AdvisorFilter & { page?: number; pag
       query = query.or(`name.ilike.%${filters.searchQuery}%,firm_name.ilike.%${filters.searchQuery}%`);
     }
 
-    // Apply state filter at database level
+    // Apply state filter at database level - cast to proper type
     if (filters?.state && filters.state !== "all") {
-      query = query.eq('state_hq', filters.state);
+      query = query.eq('state_hq', filters.state as any);
     }
 
     // Apply specialty filter at database level if provided
