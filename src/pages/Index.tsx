@@ -35,9 +35,9 @@ const AdvisorGrid = () => {
           });
           
           if (data && data.length > 0) {
-            // Shuffle all advisors and take first 3
+            // Shuffle all advisors and take first 6
             const shuffled = [...data].sort(() => 0.5 - Math.random());
-            setAdvisors(shuffled.slice(0, 3));
+            setAdvisors(shuffled.slice(0, 6));
           } else {
             setAdvisors([]);
           }
@@ -57,7 +57,7 @@ const AdvisorGrid = () => {
 
   if (loading) {
     return <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-      {[1, 2, 3].map((i) => (
+      {[1, 2, 3, 4, 5, 6].map((i) => (
         <div key={i} className="h-64 bg-gray-200 rounded-lg animate-pulse"></div>
       ))}
     </div>;
@@ -113,9 +113,6 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Specialties Section */}
-      <SpecialtyBubbles />
-
       {/* Top Financial Advisors Section */}
       <section className="py-12 bg-gray-50">
         <div className="container mx-auto px-4">
@@ -131,6 +128,9 @@ const Index = () => {
           <AdvisorGrid />
         </div>
       </section>
+
+      {/* Specialties Section */}
+      <SpecialtyBubbles />
 
       {/* Categories Section */}
       <section className="py-16 bg-white">
