@@ -70,19 +70,39 @@ const DESIGNATION_VALUES = [
   'Retirement Income Certified Professional (RICP)'
 ] as const;
 
-// Define licenses as a const array
+// Define compensation types as a const array
+const COMPENSATION_TYPES = [
+  'Fee-Only',
+  'Fee-Based',
+  'Commission',
+  'Hourly',
+  'Flat Fee',
+  'Assets Under Management'
+] as const;
+
+// Define licenses as a const array to match the advisors_licenses enum in the database
 const LICENSE_VALUES = [
+  'Annuities',
+  'Health/Disability Insurance',
+  'Home & Auto',
+  'Insurance',
+  'Life/Accident/Health',
+  'Life & Health',
+  'Life & Disability',
+  'Life Insurance',
+  'Long Term Care',
+  'Series 3',
   'Series 6',
   'Series 7',
   'Series 24',
+  'Series 26',
+  'Series 31',
   'Series 63',
   'Series 65',
   'Series 66',
-  'Life Insurance License',
-  'Health Insurance License',
-  'Property & Casualty License',
-  'Variable Annuity License',
-  'Real Estate License'
+  'Series 79',
+  'Series 99',
+  'SIE'
 ] as const;
 
 // Import shared services constant
@@ -95,6 +115,7 @@ const SERVICE_VALUES = ADVISOR_SERVICES;
 type ServiceType = AdvisorService;
 type DesignationType = typeof DESIGNATION_VALUES[number];
 type LicenseType = typeof LICENSE_VALUES[number];
+type CompensationType = typeof COMPENSATION_TYPES[number];
 
 // Create Zod enums from the values
 const serviceValues = [...SERVICE_VALUES] as const;
@@ -102,6 +123,9 @@ const serviceEnum = z.enum(serviceValues as unknown as [string, ...string[]]);
 
 const designationValues = [...DESIGNATION_VALUES] as const;
 const designationEnum = z.enum(designationValues as unknown as [string, ...string[]]);
+
+const compensationValues = [...COMPENSATION_TYPES] as const;
+const compensationEnum = z.enum(compensationValues as unknown as [string, ...string[]]);
 
 const licenseValues = [...LICENSE_VALUES] as const;
 const licenseEnum = z.enum(licenseValues as unknown as [string, ...string[]]);
@@ -132,6 +156,7 @@ const advisorSchema = z.object({
   advisor_services: z.array(serviceEnum).max(10, 'Maximum 10 services allowed').optional(),
   professional_designations: z.array(designationEnum).max(10, 'Maximum 10 designations allowed').optional(),
   licenses: z.array(licenseEnum).max(15, 'Maximum 15 licenses allowed').optional(),
+  compensation_types: z.array(compensationEnum).max(6, 'Maximum 6 compensation types allowed').optional(),
   client_type: z.array(clientTypeEnum).max(10, 'Maximum 10 client types allowed').optional(),
   states_registered_in: z.array(z.enum(US_STATES as unknown as [string, ...string[]])).max(50, 'Maximum 50 states allowed').optional(),
 });
@@ -147,6 +172,7 @@ interface AdvisorFormProps {
 const AVAILABLE_SERVICES: ServiceType[] = [...SERVICE_VALUES];
 const AVAILABLE_DESIGNATIONS: DesignationType[] = [...DESIGNATION_VALUES];
 const AVAILABLE_LICENSES: LicenseType[] = [...LICENSE_VALUES];
+const AVAILABLE_COMPENSATION_TYPES: CompensationType[] = [...COMPENSATION_TYPES];
 const AVAILABLE_CLIENT_TYPES: ClientType[] = [...CLIENT_TYPES];
 
 export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
@@ -175,6 +201,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
       advisor_services: advisor?.advisor_services || [],
       professional_designations: advisor?.professional_designations || [],
       licenses: advisor?.licenses || [],
+      compensation_types: advisor?.compensation_types || [],
       client_type: advisor?.client_type || [],
       states_registered_in: advisor?.states_registered_in || [],
     },
@@ -198,6 +225,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
   const currentSelectedServices = form.watch('advisor_services') || [];
   const currentSelectedDesignations = form.watch('professional_designations') || [];
   const currentSelectedLicenses = form.watch('licenses') || [];
+  const currentSelectedCompensationTypes = form.watch('compensation_types') || [];
   const currentSelectedClientTypes = form.watch('client_type') || [];
   const currentSelectedStates = form.watch('states_registered_in') || [];
 
@@ -206,7 +234,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
       try {
         console.log('Submitting advisor data:', formData);
         
-        // Create a properly typed advisor data object - cast all arrays and problematic fields to any
+        // Create a properly typed advisor data object
         const advisorData = {
           name: formData.name,
           slug: formData.slug,
@@ -229,43 +257,11 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
           professional_designations: (formData.professional_designations || null) as any,
           licenses: (formData.licenses || null) as any,
           client_type: (formData.client_type || null) as any,
-          states_registered_in: (formData.states_registered_in || null) as any
+          states_registered_in: (formData.states_registered_in || null) as any,
+          updated_at: new Date().toISOString(),
         };
 
-        console.log('Final advisor data being sent:', advisorData);
 
-        if (!advisorData.name || !advisorData.slug) {
-          throw new Error('Name and slug are required fields');
-        }
-
-        if (advisor) {
-          console.log('Updating advisor with ID:', advisor.id);
-          const { data: result, error } = await supabase
-            .from('financial_advisors')
-            .update(advisorData as any)
-            .eq('id', advisor.id)
-            .select();
-          
-          if (error) {
-            console.error('Update error:', error);
-            throw new Error(error.message || 'Failed to update advisor');
-          }
-          console.log('Update successful, result:', result);
-          return result;
-        } else {
-          console.log('Creating new advisor');
-          const { data: result, error } = await supabase
-            .from('financial_advisors')
-            .insert(advisorData as any)
-            .select();
-          
-          if (error) {
-            console.error('Insert error:', error);
-            throw new Error(error.message || 'Failed to create advisor');
-          }
-          console.log('Create successful, result:', result);
-          return result;
-        }
       } catch (error) {
         console.error('Error in mutation function:', error);
         throw error;
@@ -375,6 +371,27 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
   const removeClientType = (clientTypeToRemove: ClientType) => {
     const newClientTypes = currentSelectedClientTypes.filter(type => type !== clientTypeToRemove);
     form.setValue('client_type', newClientTypes, { shouldValidate: true, shouldDirty: true });
+  };
+
+  const addCompensationType = (type: CompensationType) => {
+    if (currentSelectedCompensationTypes.length >= 6) {
+      toast({
+        title: 'Maximum compensation types reached',
+        description: 'You can only select up to 6 compensation types.',
+        variant: 'destructive'
+      });
+      return;
+    }
+    
+    if (!currentSelectedCompensationTypes.includes(type)) {
+      const newTypes = [...currentSelectedCompensationTypes, type];
+      form.setValue('compensation_types', newTypes, { shouldValidate: true, shouldDirty: true });
+    }
+  };
+
+  const removeCompensationType = (typeToRemove: CompensationType) => {
+    const newTypes = currentSelectedCompensationTypes.filter(type => type !== typeToRemove);
+    form.setValue('compensation_types', newTypes, { shouldValidate: true, shouldDirty: true });
   };
 
   return (
@@ -666,8 +683,43 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
             <FormMessage />
           </FormItem>
 
+          {/* Compensation Types Multi-select */}
+          <div className="space-y-2">
+            <FormLabel>Compensation Types</FormLabel>
+            <Select onValueChange={addCompensationType}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select compensation types" />
+              </SelectTrigger>
+              <SelectContent>
+                {AVAILABLE_COMPENSATION_TYPES.map((type) => (
+                  <SelectItem key={type} value={type}>
+                    {type}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <div className="flex flex-wrap gap-2 mt-2">
+              {currentSelectedCompensationTypes.map((type: CompensationType) => (
+                <Badge key={type} variant="secondary" className="flex items-center gap-1">
+                  {type}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      removeCompensationType(type);
+                    }}
+                    className="ml-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 p-0.5"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              ))}
+            </div>
+            <FormMessage />
+          </div>
+
           {/* Licenses Multi-select */}
-          <FormItem className="md:col-span-2">
+          <div className="space-y-2">
             <FormLabel>Licenses</FormLabel>
             <Select onValueChange={addLicense}>
               <SelectTrigger>
@@ -681,24 +733,25 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
                 ))}
               </SelectContent>
             </Select>
-            <div className="mt-2 flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 mt-2">
               {currentSelectedLicenses.map((license: LicenseType) => (
-                <Badge key={license} variant="secondary" className="pr-1">
+                <Badge key={license} variant="secondary" className="flex items-center gap-1">
                   {license}
-                  <Button
+                  <button
                     type="button"
-                    variant="ghost"
-                    size="sm"
-                    className="ml-1 h-auto p-0"
-                    onClick={() => removeLicense(license)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      removeLicense(license);
+                    }}
+                    className="ml-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 p-0.5"
                   >
                     <X className="h-3 w-3" />
-                  </Button>
+                  </button>
                 </Badge>
               ))}
             </div>
             <FormMessage />
-          </FormItem>
+          </div>
 
           {/* Client Types Multi-select */}
           <FormItem className="md:col-span-2">
