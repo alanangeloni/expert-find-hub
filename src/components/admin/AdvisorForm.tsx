@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
+import { HeadshotUpload } from './HeadshotUpload';
 
 import { CLIENT_TYPES, type ClientType } from '@/constants/clientTypes';
 
@@ -69,6 +70,21 @@ const DESIGNATION_VALUES = [
   'Retirement Income Certified Professional (RICP)'
 ] as const;
 
+// Define licenses as a const array
+const LICENSE_VALUES = [
+  'Series 6',
+  'Series 7',
+  'Series 24',
+  'Series 63',
+  'Series 65',
+  'Series 66',
+  'Life Insurance License',
+  'Health Insurance License',
+  'Property & Casualty License',
+  'Variable Annuity License',
+  'Real Estate License'
+] as const;
+
 // Import shared services constant
 import { ADVISOR_SERVICES, type AdvisorService } from '@/constants/advisorServices';
 
@@ -78,6 +94,7 @@ const SERVICE_VALUES = ADVISOR_SERVICES;
 // Create types from the array values
 type ServiceType = AdvisorService;
 type DesignationType = typeof DESIGNATION_VALUES[number];
+type LicenseType = typeof LICENSE_VALUES[number];
 
 // Create Zod enums from the values
 const serviceValues = [...SERVICE_VALUES] as const;
@@ -85,6 +102,9 @@ const serviceEnum = z.enum(serviceValues as unknown as [string, ...string[]]);
 
 const designationValues = [...DESIGNATION_VALUES] as const;
 const designationEnum = z.enum(designationValues as unknown as [string, ...string[]]);
+
+const licenseValues = [...LICENSE_VALUES] as const;
+const licenseEnum = z.enum(licenseValues as unknown as [string, ...string[]]);
 
 const clientTypeValues = [...CLIENT_TYPES] as const;
 const clientTypeEnum = z.enum(clientTypeValues as unknown as [string, ...string[]]);
@@ -108,8 +128,10 @@ const advisorSchema = z.object({
   fiduciary: z.boolean().default(false),
   first_session_is_free: z.boolean().default(false),
   linked_firm: z.string().optional(),
+  headshot_url: z.string().optional(),
   advisor_services: z.array(serviceEnum).max(10, 'Maximum 10 services allowed').optional(),
   professional_designations: z.array(designationEnum).max(10, 'Maximum 10 designations allowed').optional(),
+  licenses: z.array(licenseEnum).max(15, 'Maximum 15 licenses allowed').optional(),
   client_type: z.array(clientTypeEnum).max(10, 'Maximum 10 client types allowed').optional(),
   states_registered_in: z.array(z.enum(US_STATES as unknown as [string, ...string[]])).max(50, 'Maximum 50 states allowed').optional(),
 });
@@ -124,6 +146,7 @@ interface AdvisorFormProps {
 // Use the exact enumerated values from the database schema
 const AVAILABLE_SERVICES: ServiceType[] = [...SERVICE_VALUES];
 const AVAILABLE_DESIGNATIONS: DesignationType[] = [...DESIGNATION_VALUES];
+const AVAILABLE_LICENSES: LicenseType[] = [...LICENSE_VALUES];
 const AVAILABLE_CLIENT_TYPES: ClientType[] = [...CLIENT_TYPES];
 
 export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
@@ -148,8 +171,10 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
       fiduciary: advisor?.fiduciary || false,
       first_session_is_free: advisor?.first_session_is_free || false,
       linked_firm: advisor?.linked_firm || '',
+      headshot_url: advisor?.headshot_url || '',
       advisor_services: advisor?.advisor_services || [],
       professional_designations: advisor?.professional_designations || [],
+      licenses: advisor?.licenses || [],
       client_type: advisor?.client_type || [],
       states_registered_in: advisor?.states_registered_in || [],
     },
@@ -172,6 +197,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
   // Get the current values from the form state
   const currentSelectedServices = form.watch('advisor_services') || [];
   const currentSelectedDesignations = form.watch('professional_designations') || [];
+  const currentSelectedLicenses = form.watch('licenses') || [];
   const currentSelectedClientTypes = form.watch('client_type') || [];
   const currentSelectedStates = form.watch('states_registered_in') || [];
 
@@ -191,23 +217,23 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
           email: formData.email || null,
           phone_number: formData.phone_number || null,
           years_of_experience: formData.years_of_experience || null,
-          state_hq: (formData.state_hq || null) as any, // Cast to any to bypass strict typing
+          state_hq: (formData.state_hq || null) as any,
           city: formData.city || null,
           minimum: formData.minimum || null,
           website_url: formData.website_url || null,
           verified: formData.verified || false,
-          premium: formData.premium || false,  // Fixed typo from premum to premium
+          premium: formData.premium || false,
           fiduciary: formData.fiduciary || false,
-          // Cast all arrays to any to bypass strict typing issues
+          headshot_url: formData.headshot_url || null,
           advisor_services: (formData.advisor_services || null) as any,
           professional_designations: (formData.professional_designations || null) as any,
+          licenses: (formData.licenses || null) as any,
           client_type: (formData.client_type || null) as any,
           states_registered_in: (formData.states_registered_in || null) as any
         };
 
         console.log('Final advisor data being sent:', advisorData);
 
-        // Ensure required fields are present
         if (!advisorData.name || !advisorData.slug) {
           throw new Error('Name and slug are required fields');
         }
@@ -242,7 +268,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
         }
       } catch (error) {
         console.error('Error in mutation function:', error);
-        throw error; // Re-throw to be caught by onError
+        throw error;
       }
     },
     onSuccess: (result) => {
@@ -264,9 +290,6 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
 
   const onSubmit = (data: AdvisorFormData) => {
     console.log('onSubmit called. Form submission data:', data);
-    console.log('Services array length:', data.advisor_services?.length);
-    console.log('Services array content:', JSON.stringify(data.advisor_services));
-    
     mutation.mutate(data);
   };
 
@@ -312,6 +335,27 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
     form.setValue('professional_designations', newDesignations, { shouldValidate: true, shouldDirty: true });
   };
 
+  const addLicense = (license: LicenseType) => {
+    if (currentSelectedLicenses.length >= 15) {
+      toast({
+        title: 'Maximum licenses reached',
+        description: 'You can only select up to 15 licenses.',
+        variant: 'destructive'
+      });
+      return;
+    }
+    
+    if (!currentSelectedLicenses.includes(license)) {
+      const newLicenses = [...currentSelectedLicenses, license];
+      form.setValue('licenses', newLicenses, { shouldValidate: true, shouldDirty: true });
+    }
+  };
+
+  const removeLicense = (licenseToRemove: LicenseType) => {
+    const newLicenses = currentSelectedLicenses.filter(license => license !== licenseToRemove);
+    form.setValue('licenses', newLicenses, { shouldValidate: true, shouldDirty: true });
+  };
+
   const addClientType = (clientType: ClientType) => {
     if (currentSelectedClientTypes.length >= 10) {
       toast({
@@ -337,7 +381,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Basic form fields - keep existing code for all form fields until Linked Investment Firm */}
+          {/* Basic form fields */}
           <FormField
             control={form.control}
             name="name"
@@ -366,6 +410,24 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
             )}
           />
 
+          {/* Headshot Upload */}
+          <FormField
+            control={form.control}
+            name="headshot_url"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <HeadshotUpload
+                    currentHeadshotUrl={field.value}
+                    onHeadshotChange={field.onChange}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          {/* ... keep existing code (firm_name through website_url fields) */}
           <FormField
             control={form.control}
             name="firm_name"
@@ -595,6 +657,40 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
                     size="sm"
                     className="ml-1 h-auto p-0"
                     onClick={() => removeService(service)}
+                  >
+                    <X className="h-3 w-3" />
+                  </Button>
+                </Badge>
+              ))}
+            </div>
+            <FormMessage />
+          </FormItem>
+
+          {/* Licenses Multi-select */}
+          <FormItem className="md:col-span-2">
+            <FormLabel>Licenses</FormLabel>
+            <Select onValueChange={addLicense}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select licenses" />
+              </SelectTrigger>
+              <SelectContent>
+                {AVAILABLE_LICENSES.map((license) => (
+                  <SelectItem key={license} value={license}>
+                    {license}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {currentSelectedLicenses.map((license: LicenseType) => (
+                <Badge key={license} variant="secondary" className="pr-1">
+                  {license}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="ml-1 h-auto p-0"
+                    onClick={() => removeLicense(license)}
                   >
                     <X className="h-3 w-3" />
                   </Button>
