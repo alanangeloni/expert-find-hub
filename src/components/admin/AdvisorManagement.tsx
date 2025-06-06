@@ -14,7 +14,6 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import {
   AlertDialog,
@@ -70,11 +69,13 @@ export function AdvisorManagement() {
   });
 
   const handleEdit = (advisor: any) => {
+    console.log('Edit clicked for advisor:', advisor);
     setSelectedAdvisor(advisor);
     setIsFormOpen(true);
   };
 
   const handleAdd = () => {
+    console.log('Add new advisor clicked');
     setSelectedAdvisor(null);
     setIsFormOpen(true);
   };
@@ -83,6 +84,13 @@ export function AdvisorManagement() {
     setIsFormOpen(false);
     setSelectedAdvisor(null);
     queryClient.invalidateQueries({ queryKey: ['advisors-admin'] });
+  };
+
+  const handleDialogOpenChange = (open: boolean) => {
+    setIsFormOpen(open);
+    if (!open) {
+      setSelectedAdvisor(null);
+    }
   };
 
   if (isLoading) {
@@ -97,25 +105,10 @@ export function AdvisorManagement() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h2 className="text-xl font-semibold">Financial Advisors ({advisors.length})</h2>
-        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={handleAdd}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Advisor
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>
-                {selectedAdvisor ? 'Edit Advisor' : 'Add New Advisor'}
-              </DialogTitle>
-            </DialogHeader>
-            <AdvisorForm 
-              advisor={selectedAdvisor}
-              onSuccess={handleFormSuccess}
-            />
-          </DialogContent>
-        </Dialog>
+        <Button onClick={handleAdd}>
+          <Plus className="h-4 w-4 mr-2" />
+          Add Advisor
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -167,6 +160,23 @@ export function AdvisorManagement() {
         ))}
       </div>
 
+      {/* Dialog for Add/Edit Advisor */}
+      <Dialog open={isFormOpen} onOpenChange={handleDialogOpenChange}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>
+              {selectedAdvisor ? 'Edit Advisor' : 'Add New Advisor'}
+            </DialogTitle>
+          </DialogHeader>
+          {isFormOpen && (
+            <AdvisorForm 
+              advisor={selectedAdvisor}
+              onSuccess={handleFormSuccess}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -184,7 +194,7 @@ export function AdvisorManagement() {
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
-        </AlertDialogContent>
+        </AlertDialogFooter>
       </AlertDialog>
     </div>
   );
