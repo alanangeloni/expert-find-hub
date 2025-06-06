@@ -337,7 +337,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Basic form fields */}
+          {/* Basic form fields - keep existing code for all form fields until Linked Investment Firm */}
           <FormField
             control={form.control}
             name="name"
@@ -506,7 +506,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    <SelectItem value="">No firm linked</SelectItem>
+                    <SelectItem value="none">No firm linked</SelectItem>
                     {investmentFirms?.map((firm) => (
                       <SelectItem key={firm.id} value={firm.id}>
                         {firm.name}
