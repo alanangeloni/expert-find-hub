@@ -15,6 +15,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { format } from 'date-fns';
 import { Input } from '@/components/ui/input';
 import { Search } from 'lucide-react';
+import Footer from '@/components/layout/Footer';
 
 const Blog = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -210,4 +211,13 @@ const Blog = () => {
   );
 };
 
-export default Blog;
+const BlogPage = () => {
+  return (
+    <>
+      <Blog />
+      <Footer />
+    </>
+  );
+};
+
+export default BlogPage;

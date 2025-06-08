@@ -34,6 +34,7 @@ import {
   ScrollText
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
+import Footer from "@/components/layout/Footer";
 
 interface Feature {
   title: string;
@@ -65,7 +66,7 @@ interface ExtendedFirmData {
     employees_count?: string | number;
 }
 
-export default function InvestmentFirmDetailPage() {
+const InvestmentFirmDetailPage = () => {
   const { slug } = useParams<{ slug: string }>();
   const { toast } = useToast();
 
@@ -463,6 +464,17 @@ export default function InvestmentFirmDetailPage() {
     </div>
   );
 }
+
+const InvestmentFirmDetailPageWrapper = () => {
+  return (
+    <>
+      <InvestmentFirmDetailPage />
+      <Footer />
+    </>
+  );
+};
+
+export default InvestmentFirmDetailPageWrapper;
 
 const renderDetailItem = (label: string, value: string | number | undefined | null, icon: React.ReactNode) => {
   if (value === null || value === undefined || String(value).trim() === '') return null;

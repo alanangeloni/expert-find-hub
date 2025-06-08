@@ -9,8 +9,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { getAccountingFirmBySlug } from "@/services/accountingFirmsService";
 import Header from "@/components/layout/Header";
+import Footer from "@/components/layout/Footer";
 
-export default function AccountingFirmDetail() {
+const AccountingFirmDetailComponent = () => {
   const { slug } = useParams<{ slug: string }>();
   
   const { data: firm, isLoading, error } = useQuery({
@@ -291,4 +292,15 @@ export default function AccountingFirmDetail() {
       </div>
     </div>
   );
-}
+};
+
+const AccountingFirmDetail = () => {
+  return (
+    <>
+      <AccountingFirmDetailComponent />
+      <Footer />
+    </>
+  );
+};
+
+export default AccountingFirmDetail;

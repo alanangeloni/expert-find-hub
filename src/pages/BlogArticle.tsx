@@ -6,13 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
 import { Calendar, Clock, ArrowLeft, Edit } from "lucide-react";
+import Footer from "@/components/layout/Footer";
 import { format } from "date-fns";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import ReactMarkdown from "react-markdown";
 import { getPostCategories } from "@/utils/blogRelations";
 
-export default function BlogArticle() {
+const BlogArticle = () => {
   const { slug } = useParams<{ slug: string }>();
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
@@ -325,6 +326,9 @@ export default function BlogArticle() {
           </aside>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }
+
+export default BlogArticle;

@@ -22,9 +22,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import Footer from "@/components/layout/Footer";
 import { FirmList } from "@/components/firms/FirmList";
 
-export default function AccountingFirmsPage() {
+const AccountingFirmsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedSpecialty, setSelectedSpecialty] = useState("All");
   const [selectedService, setSelectedService] = useState("All");
@@ -186,4 +187,15 @@ export default function AccountingFirmsPage() {
       />
     </div>
   );
-}
+};
+
+const AccountingFirmsPageWithFooter = () => {
+  return (
+    <>
+      <AccountingFirmsPage />
+      <Footer />
+    </>
+  );
+};
+
+export default AccountingFirmsPageWithFooter;

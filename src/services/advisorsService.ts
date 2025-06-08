@@ -314,6 +314,17 @@ export const getAdvisorCompensationTypes = async (advisorId: string): Promise<st
   }
 };
 
+// Function to get advisor licenses (placeholder since no separate table exists)
+export const getAdvisorLicenses = async (advisorId: string): Promise<string[]> => {
+  try {
+    // This is a placeholder - in a real app, this would query a licenses table
+    return [];
+  } catch (error) {
+    console.error('Error in getAdvisorLicenses:', error);
+    return [];
+  }
+};
+
 // Helper function to filter advisors by specialty
 const filterBySpecialty = async (advisors: Advisor[], specialty: string) => {
   if (advisors.length === 0) return [];
