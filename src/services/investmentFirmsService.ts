@@ -320,48 +320,120 @@ export const getUniqueStates = async (): Promise<string[]> => {
   }
 };
 
-// Add the getSimilarFirms function
-export const getSimilarFirms = async (firmId: string): Promise<InvestmentFirm[]> => {
+// Helper function to process firm data and ensure consistent format
+const processFirms = (firms: any[]): InvestmentFirm[] => {
+  return firms.map(firm => {
+    const assetClasses = Array.isArray(firm.asset_class) 
+      ? firm.asset_class 
+      : firm.asset_class ? [firm.asset_class] : [];
+      
+    return {
+      ...firm,
+      asset_classes: assetClasses,
+      asset_class: assetClasses // Keep both for backward compatibility
+    };
+  });
+};
+
+// Get similar firms based on asset class and exclude the current firm
+export const getSimilarFirms = async (firmId: string, assetClasses: string[] = []): Promise<InvestmentFirm[]> => {
   try {
-    // First get the similar firm IDs
-    const { data: similarFirmsData, error: similarError } = await supabase
-      .from('similar_firms')
-      .select('similar_firm_id')
-      .eq('firm_id', firmId);
-    
-    if (similarError || !similarFirmsData || similarFirmsData.length === 0) {
-      console.log('No similar firms found or error:', similarError);
-      return [];
-    }
-    
-    // Extract the similar firm IDs
-    const similarFirmIds = similarFirmsData.map(item => item.similar_firm_id);
-    
-    // Fetch the details of these similar firms
-    const { data: firms, error: firmsError } = await supabase
+    // Get the current firm's data
+    const { data: currentFirm, error: currentFirmError } = await supabase
       .from('investment_firms')
       .select('*')
-      .in('id', similarFirmIds);
+      .eq('id', firmId)
+      .single();
     
-    if (firmsError || !firms) {
-      console.error('Error fetching similar firms:', firmsError);
+    if (currentFirmError) {
+      console.error('Error fetching current firm:', currentFirmError);
       return [];
     }
     
-    // Ensure asset_classes is always an array
-    const firmsWithAssetClasses = firms.map(firm => {
-      const assetClasses = Array.isArray(firm.asset_class) 
-        ? firm.asset_class 
+    // Get the current firm's asset classes if not provided
+    if (assetClasses.length === 0 && currentFirm?.asset_class) {
+      assetClasses = Array.isArray(currentFirm.asset_class) 
+        ? [...currentFirm.asset_class] 
+        : [currentFirm.asset_class];
+    }
+    
+    if (assetClasses.length === 0) {
+      return [];
+    }
+    
+    // Try to find firms using contains (matches any firm where asset_class contains any of our asset classes)
+    const { data: containsFirms, error: containsError } = await supabase
+      .from('investment_firms')
+      .select('*')
+      .not('id', 'eq', firmId)
+      .contains('asset_class', assetClasses)
+      .limit(3);
+    
+    if (containsError) {
+      console.error('Error with contains query:', containsError);
+    } else if (containsFirms && containsFirms.length > 0) {
+      return processFirms(containsFirms);
+    }
+    
+    // If no results with contains, try overlaps (finds firms with any matching asset classes)
+    const { data: overlapFirms, error: overlapError } = await supabase
+      .from('investment_firms')
+      .select('*')
+      .not('id', 'eq', firmId)
+      .overlaps('asset_class', assetClasses)
+      .limit(3);
+    
+    if (overlapError) {
+      console.error('Error with overlaps query:', overlapError);
+    } else if (overlapFirms && overlapFirms.length > 0) {
+      return processFirms(overlapFirms);
+    }
+    
+    // If we still don't have results, try a more permissive approach
+    const { data: allFirms, error: allFirmsError } = await supabase
+      .from('investment_firms')
+      .select('*')
+      .not('id', 'eq', firmId);
+      
+    if (allFirmsError) {
+      console.error('Error fetching all firms:', allFirmsError);
+      return [];
+    }
+    
+    // Manually filter firms that share any asset class with the current firm
+    const similarFirms = allFirms.filter(firm => {
+      const firmAssetClasses = Array.isArray(firm.asset_class) 
+        ? [...firm.asset_class] 
         : firm.asset_class ? [firm.asset_class] : [];
-        
-      return {
-        ...firm,
-        asset_classes: assetClasses,
-        asset_class: assetClasses // Keep both for backward compatibility
-      };
+      
+      return firmAssetClasses.some(ac => {
+        const normalizedAc = String(ac).toLowerCase().trim();
+        return assetClasses.some(searchAc => 
+          String(searchAc).toLowerCase().trim() === normalizedAc
+        );
+      });
     });
     
-    return firmsWithAssetClasses as unknown as InvestmentFirm[];
+    // If we found similar firms, return them (limit to 3)
+    if (similarFirms.length > 0) {
+      return processFirms(similarFirms.slice(0, 3));
+    }
+    
+    // If no similar firms found, fetch random firms
+    const { data: randomFirms, error: randomFirmsError } = await supabase
+      .from('investment_firms')
+      .select('*')
+      .not('id', 'eq', firmId)
+      .order('random()')
+      .limit(3);
+      
+    if (randomFirmsError) {
+      console.error('Error fetching random firms:', randomFirmsError);
+      return [];
+    }
+    
+    return processFirms(randomFirms || []);
+    
   } catch (error) {
     console.error('Error in getSimilarFirms:', error);
     return [];

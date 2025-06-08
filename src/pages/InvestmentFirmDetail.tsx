@@ -5,7 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/componen
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
-import { getInvestmentFirmBySlug, getSimilarFirms } from "@/services/investmentFirmsService";
+import { getInvestmentFirmBySlug, getSimilarFirms, InvestmentFirm } from "@/services/investmentFirmsService";
 import { useQuery } from "@tanstack/react-query";
 import {
   ArrowLeft,
@@ -31,10 +31,12 @@ import {
   AlertTriangle, 
   BookOpen, 
   UserCheck, 
-  ScrollText
+  ScrollText,
+  ArrowRight
 } from "lucide-react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import Footer from "@/components/layout/Footer";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface Feature {
   title: string;
@@ -87,11 +89,24 @@ const InvestmentFirmDetailPage = () => {
 
   const firm = firmData;
 
-  const { data: similarFirms = [] } = useQuery({
+  const { data: similarFirms = [], isLoading: isLoadingSimilarFirms } = useQuery<InvestmentFirm[]>({
     queryKey: ["similarFirms", firm?.id],
-    queryFn: () => getSimilarFirms(firm?.id || ""),
+    queryFn: () => getSimilarFirms(firm?.id || "", firm?.asset_class || []),
     enabled: !!firm?.id,
   });
+  
+  const navigate = useNavigate();
+  
+  // Format currency
+  const formatCurrency = (amount?: number) => {
+    if (amount === undefined || amount === null) return 'N/A';
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
 
   if (isLoading) {
     return (
@@ -430,34 +445,64 @@ const InvestmentFirmDetailPage = () => {
                 </CardContent>
             </Card>
 
-            {similarFirms.length > 0 && (
-              <Card>
-                <CardHeader>
-                    <CardTitle className="text-lg">Similar Investment Firms</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {similarFirms.slice(0,3).map((similarFirm: any) => (
-                    <Link key={similarFirm.id} to={`/investment-firms/${similarFirm.slug}`} className="block group p-3 rounded-lg border hover:bg-slate-50 transition-colors">
-                      <div className="flex items-start gap-3">
-                        <Avatar className="h-10 w-10 rounded-md border bg-slate-100 flex-shrink-0">
-                          <AvatarImage src={similarFirm.logo_url || undefined} alt={similarFirm.name} className="object-contain p-1"/>
-                          <AvatarFallback className="bg-slate-200 text-slate-500 text-xs">{similarFirm.name ? similarFirm.name.substring(0,1) : '-'}</AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1">
-                          <h4 className="text-sm font-semibold group-hover:text-blue-600 transition-colors leading-tight">{similarFirm.name}</h4>
-                          <div className="text-xs text-slate-500 mt-0.5">
-                            <span>Min: <span className="font-medium text-slate-700">{similarFirm.minimum_investment || "N/A"}</span></span>
-                            <span className="mx-1.5">•</span>
-                            <span>Return: <span className="font-medium text-slate-700">{similarFirm.target_return || "N/A"}</span></span>
-                          </div>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold">Similar Investment Firms</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {isLoadingSimilarFirms ? (
+                  // Skeleton loaders while loading
+                  Array(3).fill(0).map((_, i) => (
+                    <div key={i} className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
+                      <Skeleton className="h-12 w-12 rounded-md" />
+                      <div className="flex-1">
+                        <Skeleton className="h-4 w-32 mb-2" />
+                        <div className="space-y-1">
+                          <Skeleton className="h-3 w-24" />
+                          <Skeleton className="h-3 w-20" />
                         </div>
-                        <ChevronRight className="h-4 w-4 text-slate-400 self-center" />
                       </div>
-                    </Link>
-                  ))}
-                </CardContent>
-              </Card>
-            )}
+                      <ChevronRight className="h-5 w-5 text-gray-400" />
+                    </div>
+                  ))
+                ) : similarFirms.length > 0 ? (
+                  // Actual similar firms
+                  similarFirms.slice(0, 3).map((similarFirm) => (
+                    <div 
+                      key={similarFirm.id}
+                      onClick={() => navigate(`/investment-firms/${similarFirm.slug}`)}
+                      className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                    >
+                      <div className="bg-gray-200 rounded-md p-2 flex-shrink-0">
+                        {similarFirm.logo_url ? (
+                          <img 
+                            src={similarFirm.logo_url} 
+                            alt={`${similarFirm.name} logo`} 
+                            className="h-8 w-8 object-contain"
+                          />
+                        ) : (
+                          <Building className="h-8 w-8 text-gray-400" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="text-sm font-medium text-gray-900 truncate">{similarFirm.name}</h4>
+                        <div className="text-xs text-gray-500 space-y-0.5">
+                          <p className="truncate">From: {formatCurrency(similarFirm.minimum_investment)}</p>
+                          <p className="truncate">
+                            Return: {similarFirm.target_return || 'N/A'}
+                          </p>
+                        </div>
+                      </div>
+                      <ChevronRight className="h-5 w-5 text-gray-400 flex-shrink-0" />
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-gray-500 text-center py-4">
+                    No similar firms found
+                  </p>
+                )}
+              </CardContent>
+            </Card>
           </div>
         </div>
       </div>
