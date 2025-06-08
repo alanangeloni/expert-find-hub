@@ -454,9 +454,15 @@ export type Database = {
           advisor_services:
             | Database["public"]["Enums"]["Advisor Services"][]
             | null
+          approved_at: string | null
+          approved_by: string | null
           city: string | null
           client_type: Database["public"]["Enums"]["clientele_type"][] | null
+          compensation:
+            | Database["public"]["Enums"]["compensation_type"][]
+            | null
           created_at: string | null
+          disclaimer: string | null
           email: string | null
           fiduciary: boolean | null
           firm_address: string | null
@@ -476,17 +482,18 @@ export type Database = {
           personal_bio: string | null
           phone_number: string | null
           position: string | null
-          premium: boolean | null
           primary_education: string | null
           professional_designations:
             | Database["public"]["Enums"]["professional_designations_for_advisors"][]
             | null
-          scheduling_link: string | null
-          secondary_education: string | null
+          rejection_reason: string | null
           slug: string
           state_hq: Database["public"]["Enums"]["States"] | null
           states_registered_in: Database["public"]["Enums"]["States"][] | null
+          status: string | null
+          submitted_at: string | null
           updated_at: string | null
+          user_id: string | null
           verified: boolean | null
           website_url: string | null
           years_of_experience: number | null
@@ -497,9 +504,15 @@ export type Database = {
           advisor_services?:
             | Database["public"]["Enums"]["Advisor Services"][]
             | null
+          approved_at?: string | null
+          approved_by?: string | null
           city?: string | null
           client_type?: Database["public"]["Enums"]["clientele_type"][] | null
+          compensation?:
+            | Database["public"]["Enums"]["compensation_type"][]
+            | null
           created_at?: string | null
+          disclaimer?: string | null
           email?: string | null
           fiduciary?: boolean | null
           firm_address?: string | null
@@ -519,17 +532,18 @@ export type Database = {
           personal_bio?: string | null
           phone_number?: string | null
           position?: string | null
-          premium?: boolean | null
           primary_education?: string | null
           professional_designations?:
             | Database["public"]["Enums"]["professional_designations_for_advisors"][]
             | null
-          scheduling_link?: string | null
-          secondary_education?: string | null
+          rejection_reason?: string | null
           slug: string
           state_hq?: Database["public"]["Enums"]["States"] | null
           states_registered_in?: Database["public"]["Enums"]["States"][] | null
+          status?: string | null
+          submitted_at?: string | null
           updated_at?: string | null
+          user_id?: string | null
           verified?: boolean | null
           website_url?: string | null
           years_of_experience?: number | null
@@ -540,9 +554,15 @@ export type Database = {
           advisor_services?:
             | Database["public"]["Enums"]["Advisor Services"][]
             | null
+          approved_at?: string | null
+          approved_by?: string | null
           city?: string | null
           client_type?: Database["public"]["Enums"]["clientele_type"][] | null
+          compensation?:
+            | Database["public"]["Enums"]["compensation_type"][]
+            | null
           created_at?: string | null
+          disclaimer?: string | null
           email?: string | null
           fiduciary?: boolean | null
           firm_address?: string | null
@@ -562,17 +582,18 @@ export type Database = {
           personal_bio?: string | null
           phone_number?: string | null
           position?: string | null
-          premium?: boolean | null
           primary_education?: string | null
           professional_designations?:
             | Database["public"]["Enums"]["professional_designations_for_advisors"][]
             | null
-          scheduling_link?: string | null
-          secondary_education?: string | null
+          rejection_reason?: string | null
           slug?: string
           state_hq?: Database["public"]["Enums"]["States"] | null
           states_registered_in?: Database["public"]["Enums"]["States"][] | null
+          status?: string | null
+          submitted_at?: string | null
           updated_at?: string | null
+          user_id?: string | null
           verified?: boolean | null
           website_url?: string | null
           years_of_experience?: number | null

@@ -94,6 +94,7 @@ export const getAdvisors = async (filters?: AdvisorFilter & { page?: number; pag
     const end = start + pageSize - 1;
     
     // Start with a query that includes linked investment firm data
+    // Only show approved advisors to the public
     let query = supabase
       .from("financial_advisors")
       .select(`
@@ -106,7 +107,8 @@ export const getAdvisors = async (filters?: AdvisorFilter & { page?: number; pag
           logo_url,
           website
         )
-      `, { count: 'exact' });
+      `, { count: 'exact' })
+      .eq('status', 'approved'); // Only show approved advisors
     
     // Apply search filter if provided
     if (filters?.searchQuery) {
@@ -213,6 +215,7 @@ export const getAdvisorBySlug = async (slug: string): Promise<Advisor | null> =>
         )
       `)
       .eq('slug', slug)
+      .eq('status', 'approved') // Only show approved advisors
       .single();
 
     if (error) {
