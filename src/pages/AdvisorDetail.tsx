@@ -7,7 +7,7 @@ import { Card } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
 import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '@/components/ui/dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import { getAdvisorBySlug, getAdvisorServices, getAdvisorProfessionalDesignations, getAdvisorCompensationTypes, Advisor } from '@/services/advisorsService';
+import { getAdvisorBySlug, getAdvisorServices, getAdvisorProfessionalDesignations, getAdvisorCompensationTypes, getAdvisorLicenses, Advisor } from '@/services/advisorsService';
 import { MeetingRequestForm } from '@/components/advisors/MeetingRequestForm';
 import { AdvisorServices } from '@/components/advisors/AdvisorServices';
 import { Calendar, MapPin, Building, Award, Star, Check, Phone, Mail, Globe, FileText, DollarSign, Shield, MessageCircle, Users } from 'lucide-react';
@@ -48,6 +48,14 @@ const AdvisorDetail = () => {
   } = useQuery({
     queryKey: ['advisorCompensation', advisor?.id],
     queryFn: () => getAdvisorCompensationTypes(advisor?.id || ''),
+    enabled: !!advisor?.id
+  });
+
+  const {
+    data: licenses = []
+  } = useQuery({
+    queryKey: ['advisorLicenses', advisor?.id],
+    queryFn: () => getAdvisorLicenses(advisor?.id || ''),
     enabled: !!advisor?.id
   });
   if (isLoadingAdvisor) {
@@ -239,6 +247,20 @@ const AdvisorDetail = () => {
                   <div>
                     <p className="font-medium text-sm text-gray-700">Fiduciary</p>
                     <p>Legally obligated to act in your best interest</p>
+                  </div>
+                </div>}
+
+              {licenses.length > 0 && <div className="flex">
+                  <FileText className="h-5 w-5 mr-3 text-gray-500 flex-shrink-0" />
+                  <div>
+                    <p className="font-medium text-sm text-gray-700 mb-1">Licenses</p>
+                    <div className="flex flex-wrap gap-1">
+                      {licenses.map((license, index) => (
+                        <Badge key={index} variant="outline" className="whitespace-nowrap">
+                          {license}
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
                 </div>}
             </div>
