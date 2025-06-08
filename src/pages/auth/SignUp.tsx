@@ -88,7 +88,8 @@ const SignUp = () => {
         description: "Your account has been created. Please check your email to verify your account."
       });
       
-      navigate("/");
+      // Redirect to advisor registration page after successful signup
+      navigate("/advisor-registration");
     } catch (error: any) {
       toast({
         title: "Error creating account",
