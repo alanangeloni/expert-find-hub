@@ -285,6 +285,18 @@ const AdvisorDetail = () => {
             </div>
           </div>
         </div>
+        
+        {/* Disclaimer Section */}
+        {advisor.disclaimer && (
+          <div className="lg:col-span-2">
+            <div className="px-4">
+              <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 mt-8">
+                <h3 className="text-lg font-medium text-gray-900 mb-3">Disclaimer</h3>
+                <p className="text-gray-600 text-sm whitespace-pre-line">{advisor.disclaimer}</p>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>;
 };

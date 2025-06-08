@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { AdvisorService } from "@/constants/advisorServices";
 import { ClientType } from "@/constants/clientTypes";
@@ -46,6 +45,7 @@ export interface Advisor {
   secondary_education?: string;
   username?: string;
   calls_booked?: number;
+  disclaimer?: string;
   // Linked investment firm data
   investment_firm?: {
     id: string;

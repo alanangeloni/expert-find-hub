@@ -371,9 +371,11 @@ const InvestmentFirmDetailPage = () => {
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
                         {leadership.map((person, index) => (
                           <div key={index} className="flex items-start gap-4 p-4 border rounded-lg bg-slate-50/50">
-                            <Avatar className="h-14 w-14 rounded-md">
+                            <Avatar className="h-20 w-20 sm:h-16 sm:w-16 md:h-14 md:w-14 rounded-md">
                               <AvatarImage src={person.image_url || undefined} alt={person.name} />
-                              <AvatarFallback className="bg-slate-200 text-slate-500">{person.name ? person.name.charAt(0) : '-'}</AvatarFallback>
+                              <AvatarFallback className="bg-slate-200 text-slate-500 text-xl sm:text-base">
+                                {person.name ? person.name.charAt(0) : '-'}
+                              </AvatarFallback>
                             </Avatar>
                             <div className="flex-1">
                               <h4 className="font-semibold text-slate-800">{person.name}</h4>
