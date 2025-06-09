@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AdvisorForm } from '@/components/advisor-registration/AdvisorRegistrationForm';
-import Footer from '@/components/layout/Footer';
 
 const AdvisorRegistration = () => {
   const { user } = useAuth();
@@ -74,7 +73,6 @@ const AdvisorRegistration = () => {
           </Card>
         </div>
       </div>
-      <Footer />
     </div>
   );
 };

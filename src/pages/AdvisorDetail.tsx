@@ -11,7 +11,6 @@ import { getAdvisorBySlug, getAdvisorServices, getAdvisorProfessionalDesignation
 import { MeetingRequestForm } from '@/components/advisors/MeetingRequestForm';
 import { AdvisorServices } from '@/components/advisors/AdvisorServices';
 import { Calendar, MapPin, Building, Award, Star, Check, Phone, Mail, Globe, FileText, DollarSign, Shield, MessageCircle, Users } from 'lucide-react';
-import Footer from '@/components/layout/Footer';
 
 // Using Advisor type from advisorsService
 
@@ -304,7 +303,6 @@ const AdvisorDetailPage = () => {
   return (
     <>
       <AdvisorDetail />
-      <Footer />
     </>
   );
 };

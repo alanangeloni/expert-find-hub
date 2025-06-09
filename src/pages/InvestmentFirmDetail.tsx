@@ -34,7 +34,7 @@ import {
   ScrollText
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
-import Footer from "@/components/layout/Footer";
+
 
 interface Feature {
   title: string;
@@ -483,16 +483,7 @@ const InvestmentFirmDetailPage = () => {
   );
 }
 
-const InvestmentFirmDetailPageWrapper = () => {
-  return (
-    <>
-      <InvestmentFirmDetailPage />
-      <Footer />
-    </>
-  );
-};
-
-export default InvestmentFirmDetailPageWrapper;
+export default InvestmentFirmDetailPage;
 
 const renderDetailItem = (label: string, value: string | number | undefined | null, icon: React.ReactNode) => {
   if (value === null || value === undefined || String(value).trim() === '') return null;

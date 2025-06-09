@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getAdvisors, getUniqueStates, type AdvisorFilter } from '@/services/advisorsService';
 import { AdvisorList } from '@/components/advisors/AdvisorList';
 import { AdvisorSearchForm } from '@/components/advisors/AdvisorSearchForm';
-import Footer from '@/components/layout/Footer';
+
 
 type PaginationState = {
   page: number;
@@ -163,7 +163,6 @@ const AdvisorsPage = () => {
   return (
     <>
       <AdvisorSearch />
-      <Footer />
     </>
   );
 };

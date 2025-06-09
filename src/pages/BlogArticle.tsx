@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { BlogPost } from "@/services/blogService";
+import { BlogPost, getBlogPosts } from "@/services/blogService";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
-import { Calendar, Clock, ArrowLeft, Edit } from "lucide-react";
-import Footer from "@/components/layout/Footer";
-import { format } from "date-fns";
+import { Calendar, Clock, ArrowLeft, Edit, Newspaper } from "lucide-react";
+import { format, parseISO } from "date-fns";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import ReactMarkdown from "react-markdown";
@@ -16,6 +15,7 @@ import { getPostCategories } from "@/utils/blogRelations";
 const BlogArticle = () => {
   const { slug } = useParams<{ slug: string }>();
   const [post, setPost] = useState<BlogPost | null>(null);
+  const [popularArticles, setPopularArticles] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -129,6 +129,30 @@ const BlogArticle = () => {
     
     fetchAuthorInfo();
   }, [post?.author_id]);
+
+  // Fetch popular articles
+  useEffect(() => {
+    const fetchPopularArticles = async () => {
+      try {
+        // Get 3 most recent published articles, excluding the current one
+        const articles = await getBlogPosts({
+          status: 'published',
+          limit: 3
+        });
+        
+        // Filter out the current article if it's loaded
+        const filteredArticles = post 
+          ? articles.filter(article => article.slug !== post.slug).slice(0, 3)
+          : articles;
+        
+        setPopularArticles(filteredArticles);
+      } catch (error) {
+        console.error('Error fetching popular articles:', error);
+      }
+    };
+
+    fetchPopularArticles();
+  }, [post?.slug]);
 
   if (loading) {
     return (
@@ -270,31 +294,30 @@ const BlogArticle = () => {
             {/* Popular Articles */}
             <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-2">
               <h4 className="font-semibold text-base mb-4">Popular Articles</h4>
-              <ul className="space-y-4">
-                {[{
-                  title: "Navigating Market Volatility: Strategies for Uncertain Times",
-                  date: "May 28, 2023",
-                  slug: "navigating-market-volatility"
-                }, {
-                  title: "Tax Optimization Strategies for High-Income Earners",
-                  date: "May 15, 2023",
-                  slug: "tax-optimization-high-income"
-                }, {
-                  title: "The Complete Guide to Estate Planning for Families",
-                  date: "April 30, 2023",
-                  slug: "estate-planning-families"
-                }].map((art, idx) => (
-                  <li key={art.slug} className="flex items-center gap-3">
-                    <div className="w-12 h-12 rounded bg-slate-100 flex items-center justify-center text-slate-300">
-                      <span className="text-xl">📰</span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <Link to={`/blog/${art.slug}`} className="block font-medium text-slate-900 hover:text-blue-700 truncate">{art.title}</Link>
-                      <div className="text-xs text-slate-500">{art.date}</div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+              {popularArticles.length > 0 ? (
+                <ul className="space-y-4">
+                  {popularArticles.map((article) => (
+                    <li key={article.slug} className="flex items-center gap-3">
+                      <div className="w-12 h-12 rounded bg-slate-100 flex items-center justify-center text-slate-400">
+                        <Newspaper className="h-5 w-5" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <Link 
+                          to={`/blog/${article.slug}`} 
+                          className="block font-medium text-slate-900 hover:text-blue-700 line-clamp-2 text-sm leading-snug"
+                        >
+                          {article.title}
+                        </Link>
+                        <div className="text-xs text-slate-500 mt-1">
+                          {format(parseISO(article.published_at || article.created_at), 'MMMM d, yyyy')}
+                        </div>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className="text-sm text-slate-500">Loading articles...</div>
+              )}
             </div>
 
             {/* Categories */}
@@ -319,14 +342,13 @@ const BlogArticle = () => {
               <h4 className="font-semibold text-base mb-2">Subscribe to Our Newsletter</h4>
               <p className="text-sm text-slate-600 mb-4">Get the latest financial insights and planning strategies delivered to your inbox.</p>
               <form className="flex flex-col gap-3">
-                <input type="email" className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Your email address" />
-                <button type="submit" className="bg-black text-white rounded-lg py-2 font-semibold hover:bg-slate-800 transition">Subscribe</button>
+                <input type="email" className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300" placeholder="Your email address" />
+                <button type="submit" className="bg-teal-500 text-white rounded-lg py-2 font-semibold hover:bg-teal-600 transition focus:ring-2 focus:ring-teal-300 focus:outline-none">Subscribe</button>
               </form>
             </div>
           </aside>
         </div>
       </div>
-      <Footer />
     </div>
   );
 }

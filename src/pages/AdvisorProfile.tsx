@@ -11,7 +11,6 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AdvisorProfileEdit } from '@/components/advisor-profile/AdvisorProfileEdit';
 import { MeetingRequestsList } from '@/components/advisor-profile/MeetingRequestsList';
 import { Advisor } from '@/services/advisorsService';
-import Footer from '@/components/layout/Footer';
 
 const AdvisorProfile = () => {
   const { user } = useAuth();
@@ -147,7 +146,6 @@ const AdvisorProfile = () => {
           </Tabs>
         </div>
       </div>
-      <Footer />
     </div>
   );
 };

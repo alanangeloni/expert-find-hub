@@ -22,7 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import Footer from "@/components/layout/Footer";
 import { FirmList } from "@/components/firms/FirmList";
 
 const AccountingFirmsPage = () => {
@@ -193,7 +192,6 @@ const AccountingFirmsPageWithFooter = () => {
   return (
     <>
       <AccountingFirmsPage />
-      <Footer />
     </>
   );
 };

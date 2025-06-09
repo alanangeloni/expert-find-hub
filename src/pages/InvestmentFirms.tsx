@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import Footer from '@/components/layout/Footer';
+
 
 const InvestmentFirms = () => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -172,7 +172,6 @@ const InvestmentFirmsPage = () => {
   return (
     <>
       <InvestmentFirms />
-      <Footer />
     </>
   );
 };
