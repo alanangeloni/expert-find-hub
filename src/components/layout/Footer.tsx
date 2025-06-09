@@ -7,8 +7,8 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between">
           <div className="mb-6 md:mb-0">
             <img 
-              src="https://wqtvpeuhjgqcjbdozzuv.supabase.co/storage/v1/object/public/website-wide-images//630a5745c93c976e2ba4b72d_Fin%20Pro%20Logo%20with%20words.png" 
-              alt="Financial Pro Logo" 
+              src="https://wqtvpeuhjgqcjbdozzuv.supabase.co/storage/v1/object/public/website-wide-images//Group%203%20(1).png" 
+              alt="Expert Find Hub Logo" 
               className="h-10 mb-2" 
             />
             <p className="mt-2 text-gray-300 text-sm">Connecting you with financial experts</p>
