@@ -11,6 +11,7 @@ import Index from "./pages/Index";
 import Advisors from "./pages/Advisors";
 import AdvisorDetail from "./pages/AdvisorDetail";
 import AdvisorRegistration from "./pages/AdvisorRegistration";
+import AdvisorProfile from "./pages/AdvisorProfile";
 import InvestmentFirms from "./pages/InvestmentFirms";
 import InvestmentFirmDetail from "./pages/InvestmentFirmDetail";
 import AccountingFirms from "./pages/AccountingFirms";
@@ -41,6 +42,14 @@ const App = () => (
               <Route path="/advisors" element={<Advisors />} />
               <Route path="/advisor/:slug" element={<AdvisorDetail />} />
               <Route path="/advisor-registration" element={<AdvisorRegistration />} />
+              <Route
+                path="/advisor-profile"
+                element={
+                  <ProtectedRoute>
+                    <AdvisorProfile />
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/investment-firms" element={<InvestmentFirms />} />
               <Route path="/investment-firm/:slug" element={<InvestmentFirmDetail />} />
               <Route path="/accounting-firms" element={<AccountingFirms />} />
