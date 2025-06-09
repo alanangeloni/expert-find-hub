@@ -46,6 +46,10 @@ export interface Advisor {
   username?: string;
   calls_booked?: number;
   disclaimer?: string;
+  // Status fields for advisor approval workflow
+  status?: string;
+  rejection_reason?: string;
+  user_id?: string;
   // Linked investment firm data
   investment_firm?: {
     id: string;

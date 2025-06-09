@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,8 +12,28 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
-import { AdvisorService } from '@/constants/advisorServices';
-import { ClientType } from '@/constants/clientTypes';
+
+// Define the enum values directly since we can't import them as values
+const advisorServices = [
+  "Financial Planning",
+  "Retirement Planning", 
+  "Investment Management",
+  "Estate Planning",
+  "Tax Planning",
+  "Insurance Planning",
+  "Education Planning",
+  "Business Planning"
+] as const;
+
+const clientTypes = [
+  "Individuals",
+  "Families", 
+  "High Net Worth",
+  "Ultra High Net Worth",
+  "Small Business",
+  "Large Business",
+  "Non-Profit"
+] as const;
 
 const formSchema = z.object({
   firstName: z.string().min(2, {
@@ -109,9 +130,9 @@ export const AdvisorForm = ({ onSuccess }: { onSuccess: () => void }) => {
         city: data.city,
         minimum: data.minimum,
         website_url: data.websiteUrl,
-        advisor_services: data.advisorServices as AdvisorService[],
+        advisor_services: data.advisorServices,
         professional_designations: data.professionalDesignations,
-        client_type: data.clientType as ClientType[],
+        client_type: data.clientType,
         licenses: data.licenses,
         compensation: data.compensation,
         fiduciary: data.fiduciary,
@@ -156,7 +177,7 @@ export const AdvisorForm = ({ onSuccess }: { onSuccess: () => void }) => {
             placeholder="John"
           />
           {errors.firstName && (
-            <p className="text-sm text-red-500">{errors.firstName.message}</p>
+            <p className="text-sm text-red-500">{errors.firstName.message as string}</p>
           )}
         </div>
 
@@ -169,7 +190,7 @@ export const AdvisorForm = ({ onSuccess }: { onSuccess: () => void }) => {
             placeholder="Doe"
           />
           {errors.lastName && (
-            <p className="text-sm text-red-500">{errors.lastName.message}</p>
+            <p className="text-sm text-red-500">{errors.lastName.message as string}</p>
           )}
         </div>
       </div>
@@ -183,7 +204,7 @@ export const AdvisorForm = ({ onSuccess }: { onSuccess: () => void }) => {
           placeholder="Acme Corp"
         />
         {errors.firmName && (
-          <p className="text-sm text-red-500">{errors.firmName.message}</p>
+          <p className="text-sm text-red-500">{errors.firmName.message as string}</p>
         )}
       </div>
 
@@ -196,7 +217,7 @@ export const AdvisorForm = ({ onSuccess }: { onSuccess: () => void }) => {
           placeholder="Financial Advisor"
         />
         {errors.position && (
-          <p className="text-sm text-red-500">{errors.position.message}</p>
+          <p className="text-sm text-red-500">{errors.position.message as string}</p>
         )}
       </div>
 
@@ -209,7 +230,7 @@ export const AdvisorForm = ({ onSuccess }: { onSuccess: () => void }) => {
           rows={3}
         />
         {errors.personalBio && (
-          <p className="text-sm text-red-500">{errors.personalBio.message}</p>
+          <p className="text-sm text-red-500">{errors.personalBio.message as string}</p>
         )}
       </div>
 
@@ -222,7 +243,7 @@ export const AdvisorForm = ({ onSuccess }: { onSuccess: () => void }) => {
           rows={3}
         />
         {errors.firmBio && (
-          <p className="text-sm text-red-500">{errors.firmBio.message}</p>
+          <p className="text-sm text-red-500">{errors.firmBio.message as string}</p>
         )}
       </div>
 
@@ -236,7 +257,7 @@ export const AdvisorForm = ({ onSuccess }: { onSuccess: () => void }) => {
             placeholder="you@example.com"
           />
           {errors.email && (
-            <p className="text-sm text-red-500">{errors.email.message}</p>
+            <p className="text-sm text-red-500">{errors.email.message as string}</p>
           )}
         </div>
 
@@ -249,7 +270,7 @@ export const AdvisorForm = ({ onSuccess }: { onSuccess: () => void }) => {
             placeholder="+1 (555) 123-4567"
           />
           {errors.phoneNumber && (
-            <p className="text-sm text-red-500">{errors.phoneNumber.message}</p>
+            <p className="text-sm text-red-500">{errors.phoneNumber.message as string}</p>
           )}
         </div>
       </div>
@@ -264,7 +285,7 @@ export const AdvisorForm = ({ onSuccess }: { onSuccess: () => void }) => {
             placeholder="5"
           />
           {errors.yearsOfExperience && (
-            <p className="text-sm text-red-500">{errors.yearsOfExperience.message}</p>
+            <p className="text-sm text-red-500">{errors.yearsOfExperience.message as string}</p>
           )}
         </div>
 
@@ -277,7 +298,7 @@ export const AdvisorForm = ({ onSuccess }: { onSuccess: () => void }) => {
             placeholder="NY"
           />
           {errors.stateHq && (
-            <p className="text-sm text-red-500">{errors.stateHq.message}</p>
+            <p className="text-sm text-red-500">{errors.stateHq.message as string}</p>
           )}
         </div>
       </div>
@@ -292,7 +313,7 @@ export const AdvisorForm = ({ onSuccess }: { onSuccess: () => void }) => {
             placeholder="New York"
           />
           {errors.city && (
-            <p className="text-sm text-red-500">{errors.city.message}</p>
+            <p className="text-sm text-red-500">{errors.city.message as string}</p>
           )}
         </div>
 
@@ -316,13 +337,13 @@ export const AdvisorForm = ({ onSuccess }: { onSuccess: () => void }) => {
           placeholder="https://example.com"
         />
         {errors.websiteUrl && (
-          <p className="text-sm text-red-500">{errors.websiteUrl.message}</p>
+          <p className="text-sm text-red-500">{errors.websiteUrl.message as string}</p>
         )}
       </div>
 
       <div className="space-y-2">
         <Label>Advisor Services</Label>
-        {Object.values(AdvisorService).map((service) => (
+        {advisorServices.map((service) => (
           <div key={service} className="flex items-center space-x-2">
             <Checkbox
               id={`advisorServices-${service}`}
@@ -335,13 +356,13 @@ export const AdvisorForm = ({ onSuccess }: { onSuccess: () => void }) => {
           </div>
         ))}
         {errors.advisorServices && (
-          <p className="text-sm text-red-500">{errors.advisorServices.message}</p>
+          <p className="text-sm text-red-500">{errors.advisorServices.message as string}</p>
         )}
       </div>
 
       <div className="space-y-2">
         <Label>Client Type</Label>
-        {Object.values(ClientType).map((type) => (
+        {clientTypes.map((type) => (
           <div key={type} className="flex items-center space-x-2">
             <Checkbox
               id={`clientType-${type}`}
@@ -354,7 +375,7 @@ export const AdvisorForm = ({ onSuccess }: { onSuccess: () => void }) => {
           </div>
         ))}
         {errors.clientType && (
-          <p className="text-sm text-red-500">{errors.clientType.message}</p>
+          <p className="text-sm text-red-500">{errors.clientType.message as string}</p>
         )}
       </div>
 
@@ -407,7 +428,7 @@ export const AdvisorForm = ({ onSuccess }: { onSuccess: () => void }) => {
           I agree to the <a href="/terms" className="text-blue-500">terms and conditions</a>
         </Label>
         {errors.terms && (
-          <p className="text-sm text-red-500">{errors.terms.message}</p>
+          <p className="text-sm text-red-500">{errors.terms.message as string}</p>
         )}
       </div>
 
