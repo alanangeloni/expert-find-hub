@@ -3,7 +3,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
-import { MapPin, Award, Check, DollarSign } from 'lucide-react';
+import { MapPin, Award, DollarSign } from 'lucide-react';
 import { Advisor } from '@/services/advisorsService';
 import { ADVISOR_SERVICES } from '@/constants/advisorServices';
 
@@ -33,12 +33,6 @@ export const AdvisorCard = ({ advisor }: AdvisorCardProps) => {
             <div className="flex-1">
               <h3 className="text-lg font-semibold text-gray-900 line-clamp-1 leading-none">
                 {advisor.name}
-                {advisor.verified && (
-                  <Badge variant="outline" className="ml-2 bg-blue-50 text-blue-700 border-blue-200">
-                    <Check className="h-3 w-3 mr-1" />
-                    Verified
-                  </Badge>
-                )}
               </h3>
               <p className="text-sm font-medium text-gray-700 mt-1">
                 {advisor.firm_name || "Independent Advisor"}
@@ -53,14 +47,6 @@ export const AdvisorCard = ({ advisor }: AdvisorCardProps) => {
           </div>
           
           <div className="mt-3">
-            {/* Debug info - will remove later */}
-            <div className="hidden">
-              <p>Advisor: {advisor.name}</p>
-              <p>Services count: {advisor.advisor_services?.length || 0}</p>
-              <p>Services: {JSON.stringify(advisor.advisor_services)}</p>
-              <p>Services type: {typeof advisor.advisor_services}</p>
-            </div>
-            
             {/* Display up to 3 specialties */}
             {advisor.advisor_services && Array.isArray(advisor.advisor_services) && advisor.advisor_services.length > 0 && (
               <div className="flex flex-wrap gap-1.5 mb-2">
