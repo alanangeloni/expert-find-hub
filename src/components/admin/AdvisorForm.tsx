@@ -148,7 +148,7 @@ const advisorSchema = z.object({
   minimum: z.string().optional(),
   website_url: z.string().url().optional().or(z.literal('')),
   verified: z.boolean().default(false),
-  premium: z.boolean().default(false),
+  // Premium status is managed by admins only, not in the form
   fiduciary: z.boolean().default(false),
   first_session_is_free: z.boolean().default(false),
   linked_firm: z.string().optional(),
@@ -193,7 +193,6 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
       minimum: advisor?.minimum || '',
       website_url: advisor?.website_url || '',
       verified: advisor?.verified || false,
-      premium: advisor?.premium || false,
       fiduciary: advisor?.fiduciary || false,
       first_session_is_free: advisor?.first_session_is_free || false,
       linked_firm: advisor?.linked_firm || '',
@@ -250,7 +249,7 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
           minimum: formData.minimum || null,
           website_url: formData.website_url || null,
           verified: formData.verified || false,
-          premium: formData.premium || false,
+          // Premium status is managed by admins only
           fiduciary: formData.fiduciary || false,
           headshot_url: formData.headshot_url || null,
           advisor_services: (formData.advisor_services || []) as ServiceType[],
@@ -276,14 +275,23 @@ export function AdvisorForm({ advisor, onSuccess }: AdvisorFormProps) {
           if (error) throw error;
           result = data;
         } else {
-          // Create new advisor
+          // Create new advisor with status 'pending'
           const { data, error } = await supabase
             .from('financial_advisors')
-            .insert(advisorData)
+            .insert({
+              ...advisorData,
+              status: 'pending',
+              verified: false,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            })
             .select()
             .single();
             
-          if (error) throw error;
+          if (error) {
+            console.error('Error creating advisor:', error);
+            throw error;
+          }
           result = data;
         }
         

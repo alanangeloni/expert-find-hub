@@ -143,9 +143,6 @@ export function AdvisorManagement() {
             {advisor.verified && (
               <Badge variant="outline" className="text-xs">Verified</Badge>
             )}
-            {advisor.premium && (
-              <Badge variant="default" className="text-xs">Premium</Badge>
-            )}
           </div>
         </div>
       </CardHeader>

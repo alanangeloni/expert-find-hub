@@ -221,9 +221,20 @@ const InvestmentFirmDetailPage = () => {
                     <p className="text-base font-semibold text-slate-800">{firm.target_return || "N/A"}</p>
                   </div>
                 </div>
-                <Button size="lg" className="bg-mint-500 hover:bg-mint-600 text-white">
-                  Invest Now
-                  <ChevronRight className="ml-2 h-4 w-4" />
+                <Button 
+                  asChild 
+                  size="lg" 
+                  className="bg-mint-500 hover:bg-mint-600 text-white"
+                >
+                  <a 
+                    href={firm.firm_link} 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center"
+                  >
+                    Invest Now
+                    <ChevronRight className="ml-2 h-4 w-4" />
+                  </a>
                 </Button>
               </div>
             </div>
@@ -423,9 +434,16 @@ const InvestmentFirmDetailPage = () => {
                 </CardHeader>
                 <CardContent>
                     <p className="text-sm opacity-90 mb-4">Get started with {firm.name} today and build a portfolio aligned with your financial goals.</p>
-                    <Button variant="secondary" className="w-full bg-white text-brand-blue hover:bg-slate-100">
+                    <Button asChild variant="secondary" className="w-full bg-white text-brand-blue hover:bg-slate-100">
+                      <a 
+                        href={firm.firm_link} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center"
+                      >
                         Open an Account
                         <ChevronRight className="ml-2 h-4 w-4" />
+                      </a>
                     </Button>
                 </CardContent>
             </Card>

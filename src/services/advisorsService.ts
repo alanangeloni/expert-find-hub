@@ -19,7 +19,6 @@ export interface Advisor {
   minimum?: string;
   website_url?: string | null;
   verified?: boolean;
-  premium?: boolean;
   fiduciary?: boolean;
   first_session_is_free?: boolean;
   linked_firm?: string | null;

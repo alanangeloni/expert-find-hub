@@ -249,7 +249,6 @@ export const AdvisorForm = ({ onSuccess }: { onSuccess: () => void }) => {
         states_registered_in: (formData.states_registered_in || []) as USState[],
         fiduciary: formData.fiduciary,
         verified: false,
-        premium: false,
         status: 'pending_approval'
       };
 
