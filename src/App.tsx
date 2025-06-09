@@ -51,7 +51,7 @@ const App = () => (
                 }
               />
               <Route path="/investment-firms" element={<InvestmentFirms />} />
-              <Route path="/investment-firm/:slug" element={<InvestmentFirmDetail />} />
+              <Route path="/investment-firms/:slug" element={<InvestmentFirmDetail />} />
               <Route path="/accounting-firms" element={<AccountingFirms />} />
               <Route path="/accounting-firm/:slug" element={<AccountingFirmDetail />} />
               <Route path="/blog" element={<Blog />} />
