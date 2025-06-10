@@ -122,7 +122,15 @@ export const useBlogEditor = () => {
   }, [existingPost, reset, slug]);
 
   const createPostMutation = useMutation({
-    mutationFn: createBlogPost,
+    mutationFn: (postData: {
+      title: string;
+      slug: string;
+      content: string;
+      excerpt?: string;
+      cover_image_url?: string;
+      status: "draft" | "published";
+      categories?: string[];
+    }) => createBlogPost(postData),
     onSuccess: () => {
       toast({ title: "Blog post created successfully!" });
       queryClient.invalidateQueries({ queryKey: ['blogPosts'] });
@@ -138,7 +146,17 @@ export const useBlogEditor = () => {
   });
 
   const updatePostMutation = useMutation({
-    mutationFn: updateBlogPost,
+    mutationFn: (postData: {
+      id: string;
+      title: string;
+      slug: string;
+      content: string;
+      excerpt?: string;
+      cover_image_url?: string;
+      status: "draft" | "published";
+      categories?: string[];
+      published_at?: string;
+    }) => updateBlogPost(postData),
     onSuccess: () => {
       toast({ title: "Blog post updated successfully!" });
       queryClient.invalidateQueries({ queryKey: ['blogPosts'] });

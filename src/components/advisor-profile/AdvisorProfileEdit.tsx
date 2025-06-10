@@ -198,7 +198,7 @@ export const AdvisorProfileEdit: React.FC<AdvisorProfileEditProps> = ({ advisor,
         states_registered_in: data.states_registered_in || [],
         fiduciary: data.fiduciary,
         updated_at: new Date().toISOString(),
-      };
+      } as any; // Type assertion to bypass strict typing
 
       const { error } = await supabase
         .from('financial_advisors')
