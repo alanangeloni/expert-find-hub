@@ -15,19 +15,20 @@ import {
 type Specialty = {
   id: string;
   name: string;
+  filterValue: string;
   icon: React.ReactNode;
 };
 
 const specialties: Specialty[] = [
-  { id: 'retirement', name: 'Retirement', icon: <ShieldCheck className="h-5 w-5" /> },
-  { id: 'investing', name: 'Investing', icon: <LineChart className="h-5 w-5" /> },
-  { id: 'family', name: 'Family', icon: <Users className="h-5 w-5" /> },
-  { id: 'estate-planning', name: 'Estate Planning', icon: <FileText className="h-5 w-5" /> },
-  { id: 'asset-management', name: 'Asset Management', icon: <Calculator className="h-5 w-5" /> },
-  { id: 'tax-strategy', name: 'Tax Strategy', icon: <Shield className="h-5 w-5" /> },
-  { id: 'college', name: 'College', icon: <GraduationCap className="h-5 w-5" /> },
-  { id: 'home-purchasing', name: 'Home Purchasing', icon: <Home className="h-5 w-5" /> },
-  { id: 'debt-management', name: 'Debt Management', icon: <BarChart className="h-5 w-5" /> },
+  { id: 'retirement', name: 'Retirement', filterValue: 'Retirement Planning', icon: <ShieldCheck className="h-5 w-5" /> },
+  { id: 'investing', name: 'Investing', filterValue: 'Investment Management', icon: <LineChart className="h-5 w-5" /> },
+  { id: 'family', name: 'Family', filterValue: 'Succession Planning', icon: <Users className="h-5 w-5" /> },
+  { id: 'estate-planning', name: 'Estate Planning', filterValue: 'Estate/Trust Planning', icon: <FileText className="h-5 w-5" /> },
+  { id: 'wealth-management', name: 'Wealth Management', filterValue: 'Wealth Management', icon: <Calculator className="h-5 w-5" /> },
+  { id: 'tax-strategy', name: 'Tax Strategy', filterValue: 'Tax Planning', icon: <Shield className="h-5 w-5" /> },
+  { id: 'college', name: 'College', filterValue: 'Education Planning', icon: <GraduationCap className="h-5 w-5" /> },
+  { id: 'home-purchasing', name: 'Home Purchasing', filterValue: 'Life Transitions', icon: <Home className="h-5 w-5" /> },
+  { id: 'debt-management', name: 'Debt Management', filterValue: 'Debt Management', icon: <BarChart className="h-5 w-5" /> },
 ];
 
 const SpecialtyBubbles: React.FC = () => {
@@ -45,7 +46,7 @@ const SpecialtyBubbles: React.FC = () => {
           {specialties.map((specialty) => (
             <Link
               key={specialty.id}
-              to={`/advisors?specialties=${encodeURIComponent(specialty.name)}`}
+              to={`/advisors?specialties=${encodeURIComponent(specialty.filterValue)}`}
               className="flex items-center gap-2.5 px-5 py-2.5 bg-white rounded-full border border-gray-200 hover:border-brand-blue hover:bg-blue-50 transition-colors duration-200"
             >
               <span className="text-brand-blue">
