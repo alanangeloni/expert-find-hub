@@ -24,33 +24,16 @@ export interface AccountingFirm {
   premium?: boolean;
   created_at?: string;
   updated_at?: string;
-  services?: string[];
-  specialties?: string[];
-  industries?: string[];
 }
 
 export async function getAccountingFirms(): Promise<AccountingFirm[]> {
   try {
-    console.log('Fetching accounting firms from database...');
-    
     const { data: firms, error } = await supabase
       .from('accounting_firms')
-      .select('*')
-      .order('name');
+      .select('*');
 
-    if (error) {
-      console.error('Error fetching accounting firms:', error);
-      console.error('Error details:', {
-        message: error.message,
-        details: error.details,
-        hint: error.hint,
-        code: error.code
-      });
-      return [];
-    }
+    if (error) throw error;
 
-    console.log(`Found ${firms?.length || 0} accounting firms`);
-    console.log('Firms data:', firms);
     return firms || [];
   } catch (error) {
     console.error('Error fetching accounting firms:', error);

@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card } from '@/components/ui/card';
 import { MapPin, Award, DollarSign } from 'lucide-react';
 import { Advisor } from '@/services/advisorsService';
+import { ADVISOR_SERVICES } from '@/constants/advisorServices';
 
 interface AdvisorCardProps {
   advisor: Advisor;

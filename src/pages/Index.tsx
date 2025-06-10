@@ -1,89 +1,131 @@
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
+import { Card, CardContent } from "@/components/ui/card";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Star } from "lucide-react";
+import SpecialtyBubbles from "@/components/home/SpecialtyBubbles";
+import { AdvisorCard } from "@/components/advisors/AdvisorCard";
+import { getAdvisors } from "@/services/advisorsService";
 
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { getAdvisors } from '@/services/advisorsService';
-import { getAccountingFirms } from '@/services/accountingFirmsService';
-import { AdvisorCard } from '@/components/advisors/AdvisorCard';
-import { AccountingFirmCard } from '@/components/accountingFirms/AccountingFirmCard';
+// Professional type that rotates in the hero section
+const professionalTypes = ["Financial Professional", "Financial Advisor", "Accountant", "Tax Specialist"];
 
-const IndexPage = () => {
-  const { data: advisors = [], isLoading: advisorsLoading } = useQuery({
-    queryKey: ['featuredAdvisors'],
-    queryFn: () => getAdvisors({ page: 1, pageSize: 6 })
-  });
-
-  const { data: accountingFirms = [], isLoading: accountingFirmsLoading } = useQuery({
-    queryKey: ['featuredAccountingFirms'],
-    queryFn: () => getAccountingFirms()
-  });
-
-  return (
-    <div>
+// Component to fetch and display advisor grid
+const AdvisorGrid = () => {
+  const [advisors, setAdvisors] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  useEffect(() => {
+    const fetchRandomAdvisors = async () => {
+      try {
+        setLoading(true);
+        // First, get the total count of advisors
+        const {
+          count
+        } = await getAdvisors({
+          page: 1,
+          pageSize: 1 // We just need the count
+        });
+        if (count > 0) {
+          // Fetch all advisors
+          const {
+            data
+          } = await getAdvisors({
+            page: 1,
+            pageSize: count // Fetch all advisors
+            // You might want to add additional filters here to ensure quality advisors
+          });
+          if (data && data.length > 0) {
+            // Shuffle all advisors and take first 6
+            const shuffled = [...data].sort(() => 0.5 - Math.random());
+            setAdvisors(shuffled.slice(0, 6));
+          } else {
+            setAdvisors([]);
+          }
+        } else {
+          setAdvisors([]);
+        }
+      } catch (err) {
+        console.error('Error fetching advisors:', err);
+        setError('Failed to load advisors');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchRandomAdvisors();
+  }, []);
+  if (loading) {
+    return <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="h-64 bg-gray-200 rounded-lg animate-pulse"></div>)}
+    </div>;
+  }
+  if (error) {
+    return <div className="text-center text-red-500 py-8">{error}</div>;
+  }
+  if (advisors.length === 0) {
+    return <div className="text-center text-gray-500 py-8">No advisors found</div>;
+  }
+  return <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {advisors.map(advisor => <div key={advisor.id} className="h-full">
+          <AdvisorCard advisor={advisor} />
+        </div>)}
+    </div>;
+};
+const Index = () => {
+  const [professionalTypeIndex, setProfessionalTypeIndex] = useState(0);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setProfessionalTypeIndex(prevIndex => (prevIndex + 1) % professionalTypes.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+  return <div className="flex flex-col">
       {/* Hero Section */}
-      <section className="py-20 bg-brand-blue text-white">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl font-bold mb-4">Your Path to Financial Success Starts Here</h1>
-          <p className="text-lg mb-8">Find trusted financial advisors and accounting firms to help you achieve your goals.</p>
-          <Link to="/advisors" className="bg-brand-teal text-brand-blue font-bold py-3 px-8 rounded-full hover:bg-teal-300 transition-colors">
-            Find an Advisor
-          </Link>
-        </div>
-      </section>
-
-      {/* Featured Advisors Section */}
-      <section className="py-16 bg-gray-50">
+      <section className="bg-white py-12 md:py-20 text-center">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Featured Financial Advisors</h2>
-          {advisorsLoading ? (
-            <div className="text-center">Loading advisors...</div>
-          ) : advisors && advisors.length > 0 ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {advisors.slice(0, 6).map((advisor) => (
-                <AdvisorCard key={advisor.id} advisor={advisor} />
-              ))}
+          <div className="max-w-4xl mx-auto">
+            <h1 className="text-4xl font-bold mb-2 md:text-7xl">
+              <span className="text-brand-blue">Find a</span> <br />
+              <span className="text-emerald-400">
+                {professionalTypes[professionalTypeIndex]}
+              </span>
+            </h1>
+            <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+              Discover Vetted Financial Experts for $500k+ Businesses and High-Net-Worth Clients. 
+              Take a quick quiz to hear from accountants, financial advisors, or browse our directory.
+            </p>
+            <div className="flex justify-center">
+              <Link to="/firms" className="inline-flex items-center justify-center px-6 py-3 text-base font-medium rounded-md text-white bg-brand-blue hover:bg-opacity-90 transition-colors">
+                Take Quiz to Connect
+              </Link>
             </div>
-          ) : (
-            <div className="text-center text-gray-600">No advisors available at the moment.</div>
-          )}
-        </div>
-      </section>
-
-      {/* Featured Accounting Firms Section */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Featured Accounting Firms</h2>
-          {accountingFirmsLoading ? (
-            <div className="text-center">Loading accounting firms...</div>
-          ) : accountingFirms && accountingFirms.length > 0 ? (
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {accountingFirms.slice(0, 6).map((firm) => (
-                <AccountingFirmCard key={firm.id} firm={firm} />
-              ))}
-            </div>
-          ) : (
-            <div className="text-center text-gray-600">No accounting firms available at the moment.</div>
-          )}
-        </div>
-      </section>
-
-      {/* Call to Action Section */}
-      <section className="py-20 bg-brand-teal text-brand-blue">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Take Control of Your Finances?</h2>
-          <p className="text-lg mb-8">Explore our resources and connect with professionals who can guide you.</p>
-          <div className="flex justify-center gap-4">
-            <Link to="/advisors" className="bg-white font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-colors">
-              Find an Advisor
-            </Link>
-            <Link to="/accounting-firms" className="bg-white font-bold py-3 px-8 rounded-full hover:bg-gray-100 transition-colors">
-              Find an Accounting Firm
-            </Link>
           </div>
         </div>
       </section>
-    </div>
-  );
-};
 
-export default IndexPage;
+      {/* Top Financial Advisors Section */}
+      <section className="py-12 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="flex justify-between items-center mb-8">
+            <h2 className="text-2xl font-bold text-brand-blue">
+              Top Financial Advisors
+            </h2>
+            <Link to="/advisors" className="text-emerald-400 flex items-center">
+              View all advisors →
+            </Link>
+          </div>
+          
+          <AdvisorGrid />
+        </div>
+      </section>
+
+      {/* Specialties Section */}
+      <SpecialtyBubbles />
+
+      {/* Categories Section */}
+      
+
+
+    </div>;
+};
+export default Index;

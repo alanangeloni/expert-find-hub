@@ -1,9 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { getAdvisors, getUniqueStatesFromAdvisors, type AdvisorFilters } from '@/services/advisorsService';
+import { getAdvisors, getUniqueStates, type AdvisorFilter } from '@/services/advisorsService';
 import { AdvisorList } from '@/components/advisors/AdvisorList';
 import { AdvisorSearchForm } from '@/components/advisors/AdvisorSearchForm';
+
 
 type PaginationState = {
   page: number;
@@ -13,7 +14,7 @@ type PaginationState = {
 
 const AdvisorSearch = () => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [filters, setFilters] = useState<AdvisorFilters>({
+  const [filters, setFilters] = useState<AdvisorFilter>({
     state: undefined,
     minimumAssets: undefined,
     specialties: [],
@@ -31,7 +32,7 @@ const AdvisorSearch = () => {
   useEffect(() => {
     const fetchStates = async () => {
       try {
-        const uniqueStates = await getUniqueStatesFromAdvisors();
+        const uniqueStates = await getUniqueStates();
         setStates(uniqueStates);
       } catch (error) {
         console.error("Failed to fetch states:", error);
@@ -42,7 +43,7 @@ const AdvisorSearch = () => {
   }, []);
 
   // Get advisors with pagination
-  const { data: advisors = [], isLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['advisors', { ...filters, searchQuery, page: pagination.page }],
     queryFn: () => getAdvisors({
       ...filters,
@@ -54,13 +55,13 @@ const AdvisorSearch = () => {
 
   // Update pagination when data changes
   useEffect(() => {
-    if (advisors) {
+    if (data) {
       setPagination(prev => ({
         ...prev,
-        totalCount: advisors.length || 0
+        totalCount: data.count || 0
       }));
     }
-  }, [advisors]);
+  }, [data]);
 
   const handlePageChange = (newPage: number) => {
     setPagination(prev => ({
@@ -70,6 +71,9 @@ const AdvisorSearch = () => {
     // Scroll to top of the list when changing pages
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
+
+  // Get advisors from response or empty array if not available
+  const advisors = data?.data || [];
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
