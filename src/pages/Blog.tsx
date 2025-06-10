@@ -12,7 +12,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { FilterBar } from '@/components/filters/FilterBar';
-import { FilterButton } from '@/components/filters/FilterButton';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { format } from 'date-fns';
 
 const Blog = () => {
@@ -85,23 +85,23 @@ const Blog = () => {
         onSearchChange={handleSearchChange}
         className="mb-8"
       >
-        <div className="flex flex-wrap gap-2">
-          <FilterButton
-            active={selectedCategory === 'all'}
-            onClick={() => setSelectedCategory('all')}
-          >
-            All Posts
-          </FilterButton>
-          
-          {categoriesData?.map((category: BlogCategory) => (
-            <FilterButton
-              key={category.id}
-              active={selectedCategory === category.name}
-              onClick={() => setSelectedCategory(category.name)}
-            >
-              {category.name}
-            </FilterButton>
-          ))}
+        <div className="flex items-center gap-2">
+          <label htmlFor="category-filter" className="text-sm font-medium text-slate-700 whitespace-nowrap">
+            Category:
+          </label>
+          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <SelectTrigger id="category-filter" className="w-[180px] h-10 rounded-[20px] bg-slate-50 border-slate-100">
+              <SelectValue placeholder="Select category" />
+            </SelectTrigger>
+            <SelectContent className="bg-white border border-slate-200 shadow-lg">
+              <SelectItem value="all">All Posts</SelectItem>
+              {categoriesData?.map((category: BlogCategory) => (
+                <SelectItem key={category.id} value={category.name}>
+                  {category.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </FilterBar>
 
