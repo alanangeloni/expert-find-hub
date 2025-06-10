@@ -31,12 +31,19 @@ export interface AccountingFirm {
 
 export async function getAccountingFirms(): Promise<AccountingFirm[]> {
   try {
+    console.log('Fetching accounting firms from database...');
+    
     const { data: firms, error } = await supabase
       .from('accounting_firms')
-      .select('*');
+      .select('*')
+      .order('name');
 
-    if (error) throw error;
+    if (error) {
+      console.error('Error fetching accounting firms:', error);
+      return [];
+    }
 
+    console.log(`Found ${firms?.length || 0} accounting firms`);
     return firms || [];
   } catch (error) {
     console.error('Error fetching accounting firms:', error);

@@ -58,7 +58,7 @@ export const getAdvisors = async (filters: AdvisorFilters = {}): Promise<Advisor
     let query = supabase
       .from('financial_advisors')
       .select('*')
-      .eq('status', 'approved');
+      .eq('status', 'approved'); // Only fetch approved advisors
 
     // Apply filters
     if (filters.state) {
@@ -102,7 +102,7 @@ export const getAdvisors = async (filters: AdvisorFilters = {}): Promise<Advisor
       });
     }
 
-    console.log(`Found ${advisors.length} advisors after filtering`);
+    console.log(`Found ${advisors.length} approved advisors after filtering`);
     
     return advisors.map(advisor => ({
       ...advisor,
@@ -120,7 +120,7 @@ export const getUniqueStatesFromAdvisors = async (): Promise<string[]> => {
       .from('financial_advisors')
       .select('state_hq')
       .not('state_hq', 'is', null)
-      .eq('status', 'approved');
+      .eq('status', 'approved'); // Only get states from approved advisors
 
     if (error) throw error;
 
@@ -138,7 +138,7 @@ export const getAdvisorBySlug = async (slug: string): Promise<Advisor | null> =>
       .from('financial_advisors')
       .select('*')
       .eq('slug', slug)
-      .eq('status', 'approved')
+      .eq('status', 'approved') // Only fetch approved advisors
       .single();
 
     if (error) throw error;

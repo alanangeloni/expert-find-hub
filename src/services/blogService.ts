@@ -105,7 +105,6 @@ export const updateBlogPost = async (id: string, updates: BlogPostUpdate): Promi
   }
 };
 
-// Add missing exports
 export const createBlogPost = async (post: Omit<BlogPost, 'id' | 'created_at' | 'updated_at'>): Promise<BlogPost> => {
   try {
     const { data, error } = await supabase
