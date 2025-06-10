@@ -72,7 +72,7 @@ const UserMenu = () => {
               <p className="text-sm font-medium text-gray-900">{user.email}</p>
             </div>
             <Link
-              to="/profile"
+              to="/advisor-profile"
               className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
               onClick={() => setIsMenuOpen(false)}
             >
