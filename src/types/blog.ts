@@ -1,8 +1,6 @@
 
-import { z } from 'zod';
-
-// Use the existing blog_category enum from the database
-export const BlogCategoryEnum = z.enum([
+// Blog category types - using the enum values from the database
+export const BLOG_CATEGORIES = [
   'Banking',
   'Business', 
   'Loans',
@@ -14,38 +12,28 @@ export const BlogCategoryEnum = z.enum([
   'Real Estate',
   'Retirement',
   'Reviews'
-]);
+] as const;
 
-export const blogPostSchema = z.object({
-  title: z.string().min(3, { message: "Title must be at least 3 characters." }),
-  slug: z.string().min(3, { message: "Slug must be at least 3 characters." }),
-  content: z.string().min(10, { message: "Content must be at least 10 characters." }),
-  excerpt: z.string().optional(),
-  cover_image_url: z.string().optional(),
-  status: z.enum(['draft', 'published']),
-  categories: z.array(BlogCategoryEnum).optional(),
-});
+export type BlogCategoryType = typeof BLOG_CATEGORIES[number];
 
-export type BlogPostFormValues = z.infer<typeof blogPostSchema>;
-export type BlogCategoryType = z.infer<typeof BlogCategoryEnum>;
+export interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  excerpt?: string;
+  cover_image_url?: string;
+  status: 'draft' | 'published';
+  author_id?: string;
+  authorName?: string;
+  published_at?: string;
+  created_at: string;
+  updated_at: string;
+  categories?: string[];
+}
 
 export interface BlogCategory {
   id: string;
   name: BlogCategoryType;
   slug: string;
 }
-
-// Export the available categories as a constant using the database enum values
-export const BLOG_CATEGORIES: BlogCategoryType[] = [
-  'Banking',
-  'Business', 
-  'Loans',
-  'Investing',
-  'Insurance',
-  'Interview',
-  'Finance',
-  'Taxes',
-  'Real Estate',
-  'Retirement',
-  'Reviews'
-];

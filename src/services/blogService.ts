@@ -1,28 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { getPostCategories } from "@/utils/blogRelations";
-import { BLOG_CATEGORIES, type BlogCategoryType } from "@/types/blog";
-
-export interface BlogPost {
-  id: string;
-  title: string;
-  slug: string;
-  content: string;
-  excerpt?: string;
-  cover_image_url?: string;
-  status: 'draft' | 'published';
-  author_id?: string;
-  authorName?: string;
-  published_at?: string;
-  created_at: string;
-  updated_at: string;
-  categories?: string[];
-}
-
-export interface BlogCategory {
-  id: string;
-  name: BlogCategoryType;
-  slug: string;
-}
+import { BLOG_CATEGORIES, type BlogCategoryType, type BlogPost, type BlogCategory } from "@/types/blog";
 
 export const getBlogPosts = async (options: {
   status?: 'draft' | 'published' | 'all';
@@ -311,4 +289,16 @@ export const uploadBlogImage = async (file: File): Promise<string | null> => {
     console.error('Error in uploadBlogImage:', error);
     return null;
   }
+};
+
+export const getPostCategories = async (postId: string): Promise<string[]> => {
+  const { data, error } = await supabase
+    .rpc('get_post_categories', { post_id: postId });
+  
+  if (error) {
+    console.error('Error fetching post categories:', error);
+    return [];
+  }
+  
+  return data || [];
 };
