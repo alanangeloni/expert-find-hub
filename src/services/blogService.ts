@@ -17,6 +17,7 @@ export interface BlogPost {
   created_at?: string;
   updated_at?: string;
   categories?: string[];
+  authorName?: string;
 }
 
 // Export the BlogCategory interface
@@ -52,59 +53,32 @@ export const uploadBlogImage = async (file: File): Promise<string | null> => {
   }
 };
 
-export const getBlogPosts = async (options: {
-  status?: 'draft' | 'published' | 'all';
-  category?: string;
-  limit?: number;
-  authorId?: string;
-} = {}): Promise<BlogPost[]> => {
+export const getBlogPosts = async (): Promise<BlogPost[]> => {
   try {
-    let query = supabase.from('blog_posts').select('*');
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .eq('status', 'published')
+      .order('published_at', { ascending: false });
 
-    // Apply filters
-    if (options.status && options.status !== 'all') {
-      query = query.eq('status', options.status);
-    }
-    
-    if (options.authorId) {
-      query = query.eq('author_id', options.authorId);
-    }
-    
-    if (options.limit) {
-      query = query.limit(options.limit);
-    }
-    
-    // Order by published date or created date
-    query = query.order('published_at', { ascending: false })
-                 .order('created_at', { ascending: false });
-
-    const { data, error } = await query;
-    
     if (error) {
       console.error('Error fetching blog posts:', error);
       return [];
     }
-    
-    if (!data) return [];
-    
-    // Get categories for each post using our utility function
-    const posts = await Promise.all(data.map(async (post) => {
-      const postCategories = await getPostCategories(post.id);
-      return {
-        ...post,
-        categories: postCategories,
-        status: post.status as 'draft' | 'published'
-      } as BlogPost;
-    }));
-    
-    // Filter by category if specified
-    if (options.category) {
-      return posts.filter(post => 
-        post.categories && post.categories.includes(options.category)
-      );
-    }
-    
-    return posts;
+
+    // Add categories to each post
+    const postsWithCategories = await Promise.all(
+      (data || []).map(async (post) => {
+        const categories = await getPostCategories(post.id);
+        return {
+          ...post,
+          categories,
+          authorName: 'Admin' // Default author name
+        };
+      })
+    );
+
+    return postsWithCategories;
   } catch (error) {
     console.error('Error in getBlogPosts:', error);
     return [];
@@ -120,30 +94,21 @@ export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> 
       .single();
 
     if (error || !data) {
-      console.error(`Error fetching blog post with slug ${slug}:`, error);
+      console.error('Error fetching blog post:', error);
       return null;
     }
 
-    // Get categories for the post
     const categories = await getPostCategories(data.id);
 
-    return { 
-      ...data, 
+    return {
+      ...data,
       categories,
-      status: data.status as 'draft' | 'published'
-    } as BlogPost;
-  } catch (error: any) {
-    console.error(`Error fetching blog post with slug ${slug}:`, error);
+      authorName: 'Admin' // Default author name
+    };
+  } catch (error) {
+    console.error('Error in getBlogPostBySlug:', error);
     return null;
   }
-};
-
-export const getBlogCategories = async (): Promise<BlogCategory[]> => {
-  return BLOG_CATEGORIES.map((category, index) => ({
-    id: `category-${index}`,
-    name: category,
-    slug: category.toLowerCase().replace(/\s+/g, '-')
-  }));
 };
 
 export const createBlogPost = async (post: Omit<BlogPost, 'id' | 'created_at' | 'updated_at'>): Promise<BlogPost | null> => {
@@ -151,52 +116,53 @@ export const createBlogPost = async (post: Omit<BlogPost, 'id' | 'created_at' | 
     const { data, error } = await supabase
       .from('blog_posts')
       .insert([{
-        title: post.title,
-        slug: post.slug,
-        content: post.content,
-        excerpt: post.excerpt,
-        cover_image_url: post.cover_image_url,
-        status: post.status,
-        author_id: post.author_id,
-        published_at: post.published_at
+        ...post,
+        published_at: post.status === 'published' ? new Date().toISOString() : null
       }])
       .select()
       .single();
 
     if (error) {
       console.error('Error creating blog post:', error);
-      return null;
+      throw error;
     }
 
-    return data as BlogPost;
+    return data;
   } catch (error) {
-    console.error('Error creating blog post:', error);
-    return null;
+    console.error('Error in createBlogPost:', error);
+    throw error;
   }
 };
 
 export const updateBlogPost = async (id: string, updates: Partial<BlogPost>): Promise<BlogPost | null> => {
   try {
+    const updateData = { ...updates };
+    
+    // If status is being changed to published and there's no published_at date, set it
+    if (updates.status === 'published' && !updates.published_at) {
+      updateData.published_at = new Date().toISOString();
+    }
+
     const { data, error } = await supabase
       .from('blog_posts')
-      .update(updates)
+      .update(updateData)
       .eq('id', id)
       .select()
       .single();
 
     if (error) {
       console.error('Error updating blog post:', error);
-      return null;
+      throw error;
     }
 
-    return data as BlogPost;
+    return data;
   } catch (error) {
-    console.error('Error updating blog post:', error);
-    return null;
+    console.error('Error in updateBlogPost:', error);
+    throw error;
   }
 };
 
-export const deleteBlogPost = async (id: string): Promise<boolean> => {
+export const deleteBlogPost = async (id: string): Promise<void> => {
   try {
     const { error } = await supabase
       .from('blog_posts')
@@ -205,12 +171,49 @@ export const deleteBlogPost = async (id: string): Promise<boolean> => {
 
     if (error) {
       console.error('Error deleting blog post:', error);
-      return false;
+      throw error;
+    }
+  } catch (error) {
+    console.error('Error in deleteBlogPost:', error);
+    throw error;
+  }
+};
+
+export const getDraftBlogPosts = async (): Promise<BlogPost[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .eq('status', 'draft')
+      .order('updated_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching draft blog posts:', error);
+      return [];
     }
 
-    return true;
+    return data || [];
   } catch (error) {
-    console.error('Error deleting blog post:', error);
-    return false;
+    console.error('Error in getDraftBlogPosts:', error);
+    return [];
+  }
+};
+
+export const getAllBlogPosts = async (): Promise<BlogPost[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .select('*')
+      .order('updated_at', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching all blog posts:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error('Error in getAllBlogPosts:', error);
+    return [];
   }
 };

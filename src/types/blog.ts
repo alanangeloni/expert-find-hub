@@ -27,6 +27,7 @@ export interface BlogPost {
   created_at?: string;
   updated_at?: string;
   categories?: string[];
+  authorName?: string;
 }
 
 export interface BlogCategory {
