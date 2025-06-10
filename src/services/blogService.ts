@@ -1,6 +1,6 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { getPostCategories } from "@/utils/blogRelations";
+import { BLOG_CATEGORIES, type BlogCategoryType } from "@/types/blog";
 
 export interface BlogPost {
   id: string;
@@ -20,7 +20,7 @@ export interface BlogPost {
 
 export interface BlogCategory {
   id: string;
-  name: string;
+  name: BlogCategoryType;
   slug: string;
 }
 
@@ -112,23 +112,14 @@ export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> 
   }
 };
 
-// Get all blog categories
+// Get all blog categories - now returns the predefined categories
 export const getBlogCategories = async (): Promise<BlogCategory[]> => {
-  try {
-    // Using direct SQL query since the table might not be set up in Supabase types yet
-    const { data, error } = await supabase
-      .rpc('get_blog_categories');
-      
-    if (error || !data) {
-      console.error('Error fetching blog categories:', error);
-      return [];
-    }
-    
-    return data as BlogCategory[];
-  } catch (error) {
-    console.error('Error in getBlogCategories:', error);
-    return [];
-  }
+  // Return the predefined categories from our enum
+  return BLOG_CATEGORIES.map((category, index) => ({
+    id: `category-${index}`,
+    name: category,
+    slug: category.toLowerCase().replace(/\s+/g, '-')
+  }));
 };
 
 export const createBlogPost = async (postData: {

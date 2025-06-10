@@ -366,35 +366,6 @@ export type Database = {
         }
         Relationships: []
       }
-      blog_post_categories: {
-        Row: {
-          category_name: string
-          created_at: string | null
-          id: string
-          post_id: string
-        }
-        Insert: {
-          category_name: string
-          created_at?: string | null
-          id?: string
-          post_id: string
-        }
-        Update: {
-          category_name?: string
-          created_at?: string | null
-          id?: string
-          post_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "blog_post_categories_post_id_fkey"
-            columns: ["post_id"]
-            isOneToOne: false
-            referencedRelation: "blog_posts"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       blog_posts: {
         Row: {
           author_id: string | null

@@ -21,7 +21,7 @@ const Blog = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [posts, setPosts] = useState<BlogPost[]>([]);
 
-  // Fetch categories
+  // Get categories directly from our predefined list
   const { data: categoriesData, isLoading: categoriesLoading } = useQuery({
     queryKey: ['blogCategories'],
     queryFn: getBlogCategories
