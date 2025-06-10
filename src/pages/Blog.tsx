@@ -10,11 +10,10 @@ import {
 } from '@/services/blogService';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Spinner } from '@/components/ui/spinner';
+import { FilterBar } from '@/components/filters/FilterBar';
+import { FilterButton } from '@/components/filters/FilterButton';
 import { format } from 'date-fns';
-import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
 
 const Blog = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -79,45 +78,32 @@ const Blog = () => {
         </p>
       </div>
 
-      {/* Search and categories */}
-      <div className="mb-8">
-        <div className="bg-white rounded-[20px] shadow-sm border border-slate-100 p-4 md:p-5 mb-6">
-          <div className="flex flex-wrap items-center gap-3 md:gap-4">
-            <div className="relative flex-1 min-w-[240px]">
-              <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-                <Search className="h-4 w-4 text-slate-400" />
-              </div>
-              <Input
-                placeholder="Search articles..."
-                className="pl-10 h-12 rounded-[20px] bg-slate-50 border-slate-100 focus-visible:ring-brand-blue"
-                value={searchQuery}
-                onChange={handleSearchChange}
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
-          <Button 
-            variant={selectedCategory === 'all' ? 'default' : 'outline'}
-            className="rounded-full"
+      {/* Search and Filter Bar */}
+      <FilterBar
+        searchPlaceholder="Search articles..."
+        searchQuery={searchQuery}
+        onSearchChange={handleSearchChange}
+        className="mb-8"
+      >
+        <div className="flex flex-wrap gap-2">
+          <FilterButton
+            active={selectedCategory === 'all'}
             onClick={() => setSelectedCategory('all')}
           >
             All Posts
-          </Button>
+          </FilterButton>
           
           {categoriesData?.map((category: BlogCategory) => (
-            <Button 
-              key={category.id} 
-              variant={selectedCategory === category.name ? 'default' : 'outline'}
-              className="rounded-full"
+            <FilterButton
+              key={category.id}
+              active={selectedCategory === category.name}
               onClick={() => setSelectedCategory(category.name)}
             >
               {category.name}
-            </Button>
+            </FilterButton>
           ))}
         </div>
-      </div>
+      </FilterBar>
 
       {/* Loading state */}
       {(postsLoading || categoriesLoading) && (
@@ -128,6 +114,7 @@ const Blog = () => {
 
       {/* Latest Articles section heading */}
       <h2 className="text-2xl font-semibold mb-6">Latest Articles</h2>
+      
       {/* Blog posts grid */}
       {!postsLoading && posts.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
