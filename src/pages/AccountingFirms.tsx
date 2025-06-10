@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
@@ -26,8 +27,6 @@ import { FirmList } from "@/components/firms/FirmList";
 
 const AccountingFirmsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [selectedSpecialty, setSelectedSpecialty] = useState("All");
-  const [selectedService, setSelectedService] = useState("All");
   const [selectedMinimumFee, setSelectedMinimumFee] = useState("All");
   
   // Fetch accounting firms
@@ -42,48 +41,13 @@ const AccountingFirmsPage = () => {
     return `$${value}/mo`;
   };
 
-  // Service categories
-  const services = [
-    "All", 
-    "Tax Preparation", 
-    "Bookkeeping", 
-    "Business Formation",
-    "Advisory Services",
-    "Payroll Services",
-    "International Tax Services"
-  ];
-
-  // Specialty categories
-  const specialties = [
-    "All",
-    "High Net Worth Individuals",
-    "Real Estate Investors",
-    "VC Backed",
-    "Digital Nomads",
-    "International/Expats",
-    "Solopreneurs",
-    "SMB Owner"
-  ];
-
-  // Filter firms based on search, specialty, service, and minimum fee
+  // Filter firms based on search and minimum fee
   const filteredFirms = firms.filter((firm) => {
     // Filter by search query
     const matchesSearch = 
       searchQuery.trim() === "" || 
       firm.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       firm.description?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      false;
-      
-    // Filter by specialty
-    const matchesSpecialty = 
-      selectedSpecialty === "All" || 
-      firm.specialties?.includes(selectedSpecialty as any) ||
-      false;
-      
-    // Filter by service
-    const matchesService = 
-      selectedService === "All" || 
-      firm.services?.includes(selectedService as any) ||
       false;
     
     // Filter by minimum fee
@@ -101,7 +65,7 @@ const AccountingFirmsPage = () => {
       }
     }
     
-    return matchesSearch && matchesSpecialty && matchesService && matchesMinimumFee;
+    return matchesSearch && matchesMinimumFee;
   });
 
   return (
@@ -138,38 +102,12 @@ const AccountingFirmsPage = () => {
               <SelectItem value="$250/mo+">$250/mo+</SelectItem>
             </SelectContent>
           </Select>
-          <Select value={selectedService} onValueChange={setSelectedService}>
-            <SelectTrigger className="w-[180px] rounded-[20px] h-12 bg-slate-50 border-slate-100">
-              <SelectValue placeholder="Service" />
-            </SelectTrigger>
-            <SelectContent className="rounded-md bg-white">
-              {services.map((service) => (
-                <SelectItem key={service} value={service}>
-                  {service}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={selectedSpecialty} onValueChange={setSelectedSpecialty}>
-            <SelectTrigger className="w-[180px] rounded-[20px] h-12 bg-slate-50 border-slate-100">
-              <SelectValue placeholder="Specialty" />
-            </SelectTrigger>
-            <SelectContent className="rounded-md bg-white">
-              {specialties.map((specialty) => (
-                <SelectItem key={specialty} value={specialty}>
-                  {specialty}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          {(selectedMinimumFee !== "All" || selectedService !== "All" || selectedSpecialty !== "All") && (
+          {selectedMinimumFee !== "All" && (
             <Button 
               variant="outline" 
               className="rounded-[20px] h-12 border-dashed"
               onClick={() => {
                 setSelectedMinimumFee("All");
-                setSelectedService("All");
-                setSelectedSpecialty("All");
               }}
             >
               Clear Filters

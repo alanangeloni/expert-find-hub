@@ -9,93 +9,6 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      accounting_firm_industries: {
-        Row: {
-          created_at: string | null
-          firm_id: string
-          id: string
-          industry: string
-        }
-        Insert: {
-          created_at?: string | null
-          firm_id: string
-          id?: string
-          industry: string
-        }
-        Update: {
-          created_at?: string | null
-          firm_id?: string
-          id?: string
-          industry?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "accounting_firm_industries_firm_id_fkey"
-            columns: ["firm_id"]
-            isOneToOne: false
-            referencedRelation: "accounting_firms"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      accounting_firm_services: {
-        Row: {
-          created_at: string | null
-          firm_id: string
-          id: string
-          service: Database["public"]["Enums"]["accounting_service_type"]
-        }
-        Insert: {
-          created_at?: string | null
-          firm_id: string
-          id?: string
-          service: Database["public"]["Enums"]["accounting_service_type"]
-        }
-        Update: {
-          created_at?: string | null
-          firm_id?: string
-          id?: string
-          service?: Database["public"]["Enums"]["accounting_service_type"]
-        }
-        Relationships: [
-          {
-            foreignKeyName: "accounting_firm_services_firm_id_fkey"
-            columns: ["firm_id"]
-            isOneToOne: false
-            referencedRelation: "accounting_firms"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      accounting_firm_specialties: {
-        Row: {
-          created_at: string | null
-          firm_id: string
-          id: string
-          specialty: Database["public"]["Enums"]["client_specialty_type"]
-        }
-        Insert: {
-          created_at?: string | null
-          firm_id: string
-          id?: string
-          specialty: Database["public"]["Enums"]["client_specialty_type"]
-        }
-        Update: {
-          created_at?: string | null
-          firm_id?: string
-          id?: string
-          specialty?: Database["public"]["Enums"]["client_specialty_type"]
-        }
-        Relationships: [
-          {
-            foreignKeyName: "accounting_firm_specialties_firm_id_fkey"
-            columns: ["firm_id"]
-            isOneToOne: false
-            referencedRelation: "accounting_firms"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       accounting_firms: {
         Row: {
           address: string | null
@@ -344,27 +257,6 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
-      }
-      blog_categories: {
-        Row: {
-          created_at: string | null
-          id: string
-          name: string
-          slug: string
-        }
-        Insert: {
-          created_at?: string | null
-          id?: string
-          name: string
-          slug: string
-        }
-        Update: {
-          created_at?: string | null
-          id?: string
-          name?: string
-          slug?: string
-        }
-        Relationships: []
       }
       blog_posts: {
         Row: {

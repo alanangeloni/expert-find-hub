@@ -24,9 +24,6 @@ export interface AccountingFirm {
   premium?: boolean;
   created_at?: string;
   updated_at?: string;
-  services?: string[];
-  specialties?: string[];
-  industries?: string[];
 }
 
 export async function getAccountingFirms(): Promise<AccountingFirm[]> {
@@ -37,43 +34,7 @@ export async function getAccountingFirms(): Promise<AccountingFirm[]> {
 
     if (error) throw error;
 
-    // Get additional details for each firm
-    const firmsWithDetails = await Promise.all(
-      firms.map(async (firm) => {
-        // Get services
-        const { data: services, error: servicesError } = await supabase
-          .from('accounting_firm_services')
-          .select('service')
-          .eq('firm_id', firm.id);
-
-        if (servicesError) console.error('Error fetching services:', servicesError);
-
-        // Get specialties
-        const { data: specialties, error: specialtiesError } = await supabase
-          .from('accounting_firm_specialties')
-          .select('specialty')
-          .eq('firm_id', firm.id);
-
-        if (specialtiesError) console.error('Error fetching specialties:', specialtiesError);
-
-        // Get industries
-        const { data: industries, error: industriesError } = await supabase
-          .from('accounting_firm_industries')
-          .select('industry')
-          .eq('firm_id', firm.id);
-
-        if (industriesError) console.error('Error fetching industries:', industriesError);
-
-        return {
-          ...firm,
-          services: services?.map(s => s.service) || [],
-          specialties: specialties?.map(s => s.specialty) || [],
-          industries: industries?.map(i => i.industry) || []
-        };
-      })
-    );
-
-    return firmsWithDetails;
+    return firms || [];
   } catch (error) {
     console.error('Error fetching accounting firms:', error);
     return [];
@@ -91,38 +52,7 @@ export async function getAccountingFirmBySlug(slug: string): Promise<AccountingF
     if (error) throw error;
     if (!firms || firms.length === 0) return null;
 
-    const firm = firms[0];
-
-    // Get services
-    const { data: services, error: servicesError } = await supabase
-      .from('accounting_firm_services')
-      .select('service')
-      .eq('firm_id', firm.id);
-
-    if (servicesError) console.error('Error fetching services:', servicesError);
-
-    // Get specialties
-    const { data: specialties, error: specialtiesError } = await supabase
-      .from('accounting_firm_specialties')
-      .select('specialty')
-      .eq('firm_id', firm.id);
-
-    if (specialtiesError) console.error('Error fetching specialties:', specialtiesError);
-
-    // Get industries
-    const { data: industries, error: industriesError } = await supabase
-      .from('accounting_firm_industries')
-      .select('industry')
-      .eq('firm_id', firm.id);
-
-    if (industriesError) console.error('Error fetching industries:', industriesError);
-
-    return {
-      ...firm,
-      services: services?.map(s => s.service) || [],
-      specialties: specialties?.map(s => s.specialty) || [],
-      industries: industries?.map(i => i.industry) || []
-    };
+    return firms[0];
   } catch (error) {
     console.error('Error fetching accounting firm by slug:', error);
     return null;
