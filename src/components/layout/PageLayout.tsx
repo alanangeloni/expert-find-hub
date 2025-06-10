@@ -1,3 +1,4 @@
+
 import { ReactNode } from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from './Header';
@@ -8,9 +9,9 @@ interface PageLayoutProps {
 
 export function PageLayout({ children }: PageLayoutProps) {
   return (
-    <div className="flex flex-col">
+    <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1">
+      <main className="flex-1 w-full">
         {children}
       </main>
     </div>

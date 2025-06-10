@@ -5,7 +5,6 @@ import { getAdvisors, getUniqueStates, type AdvisorFilter } from '@/services/adv
 import { AdvisorList } from '@/components/advisors/AdvisorList';
 import { AdvisorSearchForm } from '@/components/advisors/AdvisorSearchForm';
 
-
 type PaginationState = {
   page: number;
   pageSize: number;
@@ -119,32 +118,35 @@ const AdvisorSearch = () => {
   };
   
   return (
-    <div className="container mx-auto py-8 px-4">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Find a Financial Advisor</h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Finding a trusted professional to achieve your financial goals has never been easier
-        </p>
-      </div>
-      
-      <AdvisorSearchForm
-        searchQuery={searchQuery}
-        filters={filters}
-        states={states}
-        onSearchChange={handleSearchChange}
-        onStateChange={handleStateChange}
-        onMinimumChange={handleMinimumChange}
-        onSpecialtyChange={handleSpecialtyChange}
-        onClientTypeChange={handleClientTypeChange}
-        clearFilters={clearFilters}
-      />
-      
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        <div className="col-span-1 lg:hidden">
-          {/* Mobile filters would go here if needed */}
+    <div className="min-h-screen bg-gray-50">
+      <div className="container mx-auto py-4 md:py-8 px-4">
+        {/* Header Section - Mobile Responsive */}
+        <div className="text-center mb-6 md:mb-8">
+          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
+            Find a Financial Advisor
+          </h1>
+          <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto px-4">
+            Finding a trusted professional to achieve your financial goals has never been easier
+          </p>
         </div>
         
-        <div className="col-span-1 lg:col-span-4">
+        {/* Search Form - Mobile Responsive */}
+        <div className="mb-6 md:mb-8">
+          <AdvisorSearchForm
+            searchQuery={searchQuery}
+            filters={filters}
+            states={states}
+            onSearchChange={handleSearchChange}
+            onStateChange={handleStateChange}
+            onMinimumChange={handleMinimumChange}
+            onSpecialtyChange={handleSpecialtyChange}
+            onClientTypeChange={handleClientTypeChange}
+            clearFilters={clearFilters}
+          />
+        </div>
+        
+        {/* Results Grid */}
+        <div className="w-full">
           <AdvisorList 
             advisors={advisors}
             isLoading={isLoading}
@@ -160,11 +162,7 @@ const AdvisorSearch = () => {
 };
 
 const AdvisorsPage = () => {
-  return (
-    <>
-      <AdvisorSearch />
-    </>
-  );
+  return <AdvisorSearch />;
 };
 
 export default AdvisorsPage;
