@@ -63,9 +63,9 @@ export const getAdvisors = async (params: GetAdvisorsParams = {}): Promise<GetAd
       .select('*', { count: 'exact' })
       .eq('status', 'approved');
 
-    // Apply filters
+    // Apply filters at database level
     if (params.state) {
-      query = query.eq('state_hq', params.state);
+      query = query.eq('state_hq', params.state as any);
     }
 
     if (params.searchQuery) {
@@ -76,7 +76,12 @@ export const getAdvisors = async (params: GetAdvisorsParams = {}): Promise<GetAd
       query = query.contains('client_type', [params.clientType]);
     }
 
-    // Apply pagination
+    // Apply specialty filter at database level
+    if (params.specialties && params.specialties.length > 0) {
+      query = query.overlaps('advisor_services', params.specialties as any);
+    }
+
+    // Apply pagination after all filters
     const page = params.page || 1;
     const pageSize = params.pageSize || 15;
     const from = (page - 1) * pageSize;
@@ -88,19 +93,9 @@ export const getAdvisors = async (params: GetAdvisorsParams = {}): Promise<GetAd
 
     if (error) throw error;
 
-    let advisors = data || [];
+    const advisors = data || [];
 
-    // Apply client-side filters for specialties
-    if (params.specialties && params.specialties.length > 0) {
-      advisors = advisors.filter(advisor => 
-        advisor.advisor_services && 
-        params.specialties!.some(specialty => 
-          advisor.advisor_services!.includes(specialty)
-        )
-      );
-    }
-
-    console.log(`Found ${advisors.length} approved advisors after filtering`);
+    console.log(`Found ${advisors.length} approved advisors after filtering, total count: ${count}`);
     
     return {
       data: advisors,
