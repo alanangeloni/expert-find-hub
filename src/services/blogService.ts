@@ -44,7 +44,6 @@ export const getBlogPosts = async (options: {
       return {
         ...post,
         categories: postCategories,
-        // Type cast status to ensure it matches the expected type
         status: post.status as 'draft' | 'published'
       } as BlogPost;
     }));
@@ -82,7 +81,6 @@ export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> 
     return { 
       ...data, 
       categories,
-      // Type cast status to ensure it matches the expected type
       status: data.status as 'draft' | 'published'
     } as BlogPost;
   } catch (error: any) {
@@ -91,9 +89,7 @@ export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> 
   }
 };
 
-// Get all blog categories - now returns the predefined categories
 export const getBlogCategories = async (): Promise<BlogCategory[]> => {
-  // Return the predefined categories from our enum
   return BLOG_CATEGORIES.map((category, index) => ({
     id: `category-${index}`,
     name: category,
@@ -101,193 +97,71 @@ export const getBlogCategories = async (): Promise<BlogCategory[]> => {
   }));
 };
 
-export const createBlogPost = async (postData: {
-  title: string;
-  slug: string;
-  content: string;
-  excerpt?: string;
-  cover_image_url?: string;
-  status: 'draft' | 'published';
-  categories?: string[];
-}): Promise<BlogPost | null> => {
+export const createBlogPost = async (post: Omit<BlogPost, 'id' | 'created_at' | 'updated_at'>): Promise<BlogPost | null> => {
   try {
-    const { categories, ...postFields } = postData;
-    
-    // Create the blog post
-    const { data: post, error } = await supabase
+    const { data, error } = await supabase
       .from('blog_posts')
-      .insert({
-        ...postFields,
-        published_at: postData.status === 'published' ? new Date().toISOString() : null
-      })
+      .insert([{
+        title: post.title,
+        slug: post.slug,
+        content: post.content,
+        excerpt: post.excerpt,
+        cover_image_url: post.cover_image_url,
+        status: post.status,
+        author_id: post.author_id,
+        published_at: post.published_at
+      }])
       .select()
       .single();
-      
-    if (error || !post) {
+
+    if (error) {
       console.error('Error creating blog post:', error);
       return null;
     }
-    
-    // Add categories if provided
-    if (categories && categories.length > 0) {
-      for (const category of categories) {
-        await addCategoryToPost(post.id, category);
-      }
-    }
-    
-    return { 
-      ...post, 
-      categories: categories || [],
-      status: post.status as 'draft' | 'published'
-    } as BlogPost;
+
+    return data as BlogPost;
   } catch (error) {
-    console.error('Error in createBlogPost:', error);
+    console.error('Error creating blog post:', error);
     return null;
   }
 };
 
-export const updateBlogPost = async (postData: {
-  id: string;
-  title: string;
-  slug: string;
-  content: string;
-  excerpt?: string;
-  cover_image_url?: string;
-  status: 'draft' | 'published';
-  categories?: string[];
-  published_at?: string;
-}): Promise<BlogPost | null> => {
+export const updateBlogPost = async (id: string, updates: Partial<BlogPost>): Promise<BlogPost | null> => {
   try {
-    const { id, categories, ...postFields } = postData;
-    
-    // Update the blog post
-    const { data: post, error } = await supabase
+    const { data, error } = await supabase
       .from('blog_posts')
-      .update({
-        ...postFields,
-        // Update published_at if changing to published status
-        published_at: postData.status === 'published' && !postData.published_at 
-          ? new Date().toISOString() 
-          : postData.published_at
-      })
+      .update(updates)
       .eq('id', id)
       .select()
       .single();
-      
-    if (error || !post) {
+
+    if (error) {
       console.error('Error updating blog post:', error);
       return null;
     }
-    
-    // Handle categories if provided
-    if (categories !== undefined) {
-      // First remove existing categories
-      await supabase.rpc('remove_all_post_categories', { post_id: id });
-      
-      // Then add the new categories
-      if (categories.length > 0) {
-        for (const category of categories) {
-          await addCategoryToPost(id, category);
-        }
-      }
-    }
-    
-    return { 
-      ...post, 
-      categories: categories || [],
-      status: post.status as 'draft' | 'published'
-    } as BlogPost;
+
+    return data as BlogPost;
   } catch (error) {
-    console.error('Error in updateBlogPost:', error);
+    console.error('Error updating blog post:', error);
     return null;
   }
 };
 
 export const deleteBlogPost = async (id: string): Promise<boolean> => {
   try {
-    // Delete the blog post
     const { error } = await supabase
       .from('blog_posts')
       .delete()
       .eq('id', id);
-      
+
     if (error) {
       console.error('Error deleting blog post:', error);
       return false;
     }
-    
+
     return true;
   } catch (error) {
-    console.error('Error in deleteBlogPost:', error);
+    console.error('Error deleting blog post:', error);
     return false;
-  }
-};
-
-export const addCategoryToPost = async (postId: string, categoryName: string): Promise<boolean> => {
-  try {
-    const { error } = await supabase
-      .rpc('add_category_to_post', { 
-        post_id: postId, 
-        category: categoryName 
-      });
-      
-    if (error) {
-      console.error('Error adding category to post:', error);
-      return false;
-    }
-    
-    return true;
-  } catch (error) {
-    console.error('Error in addCategoryToPost:', error);
-    return false;
-  }
-};
-
-export const removeCategoryFromPost = async (postId: string, categoryName: string): Promise<boolean> => {
-  try {
-    const { error } = await supabase
-      .rpc('remove_category_from_post', { 
-        post_id: postId, 
-        category: categoryName 
-      });
-      
-    if (error) {
-      console.error('Error removing category from post:', error);
-      return false;
-    }
-    
-    return true;
-  } catch (error) {
-    console.error('Error in removeCategoryFromPost:', error);
-    return false;
-  }
-};
-
-export const uploadBlogImage = async (file: File): Promise<string | null> => {
-  try {
-    // Create a unique file name for storage
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Math.random().toString(36).substring(2, 15)}_${Date.now()}.${fileExt}`;
-    const filePath = `blog_images/${fileName}`;
-    
-    // Upload the file to Supabase storage
-    const { data, error } = await supabase.storage
-      .from('blog_images')
-      .upload(filePath, file);
-      
-    if (error) {
-      console.error('Error uploading image:', error);
-      return null;
-    }
-    
-    // Get the public URL for the uploaded file
-    const { data: urlData } = supabase.storage
-      .from('blog_images')
-      .getPublicUrl(filePath);
-    
-    return urlData.publicUrl;
-  } catch (error) {
-    console.error('Error in uploadBlogImage:', error);
-    return null;
   }
 };
