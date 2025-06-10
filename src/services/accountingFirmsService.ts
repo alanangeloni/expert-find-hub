@@ -40,10 +40,17 @@ export async function getAccountingFirms(): Promise<AccountingFirm[]> {
 
     if (error) {
       console.error('Error fetching accounting firms:', error);
+      console.error('Error details:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      });
       return [];
     }
 
     console.log(`Found ${firms?.length || 0} accounting firms`);
+    console.log('Firms data:', firms);
     return firms || [];
   } catch (error) {
     console.error('Error fetching accounting firms:', error);
