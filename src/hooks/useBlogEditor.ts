@@ -146,7 +146,7 @@ export const useBlogEditor = () => {
   });
 
   const updatePostMutation = useMutation({
-    mutationFn: (postData: {
+    mutationFn: ({ id, ...postData }: {
       id: string;
       title: string;
       slug: string;
@@ -156,7 +156,7 @@ export const useBlogEditor = () => {
       status: "draft" | "published";
       categories?: string[];
       published_at?: string;
-    }) => updateBlogPost(postData),
+    }) => updateBlogPost(id, postData),
     onSuccess: () => {
       toast({ title: "Blog post updated successfully!" });
       queryClient.invalidateQueries({ queryKey: ['blogPosts'] });

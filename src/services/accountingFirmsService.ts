@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 
 export interface AccountingFirm {
@@ -24,6 +23,9 @@ export interface AccountingFirm {
   premium?: boolean;
   created_at?: string;
   updated_at?: string;
+  services?: string[];
+  specialties?: string[];
+  industries?: string[];
 }
 
 export async function getAccountingFirms(): Promise<AccountingFirm[]> {

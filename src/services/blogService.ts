@@ -1,4 +1,3 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { getPostCategories } from "@/utils/blogRelations";
 import { BLOG_CATEGORIES, type BlogCategoryType } from "@/types/blog";
@@ -12,11 +11,12 @@ export interface BlogPost {
   excerpt?: string;
   cover_image_url?: string;
   status: 'draft' | 'published';
-  author_id?: string;
   published_at?: string;
-  created_at?: string;
-  updated_at?: string;
+  created_at: string;
+  updated_at: string;
+  author_id?: string;
   categories?: string[];
+  authorName?: string;
 }
 
 // Export the BlogCategory interface
