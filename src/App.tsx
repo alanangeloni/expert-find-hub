@@ -24,6 +24,7 @@ import SignUp from "./pages/auth/SignUp";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import BlogEditor from "./pages/admin/BlogEditor";
+import AdminDashboard from "./components/admin/AdminDashboard";
 import AdminEntityDashboard from "./pages/admin/AdminEntityDashboard";
 import NotFound from "./pages/NotFound";
 
@@ -65,6 +66,22 @@ const App = () => (
                   <Route path="/auth/reset-password" element={<ResetPassword />} />
                   <Route
                     path="/admin/blog"
+                    element={
+                      <ProtectedRoute>
+                        <AdminDashboard />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/blog/new"
+                    element={
+                      <ProtectedRoute>
+                        <BlogEditor />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/admin/blog/edit/:slug"
                     element={
                       <ProtectedRoute>
                         <BlogEditor />
