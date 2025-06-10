@@ -1,5 +1,7 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import { ADVISOR_SERVICES, type AdvisorService } from "@/constants/advisorServices";
+import { CLIENT_TYPES, type ClientType } from "@/constants/clientTypes";
 
 export interface Advisor {
   id: string;
@@ -31,6 +33,7 @@ export interface Advisor {
   verified?: boolean;
   status?: string;
   user_id?: string;
+  rejection_reason?: string;
   created_at?: string;
   updated_at?: string;
 }
@@ -44,6 +47,9 @@ export interface AdvisorFilters {
   page?: number;
   pageSize?: number;
 }
+
+// For backward compatibility
+export type AdvisorFilter = AdvisorFilters;
 
 export const getAdvisors = async (filters: AdvisorFilters = {}): Promise<Advisor[]> => {
   try {
@@ -108,6 +114,24 @@ export const getAdvisors = async (filters: AdvisorFilters = {}): Promise<Advisor
   }
 };
 
+export const getUniqueStatesFromAdvisors = async (): Promise<string[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('financial_advisors')
+      .select('state_hq')
+      .not('state_hq', 'is', null)
+      .eq('status', 'approved');
+
+    if (error) throw error;
+
+    const uniqueStates = Array.from(new Set(data.map(item => item.state_hq).filter(Boolean)));
+    return uniqueStates.sort();
+  } catch (error) {
+    console.error('Error fetching unique states:', error);
+    return [];
+  }
+};
+
 export const getAdvisorBySlug = async (slug: string): Promise<Advisor | null> => {
   try {
     const { data, error } = await supabase
@@ -125,11 +149,51 @@ export const getAdvisorBySlug = async (slug: string): Promise<Advisor | null> =>
   }
 };
 
+export const getAdvisorServices = async (advisorId: string): Promise<string[]> => {
+  try {
+    const advisor = await getAdvisorBySlug(advisorId);
+    return advisor?.advisor_services || [];
+  } catch (error) {
+    console.error('Error fetching advisor services:', error);
+    return [];
+  }
+};
+
+export const getAdvisorProfessionalDesignations = async (advisorId: string): Promise<string[]> => {
+  try {
+    const advisor = await getAdvisorBySlug(advisorId);
+    return advisor?.professional_designations || [];
+  } catch (error) {
+    console.error('Error fetching advisor professional designations:', error);
+    return [];
+  }
+};
+
+export const getAdvisorCompensationTypes = async (advisorId: string): Promise<string[]> => {
+  try {
+    const advisor = await getAdvisorBySlug(advisorId);
+    return advisor?.compensation || [];
+  } catch (error) {
+    console.error('Error fetching advisor compensation types:', error);
+    return [];
+  }
+};
+
+export const getAdvisorLicenses = async (advisorId: string): Promise<string[]> => {
+  try {
+    const advisor = await getAdvisorBySlug(advisorId);
+    return advisor?.licenses || [];
+  } catch (error) {
+    console.error('Error fetching advisor licenses:', error);
+    return [];
+  }
+};
+
 export const createAdvisor = async (advisorData: Partial<Advisor>): Promise<Advisor> => {
   try {
     const { data, error } = await supabase
       .from('financial_advisors')
-      .insert(advisorData)
+      .insert(advisorData as any)
       .select()
       .single();
 
@@ -145,7 +209,7 @@ export const updateAdvisor = async (id: string, updates: Partial<Advisor>): Prom
   try {
     const { data, error } = await supabase
       .from('financial_advisors')
-      .update(updates)
+      .update(updates as any)
       .eq('id', id)
       .select()
       .single();
