@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -73,32 +74,33 @@ const AdminEntityDashboard = () => {
 
   return (
     <div className="container mx-auto py-8 px-4">
-      <div className="mb-8">
-        <h1 className="text-2xl md:text-3xl font-bold mb-2">Entity Management Dashboard</h1>
-        <p className="text-gray-600">Manage financial advisors, accounting firms, investment firms, and meeting requests</p>
-      </div>
-
       <Tabs defaultValue="advisors" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="advisors">Financial Advisors</TabsTrigger>
-          <TabsTrigger value="accounting">Accounting Firms</TabsTrigger>
-          <TabsTrigger value="investment">Investment Firms</TabsTrigger>
-          <TabsTrigger value="meetings">Meeting Requests</TabsTrigger>
-        </TabsList>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold">Entity Management</h1>
+            <p className="text-muted-foreground">Manage financial advisors, firms, and meeting requests</p>
+          </div>
+          <TabsList className="grid w-full sm:w-auto grid-cols-2 sm:grid-cols-4">
+            <TabsTrigger value="advisors" className="text-xs sm:text-sm">Advisors</TabsTrigger>
+            <TabsTrigger value="accounting" className="text-xs sm:text-sm">Accounting</TabsTrigger>
+            <TabsTrigger value="investment" className="text-xs sm:text-sm">Investment</TabsTrigger>
+            <TabsTrigger value="meetings" className="text-xs sm:text-sm">Meetings</TabsTrigger>
+          </TabsList>
+        </div>
 
-        <TabsContent value="advisors" className="mt-6">
+        <TabsContent value="advisors" className="mt-0">
           <AdvisorManagement />
         </TabsContent>
 
-        <TabsContent value="accounting" className="mt-6">
+        <TabsContent value="accounting" className="mt-0">
           <AccountingFirmManagement />
         </TabsContent>
 
-        <TabsContent value="investment" className="mt-6">
+        <TabsContent value="investment" className="mt-0">
           <InvestmentFirmManagement />
         </TabsContent>
 
-        <TabsContent value="meetings" className="mt-6">
+        <TabsContent value="meetings" className="mt-0">
           <MeetingRequestsManagement />
         </TabsContent>
       </Tabs>

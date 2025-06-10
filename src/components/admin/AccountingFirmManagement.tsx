@@ -96,7 +96,10 @@ export function AccountingFirmManagement() {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Accounting Firms ({firms.length})</h2>
+        <div className="flex items-center gap-2">
+          <h2 className="text-xl font-semibold">Accounting Firms</h2>
+          <Badge variant="secondary">{firms.length}</Badge>
+        </div>
         <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
           <DialogTrigger asChild>
             <Button onClick={handleAdd}>
@@ -125,7 +128,7 @@ export function AccountingFirmManagement() {
               <div className="flex justify-between items-start">
                 <div>
                   <CardTitle className="text-base">{firm.name}</CardTitle>
-                  <p className="text-sm text-gray-500">{firm.headquarters}</p>
+                  <p className="text-sm text-muted-foreground">{firm.headquarters}</p>
                 </div>
                 <div className="flex gap-1">
                   {firm.verified && (
@@ -138,7 +141,7 @@ export function AccountingFirmManagement() {
               </div>
             </CardHeader>
             <CardContent className="space-y-2">
-              <div className="text-sm text-gray-600">
+              <div className="text-sm text-muted-foreground">
                 <p>Fee: {firm.minimum_fee || 'N/A'}</p>
                 <p>Established: {firm.established ? new Date(firm.established).getFullYear() : 'N/A'}</p>
                 <p>Employees: {firm.employees || 'N/A'}</p>
@@ -156,7 +159,7 @@ export function AccountingFirmManagement() {
                   variant="outline" 
                   size="sm"
                   onClick={() => setDeleteId(firm.id)}
-                  className="text-red-500 hover:text-red-700"
+                  className="text-destructive hover:text-destructive"
                 >
                   <Trash2 className="h-3 w-3 mr-1" />
                   Delete
@@ -179,7 +182,7 @@ export function AccountingFirmManagement() {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction 
               onClick={() => deleteId && deleteMutation.mutate(deleteId)}
-              className="bg-red-500 hover:bg-red-600"
+              className="bg-destructive hover:bg-destructive/90"
             >
               Delete
             </AlertDialogAction>
