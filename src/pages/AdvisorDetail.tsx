@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -7,12 +8,10 @@ import { Card } from '@/components/ui/card';
 import { Spinner } from '@/components/ui/spinner';
 import { Dialog, DialogContent, DialogTrigger, DialogTitle } from '@/components/ui/dialog';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
-import { getAdvisorBySlug, getAdvisorServices, getAdvisorProfessionalDesignations, getAdvisorCompensationTypes, getAdvisorLicenses, Advisor } from '@/services/advisorsService';
+import { getAdvisorBySlug, Advisor } from '@/services/advisorsService';
 import { MeetingRequestForm } from '@/components/advisors/MeetingRequestForm';
 import { AdvisorServices } from '@/components/advisors/AdvisorServices';
 import { Calendar, MapPin, Building, Award, Star, Check, Phone, Mail, Globe, FileText, DollarSign, Shield, MessageCircle, Users } from 'lucide-react';
-
-// Using Advisor type from advisorsService
 
 const AdvisorDetail = () => {
   const {
@@ -29,35 +28,7 @@ const AdvisorDetail = () => {
     queryFn: () => getAdvisorBySlug(slug || ''),
     enabled: !!slug
   });
-  const {
-    data: services = []
-  } = useQuery({
-    queryKey: ['advisorServices', advisor?.id],
-    queryFn: () => getAdvisorServices(advisor?.id || ''),
-    enabled: !!advisor?.id
-  });
-  const {
-    data: designations = []
-  } = useQuery({
-    queryKey: ['advisorDesignations', advisor?.id],
-    queryFn: () => getAdvisorProfessionalDesignations(advisor?.id || ''),
-    enabled: !!advisor?.id
-  });
-  const {
-    data: compensationTypes = []
-  } = useQuery({
-    queryKey: ['advisorCompensation', advisor?.id],
-    queryFn: () => getAdvisorCompensationTypes(advisor?.id || ''),
-    enabled: !!advisor?.id
-  });
 
-  const {
-    data: licenses = []
-  } = useQuery({
-    queryKey: ['advisorLicenses', advisor?.id],
-    queryFn: () => getAdvisorLicenses(advisor?.id || ''),
-    enabled: !!advisor?.id
-  });
   if (isLoadingAdvisor) {
     return <div className="container mx-auto py-16 flex justify-center">
         <Spinner size="lg" />
@@ -93,17 +64,6 @@ const AdvisorDetail = () => {
                   </span>}
               </div>
               
-              {/* Rating */}
-              {advisor.rating && <div className="flex items-center gap-2">
-                  <div className="flex">
-                    {[1, 2, 3, 4, 5].map(star => <Star key={star} className={`h-4 w-4 ${star <= Math.floor(Number(advisor.rating) || 0) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />)}
-                  </div>
-                  <span className="text-sm font-medium text-gray-700">{advisor.rating}</span>
-                  <span className="text-sm text-gray-500">
-                    ({advisor.review_count || 0} review{advisor.review_count !== 1 ? 's' : ''})
-                  </span>
-                </div>}
-              
               {/* Position and Firm */}
               {(advisor.position || advisor.firm_name) && <p className="text-gray-700">
                   {advisor.position || "Financial Advisor"}
@@ -127,11 +87,6 @@ const AdvisorDetail = () => {
 
               {/* Action Buttons - Right Aligned */}
               <div className="flex flex-col sm:flex-row gap-3 pt-2 md:pt-0 md:items-center">
-                {advisor.scheduling_link && <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50 w-full sm:w-auto" size="lg" onClick={() => window.open(advisor.scheduling_link, '_blank')}>
-                    <Users className="h-4 w-4 mr-2" />
-                    Book Direct
-                  </Button>}
-                
                 <Dialog open={isMeetingDialogOpen} onOpenChange={setIsMeetingDialogOpen}>
                   <DialogTrigger asChild>
                     <Button className="bg-[#1a365d] hover:bg-[#2c5282] text-white w-full sm:w-auto transition-colors duration-200" size="lg">
@@ -165,8 +120,8 @@ const AdvisorDetail = () => {
               </Card>
 
           {/* Services Section */}
-          {services.length > 0 && <div className="mb-8">
-              <AdvisorServices services={services} advisorName={advisor.name} />
+          {advisor.advisor_services && advisor.advisor_services.length > 0 && <div className="mb-8">
+              <AdvisorServices services={advisor.advisor_services} advisorName={advisor.name} />
             </div>}
 
           {/* About Firm Section */}
@@ -210,24 +165,24 @@ const AdvisorDetail = () => {
             <h3 className="text-xl font-bold mb-4">Professional Details</h3>
             
             <div className="space-y-4">
-              {designations.length > 0 && <div className="flex">
+              {advisor.professional_designations && advisor.professional_designations.length > 0 && <div className="flex">
                   <Award className="h-5 w-5 mr-3 text-gray-500 flex-shrink-0" />
                   <div>
                     <p className="font-medium text-sm text-gray-700 mb-1">Professional Designations</p>
                     <div className="flex flex-wrap gap-1">
-                      {designations.map((designation, index) => <Badge key={index} variant="outline" className="whitespace-nowrap">
+                      {advisor.professional_designations.map((designation, index) => <Badge key={index} variant="outline" className="whitespace-nowrap">
                           {designation}
                         </Badge>)}
                     </div>
                   </div>
                 </div>}
 
-              {compensationTypes.length > 0 && <div className="flex">
+              {advisor.compensation && advisor.compensation.length > 0 && <div className="flex">
                   <DollarSign className="h-5 w-5 mr-3 text-gray-500 flex-shrink-0" />
                   <div>
                     <p className="font-medium text-sm text-gray-700 mb-1">Compensation Structure</p>
                     <div className="flex flex-wrap gap-1">
-                      {compensationTypes.map((type, index) => <Badge key={index} variant="outline" className="whitespace-nowrap">
+                      {advisor.compensation.map((type, index) => <Badge key={index} variant="outline" className="whitespace-nowrap">
                           {type}
                         </Badge>)}
                     </div>
@@ -250,12 +205,12 @@ const AdvisorDetail = () => {
                   </div>
                 </div>}
 
-              {licenses.length > 0 && <div className="flex">
+              {advisor.licenses && advisor.licenses.length > 0 && <div className="flex">
                   <FileText className="h-5 w-5 mr-3 text-gray-500 flex-shrink-0" />
                   <div>
                     <p className="font-medium text-sm text-gray-700 mb-1">Licenses</p>
                     <div className="flex flex-wrap gap-1">
-                      {licenses.map((license, index) => (
+                      {advisor.licenses.map((license, index) => (
                         <Badge key={index} variant="outline" className="whitespace-nowrap">
                           {license}
                         </Badge>
