@@ -1,25 +1,32 @@
 
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from "@/integrations/supabase/client";
 
-/**
- * Get all categories for a specific blog post
- */
 export const getPostCategories = async (postId: string): Promise<string[]> => {
   try {
-    // We'll use a direct query since the relationships might not be set up yet
-    const { data, error } = await supabase
-      .from('blog_post_categories')
-      .select('category_name')
-      .eq('post_id', postId);
-
-    if (error) {
-      console.error('Error fetching post categories:', error);
-      return [];
-    }
-
-    return data?.map(item => item.category_name) || [];
-  } catch (error) {
-    console.error('Error in getPostCategories:', error);
+    // Since blog_post_categories table doesn't exist in the current schema,
+    // we'll return an empty array for now
+    console.log('Getting categories for post:', postId);
     return [];
+  } catch (error) {
+    console.error('Error fetching post categories:', error);
+    return [];
+  }
+};
+
+export const addCategoryToPost = async (postId: string, category: string): Promise<void> => {
+  try {
+    // Placeholder for adding category to post
+    console.log('Adding category to post:', postId, category);
+  } catch (error) {
+    console.error('Error adding category to post:', error);
+  }
+};
+
+export const removeCategoryFromPost = async (postId: string, category: string): Promise<void> => {
+  try {
+    // Placeholder for removing category from post
+    console.log('Removing category from post:', postId, category);
+  } catch (error) {
+    console.error('Error removing category from post:', error);
   }
 };

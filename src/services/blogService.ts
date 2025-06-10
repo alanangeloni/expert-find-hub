@@ -1,6 +1,30 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { getPostCategories } from "@/utils/blogRelations";
-import { BLOG_CATEGORIES, type BlogCategoryType, type BlogPost, type BlogCategory } from "@/types/blog";
+import { BLOG_CATEGORIES, type BlogCategoryType } from "@/types/blog";
+
+// Export the BlogPost interface
+export interface BlogPost {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  excerpt?: string;
+  cover_image_url?: string;
+  status: 'draft' | 'published';
+  author_id?: string;
+  published_at?: string;
+  created_at?: string;
+  updated_at?: string;
+  categories?: string[];
+}
+
+// Export the BlogCategory interface
+export interface BlogCategory {
+  id: string;
+  name: string;
+  slug: string;
+}
 
 export const uploadBlogImage = async (file: File): Promise<string | null> => {
   try {
