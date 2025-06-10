@@ -21,7 +21,7 @@ const Header = () => {
             Financial Advisors
           </Link>
           <Link 
-            to="/investment-firms"
+            to="/firms"
             className="text-gray-600 hover:text-brand-blue"
           >
             Investment Firms

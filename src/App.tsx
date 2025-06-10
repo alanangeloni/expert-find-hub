@@ -53,8 +53,8 @@ const App = () => (
                       </ProtectedRoute>
                     }
                   />
-                  <Route path="/investment-firms" element={<InvestmentFirms />} />
-                  <Route path="/investment-firms/:slug" element={<InvestmentFirmDetail />} />
+                  <Route path="/firms" element={<InvestmentFirms />} />
+                  <Route path="/firms/:slug" element={<InvestmentFirmDetail />} />
                   <Route path="/accounting-firms" element={<AccountingFirms />} />
                   <Route path="/accounting-firms/:slug" element={<AccountingFirmDetail />} />
                   <Route path="/blog" element={<Blog />} />

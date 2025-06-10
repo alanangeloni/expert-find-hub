@@ -95,7 +95,7 @@ const Index = () => {
               Take a quick quiz to hear from accountants, financial advisors, or browse our directory.
             </p>
             <div className="flex justify-center">
-              <Link to="/investment-firms" className="inline-flex items-center justify-center px-6 py-3 text-base font-medium rounded-md text-white bg-brand-blue hover:bg-opacity-90 transition-colors">
+              <Link to="/firms" className="inline-flex items-center justify-center px-6 py-3 text-base font-medium rounded-md text-white bg-brand-blue hover:bg-opacity-90 transition-colors">
                 Take Quiz to Connect
               </Link>
             </div>

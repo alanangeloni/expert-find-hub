@@ -109,7 +109,7 @@ const InvestmentFirmDetailPage = () => {
         <p className="text-slate-600 mb-6 max-w-md">
           The investment firm you're looking for doesn't exist or an error occurred while loading its details.
         </p>
-        <Link to="/investment-firms">
+        <Link to="/firms">
           <Button variant="outline">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Investment Firms
@@ -131,7 +131,7 @@ const InvestmentFirmDetailPage = () => {
       <div className="container max-w-6xl mx-auto py-8 px-4 md:px-6">
         <div className="mb-6">
           <Link
-            to="/investment-firms"
+            to="/firms"
             className="inline-flex items-center text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
@@ -455,7 +455,7 @@ const InvestmentFirmDetailPage = () => {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   {similarFirms.slice(0,3).map((similarFirm: any) => (
-                    <Link key={similarFirm.id} to={`/investment-firms/${similarFirm.slug}`} className="block group p-3 rounded-lg border hover:bg-mint-100 transition-colors">
+                    <Link key={similarFirm.id} to={`/firms/${similarFirm.slug}`} className="block group p-3 rounded-lg border hover:bg-mint-100 transition-colors">
                       <div className="flex items-start gap-3">
                         <Avatar className="h-10 w-10 rounded-md border bg-slate-100 flex-shrink-0">
                           <AvatarImage src={similarFirm.logo_url || undefined} alt={similarFirm.name} className="object-contain p-1"/>

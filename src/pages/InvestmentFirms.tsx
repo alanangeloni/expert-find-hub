@@ -156,7 +156,7 @@ const InvestmentFirms = () => {
             firms={firms}
             isLoading={isLoading}
             formatMinimumInvestment={formatMinimumInvestment}
-            basePath="/investment-firms"
+            basePath="/firms"
             currentPage={currentPage}
             onPageChange={setCurrentPage}
             totalCount={firmsData?.total || 0}
