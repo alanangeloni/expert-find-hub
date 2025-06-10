@@ -44,9 +44,6 @@ export interface Advisor {
   states_registered_in?: string[];
   licenses?: string[];
   compensation?: string[];
-  rating?: number;
-  review_count?: number;
-  scheduling_link?: string;
 }
 
 export interface AdvisorFilter {

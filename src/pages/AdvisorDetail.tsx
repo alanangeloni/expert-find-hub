@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -12,63 +13,53 @@ import { MeetingRequestForm } from '@/components/advisors/MeetingRequestForm';
 import { AdvisorServices } from '@/components/advisors/AdvisorServices';
 import { Calendar, MapPin, Building, Award, Star, Check, Phone, Mail, Globe, FileText, DollarSign, Shield, MessageCircle, Users } from 'lucide-react';
 
-// Using Advisor type from advisorsService
-
 const AdvisorDetail = () => {
-  const {
-    slug
-  } = useParams<{
-    slug: string;
-  }>();
+  const { slug } = useParams<{ slug: string; }>();
   const [isMeetingDialogOpen, setIsMeetingDialogOpen] = useState(false);
-  const {
-    data: advisor,
-    isLoading: isLoadingAdvisor
-  } = useQuery({
+  
+  const { data: advisor, isLoading: isLoadingAdvisor } = useQuery({
     queryKey: ['advisor', slug],
     queryFn: () => getAdvisorBySlug(slug || ''),
     enabled: !!slug
   });
-  const {
-    data: services = []
-  } = useQuery({
+  
+  const { data: services = [] } = useQuery({
     queryKey: ['advisorServices', advisor?.id],
     queryFn: () => getAdvisorServices(advisor?.id || ''),
     enabled: !!advisor?.id
   });
-  const {
-    data: designations = []
-  } = useQuery({
+  
+  const { data: designations = [] } = useQuery({
     queryKey: ['advisorDesignations', advisor?.id],
     queryFn: () => getAdvisorProfessionalDesignations(advisor?.id || ''),
     enabled: !!advisor?.id
   });
-  const {
-    data: compensationTypes = []
-  } = useQuery({
+  
+  const { data: compensationTypes = [] } = useQuery({
     queryKey: ['advisorCompensation', advisor?.id],
     queryFn: () => getAdvisorCompensationTypes(advisor?.id || ''),
     enabled: !!advisor?.id
   });
 
-  const {
-    data: licenses = []
-  } = useQuery({
+  const { data: licenses = [] } = useQuery({
     queryKey: ['advisorLicenses', advisor?.id],
     queryFn: () => getAdvisorLicenses(advisor?.id || ''),
     enabled: !!advisor?.id
   });
+  
   if (isLoadingAdvisor) {
     return <div className="container mx-auto py-16 flex justify-center">
         <Spinner size="lg" />
       </div>;
   }
+  
   if (!advisor) {
     return <div className="container mx-auto py-16 text-center">
         <h2 className="text-2xl font-bold mb-4">Advisor not found</h2>
         <p className="text-gray-600">The advisor you're looking for doesn't exist or has been removed.</p>
       </div>;
   }
+  
   return <div className="min-h-screen bg-slate-50">
       {/* Hero section */}
       <div className="bg-white border-b">
@@ -93,17 +84,6 @@ const AdvisorDetail = () => {
                   </span>}
               </div>
               
-              {/* Rating */}
-              {advisor.rating && <div className="flex items-center gap-2">
-                  <div className="flex">
-                    {[1, 2, 3, 4, 5].map(star => <Star key={star} className={`h-4 w-4 ${star <= Math.floor(Number(advisor.rating) || 0) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"}`} />)}
-                  </div>
-                  <span className="text-sm font-medium text-gray-700">{advisor.rating}</span>
-                  <span className="text-sm text-gray-500">
-                    ({advisor.review_count || 0} review{advisor.review_count !== 1 ? 's' : ''})
-                  </span>
-                </div>}
-              
               {/* Position and Firm */}
               {(advisor.position || advisor.firm_name) && <p className="text-gray-700">
                   {advisor.position || "Financial Advisor"}
@@ -127,11 +107,6 @@ const AdvisorDetail = () => {
 
               {/* Action Buttons - Right Aligned */}
               <div className="flex flex-col sm:flex-row gap-3 pt-2 md:pt-0 md:items-center">
-                {advisor.scheduling_link && <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50 w-full sm:w-auto" size="lg" onClick={() => window.open(advisor.scheduling_link, '_blank')}>
-                    <Users className="h-4 w-4 mr-2" />
-                    Book Direct
-                  </Button>}
-                
                 <Dialog open={isMeetingDialogOpen} onOpenChange={setIsMeetingDialogOpen}>
                   <DialogTrigger asChild>
                     <Button className="bg-[#1a365d] hover:bg-[#2c5282] text-white w-full sm:w-auto transition-colors duration-200" size="lg">
@@ -299,6 +274,7 @@ const AdvisorDetail = () => {
       </div>
     </div>;
 };
+
 const AdvisorDetailPage = () => {
   return (
     <>
