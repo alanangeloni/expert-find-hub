@@ -1,10 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { getAdvisors, getUniqueStates, type AdvisorFilter } from '@/services/advisorsService';
+import { getAdvisors, getUniqueStatesFromAdvisors, type AdvisorFilter } from '@/services/advisorsService';
 import { AdvisorList } from '@/components/advisors/AdvisorList';
 import { AdvisorSearchForm } from '@/components/advisors/AdvisorSearchForm';
-
 
 type PaginationState = {
   page: number;
@@ -32,7 +31,7 @@ const AdvisorSearch = () => {
   useEffect(() => {
     const fetchStates = async () => {
       try {
-        const uniqueStates = await getUniqueStates();
+        const uniqueStates = await getUniqueStatesFromAdvisors();
         setStates(uniqueStates);
       } catch (error) {
         console.error("Failed to fetch states:", error);
@@ -58,7 +57,7 @@ const AdvisorSearch = () => {
     if (data) {
       setPagination(prev => ({
         ...prev,
-        totalCount: data.count || 0
+        totalCount: data.total || 0
       }));
     }
   }, [data]);

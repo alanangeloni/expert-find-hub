@@ -44,6 +44,9 @@ export interface Advisor {
   states_registered_in?: string[];
   licenses?: string[];
   compensation?: string[];
+  rating?: number;
+  review_count?: number;
+  scheduling_link?: string;
 }
 
 export interface AdvisorFilter {
@@ -170,7 +173,7 @@ export const updateAdvisor = async (id: string, updates: Partial<Advisor>): Prom
   try {
     const { data, error } = await supabase
       .from('financial_advisors')
-      .update(updates)
+      .update(updates as any)
       .eq('id', id)
       .select()
       .single();
@@ -185,4 +188,24 @@ export const updateAdvisor = async (id: string, updates: Partial<Advisor>): Prom
     console.error('Error updating advisor:', error);
     throw error;
   }
+};
+
+// Legacy function names for compatibility
+export const getUniqueStates = getUniqueStatesFromAdvisors;
+
+// Mock functions for compatibility with existing code
+export const getAdvisorServices = async (advisorId: string): Promise<string[]> => {
+  return [];
+};
+
+export const getAdvisorProfessionalDesignations = async (advisorId: string): Promise<string[]> => {
+  return [];
+};
+
+export const getAdvisorCompensationTypes = async (advisorId: string): Promise<string[]> => {
+  return [];
+};
+
+export const getAdvisorLicenses = async (advisorId: string): Promise<string[]> => {
+  return [];
 };

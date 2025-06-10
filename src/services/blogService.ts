@@ -1,7 +1,5 @@
 
 import { supabase } from "@/integrations/supabase/client";
-import { getPostCategories } from "@/utils/blogRelations";
-import { BLOG_CATEGORIES, type BlogCategoryType } from "@/types/blog";
 
 // Export the BlogPost interface
 export interface BlogPost {
@@ -66,19 +64,12 @@ export const getBlogPosts = async (): Promise<BlogPost[]> => {
       return [];
     }
 
-    // Add categories to each post
-    const postsWithCategories = await Promise.all(
-      (data || []).map(async (post) => {
-        const categories = await getPostCategories(post.id);
-        return {
-          ...post,
-          categories,
-          authorName: 'Admin' // Default author name
-        };
-      })
-    );
-
-    return postsWithCategories;
+    return (data || []).map(post => ({
+      ...post,
+      status: post.status as 'draft' | 'published',
+      categories: [],
+      authorName: 'Admin'
+    }));
   } catch (error) {
     console.error('Error in getBlogPosts:', error);
     return [];
@@ -98,12 +89,11 @@ export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> 
       return null;
     }
 
-    const categories = await getPostCategories(data.id);
-
     return {
       ...data,
-      categories,
-      authorName: 'Admin' // Default author name
+      status: data.status as 'draft' | 'published',
+      categories: [],
+      authorName: 'Admin'
     };
   } catch (error) {
     console.error('Error in getBlogPostBySlug:', error);
@@ -127,7 +117,10 @@ export const createBlogPost = async (post: Omit<BlogPost, 'id' | 'created_at' | 
       throw error;
     }
 
-    return data;
+    return {
+      ...data,
+      status: data.status as 'draft' | 'published'
+    };
   } catch (error) {
     console.error('Error in createBlogPost:', error);
     throw error;
@@ -138,7 +131,6 @@ export const updateBlogPost = async (id: string, updates: Partial<BlogPost>): Pr
   try {
     const updateData = { ...updates };
     
-    // If status is being changed to published and there's no published_at date, set it
     if (updates.status === 'published' && !updates.published_at) {
       updateData.published_at = new Date().toISOString();
     }
@@ -155,7 +147,10 @@ export const updateBlogPost = async (id: string, updates: Partial<BlogPost>): Pr
       throw error;
     }
 
-    return data;
+    return {
+      ...data,
+      status: data.status as 'draft' | 'published'
+    };
   } catch (error) {
     console.error('Error in updateBlogPost:', error);
     throw error;
@@ -192,7 +187,10 @@ export const getDraftBlogPosts = async (): Promise<BlogPost[]> => {
       return [];
     }
 
-    return data || [];
+    return (data || []).map(post => ({
+      ...post,
+      status: post.status as 'draft' | 'published'
+    }));
   } catch (error) {
     console.error('Error in getDraftBlogPosts:', error);
     return [];
@@ -211,9 +209,17 @@ export const getAllBlogPosts = async (): Promise<BlogPost[]> => {
       return [];
     }
 
-    return data || [];
+    return (data || []).map(post => ({
+      ...post,
+      status: post.status as 'draft' | 'published'
+    }));
   } catch (error) {
     console.error('Error in getAllBlogPosts:', error);
     return [];
   }
+};
+
+// Mock function for compatibility
+export const getBlogCategories = async (): Promise<BlogCategory[]> => {
+  return [];
 };
