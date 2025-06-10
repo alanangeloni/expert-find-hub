@@ -85,33 +85,21 @@ export const AdvisorSearchForm = ({
 
   return (
     <div className="bg-white rounded-lg md:rounded-[20px] shadow-sm border border-slate-100 p-3 md:p-5">
-      {/* Main Search Bar - Always Visible */}
-      <div className="flex flex-col md:flex-row gap-3 mb-4 md:mb-0">
-        <div className="relative flex-1">
+      {/* Desktop Layout - Single Row */}
+      <div className="hidden md:flex md:items-center md:gap-4">
+        {/* Search Bar */}
+        <div className="relative flex-1 min-w-[300px]">
           <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
             <Search className="h-4 w-4 text-slate-400" />
           </div>
           <Input
             placeholder="Search advisors by name or firm..."
-            className="pl-10 h-10 md:h-12 rounded-lg md:rounded-[20px] bg-slate-50 border-slate-100 focus-visible:ring-brand-blue text-sm md:text-base"
+            className="pl-10 h-12 rounded-[20px] bg-slate-50 border-slate-100 focus-visible:ring-brand-blue"
             value={searchQuery}
             onChange={onSearchChange}
           />
         </div>
 
-        {/* Mobile Filter Toggle */}
-        <Button 
-          variant="outline" 
-          onClick={() => setShowMobileFilters(!showMobileFilters)}
-          className="md:hidden h-10 rounded-lg border-slate-200 text-slate-600 hover:bg-slate-50 flex items-center gap-2"
-        >
-          <Filter className="h-4 w-4" />
-          Filters
-        </Button>
-      </div>
-
-      {/* Desktop Filters - Always Visible on Desktop */}
-      <div className="hidden md:flex md:flex-wrap md:items-center md:gap-3 md:mt-4">
         {/* State Selector */}
         <Select 
           value={localState} 
@@ -120,7 +108,7 @@ export const AdvisorSearchForm = ({
             onStateChange(value);
           }}
         >
-          <SelectTrigger className="w-full md:w-[140px] h-10 md:h-12 rounded-lg md:rounded-[20px] bg-slate-50 border-slate-100">
+          <SelectTrigger className="w-[140px] h-12 rounded-[20px] bg-slate-50 border-slate-100">
             <SelectValue placeholder="State" />
           </SelectTrigger>
           <SelectContent className="rounded-md bg-white z-50">
@@ -139,7 +127,7 @@ export const AdvisorSearchForm = ({
             onClientTypeChange(value);
           }}
         >
-          <SelectTrigger className="w-full md:w-[160px] h-10 md:h-12 rounded-lg md:rounded-[20px] bg-slate-50 border-slate-100">
+          <SelectTrigger className="w-[160px] h-12 rounded-[20px] bg-slate-50 border-slate-100">
             <SelectValue placeholder="Client Type" />
           </SelectTrigger>
           <SelectContent className="rounded-md bg-white z-50">
@@ -151,106 +139,132 @@ export const AdvisorSearchForm = ({
         </Select>
 
         {/* Specialties Multi-Selector */}
-        <div className="flex-1 min-w-[200px]">
-          <Select 
-            value=""
-            onValueChange={handleSpecialtySelect}
-          >
-            <SelectTrigger className="h-10 md:h-12 rounded-lg md:rounded-[20px] bg-slate-50 border-slate-100">
-              <SelectValue placeholder={selectedSpecialties.length > 0 ? `${selectedSpecialties.length} specialties selected` : "Select Specialties"} />
-            </SelectTrigger>
-            <SelectContent className="w-full max-h-[300px] overflow-y-auto rounded-md bg-white z-50">
-              {specialties
-                .filter(specialty => !selectedSpecialties.includes(specialty))
-                .map((specialty) => (
-                <SelectItem key={specialty} value={specialty}>
-                  {specialty}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <Select 
+          value=""
+          onValueChange={handleSpecialtySelect}
+        >
+          <SelectTrigger className="w-[200px] h-12 rounded-[20px] bg-slate-50 border-slate-100">
+            <SelectValue placeholder={selectedSpecialties.length > 0 ? `${selectedSpecialties.length} specialties` : "Specialties"} />
+          </SelectTrigger>
+          <SelectContent className="w-full max-h-[300px] overflow-y-auto rounded-md bg-white z-50">
+            {specialties
+              .filter(specialty => !selectedSpecialties.includes(specialty))
+              .map((specialty) => (
+              <SelectItem key={specialty} value={specialty}>
+                {specialty}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
 
         {/* Clear Filters Button */}
         <Button 
           variant="outline" 
           onClick={clearFilters}
-          className="h-10 md:h-12 rounded-lg md:rounded-[20px] border-slate-200 text-slate-600 hover:bg-slate-50 whitespace-nowrap text-sm md:text-base"
+          className="h-12 px-6 rounded-[20px] border-slate-200 text-slate-600 hover:bg-slate-50 whitespace-nowrap"
         >
           Clear Filters
         </Button>
       </div>
 
-      {/* Mobile Filters - Collapsible */}
-      {showMobileFilters && (
-        <div className="md:hidden mt-4 pt-4 border-t border-slate-100 space-y-3">
-          {/* State Selector */}
-          <Select 
-            value={localState} 
-            onValueChange={(value) => {
-              setLocalState(value);
-              onStateChange(value);
-            }}
-          >
-            <SelectTrigger className="w-full h-10 rounded-lg bg-slate-50 border-slate-100">
-              <SelectValue placeholder="Select State" />
-            </SelectTrigger>
-            <SelectContent className="rounded-md bg-white z-50">
-              <SelectItem value="all">All States</SelectItem>
-              {states.map((state) => (
-                <SelectItem key={state} value={state}>{state}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          
-          {/* Client Type Selector */}
-          <Select 
-            value={localClientType}
-            onValueChange={(value) => {
-              setLocalClientType(value);
-              onClientTypeChange(value);
-            }}
-          >
-            <SelectTrigger className="w-full h-10 rounded-lg bg-slate-50 border-slate-100">
-              <SelectValue placeholder="Select Client Type" />
-            </SelectTrigger>
-            <SelectContent className="rounded-md bg-white z-50">
-              <SelectItem value="all">All Client Types</SelectItem>
-              {clientTypes.map((type) => (
-                <SelectItem key={type} value={type}>{type}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+      {/* Mobile Layout */}
+      <div className="md:hidden">
+        {/* Main Search Bar - Always Visible */}
+        <div className="flex gap-3 mb-4">
+          <div className="relative flex-1">
+            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+              <Search className="h-4 w-4 text-slate-400" />
+            </div>
+            <Input
+              placeholder="Search advisors by name or firm..."
+              className="pl-10 h-10 rounded-lg bg-slate-50 border-slate-100 focus-visible:ring-brand-blue text-sm"
+              value={searchQuery}
+              onChange={onSearchChange}
+            />
+          </div>
 
-          {/* Specialties Multi-Selector */}
-          <Select 
-            value=""
-            onValueChange={handleSpecialtySelect}
-          >
-            <SelectTrigger className="w-full h-10 rounded-lg bg-slate-50 border-slate-100">
-              <SelectValue placeholder={selectedSpecialties.length > 0 ? `${selectedSpecialties.length} specialties selected` : "Select Specialties"} />
-            </SelectTrigger>
-            <SelectContent className="w-full max-h-[300px] overflow-y-auto rounded-md bg-white z-50">
-              {specialties
-                .filter(specialty => !selectedSpecialties.includes(specialty))
-                .map((specialty) => (
-                <SelectItem key={specialty} value={specialty}>
-                  {specialty}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-
-          {/* Clear Filters Button */}
+          {/* Mobile Filter Toggle */}
           <Button 
             variant="outline" 
-            onClick={clearFilters}
-            className="w-full h-10 rounded-lg border-slate-200 text-slate-600 hover:bg-slate-50"
+            onClick={() => setShowMobileFilters(!showMobileFilters)}
+            className="h-10 rounded-lg border-slate-200 text-slate-600 hover:bg-slate-50 flex items-center gap-2"
           >
-            Clear All Filters
+            <Filter className="h-4 w-4" />
+            Filters
           </Button>
         </div>
-      )}
+
+        {/* Mobile Filters - Collapsible */}
+        {showMobileFilters && (
+          <div className="pt-4 border-t border-slate-100 space-y-3">
+            {/* State Selector */}
+            <Select 
+              value={localState} 
+              onValueChange={(value) => {
+                setLocalState(value);
+                onStateChange(value);
+              }}
+            >
+              <SelectTrigger className="w-full h-10 rounded-lg bg-slate-50 border-slate-100">
+                <SelectValue placeholder="Select State" />
+              </SelectTrigger>
+              <SelectContent className="rounded-md bg-white z-50">
+                <SelectItem value="all">All States</SelectItem>
+                {states.map((state) => (
+                  <SelectItem key={state} value={state}>{state}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            
+            {/* Client Type Selector */}
+            <Select 
+              value={localClientType}
+              onValueChange={(value) => {
+                setLocalClientType(value);
+                onClientTypeChange(value);
+              }}
+            >
+              <SelectTrigger className="w-full h-10 rounded-lg bg-slate-50 border-slate-100">
+                <SelectValue placeholder="Select Client Type" />
+              </SelectTrigger>
+              <SelectContent className="rounded-md bg-white z-50">
+                <SelectItem value="all">All Client Types</SelectItem>
+                {clientTypes.map((type) => (
+                  <SelectItem key={type} value={type}>{type}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Specialties Multi-Selector */}
+            <Select 
+              value=""
+              onValueChange={handleSpecialtySelect}
+            >
+              <SelectTrigger className="w-full h-10 rounded-lg bg-slate-50 border-slate-100">
+                <SelectValue placeholder={selectedSpecialties.length > 0 ? `${selectedSpecialties.length} specialties selected` : "Select Specialties"} />
+              </SelectTrigger>
+              <SelectContent className="w-full max-h-[300px] overflow-y-auto rounded-md bg-white z-50">
+                {specialties
+                  .filter(specialty => !selectedSpecialties.includes(specialty))
+                  .map((specialty) => (
+                  <SelectItem key={specialty} value={specialty}>
+                    {specialty}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Clear Filters Button */}
+            <Button 
+              variant="outline" 
+              onClick={clearFilters}
+              className="w-full h-10 rounded-lg border-slate-200 text-slate-600 hover:bg-slate-50"
+            >
+              Clear All Filters
+            </Button>
+          </div>
+        )}
+      </div>
 
       {/* Selected Specialties Chips */}
       {selectedSpecialties.length > 0 && (
