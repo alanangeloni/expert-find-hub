@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -7,13 +8,15 @@ import { AdvisorCard } from '@/components/advisors/AdvisorCard';
 import { AccountingFirmCard } from '@/components/accountingFirms/AccountingFirmCard';
 
 const IndexPage = () => {
-  const { data: advisors, isLoading: advisorsLoading } = useQuery('featuredAdvisors', () =>
-    getAdvisors({ page: 1, pageSize: 6 })
-  );
+  const { data: advisors = [], isLoading: advisorsLoading } = useQuery({
+    queryKey: ['featuredAdvisors'],
+    queryFn: () => getAdvisors({ page: 1, pageSize: 6 })
+  });
 
-  const { data: accountingFirms, isLoading: accountingFirmsLoading } = useQuery('featuredAccountingFirms', () =>
-    getAccountingFirms()
-  );
+  const { data: accountingFirms = [], isLoading: accountingFirmsLoading } = useQuery({
+    queryKey: ['featuredAccountingFirms'],
+    queryFn: () => getAccountingFirms()
+  });
 
   return (
     <div>

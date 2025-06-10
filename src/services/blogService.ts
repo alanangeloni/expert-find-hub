@@ -44,7 +44,10 @@ export const getBlogPosts = async (): Promise<BlogPost[]> => {
 
     if (error) throw error;
 
-    return data || [];
+    return (data || []).map(post => ({
+      ...post,
+      status: post.status as 'draft' | 'published'
+    }));
   } catch (error) {
     console.error('Error fetching blog posts:', error);
     return [];
@@ -61,7 +64,10 @@ export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> 
       .single();
 
     if (error) throw error;
-    return data;
+    return {
+      ...data,
+      status: data.status as 'draft' | 'published'
+    };
   } catch (error) {
     console.error('Error fetching blog post:', error);
     return null;
@@ -89,9 +95,57 @@ export const updateBlogPost = async (id: string, updates: BlogPostUpdate): Promi
       .single();
 
     if (error) throw error;
-    return data;
+    return {
+      ...data,
+      status: data.status as 'draft' | 'published'
+    };
   } catch (error) {
     console.error('Error updating blog post:', error);
+    throw error;
+  }
+};
+
+// Add missing exports
+export const createBlogPost = async (post: Omit<BlogPost, 'id' | 'created_at' | 'updated_at'>): Promise<BlogPost> => {
+  try {
+    const { data, error } = await supabase
+      .from('blog_posts')
+      .insert(post as any)
+      .select()
+      .single();
+
+    if (error) throw error;
+    return {
+      ...data,
+      status: data.status as 'draft' | 'published'
+    };
+  } catch (error) {
+    console.error('Error creating blog post:', error);
+    throw error;
+  }
+};
+
+export const deleteBlogPost = async (id: string): Promise<void> => {
+  try {
+    const { error } = await supabase
+      .from('blog_posts')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+  } catch (error) {
+    console.error('Error deleting blog post:', error);
+    throw error;
+  }
+};
+
+export const uploadBlogImage = async (file: File): Promise<string> => {
+  try {
+    // For now, return a placeholder URL
+    console.log('Uploading blog image:', file.name);
+    return '/placeholder.svg';
+  } catch (error) {
+    console.error('Error uploading blog image:', error);
     throw error;
   }
 };
