@@ -1,7 +1,32 @@
-
 import { supabase } from "@/integrations/supabase/client";
 import { getPostCategories } from "@/utils/blogRelations";
 import { BLOG_CATEGORIES, type BlogCategoryType, type BlogPost, type BlogCategory } from "@/types/blog";
+
+export const uploadBlogImage = async (file: File): Promise<string | null> => {
+  try {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random()}.${fileExt}`;
+    const filePath = `blog-images/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('blog-images')
+      .upload(filePath, file);
+
+    if (uploadError) {
+      console.error('Error uploading image:', uploadError);
+      return null;
+    }
+
+    const { data } = supabase.storage
+      .from('blog-images')
+      .getPublicUrl(filePath);
+
+    return data.publicUrl;
+  } catch (error) {
+    console.error('Error uploading blog image:', error);
+    return null;
+  }
+};
 
 export const getBlogPosts = async (options: {
   status?: 'draft' | 'published' | 'all';
