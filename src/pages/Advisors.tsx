@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getAdvisors, getUniqueStates, type AdvisorFilter } from '@/services/advisorsService';
@@ -118,7 +117,7 @@ const AdvisorSearch = () => {
   };
   
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-white">
       <div className="container mx-auto py-4 md:py-8 px-4">
         {/* Header Section - Mobile Responsive */}
         <div className="text-center mb-6 md:mb-8">
