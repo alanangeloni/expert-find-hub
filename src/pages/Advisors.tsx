@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getAdvisors, getUniqueStates, type AdvisorFilter } from '@/services/advisorsService';
 import { AdvisorList } from '@/components/advisors/AdvisorList';
 import { AdvisorSearchForm } from '@/components/advisors/AdvisorSearchForm';
+import { NewsletterSignup } from '@/components/common/NewsletterSignup';
 
 type PaginationState = {
   page: number;
@@ -154,6 +155,11 @@ const AdvisorSearch = () => {
             pageSize={pagination.pageSize}
             onPageChange={handlePageChange}
           />
+        </div>
+        
+        {/* Newsletter Signup Section */}
+        <div className="mt-16 mb-4">
+          <NewsletterSignup />
         </div>
       </div>
     </div>

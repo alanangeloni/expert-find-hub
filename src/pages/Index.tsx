@@ -86,7 +86,7 @@ const Index = () => {
               Your needs are unique. Find an advisor experienced in supporting people just like you. From entrepreneurs to young families, discover experts who understand your world and your goals.
             </p>
             <div className="flex justify-center">
-              <Link to="/advisors" className="inline-flex items-center justify-center px-6 py-3 text-base font-medium rounded-md text-white bg-brand-blue hover:bg-opacity-90 transition-colors">
+              <Link to="/advisors" className="inline-flex items-center justify-center px-6 py-3 text-base font-medium rounded-md text-white bg-[#004660] hover:bg-opacity-90 transition-colors">
                 Browse Advisors
               </Link>
             </div>
@@ -126,7 +126,7 @@ const Index = () => {
                 <p className="text-gray-600 mb-6">
                   Browse investment firms and filter by asset class to discover a wide range of opportunities tailored to your interests.
                 </p>
-                <Link to="/firms" className="inline-block bg-gray-800 text-white px-6 py-3 rounded-md hover:bg-opacity-90 transition-colors w-full sm:w-auto text-center">
+                <Link to="/firms" className="inline-block bg-[#004660] text-white px-6 py-3 rounded-md hover:bg-opacity-90 transition-colors w-full sm:w-auto text-center">
                   Browse Firms
                 </Link>
               </CardContent>
@@ -139,9 +139,9 @@ const Index = () => {
                   Join as a <span className="text-mint-500">Financial Professional</span>
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  Your expertise deserves the right audience. Join now and connect with clients who value your guidance.
+                  Your expertise deserves the right audience. Join now and connect with clients seeking your guidance.
                 </p>
-                <Link to="/auth/SignUp" className="inline-block bg-gray-800 text-white px-6 py-3 rounded-md hover:bg-opacity-90 transition-colors w-full sm:w-auto text-center">
+                <Link to="/auth/SignUp" className="inline-block bg-[#004660] text-white px-6 py-3 rounded-md hover:bg-opacity-90 transition-colors w-full sm:w-auto text-center">
                   Apply Now
                 </Link>
               </CardContent>

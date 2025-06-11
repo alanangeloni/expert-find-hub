@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { NewsletterSignup } from '@/components/common/NewsletterSignup';
 
 
 const InvestmentFirms = () => {
@@ -163,6 +164,11 @@ const InvestmentFirms = () => {
             pageSize={pageSize}
           />
         </div>
+      </div>
+      
+      {/* Newsletter Signup Section */}
+      <div className="mt-16 mb-4">
+        <NewsletterSignup />
       </div>
     </div>
   );

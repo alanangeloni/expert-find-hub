@@ -8,6 +8,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { FilterBar } from '@/components/filters/FilterBar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { format } from 'date-fns';
+import { NewsletterSignup } from '@/components/common/NewsletterSignup';
 const Blog = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -138,27 +139,9 @@ const Blog = () => {
           <p className="text-lg text-gray-600">No articles found for this category.</p>
         </div> : null}
 
-      {/* Stay Informed Newsletter Section */}
-      <div className="bg-mint-50 rounded-2xl mt-16 mb-4 p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 border border-mint-200">
-        <div className="text-slate-900 flex-1 min-w-[220px]">
-          <h3 className="text-2xl font-bold mb-3">Stay Informed</h3>
-          <p className="mb-4 text-slate-700">Subscribe to our newsletter for the latest financial insights, market updates, and planning strategies.</p>
-          <ul className="mb-4 space-y-2 text-slate-700 text-sm list-disc pl-5">
-            <li>Weekly market updates and analysis</li>
-            <li>Exclusive financial planning tips</li>
-            <li>Early access to webinars and events</li>
-          </ul>
-        </div>
-        <form className="bg-slate-800 rounded-xl p-6 flex flex-col gap-4 w-full max-w-xs min-w-[220px]">
-          <label className="text-slate-200 text-sm font-medium">Name
-            <input type="text" className="mt-1 w-full rounded-md bg-slate-700 border border-slate-600 text-white p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Your name" />
-          </label>
-          <label className="text-slate-200 text-sm font-medium">Email
-            <input type="email" className="mt-1 w-full rounded-md bg-slate-700 border border-slate-600 text-white p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Your email" />
-          </label>
-          <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold">Subscribe</Button>
-          <span className="text-xs text-slate-400 mt-2">We respect your privacy. Unsubscribe at any time.</span>
-        </form>
+      {/* Newsletter Signup Section */}
+      <div className="mt-16 mb-4">
+        <NewsletterSignup />
       </div>
     </div>;
 };

@@ -36,7 +36,7 @@ const SpecialtyBubbles: React.FC = () => {
     <section className="py-16 bg-white mb-[10px]">
       <div className="container mx-auto px-4">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-brand-blue mb-3">Find an <span className="text-mint-500">Advisor</span> by <span className="text-mint-500">Speciality</span></h2>
+          <h2 className="text-4xl font-bold text-brand-blue mb-3">Find an <span className="text-mint-500">Advisor</span> by <span className="text-mint-500">Speciality</span></h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Connect with financial experts who specialize in your specific needs
           </p>

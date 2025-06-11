@@ -191,8 +191,12 @@ export const getInvestmentFirms = async (filters?: FirmFilter): Promise<Paginate
     if (filters?.assetClass && filters.assetClass !== 'all') {
       console.log('Applying asset class filter:', filters.assetClass);
       processedFirms = processedFirms.filter((firm: any) => {
-        const matches = firm.asset_class === filters.assetClass;
-        console.log(`Firm ${firm.name} (${firm.asset_class}) matches ${filters.assetClass}:`, matches);
+        const firmAssetClasses = Array.isArray(firm.asset_class) 
+          ? firm.asset_class 
+          : firm.asset_class ? [firm.asset_class] : [];
+        
+        const matches = firmAssetClasses.some(ac => ac === filters.assetClass);
+        console.log(`Firm ${firm.name} (${firmAssetClasses}) matches ${filters.assetClass}:`, matches);
         return matches;
       });
       console.log('Firms after asset class filter:', processedFirms);
