@@ -33,10 +33,10 @@ const specialties: Specialty[] = [
 
 const SpecialtyBubbles: React.FC = () => {
   return (
-    <section className="py-12 bg-gray-50">
+    <section className="py-16 bg-white mb-[10px]">
       <div className="container mx-auto px-4">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-brand-blue mb-3">Find an Advisor by Speciality</h2>
+          <h2 className="text-3xl font-bold text-brand-blue mb-3">Find an <span className="text-mint-500">Advisor</span> by <span className="text-mint-500">Speciality</span></h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Connect with financial experts who specialize in your specific needs
           </p>
@@ -47,7 +47,7 @@ const SpecialtyBubbles: React.FC = () => {
             <Link
               key={specialty.id}
               to={`/advisors?specialties=${encodeURIComponent(specialty.filterValue)}`}
-              className="flex items-center gap-2.5 px-5 py-2.5 bg-white rounded-full border border-gray-200 hover:border-brand-blue hover:bg-blue-50 transition-colors duration-200"
+              className="flex items-center gap-2.5 px-5 py-2.5 rounded-full transition-colors duration-200 bg-mint-50 text-mint-800 border border-mint-200 hover:bg-mint-100"
             >
               <span className="text-brand-blue">
                 {specialty.icon}

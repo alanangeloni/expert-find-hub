@@ -81,7 +81,7 @@ const InvestmentFirms = () => {
   return (
     <div className="container mx-auto py-8 px-4">
       <div className="text-center mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Find Investment Firms</h1>
+        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Browse Investment Firms</h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
           Discover top investment firms that can help you achieve your financial goals
         </p>

@@ -139,11 +139,11 @@ const Blog = () => {
         </div> : null}
 
       {/* Stay Informed Newsletter Section */}
-      <div className="bg-slate-900 rounded-2xl mt-16 mb-4 p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8">
-        <div className="text-white flex-1 min-w-[220px]">
+      <div className="bg-mint-50 rounded-2xl mt-16 mb-4 p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 border border-mint-200">
+        <div className="text-slate-900 flex-1 min-w-[220px]">
           <h3 className="text-2xl font-bold mb-3">Stay Informed</h3>
-          <p className="mb-4 text-slate-200">Subscribe to our newsletter for the latest financial insights, market updates, and planning strategies.</p>
-          <ul className="mb-4 space-y-2 text-slate-200 text-sm list-disc pl-5">
+          <p className="mb-4 text-slate-700">Subscribe to our newsletter for the latest financial insights, market updates, and planning strategies.</p>
+          <ul className="mb-4 space-y-2 text-slate-700 text-sm list-disc pl-5">
             <li>Weekly market updates and analysis</li>
             <li>Exclusive financial planning tips</li>
             <li>Early access to webinars and events</li>

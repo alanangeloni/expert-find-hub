@@ -7,9 +7,6 @@ import SpecialtyBubbles from "@/components/home/SpecialtyBubbles";
 import { AdvisorCard } from "@/components/advisors/AdvisorCard";
 import { getAdvisors } from "@/services/advisorsService";
 
-// Professional type that rotates in the hero section
-const professionalTypes = ["Financial Professional", "Financial Advisor", "Accountant", "Tax Specialist"];
-
 // Component to fetch and display advisor grid
 const AdvisorGrid = () => {
   const [advisors, setAdvisors] = useState([]);
@@ -72,27 +69,21 @@ const AdvisorGrid = () => {
     </div>;
 };
 const Index = () => {
-  const [professionalTypeIndex, setProfessionalTypeIndex] = useState(0);
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setProfessionalTypeIndex(prevIndex => (prevIndex + 1) % professionalTypes.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
+
   return <div className="flex flex-col">
       {/* Hero Section */}
       <section className="bg-white py-12 md:py-20 text-center">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            <h1 className="text-4xl font-bold mb-2 md:text-7xl">
-              <span className="text-brand-blue">Find a</span> <br />
-              <span className="text-emerald-400">
-                {professionalTypes[professionalTypeIndex]}
-              </span>
-            </h1>
+                <div className="text-center">
+                  <h1 className="text-4xl font-bold mb-2 md:text-6xl">
+                    <span className="text-brand-blue">
+                      <span className="text-mint-500">Achieve</span> your Financial Goals with a <span className="text-mint-500">Financial Professional</span>
+                    </span>
+                  </h1>
+                </div>
             <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-              Discover Vetted Financial Experts for $500k+ Businesses and High-Net-Worth Clients. 
-              Take a quick quiz to hear from accountants, financial advisors, or browse our directory.
+              Your needs are unique. Find an advisor experienced in supporting people just like you. From entrepreneurs to young families, discover experts who understand your world and your goals.
             </p>
             <div className="flex justify-center">
               <Link to="/advisors" className="inline-flex items-center justify-center px-6 py-3 text-base font-medium rounded-md text-white bg-brand-blue hover:bg-opacity-90 transition-colors">
@@ -108,7 +99,7 @@ const Index = () => {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-center mb-8">
             <h2 className="text-2xl font-bold text-brand-blue">
-              Top Financial Advisors
+              <span className="text-mint-500">Top</span> Financial Advisors
             </h2>
             <Link to="/advisors" className="text-emerald-400 flex items-center">
               View all advisors →
@@ -122,10 +113,42 @@ const Index = () => {
       {/* Specialties Section */}
       <SpecialtyBubbles />
 
-      {/* Categories Section */}
-      
+      {/* CTA Section */}
+      <section className="pt-0 pb-16 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            {/* Left Card */}
+            <Card className="h-full overflow-hidden hover:shadow-lg transition-shadow duration-300 p-6">
+              <CardContent className="p-0">
+                <h3 className="text-2xl font-bold mb-3 text-brand-blue">
+                  Browse <span className="text-mint-500">Investment Firms</span>
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  Browse investment firms and filter by asset class to discover a wide range of opportunities tailored to your interests.
+                </p>
+                <Link to="/firms" className="inline-block bg-gray-800 text-white px-6 py-3 rounded-md hover:bg-opacity-90 transition-colors w-full sm:w-auto text-center">
+                  Browse Firms
+                </Link>
+              </CardContent>
+            </Card>
 
-
+            {/* Right Card */}
+            <Card className="h-full overflow-hidden hover:shadow-lg transition-shadow duration-300 p-6">
+              <CardContent className="p-0">
+                <h3 className="text-2xl font-bold mb-3 text-brand-blue">
+                  Join as a <span className="text-mint-500">Financial Professional</span>
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  Your expertise deserves the right audience. Join now and connect with clients who value your guidance.
+                </p>
+                <Link to="/auth/SignUp" className="inline-block bg-gray-800 text-white px-6 py-3 rounded-md hover:bg-opacity-90 transition-colors w-full sm:w-auto text-center">
+                  Apply Now
+                </Link>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
     </div>;
 };
 export default Index;
