@@ -8,9 +8,11 @@ import { Spinner } from "@/components/ui/spinner";
 import { Calendar, Clock, ArrowLeft, Edit, Newspaper } from "lucide-react";
 import { format, parseISO } from "date-fns";
 import { useAuth } from "@/contexts/AuthContext";
+import { Seo } from "@/components/seo/Seo";
 import { supabase } from "@/integrations/supabase/client";
 import ReactMarkdown from "react-markdown";
 import { getPostCategories } from "@/utils/blogRelations";
+
 const BlogArticle = () => {
   const {
     slug
@@ -26,6 +28,7 @@ const BlogArticle = () => {
     user
   } = useAuth();
   const navigate = useNavigate();
+
   useEffect(() => {
     const checkAdminStatus = async () => {
       if (!user) return;
@@ -40,6 +43,7 @@ const BlogArticle = () => {
     };
     checkAdminStatus();
   }, [user]);
+
   useEffect(() => {
     const fetchBlogPost = async () => {
       if (!slug) return;
@@ -127,6 +131,7 @@ const BlogArticle = () => {
     };
     fetchPopularArticles();
   }, [post?.slug]);
+
   if (loading) {
     return <div className="min-h-screen flex items-center justify-center">
         <Spinner size="lg" />
@@ -145,7 +150,14 @@ const BlogArticle = () => {
         </div>
       </div>;
   }
-  return <div className="min-h-screen bg-white">
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {post && (
+        <Seo 
+          title={post.title}
+          description={post.excerpt || post.content.substring(0, 155) + '...'}
+        />
+      )}
       {/* Hero Section with Cover Image */}
       {post?.cover_image_url ? <div className="w-full h-[40vh] md:h-[50vh] relative bg-center bg-cover" style={{
       backgroundImage: `url(${post.cover_image_url})`
@@ -270,6 +282,8 @@ const BlogArticle = () => {
           </aside>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default BlogArticle;

@@ -6,6 +6,7 @@ import { Star } from "lucide-react";
 import SpecialtyBubbles from "@/components/home/SpecialtyBubbles";
 import { AdvisorCard } from "@/components/advisors/AdvisorCard";
 import { getAdvisors } from "@/services/advisorsService";
+import { Seo } from "@/components/seo/Seo";
 
 // Component to fetch and display advisor grid
 const AdvisorGrid = () => {
@@ -69,8 +70,14 @@ const AdvisorGrid = () => {
     </div>;
 };
 const Index = () => {
+  const pageTitle = 'Financial Professional | Find a Financial Professional';
+  const pageDescription = 'Find a Financial Professional to help plan and manage your wealth! Search Financial Advisors, Financial Planners, Insurance Professionals, Tax and Accounting experts, and more.';
 
-  return <div className="flex flex-col">
+  return (
+    <>
+      <Seo title={pageTitle} description={pageDescription} />
+      <div className="flex flex-col">
+    
       {/* Hero Section */}
       <section className="bg-white py-12 md:py-20 text-center">
         <div className="container mx-auto px-4">
@@ -149,6 +156,9 @@ const Index = () => {
           </div>
         </div>
       </section>
-    </div>;
+    </div>
+    </>
+  );
 };
+
 export default Index;

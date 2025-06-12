@@ -4,6 +4,7 @@ import { getAdvisors, getUniqueStates, type AdvisorFilter } from '@/services/adv
 import { AdvisorList } from '@/components/advisors/AdvisorList';
 import { AdvisorSearchForm } from '@/components/advisors/AdvisorSearchForm';
 import { NewsletterSignup } from '@/components/common/NewsletterSignup';
+import { Seo } from '@/components/seo/Seo';
 
 type PaginationState = {
   page: number;
@@ -167,7 +168,15 @@ const AdvisorSearch = () => {
 };
 
 const AdvisorsPage = () => {
-  return <AdvisorSearch />;
+  return (
+    <>
+      <Seo 
+        title="Find a Financial Advisor"
+        description="Browse financial advisors to find the one best suited to help you achieve your financial goals"
+      />
+      <AdvisorSearch />
+    </>
+  );
 };
 
 export default AdvisorsPage;

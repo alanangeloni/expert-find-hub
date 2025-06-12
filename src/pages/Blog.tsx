@@ -9,6 +9,7 @@ import { FilterBar } from '@/components/filters/FilterBar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { format } from 'date-fns';
 import { NewsletterSignup } from '@/components/common/NewsletterSignup';
+import { Seo } from '@/components/seo/Seo';
 const Blog = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
@@ -146,8 +147,14 @@ const Blog = () => {
     </div>;
 };
 const BlogPage = () => {
-  return <>
+  return (
+    <>
+      <Seo 
+        title="Blog | Financial Professional - Increase Your Financial IQ in Minutes!"
+        description="Read the latest financial articles! Learn more about investing, retirement, saving, insurance, and more."
+      />
       <Blog />
-    </>;
+    </>
+  );
 };
 export default BlogPage;

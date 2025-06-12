@@ -7,8 +7,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 import { getInvestmentFirmBySlug, getSimilarFirms } from "@/services/investmentFirmsService";
 import { useQuery } from "@tanstack/react-query";
-import { ArrowLeft, Award, Building, Calendar, CheckCircle, ChevronRight, Coins, DollarSign, FileText, Globe, Info, Landmark, Link as LinkIconLucide, Shield, Star, Users, Briefcase, TrendingUp, PiggyBank, ExternalLink as ExternalLinkIcon, AlertTriangle, BookOpen, UserCheck, ScrollText } from "lucide-react";
+import { 
+  ArrowLeft, Award, Building, Calendar, CheckCircle, ChevronRight, Coins, 
+  DollarSign, FileText, Globe, Info, Landmark, Link as LinkIconLucide, 
+  Shield, Star, Users, Briefcase, TrendingUp, PiggyBank, ExternalLink as ExternalLinkIcon, 
+  AlertTriangle, BookOpen, UserCheck, ScrollText 
+} from "lucide-react";
 import { Link, useParams } from "react-router-dom";
+import { Seo } from '@/components/seo/Seo';
+import React from 'react';
+
 interface Feature {
   title: string;
   description?: string;
@@ -98,7 +106,28 @@ const InvestmentFirmDetailPage = () => {
   const clientTypes: ClientType[] = firm.investment_firm_clients?.map((c: any) => c.client_type).filter(Boolean) || [];
   const moneyMakingMethods: MoneyMakingMethod[] = firm.money_making_methods || [];
   const firmType = firm.asset_classes && firm.asset_classes.length > 0 ? firm.asset_classes.join(', ') : "N/A";
-  return <div className="min-h-screen bg-slate-50">
+  // Generate SEO metadata
+  const pageTitle = firm ? `${firm.name} Review` : 'Investment Firm Review';
+  const pageDescription = firm ? 
+    `${firm.description || ''} The minimum investment required on ${firm.name} to open an account is ${firm.minimum_investment || 'not specified'}.` : 
+    'Detailed information about this investment firm.';
+
+  const renderDetailItem = (label: string, value: string | number | undefined | null, icon: React.ReactNode) => {
+    if (value === null || value === undefined || String(value).trim() === '') return null;
+    return (
+      <div className="flex justify-between items-center py-2 border-b border-slate-100 last:border-b-0">
+        <div className="flex items-center gap-2 text-slate-600">
+          {icon}
+          <span>{label}</span>
+        </div>
+        <div className="font-medium text-slate-800 text-right break-words">{String(value)}</div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-50">
+      <Seo title={pageTitle} description={pageDescription} />
       <div className="container max-w-6xl mx-auto py-8 px-4 md:px-6">
         <div className="mb-6">
           <Link to="/firms" className="inline-flex items-center text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">
@@ -360,16 +389,8 @@ const InvestmentFirmDetailPage = () => {
           </div>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default InvestmentFirmDetailPage;
-const renderDetailItem = (label: string, value: string | number | undefined | null, icon: React.ReactNode) => {
-  if (value === null || value === undefined || String(value).trim() === '') return null;
-  return <div className="flex justify-between items-center py-2 border-b border-slate-100 last:border-b-0">
-      <div className="flex items-center gap-2 text-slate-600">
-        {icon}
-        <span>{label}</span>
-      </div>
-      <div className="font-medium text-slate-800 text-right break-words">{String(value)}</div>
-    </div>;
-};

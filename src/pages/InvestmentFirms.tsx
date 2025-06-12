@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { NewsletterSignup } from '@/components/common/NewsletterSignup';
+import { Seo } from '@/components/seo/Seo';
 
 
 const InvestmentFirms = () => {
@@ -175,8 +176,12 @@ const InvestmentFirms = () => {
 };
 
 const InvestmentFirmsPage = () => {
+  const pageTitle = 'Investment Firms | Financial Professional - Browse 200+ Investment Firms';
+  const pageDescription = 'Browse and compare over 200 investment firms! Find investments in Stocks, Real Estate, Loans, Collectibles, Wine, Start-ups, Crypto, and more.';
+
   return (
     <>
+      <Seo title={pageTitle} description={pageDescription} />
       <InvestmentFirms />
     </>
   );
