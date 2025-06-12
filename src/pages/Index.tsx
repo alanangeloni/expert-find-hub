@@ -78,7 +78,7 @@ const Index = () => {
                 <div className="text-center">
                   <h1 className="text-4xl font-bold mb-2 md:text-6xl">
                     <span className="text-brand-blue">
-                      <span className="text-mint-500">Achieve</span> your Financial Goals with a <span className="text-mint-500">Financial Professional</span>
+                      <span className="text-mint-500">Achieve</span> Your <span className="text-mint-500">Financial Goals</span> with a <span className="text-brand-blue">Financial Professional</span>
                     </span>
                   </h1>
                 </div>
