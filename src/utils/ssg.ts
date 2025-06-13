@@ -214,8 +214,8 @@ const generateAdvisorPages = async () => {
     console.log('Generating individual advisor pages...');
     
     const { data: advisors, error } = await supabase
-      .from('advisors')
-      .select('id, first_name, last_name, slug, title, firm_name, personal_bio');
+      .from('financial_advisors')
+      .select('id, name, slug, position, firm_name, personal_bio');
     
     if (error) {
       console.error('Error fetching advisors:', error);
@@ -231,14 +231,13 @@ const generateAdvisorPages = async () => {
     ensureDir(advisorsDir);
     
     for (const advisor of advisors) {
-      const fullName = `${advisor.first_name} ${advisor.last_name}`;
-      const title = fullName;
-      const description = `${advisor.title || 'Financial Advisor'} at ${advisor.firm_name || 'Independent'}. ${advisor.personal_bio || `Learn more about ${fullName} and their financial advisory services.`}`;
+      const title = advisor.name;
+      const description = `${advisor.position || 'Financial Advisor'} at ${advisor.firm_name || 'Independent'}. ${advisor.personal_bio || `Learn more about ${advisor.name} and their financial advisory services.`}`;
       const content = `
-        <h1>${fullName}</h1>
-        <h2>${advisor.title || 'Financial Advisor'}</h2>
-        <p>${advisor.title || 'Financial Advisor'} at ${advisor.firm_name || 'Independent'}.</p>
-        <p>${advisor.personal_bio || `Learn more about ${fullName} and their financial advisory services.`}</p>
+        <h1>${advisor.name}</h1>
+        <h2>${advisor.position || 'Financial Advisor'}</h2>
+        <p>${advisor.position || 'Financial Advisor'} at ${advisor.firm_name || 'Independent'}.</p>
+        <p>${advisor.personal_bio || `Learn more about ${advisor.name} and their financial advisory services.`}</p>
       `;
       
       const advisorDir = path.join(advisorsDir, advisor.slug);
@@ -344,7 +343,7 @@ const generateBlogPostPages = async () => {
     
     const { data: posts, error } = await supabase
       .from('blog_posts')
-      .select('id, title, slug, short_description, content')
+      .select('id, title, slug, excerpt, content')
       .eq('status', 'published');
     
     if (error) {
@@ -362,11 +361,11 @@ const generateBlogPostPages = async () => {
     
     for (const post of posts) {
       const title = post.title;
-      const description = post.short_description || post.content?.substring(0, 160) || `Read this financial article: ${post.title}`;
+      const description = post.excerpt || post.content?.substring(0, 160) || `Read this financial article: ${post.title}`;
       const content = `
         <h1>${post.title}</h1>
         <h2>Financial Insights</h2>
-        <p>${post.short_description || 'Read this comprehensive financial article to enhance your financial knowledge.'}</p>
+        <p>${post.excerpt || 'Read this comprehensive financial article to enhance your financial knowledge.'}</p>
       `;
       
       const postDir = path.join(blogDir, post.slug);
