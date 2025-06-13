@@ -1,10 +1,6 @@
 
 import fs from 'fs';
 import path from 'path';
-import { renderToString } from 'react-dom/server';
-import React from 'react';
-import { StaticRouter } from 'react-router-dom/server';
-import App from '../App';
 
 interface PageRoute {
   path: string;
@@ -43,18 +39,15 @@ const staticRoutes: PageRoute[] = [
 export const generateStaticPages = async (): Promise<void> => {
   const distDir = path.resolve(process.cwd(), 'dist');
   
+  // Ensure dist directory exists
+  if (!fs.existsSync(distDir)) {
+    await fs.promises.mkdir(distDir, { recursive: true });
+  }
+
   for (const route of staticRoutes) {
     try {
-      // Create the HTML content for each route
-      const html = renderToString(
-        React.createElement(StaticRouter, { location: route.path },
-          React.createElement(App)
-        )
-      );
-
-      // Create the full HTML document
-      const fullHtml = `
-<!DOCTYPE html>
+      // Create the full HTML document with proper SEO tags
+      const fullHtml = `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -63,19 +56,26 @@ export const generateStaticPages = async (): Promise<void> => {
     <meta name="description" content="${route.description}" />
     <meta name="author" content="Financial Professional" />
     
+    <!-- Open Graph tags -->
     <meta property="og:title" content="${route.title}" />
     <meta property="og:description" content="${route.description}" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://yoursite.com${route.path}" />
     
+    <!-- Twitter Card tags -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="${route.title}" />
     <meta name="twitter:description" content="${route.description}" />
     
+    <!-- Canonical URL -->
     <link rel="canonical" href="https://yoursite.com${route.path}" />
+    
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   </head>
   <body>
-    <div id="root">${html}</div>
+    <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>`;
