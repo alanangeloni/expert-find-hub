@@ -1,4 +1,7 @@
-import React from 'react';
+
+import React, { useState } from 'react';
+import { subscribeToNewsletter } from '@/services/newsletterService';
+import { useToast } from '@/hooks/use-toast';
 
 interface NewsletterSignupProps {
   title?: string;
@@ -15,6 +18,50 @@ export const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
   className = '',
   children
 }) => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { toast } = useToast();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!email) {
+      toast({
+        title: "Email required",
+        description: "Please enter your email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+    
+    try {
+      await subscribeToNewsletter({
+        Name: name.trim() || undefined,
+        Email: email.trim()
+      });
+      
+      toast({
+        title: "Successfully subscribed!",
+        description: "Thank you for subscribing to our newsletter.",
+      });
+      
+      // Reset form
+      setName('');
+      setEmail('');
+    } catch (error) {
+      toast({
+        title: "Subscription failed",
+        description: "There was an error subscribing to the newsletter. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <div 
       className={`rounded-2xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 relative overflow-hidden bg-cover bg-center bg-no-repeat border border-gray-200 shadow-sm ${className}`}
@@ -33,11 +80,13 @@ export const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
           </ul>
         )}
       </div>
-      <form className="relative z-10 bg-slate-800 rounded-xl p-6 flex flex-col gap-4 w-full max-w-xs min-w-[220px]">
+      <form onSubmit={handleSubmit} className="relative z-10 bg-slate-800 rounded-xl p-6 flex flex-col gap-4 w-full max-w-xs min-w-[220px]">
         <label className="text-slate-200 text-sm font-medium">
           Name
           <input 
             type="text" 
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             className="mt-1 w-full rounded-md bg-slate-700 border border-slate-600 text-white p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" 
             placeholder="Your name" 
           />
@@ -46,6 +95,8 @@ export const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
           Email
           <input 
             type="email" 
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="mt-1 w-full rounded-md bg-slate-700 border border-slate-600 text-white p-2 focus:outline-none focus:ring-2 focus:ring-blue-500" 
             placeholder="Your email" 
             required 
@@ -53,9 +104,10 @@ export const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
         </label>
         <button 
           type="submit" 
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md transition-colors"
+          disabled={isSubmitting}
+          className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold py-2 px-4 rounded-md transition-colors"
         >
-          Subscribe
+          {isSubmitting ? 'Subscribing...' : 'Subscribe'}
         </button>
         <span className="text-xs text-slate-400 mt-2">
           We respect your privacy. Unsubscribe at any time.

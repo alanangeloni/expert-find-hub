@@ -12,6 +12,7 @@ import { Seo } from "@/components/seo/Seo";
 import { supabase } from "@/integrations/supabase/client";
 import ReactMarkdown from "react-markdown";
 import { getPostCategories } from "@/utils/blogRelations";
+import { NewsletterForm } from "@/components/common/NewsletterForm";
 
 const BlogArticle = () => {
   const {
@@ -275,10 +276,7 @@ const BlogArticle = () => {
             <div className="bg-white rounded-2xl border border-slate-200 p-6">
               <h4 className="font-semibold text-base mb-2">Subscribe to Our Newsletter</h4>
               <p className="text-sm text-slate-600 mb-4">Get the latest financial insights and planning strategies delivered to your inbox.</p>
-              <form className="flex flex-col gap-3">
-                <input type="email" className="rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-teal-300" placeholder="Your email address" />
-                <button type="submit" className="bg-teal-500 text-white rounded-lg py-2 font-semibold hover:bg-teal-600 transition focus:ring-2 focus:ring-teal-300 focus:outline-none">Subscribe</button>
-              </form>
+              <NewsletterForm />
             </div>
           </aside>
         </div>

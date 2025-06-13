@@ -794,6 +794,27 @@ export type Database = {
           },
         ]
       }
+      newsletter_signups: {
+        Row: {
+          created_at: string
+          Email: string | null
+          id: number
+          Name: string | null
+        }
+        Insert: {
+          created_at?: string
+          Email?: string | null
+          id?: number
+          Name?: string | null
+        }
+        Update: {
+          created_at?: string
+          Email?: string | null
+          id?: number
+          Name?: string | null
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
