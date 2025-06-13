@@ -1,26 +1,75 @@
-<!DOCTYPE html>
+
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>expert-find-hub</title>
-    <meta name="description" content="Lovable Generated Project" />
-    <meta name="author" content="Lovable" />
-
-    <meta property="og:title" content="expert-find-hub" />
-    <meta property="og:description" content="Lovable Generated Project" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
-
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:site" content="@lovable_dev" />
-    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+    <title>Financial Professional | Find a Financial Professional</title>
+    <meta name="description" content="Find a Financial Professional to help plan and manage your wealth! Search Financial Advisors, Financial Planners, Insurance Professionals, Tax and Accounting experts, and more." />
+    
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    
+    <!-- Critical CSS inline -->
+    <style>
+      body { 
+        font-family: system-ui, -apple-system, sans-serif; 
+        margin: 0; 
+        padding: 0; 
+        background-color: #f8fafc;
+      }
+      .ssg-content { 
+        padding: 20px; 
+        max-width: 1200px; 
+        margin: 0 auto; 
+        min-height: 200px;
+      }
+      .ssg-content h1 { 
+        font-size: 2rem; 
+        margin-bottom: 1rem; 
+        color: #1e293b; 
+        font-weight: 700;
+      }
+      .ssg-content p { 
+        line-height: 1.6; 
+        color: #475569; 
+        margin-bottom: 1rem; 
+        font-size: 1.1rem;
+      }
+      .ssg-loading { 
+        text-align: center; 
+        padding: 40px; 
+        color: #64748b;
+      }
+      .app-loaded .ssg-content { 
+        display: none; 
+      }
+      #root {
+        min-height: 100vh;
+      }
+    </style>
   </head>
-
   <body>
+    <!-- SSG Content for SEO (fallback) -->
+    <div class="ssg-content">
+      <h1>Find a Financial Professional</h1>
+      <p>Browse financial advisors, investment firms, and accounting professionals to help you achieve your financial goals.</p>
+      <div class="ssg-loading">Loading...</div>
+    </div>
+    
+    <!-- React App Root -->
     <div id="root"></div>
-    <!-- IMPORTANT: DO NOT REMOVE THIS SCRIPT TAG OR THIS VERY COMMENT! -->
-    <script src="https://cdn.gpteng.co/gptengineer.js" type="module"></script>
     <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Script to hide SSG content when React loads -->
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() {
+          document.body.classList.add('app-loaded');
+        }, 100);
+      });
+    </script>
   </body>
 </html>
