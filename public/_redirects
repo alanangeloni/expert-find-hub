@@ -1,0 +1,22 @@
+
+# Netlify redirects for SPA with SSG support
+# Serve static HTML files if they exist, otherwise fallback to SPA
+
+# Static firm pages - serve if exists, otherwise SPA
+/firms/* /firms/:splat/index.html 200
+/firms/* /index.html 200
+
+# Static advisor pages - serve if exists, otherwise SPA  
+/advisors/* /advisors/:splat/index.html 200
+/advisors/* /index.html 200
+
+# Static accounting firm pages - serve if exists, otherwise SPA
+/accounting-firms/* /accounting-firms/:splat/index.html 200
+/accounting-firms/* /index.html 200
+
+# Static blog pages - serve if exists, otherwise SPA
+/blog/* /blog/:splat/index.html 200
+/blog/* /index.html 200
+
+# All other routes fallback to SPA
+/* /index.html 200
