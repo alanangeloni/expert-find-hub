@@ -168,11 +168,21 @@ const AdvisorSearch = () => {
 };
 
 const AdvisorsPage = () => {
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "SearchResultsPage",
+    "name": "Financial Advisors Directory",
+    "description": "Browse financial advisors to find the one best suited to help you achieve your financial goals",
+    "url": "https://yoursite.com/advisors"
+  };
+
   return (
     <>
       <Seo 
         title="Find a Financial Advisor"
         description="Browse financial advisors to find the one best suited to help you achieve your financial goals"
+        structuredData={structuredData}
+        canonicalUrl="https://yoursite.com/advisors"
       />
       <AdvisorSearch />
     </>

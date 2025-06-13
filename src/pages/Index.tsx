@@ -69,13 +69,32 @@ const AdvisorGrid = () => {
         </div>)}
     </div>;
 };
+
 const Index = () => {
   const pageTitle = 'Financial Professional | Find a Financial Professional';
   const pageDescription = 'Find a Financial Professional to help plan and manage your wealth! Search Financial Advisors, Financial Planners, Insurance Professionals, Tax and Accounting experts, and more.';
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Financial Professional",
+    "description": pageDescription,
+    "url": "https://yoursite.com",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://yoursite.com/advisors?search={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  };
+
   return (
     <>
-      <Seo title={pageTitle} description={pageDescription} />
+      <Seo 
+        title={pageTitle} 
+        description={pageDescription}
+        structuredData={structuredData}
+        canonicalUrl="https://yoursite.com/"
+      />
       <div className="flex flex-col">
     
       {/* Hero Section */}
