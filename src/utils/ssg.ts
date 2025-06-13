@@ -1,108 +1,24 @@
 
 import fs from 'fs';
 import path from 'path';
+import { supabase } from '@/integrations/supabase/client';
 
-// Mock data services for SSG
-const mockInvestmentFirms = [
-  {
-    id: '1',
-    name: 'Edly',
-    slug: 'edly',
-    description: 'Edly offers income share agreements for students and professionals.',
-    minimum_investment: '$500',
-    target_return: '8-12%',
-    headquarters: 'New York, NY',
-    established: '2019'
-  },
-  {
-    id: '2',
-    name: 'StockX',
-    slug: 'stockx',
-    description: 'StockX is a marketplace for sneakers, streetwear, and collectibles.',
-    minimum_investment: '$1,000',
-    target_return: '10-15%',
-    headquarters: 'Detroit, MI',
-    established: '2015'
-  },
-  {
-    id: '3',
-    name: 'Vanguard',
-    slug: 'vanguard',
-    description: 'Vanguard is a leading investment management company.',
-    minimum_investment: '$3,000',
-    target_return: '6-8%',
-    headquarters: 'Valley Forge, PA',
-    established: '1975'
+// Get the base HTML template
+const getBaseHtml = () => {
+  const indexPath = path.join(process.cwd(), 'dist', 'index.html');
+  if (fs.existsSync(indexPath)) {
+    return fs.readFileSync(indexPath, 'utf-8');
   }
-];
-
-const mockAdvisors = [
-  {
-    id: '1',
-    name: 'John Smith',
-    slug: 'john-smith',
-    title: 'Senior Financial Advisor',
-    location: 'New York, NY',
-    specialties: ['Retirement Planning', 'Investment Management']
-  },
-  {
-    id: '2',
-    name: 'Sarah Johnson',
-    slug: 'sarah-johnson', 
-    title: 'Wealth Management Specialist',
-    location: 'San Francisco, CA',
-    specialties: ['Estate Planning', 'Tax Strategy']
-  }
-];
-
-const mockAccountingFirms = [
-  {
-    id: '1',
-    name: 'Deloitte',
-    slug: 'deloitte',
-    description: 'Global accounting and consulting firm.',
-    location: 'New York, NY',
-    services: ['Audit', 'Tax', 'Consulting']
-  },
-  {
-    id: '2',
-    name: 'PwC',
-    slug: 'pwc',
-    description: 'Professional services network.',
-    location: 'London, UK',
-    services: ['Assurance', 'Tax', 'Advisory']
-  }
-];
-
-const mockBlogPosts = [
-  {
-    id: '1',
-    title: 'Investment Strategies for 2024',
-    slug: 'investment-strategies-2024',
-    excerpt: 'Discover the top investment strategies for the upcoming year.',
-    content: 'Learn about diversification, risk management, and market trends...',
-    published_at: '2024-01-15'
-  },
-  {
-    id: '2',
-    title: 'Retirement Planning Guide',
-    slug: 'retirement-planning-guide',
-    excerpt: 'A comprehensive guide to planning for retirement.',
-    content: 'Start planning early, understand your options, and maximize savings...',
-    published_at: '2024-01-10'
-  }
-];
-
-// Generate HTML template
-const generateHtmlTemplate = (title: string, description: string, content: string): string => {
+  
+  // Fallback template if index.html doesn't exist yet
   return `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>${title}</title>
-    <meta name="description" content="${description}" />
+    <title>__TITLE__</title>
+    <meta name="description" content="__DESCRIPTION__" />
     
     <!-- Preconnect to external domains -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -115,7 +31,6 @@ const generateHtmlTemplate = (title: string, description: string, content: strin
         margin: 0; 
         padding: 0; 
         background-color: #f8fafc;
-        line-height: 1.6;
       }
       .ssg-content { 
         padding: 20px; 
@@ -124,17 +39,16 @@ const generateHtmlTemplate = (title: string, description: string, content: strin
         min-height: 200px;
       }
       .ssg-content h1 { 
-        font-size: 2.5rem; 
+        font-size: 2rem; 
         margin-bottom: 1rem; 
         color: #1e293b; 
         font-weight: 700;
       }
       .ssg-content h2 { 
-        font-size: 1.875rem; 
+        font-size: 1.5rem; 
         margin-bottom: 0.75rem; 
         color: #334155; 
         font-weight: 600;
-        margin-top: 2rem;
       }
       .ssg-content p { 
         line-height: 1.6; 
@@ -142,26 +56,13 @@ const generateHtmlTemplate = (title: string, description: string, content: strin
         margin-bottom: 1rem; 
         font-size: 1.1rem;
       }
-      .ssg-content .meta-info {
-        background: #f1f5f9;
-        padding: 1rem;
-        border-radius: 8px;
-        margin: 1rem 0;
-      }
-      .ssg-content .meta-info strong {
-        color: #1e293b;
-      }
       .ssg-loading { 
         text-align: center; 
         padding: 40px; 
         color: #64748b;
-        display: none;
       }
       .app-loaded .ssg-content { 
         display: none; 
-      }
-      .app-loaded .ssg-loading { 
-        display: block; 
       }
       #root {
         min-height: 100vh;
@@ -171,11 +72,9 @@ const generateHtmlTemplate = (title: string, description: string, content: strin
   <body>
     <!-- SSG Content for SEO -->
     <div class="ssg-content">
-      ${content}
+      __CONTENT__
+      <div class="ssg-loading">Loading...</div>
     </div>
-    
-    <!-- Loading message for when React takes over -->
-    <div class="ssg-loading">Loading interactive content...</div>
     
     <!-- React App Root -->
     <div id="root"></div>
@@ -193,233 +92,318 @@ const generateHtmlTemplate = (title: string, description: string, content: strin
 </html>`;
 };
 
-// Generate static pages
-export const generateStaticPages = async (): Promise<void> => {
-  const distDir = path.join(process.cwd(), 'dist');
-  
-  // Ensure dist directory exists
-  if (!fs.existsSync(distDir)) {
-    fs.mkdirSync(distDir, { recursive: true });
-  }
+// Create HTML with specific title, description, and content
+const createHtml = (title: string, description: string, content: string) => {
+  const baseHtml = getBaseHtml();
+  return baseHtml
+    .replace('__TITLE__', title)
+    .replace('__DESCRIPTION__', description)
+    .replace('__CONTENT__', content);
+};
 
-  // Generate homepage
-  const homeContent = `
+// Ensure directory exists
+const ensureDir = (dirPath: string) => {
+  if (!fs.existsSync(dirPath)) {
+    fs.mkdirSync(dirPath, { recursive: true });
+  }
+};
+
+// Generate homepage
+const generateHomepage = () => {
+  console.log('Generating homepage...');
+  
+  const title = 'Financial Professional | Find a Financial Professional';
+  const description = 'Find a Financial Professional to help plan and manage your wealth! Search Financial Advisors, Financial Planners, Insurance Professionals, Tax and Accounting experts, and more.';
+  const content = `
     <h1>Find a Financial Professional</h1>
     <p>Browse financial advisors, investment firms, and accounting professionals to help you achieve your financial goals.</p>
-    <h2>Investment Opportunities</h2>
-    <p>Discover top-rated investment firms offering diverse portfolio options and competitive returns.</p>
-    <h2>Expert Financial Advisors</h2>
-    <p>Connect with experienced financial advisors who can guide you through complex financial decisions.</p>
-    <h2>Professional Services</h2>
-    <p>Access comprehensive accounting and tax services from certified professionals.</p>
   `;
   
-  const homeHtml = generateHtmlTemplate(
-    'Financial Professional | Find a Financial Professional',
-    'Find a Financial Professional to help plan and manage your wealth! Search Financial Advisors, Financial Planners, Insurance Professionals, Tax and Accounting experts, and more.',
-    homeContent
-  );
-  fs.writeFileSync(path.join(distDir, 'index.html'), homeHtml);
+  const html = createHtml(title, description, content);
+  fs.writeFileSync(path.join(process.cwd(), 'dist', 'index.html'), html);
+  console.log('✅ Homepage generated');
+};
 
-  // Generate investment firms listing page
-  const firmsContent = `
+// Generate investment firms listing page
+const generateFirmsPage = () => {
+  console.log('Generating /firms page...');
+  
+  const title = 'Investment Firms | Financial Professional - Browse 200+ Investment Firms';
+  const description = 'Browse and compare over 200 investment firms! Find investments in Stocks, Real Estate, Loans, Collectibles, Wine, Start-ups, Crypto, and more.';
+  const content = `
     <h1>Investment Firms</h1>
-    <p>Explore our curated selection of investment firms and find the perfect match for your investment goals.</p>
-    <h2>Top Investment Opportunities</h2>
-    <p>From traditional asset management to alternative investments, discover firms that align with your financial objectives and risk tolerance.</p>
+    <h2>Browse 200+ Investment Firms</h2>
+    <p>Browse and compare over 200 investment firms! Find investments in Stocks, Real Estate, Loans, Collectibles, Wine, Start-ups, Crypto, and more.</p>
   `;
   
-  const firmsDir = path.join(distDir, 'firms');
-  if (!fs.existsSync(firmsDir)) {
-    fs.mkdirSync(firmsDir, { recursive: true });
-  }
+  const firmsDir = path.join(process.cwd(), 'dist', 'firms');
+  ensureDir(firmsDir);
   
-  const firmsHtml = generateHtmlTemplate(
-    'Investment Firms | Financial Professional',
-    'Explore top investment firms and find the perfect match for your investment goals.',
-    firmsContent
-  );
-  fs.writeFileSync(path.join(firmsDir, 'index.html'), firmsHtml);
+  const html = createHtml(title, description, content);
+  fs.writeFileSync(path.join(firmsDir, 'index.html'), html);
+  console.log('✅ /firms page generated');
+};
 
-  // Generate individual firm pages
-  for (const firm of mockInvestmentFirms) {
-    const firmContent = `
-      <h1>${firm.name} Review</h1>
-      <p>${firm.description} The minimum investment required on ${firm.name} to open an account is ${firm.minimum_investment}.</p>
-      <h2>Investment Details</h2>
-      <div class="meta-info">
-        <p><strong>Minimum Investment:</strong> ${firm.minimum_investment}</p>
-        <p><strong>Target Return:</strong> ${firm.target_return}</p>
-        <p><strong>Headquarters:</strong> ${firm.headquarters}</p>
-        <p><strong>Established:</strong> ${firm.established}</p>
-      </div>
-      <h2>About ${firm.name}</h2>
-      <p>Learn more about ${firm.name}'s investment approach, fees, and how they can help you achieve your financial goals.</p>
-      <h2>Investment Approach</h2>
-      <p>Discover the unique investment strategies and methodologies employed by ${firm.name} to deliver returns for their clients.</p>
-    `;
+// Generate individual firm pages
+const generateFirmPages = async () => {
+  try {
+    console.log('Generating individual firm pages...');
     
-    const firmDir = path.join(firmsDir, firm.slug);
-    if (!fs.existsSync(firmDir)) {
-      fs.mkdirSync(firmDir, { recursive: true });
+    const { data: firms, error } = await supabase
+      .from('investment_firms')
+      .select('id, name, slug, description, minimum_investment');
+    
+    if (error) {
+      console.error('Error fetching firms:', error);
+      return;
     }
     
-    const firmHtml = generateHtmlTemplate(
-      `${firm.name} Review | Financial Professional`,
-      `${firm.description} The minimum investment required on ${firm.name} to open an account is ${firm.minimum_investment}.`,
-      firmContent
-    );
-    fs.writeFileSync(path.join(firmDir, 'index.html'), firmHtml);
+    if (!firms || firms.length === 0) {
+      console.log('No firms found');
+      return;
+    }
+    
+    const firmsDir = path.join(process.cwd(), 'dist', 'firms');
+    ensureDir(firmsDir);
+    
+    for (const firm of firms) {
+      const title = `${firm.name} Review`;
+      const description = `${firm.description || ''} The minimum investment required on ${firm.name} to open an account is ${firm.minimum_investment || 'not specified'}.`;
+      const content = `
+        <h1>${firm.name} Review</h1>
+        <h2>Investment Details</h2>
+        <p>${firm.description || `Learn more about ${firm.name} and their investment opportunities.`}</p>
+        <p>The minimum investment required on ${firm.name} to open an account is ${firm.minimum_investment || 'not specified'}.</p>
+      `;
+      
+      const firmDir = path.join(firmsDir, firm.slug);
+      ensureDir(firmDir);
+      
+      const html = createHtml(title, description, content);
+      fs.writeFileSync(path.join(firmDir, 'index.html'), html);
+      console.log(`✅ Firm page generated: /firms/${firm.slug}`);
+    }
+  } catch (error) {
+    console.error('Error generating firm pages:', error);
   }
+};
 
-  // Generate advisors listing page
-  const advisorsContent = `
-    <h1>Financial Advisors</h1>
-    <p>Connect with experienced financial advisors who can help you navigate complex financial decisions and plan for your future.</p>
-    <h2>Expert Financial Guidance</h2>
-    <p>Our network of certified financial advisors offers personalized advice tailored to your unique financial situation and goals.</p>
+// Generate advisors listing page
+const generateAdvisorsPage = () => {
+  console.log('Generating /advisors page...');
+  
+  const title = 'Find a Financial Advisor';
+  const description = 'Browse financial advisors to find the one best suited to help you achieve your financial goals';
+  const content = `
+    <h1>Find a Financial Advisor</h1>
+    <h2>Browse Financial Advisors</h2>
+    <p>Browse financial advisors to find the one best suited to help you achieve your financial goals.</p>
   `;
   
-  const advisorsDir = path.join(distDir, 'advisors');
-  if (!fs.existsSync(advisorsDir)) {
-    fs.mkdirSync(advisorsDir, { recursive: true });
-  }
+  const advisorsDir = path.join(process.cwd(), 'dist', 'advisors');
+  ensureDir(advisorsDir);
   
-  const advisorsHtml = generateHtmlTemplate(
-    'Financial Advisors | Financial Professional',
-    'Connect with experienced financial advisors for personalized financial guidance.',
-    advisorsContent
-  );
-  fs.writeFileSync(path.join(advisorsDir, 'index.html'), advisorsHtml);
+  const html = createHtml(title, description, content);
+  fs.writeFileSync(path.join(advisorsDir, 'index.html'), html);
+  console.log('✅ /advisors page generated');
+};
 
-  // Generate individual advisor pages
-  for (const advisor of mockAdvisors) {
-    const advisorContent = `
-      <h1>${advisor.name} - ${advisor.title}</h1>
-      <p>Meet ${advisor.name}, a ${advisor.title} based in ${advisor.location}, specializing in ${advisor.specialties.join(', ')}.</p>
-      <h2>Professional Background</h2>
-      <div class="meta-info">
-        <p><strong>Location:</strong> ${advisor.location}</p>
-        <p><strong>Specialties:</strong> ${advisor.specialties.join(', ')}</p>
-      </div>
-      <h2>Services Offered</h2>
-      <p>${advisor.name} provides comprehensive financial planning services to help clients achieve their financial goals.</p>
-    `;
+// Generate individual advisor pages
+const generateAdvisorPages = async () => {
+  try {
+    console.log('Generating individual advisor pages...');
     
-    const advisorDir = path.join(advisorsDir, advisor.slug);
-    if (!fs.existsSync(advisorDir)) {
-      fs.mkdirSync(advisorDir, { recursive: true });
+    const { data: advisors, error } = await supabase
+      .from('advisors')
+      .select('id, first_name, last_name, slug, title, firm_name, personal_bio');
+    
+    if (error) {
+      console.error('Error fetching advisors:', error);
+      return;
     }
     
-    const advisorHtml = generateHtmlTemplate(
-      `${advisor.name} - ${advisor.title} | Financial Professional`,
-      `Meet ${advisor.name}, a ${advisor.title} based in ${advisor.location}.`,
-      advisorContent
-    );
-    fs.writeFileSync(path.join(advisorDir, 'index.html'), advisorHtml);
+    if (!advisors || advisors.length === 0) {
+      console.log('No advisors found');
+      return;
+    }
+    
+    const advisorsDir = path.join(process.cwd(), 'dist', 'advisors');
+    ensureDir(advisorsDir);
+    
+    for (const advisor of advisors) {
+      const fullName = `${advisor.first_name} ${advisor.last_name}`;
+      const title = fullName;
+      const description = `${advisor.title || 'Financial Advisor'} at ${advisor.firm_name || 'Independent'}. ${advisor.personal_bio || `Learn more about ${fullName} and their financial advisory services.`}`;
+      const content = `
+        <h1>${fullName}</h1>
+        <h2>${advisor.title || 'Financial Advisor'}</h2>
+        <p>${advisor.title || 'Financial Advisor'} at ${advisor.firm_name || 'Independent'}.</p>
+        <p>${advisor.personal_bio || `Learn more about ${fullName} and their financial advisory services.`}</p>
+      `;
+      
+      const advisorDir = path.join(advisorsDir, advisor.slug);
+      ensureDir(advisorDir);
+      
+      const html = createHtml(title, description, content);
+      fs.writeFileSync(path.join(advisorDir, 'index.html'), html);
+      console.log(`✅ Advisor page generated: /advisors/${advisor.slug}`);
+    }
+  } catch (error) {
+    console.error('Error generating advisor pages:', error);
   }
+};
 
-  // Generate accounting firms listing page
-  const accountingContent = `
+// Generate accounting firms listing page
+const generateAccountingFirmsPage = () => {
+  console.log('Generating /accounting-firms page...');
+  
+  const title = 'Accounting Firms | Financial Professional';
+  const description = 'Browse accounting firms to find professional tax and accounting services for your business and personal needs.';
+  const content = `
     <h1>Accounting Firms</h1>
-    <p>Find professional accounting services from top-rated firms to handle your business and personal financial needs.</p>
-    <h2>Professional Accounting Services</h2>
-    <p>From tax preparation to financial audits, our partner accounting firms provide comprehensive services for individuals and businesses.</p>
+    <h2>Professional Tax and Accounting Services</h2>
+    <p>Browse accounting firms to find professional tax and accounting services for your business and personal needs.</p>
   `;
   
-  const accountingDir = path.join(distDir, 'accounting-firms');
-  if (!fs.existsSync(accountingDir)) {
-    fs.mkdirSync(accountingDir, { recursive: true });
-  }
+  const accountingDir = path.join(process.cwd(), 'dist', 'accounting-firms');
+  ensureDir(accountingDir);
   
-  const accountingHtml = generateHtmlTemplate(
-    'Accounting Firms | Financial Professional',
-    'Find professional accounting services from top-rated firms.',
-    accountingContent
-  );
-  fs.writeFileSync(path.join(accountingDir, 'index.html'), accountingHtml);
+  const html = createHtml(title, description, content);
+  fs.writeFileSync(path.join(accountingDir, 'index.html'), html);
+  console.log('✅ /accounting-firms page generated');
+};
 
-  // Generate individual accounting firm pages
-  for (const firm of mockAccountingFirms) {
-    const firmContent = `
-      <h1>${firm.name} - Professional Accounting Services</h1>
-      <p>${firm.description} Based in ${firm.location}, ${firm.name} offers comprehensive accounting services.</p>
-      <h2>Services Offered</h2>
-      <div class="meta-info">
-        <p><strong>Location:</strong> ${firm.location}</p>
-        <p><strong>Services:</strong> ${firm.services.join(', ')}</p>
-      </div>
-      <h2>Why Choose ${firm.name}</h2>
-      <p>Learn about ${firm.name}'s expertise and how they can help with your accounting and financial needs.</p>
-    `;
+// Generate individual accounting firm pages
+const generateAccountingFirmPages = async () => {
+  try {
+    console.log('Generating individual accounting firm pages...');
     
-    const firmDir = path.join(accountingDir, firm.slug);
-    if (!fs.existsSync(firmDir)) {
-      fs.mkdirSync(firmDir, { recursive: true });
+    const { data: firms, error } = await supabase
+      .from('accounting_firms')
+      .select('id, name, slug, description');
+    
+    if (error) {
+      console.error('Error fetching accounting firms:', error);
+      return;
     }
     
-    const firmHtml = generateHtmlTemplate(
-      `${firm.name} - Professional Accounting Services | Financial Professional`,
-      `${firm.description} Based in ${firm.location}.`,
-      firmContent
-    );
-    fs.writeFileSync(path.join(firmDir, 'index.html'), firmHtml);
+    if (!firms || firms.length === 0) {
+      console.log('No accounting firms found');
+      return;
+    }
+    
+    const accountingDir = path.join(process.cwd(), 'dist', 'accounting-firms');
+    ensureDir(accountingDir);
+    
+    for (const firm of firms) {
+      const title = `${firm.name} - Accounting Services`;
+      const description = firm.description || `Professional accounting and tax services from ${firm.name}. Get expert financial guidance for your business and personal needs.`;
+      const content = `
+        <h1>${firm.name}</h1>
+        <h2>Professional Accounting Services</h2>
+        <p>${firm.description || `Professional accounting and tax services from ${firm.name}.`}</p>
+        <p>Get expert financial guidance for your business and personal needs.</p>
+      `;
+      
+      const firmDir = path.join(accountingDir, firm.slug);
+      ensureDir(firmDir);
+      
+      const html = createHtml(title, description, content);
+      fs.writeFileSync(path.join(firmDir, 'index.html'), html);
+      console.log(`✅ Accounting firm page generated: /accounting-firms/${firm.slug}`);
+    }
+  } catch (error) {
+    console.error('Error generating accounting firm pages:', error);
   }
+};
 
-  // Generate blog listing page
-  const blogContent = `
+// Generate blog listing page
+const generateBlogPage = () => {
+  console.log('Generating /blog page...');
+  
+  const title = 'Blog | Financial Professional - Increase Your Financial IQ in Minutes!';
+  const description = 'Read the latest financial articles! Learn more about investing, retirement, saving, insurance, and more.';
+  const content = `
     <h1>Financial Blog</h1>
-    <p>Stay informed with the latest financial news, investment strategies, and expert insights from our professional network.</p>
-    <h2>Investment Insights</h2>
-    <p>Discover expert analysis and strategies to help you make informed investment decisions in today's market.</p>
+    <h2>Increase Your Financial IQ in Minutes!</h2>
+    <p>Read the latest financial articles! Learn more about investing, retirement, saving, insurance, and more.</p>
   `;
   
-  const blogDir = path.join(distDir, 'blog');
-  if (!fs.existsSync(blogDir)) {
-    fs.mkdirSync(blogDir, { recursive: true });
-  }
+  const blogDir = path.join(process.cwd(), 'dist', 'blog');
+  ensureDir(blogDir);
   
-  const blogHtml = generateHtmlTemplate(
-    'Financial Blog | Financial Professional',
-    'Stay informed with the latest financial news and investment strategies.',
-    blogContent
-  );
-  fs.writeFileSync(path.join(blogDir, 'index.html'), blogHtml);
+  const html = createHtml(title, description, content);
+  fs.writeFileSync(path.join(blogDir, 'index.html'), html);
+  console.log('✅ /blog page generated');
+};
 
-  // Generate individual blog post pages
-  for (const post of mockBlogPosts) {
-    const postContent = `
-      <h1>${post.title}</h1>
-      <p>Published on ${new Date(post.published_at).toLocaleDateString()}</p>
-      <p>${post.excerpt}</p>
-      <h2>Article Content</h2>
-      <p>${post.content}</p>
-      <h2>Key Takeaways</h2>
-      <p>Learn the essential strategies and insights from this comprehensive guide to financial planning and investment management.</p>
-    `;
+// Generate individual blog post pages
+const generateBlogPostPages = async () => {
+  try {
+    console.log('Generating individual blog post pages...');
     
-    const postDir = path.join(blogDir, post.slug);
-    if (!fs.existsSync(postDir)) {
-      fs.mkdirSync(postDir, { recursive: true });
+    const { data: posts, error } = await supabase
+      .from('blog_posts')
+      .select('id, title, slug, short_description, content')
+      .eq('status', 'published');
+    
+    if (error) {
+      console.error('Error fetching blog posts:', error);
+      return;
     }
     
-    const postHtml = generateHtmlTemplate(
-      `${post.title} | Financial Professional`,
-      post.excerpt,
-      postContent
-    );
-    fs.writeFileSync(path.join(postDir, 'index.html'), postHtml);
+    if (!posts || posts.length === 0) {
+      console.log('No published blog posts found');
+      return;
+    }
+    
+    const blogDir = path.join(process.cwd(), 'dist', 'blog');
+    ensureDir(blogDir);
+    
+    for (const post of posts) {
+      const title = post.title;
+      const description = post.short_description || post.content?.substring(0, 160) || `Read this financial article: ${post.title}`;
+      const content = `
+        <h1>${post.title}</h1>
+        <h2>Financial Insights</h2>
+        <p>${post.short_description || 'Read this comprehensive financial article to enhance your financial knowledge.'}</p>
+      `;
+      
+      const postDir = path.join(blogDir, post.slug);
+      ensureDir(postDir);
+      
+      const html = createHtml(title, description, content);
+      fs.writeFileSync(path.join(postDir, 'index.html'), html);
+      console.log(`✅ Blog post page generated: /blog/${post.slug}`);
+    }
+  } catch (error) {
+    console.error('Error generating blog post pages:', error);
   }
+};
 
-  console.log('✅ Static site generation completed successfully!');
-  console.log('Generated static pages for:');
-  console.log('- Homepage (/)');
-  console.log('- Investment firms listing (/firms)');
-  console.log('- Individual firm pages (/firms/[slug])');
-  console.log('- Advisors listing (/advisors)');
-  console.log('- Individual advisor pages (/advisors/[slug])');
-  console.log('- Accounting firms listing (/accounting-firms)');
-  console.log('- Individual accounting firm pages (/accounting-firms/[slug])');
-  console.log('- Blog listing (/blog)');
-  console.log('- Individual blog post pages (/blog/[slug])');
+// Main function to generate all static pages
+export const generateStaticPages = async () => {
+  try {
+    console.log('🚀 Starting Static Site Generation...');
+    
+    // Ensure dist directory exists
+    const distDir = path.join(process.cwd(), 'dist');
+    ensureDir(distDir);
+    
+    // Generate all pages
+    generateHomepage();
+    generateFirmsPage();
+    await generateFirmPages();
+    generateAdvisorsPage();
+    await generateAdvisorPages();
+    generateAccountingFirmsPage();
+    await generateAccountingFirmPages();
+    generateBlogPage();
+    await generateBlogPostPages();
+    
+    console.log('✅ Static Site Generation completed successfully!');
+  } catch (error) {
+    console.error('❌ Error during Static Site Generation:', error);
+    throw error;
+  }
 };
