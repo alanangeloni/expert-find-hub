@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
@@ -37,7 +37,6 @@ const App = () => (
       <Toaster />
       <Sonner />
       <HelmetProvider>
-      <BrowserRouter>
         <AuthProvider>
           <div className="min-h-screen bg-background font-sans antialiased">
             <Header />
@@ -105,7 +104,6 @@ const App = () => (
             </div>
           </div>
         </AuthProvider>
-      </BrowserRouter>
       </HelmetProvider>
     </TooltipProvider>
   </QueryClientProvider>
