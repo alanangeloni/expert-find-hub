@@ -258,14 +258,19 @@ const AdvisorDetailPage = () => {
     enabled: !!slug,
   });
 
+  // Generate SEO metadata according to specifications
+  const pageTitle = advisor?.name || 'Financial Advisor';
+  const pageDescription = advisor ? 
+    `${advisor.position || 'Financial Advisor'} at ${advisor.firm_name || 'their firm'}. ${advisor.personal_bio?.substring(0, 155) || 'Contact for professional financial advice'}...` : 
+    'Professional financial advisor profile and contact information.';
+
   return (
     <>
-      {advisor && (
-        <Seo 
-          title={advisor.name}
-          description={`${advisor.position || 'Financial Advisor'} at ${advisor.firm_name || 'their firm'}. ${advisor.personal_bio?.substring(0, 155) || 'Contact for professional financial advice'}...`}
-        />
-      )}
+      <Seo 
+        title={pageTitle}
+        description={pageDescription}
+        canonicalUrl={`https://yoursite.com/advisors/${slug}`}
+      />
       <AdvisorDetail />
     </>
   );

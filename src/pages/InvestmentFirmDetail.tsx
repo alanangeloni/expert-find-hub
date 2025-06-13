@@ -106,11 +106,10 @@ const InvestmentFirmDetailPage = () => {
   const clientTypes: ClientType[] = firm.investment_firm_clients?.map((c: any) => c.client_type).filter(Boolean) || [];
   const moneyMakingMethods: MoneyMakingMethod[] = firm.money_making_methods || [];
   const firmType = firm.asset_classes && firm.asset_classes.length > 0 ? firm.asset_classes.join(', ') : "N/A";
-  // Generate SEO metadata
-  const pageTitle = firm ? `${firm.name} Review` : 'Investment Firm Review';
-  const pageDescription = firm ? 
-    `${firm.description || ''} The minimum investment required on ${firm.name} to open an account is ${firm.minimum_investment || 'not specified'}.` : 
-    'Detailed information about this investment firm.';
+  
+  // Generate SEO metadata according to specifications
+  const pageTitle = `${firm.name} Review`;
+  const pageDescription = `${firm.description || ''} The minimum investment required on ${firm.name} to open an account is ${firm.minimum_investment || 'not specified'}.`;
 
   const renderDetailItem = (label: string, value: string | number | undefined | null, icon: React.ReactNode) => {
     if (value === null || value === undefined || String(value).trim() === '') return null;
@@ -127,7 +126,11 @@ const InvestmentFirmDetailPage = () => {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      <Seo title={pageTitle} description={pageDescription} />
+      <Seo 
+        title={pageTitle} 
+        description={pageDescription}
+        canonicalUrl={`https://yoursite.com/firms/${slug}`}
+      />
       <div className="container max-w-6xl mx-auto py-8 px-4 md:px-6">
         <div className="mb-6">
           <Link to="/firms" className="inline-flex items-center text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">
