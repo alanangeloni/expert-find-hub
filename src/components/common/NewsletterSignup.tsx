@@ -105,7 +105,7 @@ export const NewsletterSignup: React.FC<NewsletterSignupProps> = ({
         <button 
           type="submit" 
           disabled={isSubmitting}
-          className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white font-bold py-2 px-4 rounded-md transition-colors"
+          className="w-full bg-emerald-500 hover:bg-emerald-600 disabled:bg-emerald-400 text-white font-bold py-2 px-4 rounded-md transition-colors"
         >
           {isSubmitting ? 'Subscribing...' : 'Subscribe'}
         </button>
