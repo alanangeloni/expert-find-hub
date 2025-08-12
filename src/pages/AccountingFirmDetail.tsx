@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
 import { getAccountingFirmBySlug } from "@/services/accountingFirmsService";
 import Header from "@/components/layout/Header";
+import { Seo } from "@/components/seo/Seo";
 
 const AccountingFirmDetailComponent = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -47,7 +48,21 @@ const AccountingFirmDetailComponent = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <>
+      {firm && (
+        <Seo 
+          title={`${firm.name} | Accounting Firm`}
+          description={`${(firm.long_description || firm.description || '').slice(0, 155)}...`}
+          canonicalUrl={`https://yoursite.com/accounting-firms/${slug}`}
+          structuredData={{
+            "@context": "https://schema.org",
+            "@type": "AccountingService",
+            "name": firm.name,
+            "url": `https://yoursite.com/accounting-firms/${slug}`
+          }}
+        />
+      )}
+      <div className="min-h-screen bg-slate-50">
       {/* Hero section */}
       <div className="bg-white border-b">
         <div className="container mx-auto py-8 px-4">
@@ -290,6 +305,7 @@ const AccountingFirmDetailComponent = () => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

@@ -24,6 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FirmList } from "@/components/firms/FirmList";
+import { Seo } from "@/components/seo/Seo";
 
 const AccountingFirmsPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -69,8 +70,20 @@ const AccountingFirmsPage = () => {
   });
 
   return (
-    <div className="container mx-auto py-8 px-4">
-      <div className="text-center mb-8">
+    <>
+      <Seo 
+        title="Find an Accounting Firm"
+        description="Connect with top accounting firms that can help manage your business finances"
+        canonicalUrl="https://yoursite.com/accounting-firms"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "SearchResultsPage",
+          "name": "Accounting Firms Directory",
+          "description": "Connect with top accounting firms that can help manage your business finances",
+          "url": "https://yoursite.com/accounting-firms"
+        }}
+      />
+      <div className="container mx-auto py-8 px-4">
         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Find Accounting Firms</h1>
         <p className="text-lg text-gray-600 max-w-2xl mx-auto">
           Connect with top accounting firms that can help manage your business finances
@@ -122,7 +135,7 @@ const AccountingFirmsPage = () => {
         basePath="/accounting-firms"
         firmType="accounting"
       />
-    </div>
+    </>
   );
 };
 
