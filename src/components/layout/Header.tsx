@@ -55,18 +55,17 @@ const Header = () => {
 
         {/* Mobile Menu Button */}
         <div className="md:hidden flex items-center space-x-2">
-          <UserMenu />
           <Button
             variant="ghost"
             size="sm"
             onClick={toggleMobileMenu}
-            className="p-2"
+            className="p-2 hover:bg-gray-100"
             aria-label="Toggle mobile menu"
           >
             {isMobileMenuOpen ? (
-              <X className="h-5 w-5" />
+              <X className="h-6 w-6 text-gray-700" />
             ) : (
-              <Menu className="h-5 w-5" />
+              <Menu className="h-6 w-6 text-gray-700" />
             )}
           </Button>
         </div>
@@ -74,29 +73,32 @@ const Header = () => {
 
       {/* Mobile Navigation Menu */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100">
-          <nav className="px-4 py-4 space-y-2">
+        <div className="md:hidden bg-white border-t border-gray-100 shadow-lg z-40">
+          <nav className="px-4 py-6 space-y-1">
             <Link 
               to="/advisors" 
-              className="block py-2 text-gray-600 hover:text-brand-blue transition-colors"
+              className="block py-3 px-2 text-gray-700 hover:text-brand-blue hover:bg-gray-50 rounded-md transition-colors font-medium"
               onClick={closeMobileMenu}
             >
               Financial Advisors
             </Link>
             <Link 
               to="/firms" 
-              className="block py-2 text-gray-600 hover:text-brand-blue transition-colors"
+              className="block py-3 px-2 text-gray-700 hover:text-brand-blue hover:bg-gray-50 rounded-md transition-colors font-medium"
               onClick={closeMobileMenu}
             >
               Investment Firms
             </Link>
             <Link 
               to="/blog" 
-              className="block py-2 text-gray-600 hover:text-brand-blue transition-colors"
+              className="block py-3 px-2 text-gray-700 hover:text-brand-blue hover:bg-gray-50 rounded-md transition-colors font-medium"
               onClick={closeMobileMenu}
             >
               Blog
             </Link>
+            <div className="pt-4 mt-4 border-t border-gray-100">
+              <UserMenu />
+            </div>
           </nav>
         </div>
       )}
