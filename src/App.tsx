@@ -28,6 +28,7 @@ import BlogEditor from "./pages/admin/BlogEditor";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import AdminEntityDashboard from "./pages/admin/AdminEntityDashboard";
 import NotFound from "./pages/NotFound";
+import ScrollToTop from "./components/common/ScrollToTop";
 
 const queryClient = new QueryClient();
 
@@ -38,6 +39,7 @@ const App = () => (
       <Sonner />
       <HelmetProvider>
         <AuthProvider>
+          <ScrollToTop />
           <div className="min-h-screen bg-background font-sans antialiased">
             <Header />
             <div className="flex flex-col min-h-screen">
