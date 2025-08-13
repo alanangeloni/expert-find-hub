@@ -108,20 +108,10 @@ const ensureDir = (dirPath: string) => {
   }
 };
 
-// Generate homepage
+// Generate homepage (don't overwrite main index.html for SPA routing)
 const generateHomepage = () => {
-  console.log('Generating homepage...');
-  
-  const title = 'Financial Professional | Find a Financial Professional';
-  const description = 'Find a Financial Professional to help plan and manage your wealth! Search Financial Advisors, Financial Planners, Insurance Professionals, Tax and Accounting experts, and more.';
-  const content = `
-    <h1>Find a Financial Professional</h1>
-    <p>Browse financial advisors, investment firms, and accounting professionals to help you achieve your financial goals.</p>
-  `;
-  
-  const html = createHtml(title, description, content);
-  fs.writeFileSync(path.join(process.cwd(), 'dist', 'index.html'), html);
-  console.log('✅ Homepage generated');
+  console.log('Skipping homepage generation to preserve SPA routing...');
+  console.log('✅ Homepage preserved for client-side routing');
 };
 
 // Generate investment firms listing page
