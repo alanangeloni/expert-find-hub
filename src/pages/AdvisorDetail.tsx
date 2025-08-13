@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -13,7 +12,6 @@ import { MeetingRequestForm } from '@/components/advisors/MeetingRequestForm';
 import { AdvisorServices } from '@/components/advisors/AdvisorServices';
 import { Seo } from '@/components/seo/Seo';
 import { Calendar, MapPin, Building, Award, Star, Check, Phone, Mail, Globe, FileText, DollarSign, Shield, MessageCircle, Users } from 'lucide-react';
-
 const AdvisorDetail = () => {
   const {
     slug
@@ -29,7 +27,6 @@ const AdvisorDetail = () => {
     queryFn: () => getAdvisorBySlug(slug || ''),
     enabled: !!slug
   });
-
   if (isLoadingAdvisor) {
     return <div className="container mx-auto py-16 flex justify-center">
         <Spinner size="lg" />
@@ -129,7 +126,7 @@ const AdvisorDetail = () => {
               
               {advisor.firm_name && advisor.firm_logo_url && <div className="mt-4 flex items-center">
                   <img src={advisor.firm_logo_url} alt={advisor.firm_name} className="h-12 mr-3" />
-                  <span className="text-lg font-medium">{advisor.firm_name}</span>
+                  
                 </div>}
             </Card>}
         </div>
@@ -206,11 +203,9 @@ const AdvisorDetail = () => {
                   <div>
                     <p className="font-medium text-sm text-gray-700 mb-1">Licenses</p>
                     <div className="flex flex-wrap gap-1">
-                      {advisor.licenses.map((license, index) => (
-                        <Badge key={index} variant="outline" className="whitespace-nowrap">
+                      {advisor.licenses.map((license, index) => <Badge key={index} variant="outline" className="whitespace-nowrap">
                           {license}
-                        </Badge>
-                      ))}
+                        </Badge>)}
                     </div>
                   </div>
                 </div>}
@@ -237,43 +232,37 @@ const AdvisorDetail = () => {
         </div>
         
         {/* Disclaimer Section */}
-        {advisor.disclaimer && (
-          <div className="lg:col-span-2">
+        {advisor.disclaimer && <div className="lg:col-span-2">
             <div className="px-4">
               <div className="bg-gray-50 p-6 rounded-lg border border-gray-200 mt-8">
                 <h3 className="text-lg font-medium text-gray-900 mb-3">Disclaimer</h3>
                 <p className="text-gray-600 text-sm whitespace-pre-line">{advisor.disclaimer}</p>
               </div>
             </div>
-          </div>
-        )}
+          </div>}
       </div>
     </div>;
 };
 const AdvisorDetailPage = () => {
-  const { slug } = useParams<{ slug: string }>();
-  const { data: advisor } = useQuery({
+  const {
+    slug
+  } = useParams<{
+    slug: string;
+  }>();
+  const {
+    data: advisor
+  } = useQuery({
     queryKey: ['advisor', slug],
     queryFn: () => getAdvisorBySlug(slug || ''),
-    enabled: !!slug,
+    enabled: !!slug
   });
 
   // Generate SEO metadata according to specifications
   const pageTitle = advisor?.name || 'Financial Advisor';
-  const pageDescription = advisor ? 
-    `${advisor.position || 'Financial Advisor'} at ${advisor.firm_name || 'their firm'}. ${advisor.personal_bio?.substring(0, 155) || 'Contact for professional financial advice'}...` : 
-    'Professional financial advisor profile and contact information.';
-
-  return (
-    <>
-      <Seo 
-        title={pageTitle}
-        description={pageDescription}
-        canonicalUrl={`https://yoursite.com/advisors/${slug}`}
-      />
+  const pageDescription = advisor ? `${advisor.position || 'Financial Advisor'} at ${advisor.firm_name || 'their firm'}. ${advisor.personal_bio?.substring(0, 155) || 'Contact for professional financial advice'}...` : 'Professional financial advisor profile and contact information.';
+  return <>
+      <Seo title={pageTitle} description={pageDescription} canonicalUrl={`https://yoursite.com/advisors/${slug}`} />
       <AdvisorDetail />
-    </>
-  );
+    </>;
 };
-
 export default AdvisorDetailPage;
