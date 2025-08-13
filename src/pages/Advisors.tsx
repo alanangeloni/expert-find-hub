@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useSearchParams } from 'react-router-dom';
 import { getAdvisors, getUniqueStates, type AdvisorFilter } from '@/services/advisorsService';
 import { AdvisorList } from '@/components/advisors/AdvisorList';
 import { AdvisorSearchForm } from '@/components/advisors/AdvisorSearchForm';
@@ -13,6 +14,7 @@ type PaginationState = {
 };
 
 const AdvisorSearch = () => {
+  const [searchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [filters, setFilters] = useState<AdvisorFilter>({
     state: undefined,
@@ -27,6 +29,24 @@ const AdvisorSearch = () => {
     pageSize: 15,
     totalCount: 0
   });
+
+  // Initialize filters from URL parameters
+  useEffect(() => {
+    const specialtiesParam = searchParams.get('specialties');
+    const stateParam = searchParams.get('state');
+    const clientTypeParam = searchParams.get('clientType');
+    const minimumAssetsParam = searchParams.get('minimumAssets');
+    
+    if (specialtiesParam || stateParam || clientTypeParam || minimumAssetsParam) {
+      setFilters(prev => ({
+        ...prev,
+        specialties: specialtiesParam ? [specialtiesParam] : [],
+        state: stateParam || undefined,
+        clientType: clientTypeParam || undefined,
+        minimumAssets: minimumAssetsParam || undefined
+      }));
+    }
+  }, [searchParams]);
 
   // Fetch unique states for the dropdown
   useEffect(() => {
