@@ -7,11 +7,9 @@ import './index.css'
 
 const root = document.getElementById("root")!;
 const app = (
-  <HelmetProvider>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </HelmetProvider>
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>
 );
 
 // Use hydration for SSR in production
