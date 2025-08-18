@@ -10,22 +10,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { format } from 'date-fns';
 import { NewsletterSignup } from '@/components/common/NewsletterSignup';
 import { Seo } from '@/components/seo/Seo';
-import { 
-  Pagination, 
-  PaginationContent, 
-  PaginationItem, 
-  PaginationLink, 
-  PaginationNext, 
-  PaginationPrevious,
-  PaginationEllipsis 
-} from '@/components/ui/pagination';
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, PaginationEllipsis } from '@/components/ui/pagination';
 const Blog = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [totalCount, setTotalCount] = useState<number>(0);
-  
   const postsPerPage = 15;
 
   // Get categories directly from our predefined list
@@ -58,11 +49,7 @@ const Blog = () => {
       if (searchQuery.trim() === '') {
         setPosts(postsResponse.posts);
       } else {
-        const filteredPosts = postsResponse.posts.filter(post => 
-          post.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-          post.content.toLowerCase().includes(searchQuery.toLowerCase()) || 
-          (post.excerpt && post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()))
-        );
+        const filteredPosts = postsResponse.posts.filter(post => post.title.toLowerCase().includes(searchQuery.toLowerCase()) || post.content.toLowerCase().includes(searchQuery.toLowerCase()) || post.excerpt && post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()));
         setPosts(filteredPosts);
       }
     }
@@ -75,10 +62,12 @@ const Blog = () => {
 
   // Calculate pagination
   const totalPages = Math.ceil(totalCount / postsPerPage);
-  
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   };
 
   // Function to truncate text for post excerpts
@@ -149,16 +138,7 @@ const Blog = () => {
                 {/* Excerpt */}
                 <p className="text-slate-600 mb-2 text-[15px] leading-snug line-clamp-2">{truncateText(post.excerpt || post.content, 100)}</p>
                 {/* Author Section */}
-                <div className="flex items-center gap-2 mb-2">
-                  {/* Avatar */}
-                  <div className="w-7 h-7 rounded-full bg-slate-200 flex items-center justify-center text-slate-400">
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" /><path d="M4 20c0-4 8-4 8-4s8 0 8 4" /></svg>
-                  </div>
-                  <div>
-                    <div className="font-semibold text-slate-900 text-xs">{post.authorName || 'Author Name'}</div>
-                    
-                  </div>
-                </div>
+                
                 {/* Footer - one line, small */}
                 <div className="flex items-center justify-between text-xs text-slate-500 border-t pt-2 mt-auto">
                   <div className="flex items-center gap-2">
@@ -174,99 +154,67 @@ const Blog = () => {
         </div> : null}
 
       {/* Pagination */}
-      {!postsLoading && posts.length > 0 && totalPages > 1 && (
-        <div className="flex justify-center mt-8 mb-16">
+      {!postsLoading && posts.length > 0 && totalPages > 1 && <div className="flex justify-center mt-8 mb-16">
           <Pagination>
             <PaginationContent>
-              {currentPage > 1 && (
-                <PaginationItem>
-                  <PaginationPrevious 
-                    href="#" 
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handlePageChange(currentPage - 1);
-                    }}
-                  />
-                </PaginationItem>
-              )}
+              {currentPage > 1 && <PaginationItem>
+                  <PaginationPrevious href="#" onClick={e => {
+              e.preventDefault();
+              handlePageChange(currentPage - 1);
+            }} />
+                </PaginationItem>}
               
               {/* First page */}
-              {currentPage > 3 && (
-                <>
+              {currentPage > 3 && <>
                   <PaginationItem>
-                    <PaginationLink 
-                      href="#" 
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handlePageChange(1);
-                      }}
-                    >
+                    <PaginationLink href="#" onClick={e => {
+                e.preventDefault();
+                handlePageChange(1);
+              }}>
                       1
                     </PaginationLink>
                   </PaginationItem>
-                  {currentPage > 4 && (
-                    <PaginationItem>
+                  {currentPage > 4 && <PaginationItem>
                       <PaginationEllipsis />
-                    </PaginationItem>
-                  )}
-                </>
-              )}
+                    </PaginationItem>}
+                </>}
               
               {/* Pages around current page */}
-              {Array.from({ length: totalPages }, (_, i) => i + 1)
-                .filter(page => Math.abs(page - currentPage) <= 2)
-                .map((page) => (
-                  <PaginationItem key={page}>
-                    <PaginationLink
-                      href="#"
-                      isActive={page === currentPage}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handlePageChange(page);
-                      }}
-                    >
+              {Array.from({
+            length: totalPages
+          }, (_, i) => i + 1).filter(page => Math.abs(page - currentPage) <= 2).map(page => <PaginationItem key={page}>
+                    <PaginationLink href="#" isActive={page === currentPage} onClick={e => {
+              e.preventDefault();
+              handlePageChange(page);
+            }}>
                       {page}
                     </PaginationLink>
-                  </PaginationItem>
-                ))}
+                  </PaginationItem>)}
               
               {/* Last page */}
-              {currentPage < totalPages - 2 && (
-                <>
-                  {currentPage < totalPages - 3 && (
-                    <PaginationItem>
+              {currentPage < totalPages - 2 && <>
+                  {currentPage < totalPages - 3 && <PaginationItem>
                       <PaginationEllipsis />
-                    </PaginationItem>
-                  )}
+                    </PaginationItem>}
                   <PaginationItem>
-                    <PaginationLink 
-                      href="#" 
-                      onClick={(e) => {
-                        e.preventDefault();
-                        handlePageChange(totalPages);
-                      }}
-                    >
+                    <PaginationLink href="#" onClick={e => {
+                e.preventDefault();
+                handlePageChange(totalPages);
+              }}>
                       {totalPages}
                     </PaginationLink>
                   </PaginationItem>
-                </>
-              )}
+                </>}
               
-              {currentPage < totalPages && (
-                <PaginationItem>
-                  <PaginationNext 
-                    href="#" 
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handlePageChange(currentPage + 1);
-                    }}
-                  />
-                </PaginationItem>
-              )}
+              {currentPage < totalPages && <PaginationItem>
+                  <PaginationNext href="#" onClick={e => {
+              e.preventDefault();
+              handlePageChange(currentPage + 1);
+            }} />
+                </PaginationItem>}
             </PaginationContent>
           </Pagination>
-        </div>
-      )}
+        </div>}
 
       {/* Newsletter Signup Section */}
       <div className="mt-16 mb-4">
@@ -275,15 +223,9 @@ const Blog = () => {
     </div>;
 };
 const BlogPage = () => {
-  return (
-    <>
-      <Seo 
-        title="Blog | Financial Professional - Increase Your Financial IQ in Minutes!"
-        description="Read the latest financial articles! Learn more about investing, retirement, saving, insurance, and more."
-        canonicalUrl="https://yoursite.com/blog"
-      />
+  return <>
+      <Seo title="Blog | Financial Professional - Increase Your Financial IQ in Minutes!" description="Read the latest financial articles! Learn more about investing, retirement, saving, insurance, and more." canonicalUrl="https://yoursite.com/blog" />
       <Blog />
-    </>
-  );
+    </>;
 };
 export default BlogPage;
