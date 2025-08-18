@@ -26,6 +26,11 @@ export interface BlogCategory {
   slug: string;
 }
 
+export interface BlogPostsResponse {
+  posts: BlogPost[];
+  totalCount: number;
+}
+
 export const uploadBlogImage = async (file: File): Promise<string | null> => {
   try {
     const fileExt = file.name.split('.').pop();
@@ -56,6 +61,7 @@ export const getBlogPosts = async (options: {
   status?: 'draft' | 'published' | 'all';
   category?: string;
   limit?: number;
+  offset?: number;
   authorId?: string;
 } = {}): Promise<BlogPost[]> => {
   try {
@@ -72,6 +78,10 @@ export const getBlogPosts = async (options: {
     
     if (options.limit) {
       query = query.limit(options.limit);
+    }
+
+    if (options.offset) {
+      query = query.range(options.offset, options.offset + (options.limit || 50) - 1);
     }
     
     // Order by published date or created date
@@ -108,6 +118,69 @@ export const getBlogPosts = async (options: {
   } catch (error) {
     console.error('Error in getBlogPosts:', error);
     return [];
+  }
+};
+
+export const getBlogPostsWithCount = async (options: {
+  status?: 'draft' | 'published' | 'all';
+  category?: string;
+  limit?: number;
+  offset?: number;
+  authorId?: string;
+} = {}): Promise<BlogPostsResponse> => {
+  try {
+    let query = supabase.from('blog_posts').select('*', { count: 'exact' });
+
+    // Apply filters
+    if (options.status && options.status !== 'all') {
+      query = query.eq('status', options.status);
+    }
+    
+    if (options.authorId) {
+      query = query.eq('author_id', options.authorId);
+    }
+    
+    // Order by published date or created date
+    query = query.order('published_at', { ascending: false })
+                 .order('created_at', { ascending: false });
+
+    if (options.offset && options.limit) {
+      query = query.range(options.offset, options.offset + options.limit - 1);
+    } else if (options.limit) {
+      query = query.limit(options.limit);
+    }
+
+    const { data, error, count } = await query;
+    
+    if (error) {
+      console.error('Error fetching blog posts with count:', error);
+      return { posts: [], totalCount: 0 };
+    }
+    
+    if (!data) return { posts: [], totalCount: 0 };
+    
+    // Get categories for each post using our utility function
+    const posts = await Promise.all(data.map(async (post) => {
+      const postCategories = await getPostCategories(post.id);
+      return {
+        ...post,
+        categories: postCategories,
+        status: post.status as 'draft' | 'published'
+      } as BlogPost;
+    }));
+    
+    // Filter by category if specified
+    let filteredPosts = posts;
+    if (options.category) {
+      filteredPosts = posts.filter(post => 
+        post.categories && post.categories.includes(options.category)
+      );
+    }
+    
+    return { posts: filteredPosts, totalCount: count || 0 };
+  } catch (error) {
+    console.error('Error in getBlogPostsWithCount:', error);
+    return { posts: [], totalCount: 0 };
   }
 };
 

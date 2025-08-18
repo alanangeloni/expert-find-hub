@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { getBlogPosts, getBlogCategories, type BlogPost, type BlogCategory } from '@/services/blogService';
+import { getBlogPostsWithCount, getBlogCategories, type BlogPost, type BlogCategory } from '@/services/blogService';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
@@ -10,10 +10,23 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { format } from 'date-fns';
 import { NewsletterSignup } from '@/components/common/NewsletterSignup';
 import { Seo } from '@/components/seo/Seo';
+import { 
+  Pagination, 
+  PaginationContent, 
+  PaginationItem, 
+  PaginationLink, 
+  PaginationNext, 
+  PaginationPrevious,
+  PaginationEllipsis 
+} from '@/components/ui/pagination';
 const Blog = () => {
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [totalCount, setTotalCount] = useState<number>(0);
+  
+  const postsPerPage = 15;
 
   // Get categories directly from our predefined list
   const {
@@ -24,29 +37,49 @@ const Blog = () => {
     queryFn: getBlogCategories
   });
 
-  // Fetch blog posts
+  // Fetch blog posts with pagination
   const {
-    data: postsData,
+    data: postsResponse,
     isLoading: postsLoading
   } = useQuery({
-    queryKey: ['blogPosts', selectedCategory, searchQuery],
-    queryFn: () => getBlogPosts({
+    queryKey: ['blogPosts', selectedCategory, currentPage, searchQuery],
+    queryFn: () => getBlogPostsWithCount({
       status: 'published',
-      category: selectedCategory === 'all' ? undefined : selectedCategory
+      category: selectedCategory === 'all' ? undefined : selectedCategory,
+      limit: postsPerPage,
+      offset: (currentPage - 1) * postsPerPage
     })
   });
 
   // Update posts when data changes or when search query changes
   useEffect(() => {
-    if (postsData) {
+    if (postsResponse) {
+      setTotalCount(postsResponse.totalCount);
       if (searchQuery.trim() === '') {
-        setPosts(postsData);
+        setPosts(postsResponse.posts);
       } else {
-        const filteredPosts = postsData.filter(post => post.title.toLowerCase().includes(searchQuery.toLowerCase()) || post.content.toLowerCase().includes(searchQuery.toLowerCase()) || post.excerpt && post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()));
+        const filteredPosts = postsResponse.posts.filter(post => 
+          post.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+          post.content.toLowerCase().includes(searchQuery.toLowerCase()) || 
+          (post.excerpt && post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()))
+        );
         setPosts(filteredPosts);
       }
     }
-  }, [postsData, searchQuery]);
+  }, [postsResponse, searchQuery]);
+
+  // Reset to first page when category or search changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedCategory, searchQuery]);
+
+  // Calculate pagination
+  const totalPages = Math.ceil(totalCount / postsPerPage);
+  
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   // Function to truncate text for post excerpts
   const truncateText = (text: string, maxLength: number) => {
@@ -139,6 +172,101 @@ const Blog = () => {
         </div> : !postsLoading ? <div className="text-center py-12">
           <p className="text-lg text-gray-600">No articles found for this category.</p>
         </div> : null}
+
+      {/* Pagination */}
+      {!postsLoading && posts.length > 0 && totalPages > 1 && (
+        <div className="flex justify-center mt-8 mb-16">
+          <Pagination>
+            <PaginationContent>
+              {currentPage > 1 && (
+                <PaginationItem>
+                  <PaginationPrevious 
+                    href="#" 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handlePageChange(currentPage - 1);
+                    }}
+                  />
+                </PaginationItem>
+              )}
+              
+              {/* First page */}
+              {currentPage > 3 && (
+                <>
+                  <PaginationItem>
+                    <PaginationLink 
+                      href="#" 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handlePageChange(1);
+                      }}
+                    >
+                      1
+                    </PaginationLink>
+                  </PaginationItem>
+                  {currentPage > 4 && (
+                    <PaginationItem>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  )}
+                </>
+              )}
+              
+              {/* Pages around current page */}
+              {Array.from({ length: totalPages }, (_, i) => i + 1)
+                .filter(page => Math.abs(page - currentPage) <= 2)
+                .map((page) => (
+                  <PaginationItem key={page}>
+                    <PaginationLink
+                      href="#"
+                      isActive={page === currentPage}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handlePageChange(page);
+                      }}
+                    >
+                      {page}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+              
+              {/* Last page */}
+              {currentPage < totalPages - 2 && (
+                <>
+                  {currentPage < totalPages - 3 && (
+                    <PaginationItem>
+                      <PaginationEllipsis />
+                    </PaginationItem>
+                  )}
+                  <PaginationItem>
+                    <PaginationLink 
+                      href="#" 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handlePageChange(totalPages);
+                      }}
+                    >
+                      {totalPages}
+                    </PaginationLink>
+                  </PaginationItem>
+                </>
+              )}
+              
+              {currentPage < totalPages && (
+                <PaginationItem>
+                  <PaginationNext 
+                    href="#" 
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handlePageChange(currentPage + 1);
+                    }}
+                  />
+                </PaginationItem>
+              )}
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
 
       {/* Newsletter Signup Section */}
       <div className="mt-16 mb-4">
