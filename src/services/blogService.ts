@@ -121,6 +121,7 @@ export const getBlogPosts = async (options: {
   }
 };
 
+// Get blog posts with pagination count
 export const getBlogPostsWithCount = async (options: {
   status?: 'draft' | 'published' | 'all';
   category?: string;
