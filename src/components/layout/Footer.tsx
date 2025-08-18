@@ -68,7 +68,7 @@ const Footer = () => {
               </ul>
             </div>
             
-            <div className="sm:col-span-2 lg:col-span-1">
+            <div className="sm:col-span-2 lg:col-span-1 hidden">
               <h3 className="text-sm font-semibold text-gray-300 uppercase tracking-wider mb-3 md:mb-4">
                 Legal
               </h3>
