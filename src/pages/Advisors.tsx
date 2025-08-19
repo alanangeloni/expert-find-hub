@@ -37,15 +37,13 @@ const AdvisorSearch = () => {
     const clientTypeParam = searchParams.get('clientType');
     const minimumAssetsParam = searchParams.get('minimumAssets');
     
-    if (specialtiesParam || stateParam || clientTypeParam || minimumAssetsParam) {
-      setFilters(prev => ({
-        ...prev,
-        specialties: specialtiesParam ? [specialtiesParam] : [],
-        state: stateParam || undefined,
-        clientType: clientTypeParam || undefined,
-        minimumAssets: minimumAssetsParam || undefined
-      }));
-    }
+    setFilters({
+      specialties: specialtiesParam ? [specialtiesParam] : [],
+      state: stateParam || undefined,
+      clientType: clientTypeParam || undefined,
+      minimumAssets: minimumAssetsParam || undefined,
+      searchQuery: ''
+    });
   }, [searchParams]);
 
   // Fetch unique states for the dropdown
