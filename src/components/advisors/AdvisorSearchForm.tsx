@@ -45,9 +45,8 @@ export const AdvisorSearchForm = ({
     if (urlSpecialties) {
       const specialtiesArray = decodeURIComponent(urlSpecialties).split(',').filter(Boolean);
       setSelectedSpecialties(specialtiesArray);
-      onSpecialtyChange(specialtiesArray);
     }
-  }, [searchParams, onSpecialtyChange]);
+  }, [searchParams]);
 
   // Sync local state with filters
   useEffect(() => {
