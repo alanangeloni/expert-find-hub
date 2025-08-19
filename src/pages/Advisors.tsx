@@ -115,7 +115,7 @@ const AdvisorSearch = () => {
   const handleSpecialtyChange = (specialties: string[]) => {
     setFilters(prev => ({ 
       ...prev, 
-      specialties: specialties.length === 0 ? undefined : specialties 
+      specialties: specialties.length === 0 ? [] : specialties 
     }));
     setPagination(prev => ({ ...prev, page: 1 }));
   };
