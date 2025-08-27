@@ -13,17 +13,17 @@ const AppPage = () => {
         description="Professional investment platform with real-time analytics, earnings insights, and powerful trading tools. Start investing with confidence."
       />
       
-      <main className="min-h-screen">
+      <main className="min-h-screen p-4 md:p-8">
         {/* Hero Section */}
         <section 
-          className="relative min-h-[600px] flex items-center justify-center overflow-hidden"
+          className="relative min-h-[600px] flex items-center justify-center overflow-hidden rounded-2xl"
           style={{
             backgroundImage: `url(${cloudHeroBg})`,
             backgroundSize: 'cover',
             backgroundPosition: 'center',
           }}
         >
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/20" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background/20 rounded-2xl" />
           
           <div className="container relative z-10 mx-auto px-4 py-20">
             <div className="text-center max-w-4xl mx-auto">
