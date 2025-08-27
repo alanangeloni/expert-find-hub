@@ -29,6 +29,7 @@ import AdminDashboard from "./components/admin/AdminDashboard";
 import AdminEntityDashboard from "./pages/admin/AdminEntityDashboard";
 import NotFound from "./pages/NotFound";
 import ScrollToTop from "./components/common/ScrollToTop";
+import AppPage from "./pages/App";
 
 const queryClient = new QueryClient();
 
@@ -99,6 +100,7 @@ const App = () => (
                       </ProtectedRoute>
                     }
                   />
+                  <Route path="/app" element={<AppPage />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </div>
