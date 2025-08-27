@@ -28,7 +28,7 @@ const AppPage = () => {
           <div className="container relative z-10 mx-auto px-4 py-20">
             <div className="text-center max-w-4xl mx-auto">
               <h1 className="text-5xl md:text-6xl font-bold text-primary mb-6">
-                Put a financial professional<br />in your pocket
+                Put a Financial Professional<br />in your pocket
               </h1>
               
               <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
