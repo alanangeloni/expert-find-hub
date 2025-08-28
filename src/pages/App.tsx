@@ -48,102 +48,11 @@ const AppPage = () => {
               </div>
               
               {/* Dashboard Preview */}
-              <Card className="max-w-4xl mx-auto p-0 bg-background border-border/50 overflow-hidden">
-                <div className="flex h-[400px]">
-                  {/* Sidebar */}
-                  <div className="w-48 bg-muted/20 border-r border-border p-4">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2 p-2 bg-primary/10 rounded text-primary">
-                        <BarChart3 className="h-4 w-4" />
-                        <span className="text-sm font-medium">Dashboard</span>
-                      </div>
-                      <div className="flex items-center gap-2 p-2 hover:bg-muted/50 rounded cursor-pointer">
-                        <span className="text-sm text-muted-foreground">Accounts</span>
-                      </div>
-                      <div className="flex items-center gap-2 p-2 hover:bg-muted/50 rounded cursor-pointer">
-                        <span className="text-sm text-muted-foreground">AI Assistant</span>
-                      </div>
-                      <div className="flex items-center gap-2 p-2 hover:bg-muted/50 rounded cursor-pointer">
-                        <span className="text-sm text-muted-foreground">Stocks</span>
-                      </div>
-                      <div className="flex items-center gap-2 p-2 hover:bg-muted/50 rounded cursor-pointer">
-                        <span className="text-sm text-muted-foreground">Transactions</span>
-                      </div>
-                    </div>
-                    
-                    <div className="mt-8">
-                      <div className="text-xs text-muted-foreground mb-2">Portfolio</div>
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Cash</span>
-                          <span>$10,250</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Stocks</span>
-                          <span>$66,296</span>
-                        </div>
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Real Estate</span>
-                          <span>$750,000</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Main Content */}
-                  <div className="flex-1 p-6">
-                    <div className="mb-6">
-                      <div className="text-xs text-muted-foreground mb-1">Net Worth</div>
-                      <div className="text-3xl font-bold">$845,456.17</div>
-                      <div className="text-sm text-green-500">+3.21% (+$26,291) vs last month</div>
-                    </div>
-                    
-                    {/* Chart Area */}
-                    <div className="h-32 relative mb-6">
-                      <svg className="w-full h-full">
-                        <path
-                          d="M 0 80 Q 50 75, 100 70 T 200 60 Q 250 55, 300 45 T 400 30 Q 450 25, 500 15 T 600 10"
-                          stroke="hsl(var(--primary))"
-                          strokeWidth="2"
-                          fill="none"
-                          className="opacity-80"
-                        />
-                        <path
-                          d="M 0 80 Q 50 75, 100 70 T 200 60 Q 250 55, 300 45 T 400 30 Q 450 25, 500 15 T 600 10 L 600 120 L 0 120 Z"
-                          fill="hsl(var(--primary))"
-                          className="opacity-10"
-                        />
-                      </svg>
-                    </div>
-                    
-                    {/* Asset Distribution */}
-                    <div>
-                      <div className="text-sm font-medium mb-3">Asset Distribution</div>
-                      <div className="flex items-center gap-2 h-20">
-                        <div className="h-full w-8 bg-blue-500 rounded" />
-                        <div className="h-16 w-8 bg-green-500 rounded" />
-                        <div className="h-12 w-8 bg-orange-500 rounded" />
-                        <div className="h-10 w-8 bg-purple-500 rounded" />
-                        <div className="h-14 w-8 bg-pink-500 rounded" />
-                      </div>
-                      <div className="flex gap-4 mt-3">
-                        <div className="flex items-center gap-1">
-                          <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                          <span className="text-xs text-muted-foreground">Stocks 53%</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <div className="w-2 h-2 bg-green-500 rounded-full" />
-                          <span className="text-xs text-muted-foreground">Real Estate 36%</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <div className="w-2 h-2 bg-orange-500 rounded-full" />
-                          <span className="text-xs text-muted-foreground">Collectibles 11%</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </Card>
+              <img 
+                src="/lovable-uploads/6b2aeaf0-facd-4a49-8070-a7ae8525bf3c.png"
+                alt="Financial Dashboard"
+                className="max-w-4xl mx-auto rounded-2xl shadow-2xl"
+              />
             </div>
           </div>
         </section>
