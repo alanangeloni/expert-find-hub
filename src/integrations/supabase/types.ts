@@ -932,7 +932,7 @@ export type Database = {
         Returns: undefined
       }
       get_blog_categories: {
-        Args: Record<PropertyKey, never>
+        Args: never
         Returns: {
           id: string
           name: string
@@ -1019,6 +1019,12 @@ export type Database = {
         | "Series 79"
         | "Series 99"
         | "SIE"
+        | "NYS Life"
+        | "NYS Partnership Certificate"
+        | "Series 51"
+        | "Series 7TO"
+        | "Series 53"
+        | "Life & Annuities, Health, and Variable Contracts"
       "Asset Class":
         | "Art"
         | "Asset Management"
@@ -1127,6 +1133,29 @@ export type Database = {
         | "Certified College Financial Consultant (CCFC)"
         | "Chartered SRI Counselor (CSRIC)"
         | "Certified Financial Therapist™ (CFT™)"
+        | "Certified Estate Planner (CEP)"
+        | "Master of Science in Financial Planning (MSFP)"
+        | "Certified Plan Fiduciary Advisor (CPFA®)"
+        | "Accredited Asset Management Specialist (AAMS)"
+        | "Accredited Investment Fiduciary Analyst (AIFA)"
+        | "Certified Investment Management Analyst® (CIMA®)"
+        | "Accredited Wealth Management Advisor (AWMA)"
+        | "Federal Retirement Consultant (FRC)"
+        | "Certified Wealth Strategist (CWS)"
+        | "Financial Services Certified Professional (FSCP)"
+        | "CVA (Certified Valuation Analyst)"
+        | "Chartered Retirement Plans Specialist (CRPS)"
+        | "Certified Private Wealth Advisor® (CPWA®)"
+        | "Certification in Long-Term Care (CLTC)"
+        | "Accredited Behavioral Finance Professional (ABFP®)"
+        | "Certified Plan Fiduciary Advisor (CPFA)"
+        | "Registered Social Security Analyst (RSSA)"
+        | "Registered Life Planner (RLP)"
+        | "Chartered Alternative Investment Analyst (CAIA)"
+        | "Accredited Domestic Partnership Advisor (ADPA)"
+        | "Chartered Mutual Fund Counselor (CMFC)"
+        | "Registered Financial Planner (RFP)"
+        | "Master Registered Financial Consultant (MRFC)"
       return_type:
         | "Dividends"
         | "Dividends & Value"
@@ -1379,6 +1408,12 @@ export const Constants = {
         "Series 79",
         "Series 99",
         "SIE",
+        "NYS Life",
+        "NYS Partnership Certificate",
+        "Series 51",
+        "Series 7TO",
+        "Series 53",
+        "Life & Annuities, Health, and Variable Contracts",
       ],
       "Asset Class": [
         "Art",
@@ -1496,6 +1531,29 @@ export const Constants = {
         "Certified College Financial Consultant (CCFC)",
         "Chartered SRI Counselor (CSRIC)",
         "Certified Financial Therapist™ (CFT™)",
+        "Certified Estate Planner (CEP)",
+        "Master of Science in Financial Planning (MSFP)",
+        "Certified Plan Fiduciary Advisor (CPFA®)",
+        "Accredited Asset Management Specialist (AAMS)",
+        "Accredited Investment Fiduciary Analyst (AIFA)",
+        "Certified Investment Management Analyst® (CIMA®)",
+        "Accredited Wealth Management Advisor (AWMA)",
+        "Federal Retirement Consultant (FRC)",
+        "Certified Wealth Strategist (CWS)",
+        "Financial Services Certified Professional (FSCP)",
+        "CVA (Certified Valuation Analyst)",
+        "Chartered Retirement Plans Specialist (CRPS)",
+        "Certified Private Wealth Advisor® (CPWA®)",
+        "Certification in Long-Term Care (CLTC)",
+        "Accredited Behavioral Finance Professional (ABFP®)",
+        "Certified Plan Fiduciary Advisor (CPFA)",
+        "Registered Social Security Analyst (RSSA)",
+        "Registered Life Planner (RLP)",
+        "Chartered Alternative Investment Analyst (CAIA)",
+        "Accredited Domestic Partnership Advisor (ADPA)",
+        "Chartered Mutual Fund Counselor (CMFC)",
+        "Registered Financial Planner (RFP)",
+        "Master Registered Financial Consultant (MRFC)",
       ],
       return_type: [
         "Dividends",
