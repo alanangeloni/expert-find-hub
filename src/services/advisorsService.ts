@@ -58,10 +58,10 @@ export const getAdvisors = async (params: GetAdvisorsParams = {}): Promise<GetAd
   try {
     console.log('Fetching advisors with params:', params);
     
+    // Use the secure public view that excludes sensitive contact info (email, phone)
     let query = supabase
-      .from('financial_advisors')
-      .select('*', { count: 'exact' })
-      .eq('status', 'approved');
+      .from('financial_advisors_public')
+      .select('*', { count: 'exact' });
 
     // Apply filters at database level
     if (params.state) {
@@ -78,7 +78,7 @@ export const getAdvisors = async (params: GetAdvisorsParams = {}): Promise<GetAd
 
     // Apply specialty filter at database level
     if (params.specialties && params.specialties.length > 0) {
-      query = query.overlaps('advisor_services', params.specialties as any);
+      query = query.overlaps('advisor_services', params.specialties);
     }
 
     // Apply pagination after all filters
@@ -93,7 +93,7 @@ export const getAdvisors = async (params: GetAdvisorsParams = {}): Promise<GetAd
 
     if (error) throw error;
 
-    const advisors = data || [];
+    const advisors = (data || []) as unknown as Advisor[];
 
     console.log(`Found ${advisors.length} approved advisors after filtering, total count: ${count}`);
     
@@ -109,15 +109,16 @@ export const getAdvisors = async (params: GetAdvisorsParams = {}): Promise<GetAd
 
 export const getUniqueStates = async (): Promise<string[]> => {
   try {
+    // Use the secure public view
     const { data, error } = await supabase
-      .from('financial_advisors')
+      .from('financial_advisors_public')
       .select('state_hq')
-      .not('state_hq', 'is', null)
-      .eq('status', 'approved');
+      .not('state_hq', 'is', null);
 
     if (error) throw error;
 
-    const uniqueStates = Array.from(new Set(data.map(item => item.state_hq).filter(Boolean)));
+    const results = (data || []) as unknown as { state_hq: string }[];
+    const uniqueStates = Array.from(new Set(results.map(item => item.state_hq).filter(Boolean)));
     return uniqueStates.sort();
   } catch (error) {
     console.error('Error fetching unique states:', error);
@@ -127,15 +128,15 @@ export const getUniqueStates = async (): Promise<string[]> => {
 
 export const getAdvisorBySlug = async (slug: string): Promise<Advisor | null> => {
   try {
+    // Use the secure public view that excludes sensitive contact info
     const { data, error } = await supabase
-      .from('financial_advisors')
+      .from('financial_advisors_public')
       .select('*')
       .eq('slug', slug)
-      .eq('status', 'approved')
-      .single();
+      .maybeSingle();
 
     if (error) throw error;
-    return data;
+    return data as unknown as Advisor | null;
   } catch (error) {
     console.error('Error fetching advisor:', error);
     return null;
