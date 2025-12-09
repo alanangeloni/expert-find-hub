@@ -71,7 +71,7 @@ export const AdvisorCard = ({ advisor }: AdvisorCardProps) => {
                 {advisor.minimum && (
                   <p className="text-xs text-gray-500">
                     <span className="font-medium">
-                      {advisor.minimum === "0" ? "No Minimum" : `$${advisor.minimum} min`}
+                      {advisor.minimum === "0" ? "No Minimum" : `${advisor.minimum} min`}
                     </span>
                   </p>
                 )}
