@@ -46,12 +46,6 @@ const Header = () => {
           >
             Blog
           </Link>
-          <Link 
-            to="/app" 
-            className="text-gray-600 hover:text-brand-blue transition-colors"
-          >
-            App
-          </Link>
         </nav>
 
         {/* Desktop User Menu */}
@@ -101,13 +95,6 @@ const Header = () => {
               onClick={closeMobileMenu}
             >
               Blog
-            </Link>
-            <Link 
-              to="/app" 
-              className="block py-3 px-2 text-gray-700 hover:text-brand-blue hover:bg-gray-50 rounded-md transition-colors font-medium"
-              onClick={closeMobileMenu}
-            >
-              App
             </Link>
             <div className="pt-4 mt-4 border-t border-gray-100">
               <UserMenu />
