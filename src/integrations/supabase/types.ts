@@ -116,6 +116,13 @@ export type Database = {
             referencedRelation: "financial_advisors"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "advisor_carousel_images_advisor_id_fkey"
+            columns: ["advisor_id"]
+            isOneToOne: false
+            referencedRelation: "financial_advisors_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       advisor_clientele: {
@@ -143,6 +150,13 @@ export type Database = {
             columns: ["advisor_id"]
             isOneToOne: false
             referencedRelation: "financial_advisors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "advisor_clientele_advisor_id_fkey"
+            columns: ["advisor_id"]
+            isOneToOne: false
+            referencedRelation: "financial_advisors_public"
             referencedColumns: ["id"]
           },
         ]
@@ -174,6 +188,13 @@ export type Database = {
             referencedRelation: "financial_advisors"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "advisor_compensation_types_advisor_id_fkey"
+            columns: ["advisor_id"]
+            isOneToOne: false
+            referencedRelation: "financial_advisors_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       advisor_professional_designations: {
@@ -201,6 +222,13 @@ export type Database = {
             columns: ["advisor_id"]
             isOneToOne: false
             referencedRelation: "financial_advisors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "advisor_professional_designations_advisor_id_fkey"
+            columns: ["advisor_id"]
+            isOneToOne: false
+            referencedRelation: "financial_advisors_public"
             referencedColumns: ["id"]
           },
         ]
@@ -232,6 +260,13 @@ export type Database = {
             referencedRelation: "financial_advisors"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "advisor_professions_advisor_id_fkey"
+            columns: ["advisor_id"]
+            isOneToOne: false
+            referencedRelation: "financial_advisors_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       advisor_states: {
@@ -259,6 +294,13 @@ export type Database = {
             columns: ["advisor_id"]
             isOneToOne: false
             referencedRelation: "financial_advisors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "advisor_states_advisor_id_fkey"
+            columns: ["advisor_id"]
+            isOneToOne: false
+            referencedRelation: "financial_advisors_public"
             referencedColumns: ["id"]
           },
         ]
@@ -798,6 +840,13 @@ export type Database = {
             referencedRelation: "financial_advisors"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "meeting_requests_advisor_id_fkey"
+            columns: ["advisor_id"]
+            isOneToOne: false
+            referencedRelation: "financial_advisors_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       money_making_methods: {
@@ -924,7 +973,161 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      financial_advisors_public: {
+        Row: {
+          advisor_sec_crd: string | null
+          advisor_services:
+            | Database["public"]["Enums"]["Advisor Services"][]
+            | null
+          approved_at: string | null
+          approved_by: string | null
+          city: string | null
+          client_type: Database["public"]["Enums"]["clientele_type"][] | null
+          compensation:
+            | Database["public"]["Enums"]["compensation_type"][]
+            | null
+          created_at: string | null
+          disclaimer: string | null
+          fiduciary: boolean | null
+          firm_address: string | null
+          firm_aum: string | null
+          firm_bio: string | null
+          firm_logo_url: string | null
+          firm_name: string | null
+          firm_sec_crd: string | null
+          headshot_url: string | null
+          id: string | null
+          licenses: Database["public"]["Enums"]["advisors_licenses"][] | null
+          link_to_advisor_sec: string | null
+          link_to_firm_sec: string | null
+          linked_firm: string | null
+          minimum: string | null
+          name: string | null
+          personal_bio: string | null
+          position: string | null
+          primary_education: string | null
+          professional_designations:
+            | Database["public"]["Enums"]["professional_designations_for_advisors"][]
+            | null
+          rejection_reason: string | null
+          slug: string | null
+          state_hq: Database["public"]["Enums"]["States"] | null
+          states_registered_in: Database["public"]["Enums"]["States"][] | null
+          status: string | null
+          submitted_at: string | null
+          updated_at: string | null
+          user_id: string | null
+          verified: boolean | null
+          website_url: string | null
+          years_of_experience: number | null
+          youtube_video_id: string | null
+        }
+        Insert: {
+          advisor_sec_crd?: string | null
+          advisor_services?:
+            | Database["public"]["Enums"]["Advisor Services"][]
+            | null
+          approved_at?: string | null
+          approved_by?: string | null
+          city?: string | null
+          client_type?: Database["public"]["Enums"]["clientele_type"][] | null
+          compensation?:
+            | Database["public"]["Enums"]["compensation_type"][]
+            | null
+          created_at?: string | null
+          disclaimer?: string | null
+          fiduciary?: boolean | null
+          firm_address?: string | null
+          firm_aum?: string | null
+          firm_bio?: string | null
+          firm_logo_url?: string | null
+          firm_name?: string | null
+          firm_sec_crd?: string | null
+          headshot_url?: string | null
+          id?: string | null
+          licenses?: Database["public"]["Enums"]["advisors_licenses"][] | null
+          link_to_advisor_sec?: string | null
+          link_to_firm_sec?: string | null
+          linked_firm?: string | null
+          minimum?: string | null
+          name?: string | null
+          personal_bio?: string | null
+          position?: string | null
+          primary_education?: string | null
+          professional_designations?:
+            | Database["public"]["Enums"]["professional_designations_for_advisors"][]
+            | null
+          rejection_reason?: string | null
+          slug?: string | null
+          state_hq?: Database["public"]["Enums"]["States"] | null
+          states_registered_in?: Database["public"]["Enums"]["States"][] | null
+          status?: string | null
+          submitted_at?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          verified?: boolean | null
+          website_url?: string | null
+          years_of_experience?: number | null
+          youtube_video_id?: string | null
+        }
+        Update: {
+          advisor_sec_crd?: string | null
+          advisor_services?:
+            | Database["public"]["Enums"]["Advisor Services"][]
+            | null
+          approved_at?: string | null
+          approved_by?: string | null
+          city?: string | null
+          client_type?: Database["public"]["Enums"]["clientele_type"][] | null
+          compensation?:
+            | Database["public"]["Enums"]["compensation_type"][]
+            | null
+          created_at?: string | null
+          disclaimer?: string | null
+          fiduciary?: boolean | null
+          firm_address?: string | null
+          firm_aum?: string | null
+          firm_bio?: string | null
+          firm_logo_url?: string | null
+          firm_name?: string | null
+          firm_sec_crd?: string | null
+          headshot_url?: string | null
+          id?: string | null
+          licenses?: Database["public"]["Enums"]["advisors_licenses"][] | null
+          link_to_advisor_sec?: string | null
+          link_to_firm_sec?: string | null
+          linked_firm?: string | null
+          minimum?: string | null
+          name?: string | null
+          personal_bio?: string | null
+          position?: string | null
+          primary_education?: string | null
+          professional_designations?:
+            | Database["public"]["Enums"]["professional_designations_for_advisors"][]
+            | null
+          rejection_reason?: string | null
+          slug?: string | null
+          state_hq?: Database["public"]["Enums"]["States"] | null
+          states_registered_in?: Database["public"]["Enums"]["States"][] | null
+          status?: string | null
+          submitted_at?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+          verified?: boolean | null
+          website_url?: string | null
+          years_of_experience?: number | null
+          youtube_video_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_financial_advisors_linked_firm"
+            columns: ["linked_firm"]
+            isOneToOne: false
+            referencedRelation: "investment_firms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       add_category_to_post: {
