@@ -27,6 +27,10 @@ export default {
 			}
 		},
 		extend: {
+			fontFamily: {
+				display: ['Fraunces', 'Georgia', 'serif'],
+				sans: ['Inter', 'system-ui', 'sans-serif'],
+			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
@@ -35,8 +39,30 @@ export default {
 				foreground: 'hsl(var(--foreground))',
 				"brand-blue": "#1A365D",
 				"brand-teal": "#2DD4BF",
+				ink: {
+					DEFAULT: 'hsl(var(--ink))',
+					2: 'hsl(var(--ink-2))',
+					3: 'hsl(var(--ink-3))',
+				},
+				aqua: {
+					DEFAULT: 'hsl(var(--aqua))',
+					soft: 'hsl(var(--aqua-soft))',
+					dark: 'hsl(var(--aqua-2))',
+				},
+				blue: {
+					DEFAULT: 'hsl(var(--blue))',
+					dark: 'hsl(var(--blue-2))',
+					light: 'hsl(var(--blue-3))',
+				},
+				sand: {
+					DEFAULT: 'hsl(var(--sand))',
+					2: 'hsl(var(--sand-2))',
+				},
+				line: 'hsl(var(--line))',
 				"mint": {
-					DEFAULT: "#31d6aa",
+					DEFAULT: "hsl(var(--mint))",
+					soft: "hsl(var(--mint-soft))",
+					2: "hsl(var(--mint-2))",
 					50: "#f0fdf9",
 					100: "#ccfcef",
 					200: "#99f9e0",
