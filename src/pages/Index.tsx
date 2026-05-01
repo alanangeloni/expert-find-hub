@@ -1,9 +1,298 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { ArrowRight, ShieldCheck, CalendarCheck, Clock, CreditCard } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { ArrowRight, ShieldCheck, CalendarCheck, Clock, CreditCard, Check, ChevronLeft } from "lucide-react";
 import { AdvisorCard } from "@/components/advisors/AdvisorCard";
 import { getAdvisors } from "@/services/advisorsService";
 import { Seo } from "@/components/seo/Seo";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+
+/* ------------------------- Match Quiz ------------------------- */
+type AssetBracket = "under-100k" | "100k-500k" | "500k-2m" | "over-2m";
+
+const QUIZ_GOALS = [
+  { value: "Retirement Planning", label: "Retirement planning", desc: "Build a durable income plan for life after work", icon: "🌅" },
+  { value: "Wealth Management", label: "Grow my wealth", desc: "Long-term investing across multiple accounts", icon: "📈" },
+  { value: "Tax Planning", label: "Tax optimization", desc: "Equity comp, business income, advanced planning", icon: "📊" },
+  { value: "Estate Planning", label: "Estate & legacy", desc: "Trusts, gifting, generational wealth transfer", icon: "🏛️" },
+  { value: "Sustainable Investing", label: "Sustainable investing", desc: "ESG-aligned, climate-conscious portfolios", icon: "🌿" },
+  { value: "Business Owners", label: "I own a business", desc: "Owner comp, entity structuring, exit planning", icon: "🏢" },
+  { value: "Young Professionals", label: "Early career", desc: "Student debt, first home, starting to invest", icon: "🚀" },
+  { value: "High Net Worth", label: "Private wealth", desc: "Concentrated positions, alternatives, family office", icon: "💎" },
+];
+
+const QUIZ_ASSETS: { value: AssetBracket; label: string; hint: string }[] = [
+  { value: "under-100k", label: "Under $100K", hint: "Just getting started" },
+  { value: "100k-500k", label: "$100K – $500K", hint: "Building momentum" },
+  { value: "500k-2m", label: "$500K – $2M", hint: "Significant assets" },
+  { value: "over-2m", label: "Over $2M", hint: "Private wealth range" },
+];
+
+const QUIZ_FEES = [
+  { value: "Fee-Only", label: "Fee-only", hint: "Transparent annual or project fee" },
+  { value: "Assets Under Management", label: "Percentage of assets", hint: "Typically 0.5–1% AUM" },
+  { value: "Flat Fee", label: "Flat subscription", hint: "Predictable monthly or annual" },
+  { value: "Hourly", label: "Hourly / as-needed", hint: "Pay only when you engage" },
+];
+
+const MatchQuiz = () => {
+  const navigate = useNavigate();
+  const [step, setStep] = useState(0);
+  const [goal, setGoal] = useState<string | null>(null);
+  const [assets, setAssets] = useState<AssetBracket | null>(null);
+  const [feePref, setFeePref] = useState<string | null>(null);
+  const [done, setDone] = useState(false);
+
+  const canAdvance =
+    (step === 0 && !!goal) || (step === 1 && !!assets) || (step === 2 && !!feePref);
+  const progress = ((step + 1) / 3) * 100;
+
+  const handleNext = () => {
+    if (step === 2 && goal && assets && feePref) {
+      setDone(true);
+      const params = new URLSearchParams();
+      if (goal) params.set("specialty", goal);
+      if (assets) params.set("minimum", assets);
+      if (feePref) params.set("compensation", feePref);
+      setTimeout(() => navigate(`/advisors?${params.toString()}`), 900);
+    } else {
+      setStep(step + 1);
+    }
+  };
+
+  const reset = () => {
+    setStep(0);
+    setGoal(null);
+    setAssets(null);
+    setFeePref(null);
+    setDone(false);
+  };
+
+  return (
+    <section id="match" className="py-20 md:py-24 bg-white border-y border-line">
+      <div className="container mx-auto px-5 md:px-6">
+        <div className="max-w-2xl mx-auto text-center mb-10">
+          <span className="eyebrow">Find your match</span>
+          <h2 className="font-display text-[clamp(28px,3.5vw,44px)] font-medium text-blue leading-tight mt-4 mb-4">
+            Three questions. Three advisors.
+          </h2>
+          <p className="text-ink-3 text-[17px] leading-relaxed">
+            Answer below and we'll narrow our directory to the advisors most aligned with your situation.
+          </p>
+        </div>
+
+        <div className="max-w-3xl mx-auto bg-sand border border-line rounded-[24px] p-6 md:p-10 shadow-[var(--shadow-md)]">
+          {!done ? (
+            <>
+              <div className="mb-7">
+                <div className="h-1.5 bg-sand-2 rounded-full overflow-hidden mb-2">
+                  <div
+                    className="h-full rounded-full transition-all duration-500"
+                    style={{
+                      width: `${progress}%`,
+                      background: "linear-gradient(90deg, hsl(var(--blue)) 0%, hsl(var(--aqua)) 55%, hsl(var(--mint)) 100%)",
+                    }}
+                  />
+                </div>
+                <span className="text-[12px] uppercase tracking-wider text-muted-foreground font-semibold">
+                  Step {step + 1} of 3
+                </span>
+              </div>
+
+              {step === 0 && (
+                <div>
+                  <h3 className="font-display text-[22px] md:text-[26px] text-blue mb-2">
+                    What's most on your mind right now?
+                  </h3>
+                  <p className="text-ink-3 mb-6 text-[15px]">
+                    Choose the goal that feels closest. You can talk about anything with your advisor.
+                  </p>
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    {QUIZ_GOALS.map((g) => (
+                      <button
+                        key={g.value}
+                        onClick={() => setGoal(g.value)}
+                        className={`text-left p-4 rounded-2xl border transition-all flex items-start gap-3 ${
+                          goal === g.value
+                            ? "border-mint bg-mint-soft shadow-[0_0_0_1px_hsl(var(--mint))]"
+                            : "border-line bg-card hover:border-aqua hover:-translate-y-0.5"
+                        }`}
+                      >
+                        <span className="text-2xl flex-shrink-0">{g.icon}</span>
+                        <span className="flex flex-col min-w-0">
+                          <strong className="text-blue font-semibold text-[15px] leading-tight mb-0.5">{g.label}</strong>
+                          <span className="text-[13px] text-ink-3 leading-snug">{g.desc}</span>
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {step === 1 && (
+                <div>
+                  <h3 className="font-display text-[22px] md:text-[26px] text-blue mb-2">
+                    Roughly how much do you have invested today?
+                  </h3>
+                  <p className="text-ink-3 mb-6 text-[15px]">
+                    This includes retirement accounts, brokerage, and cash savings. We don't share with anyone.
+                  </p>
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    {QUIZ_ASSETS.map((a) => (
+                      <button
+                        key={a.value}
+                        onClick={() => setAssets(a.value)}
+                        className={`text-left p-5 rounded-2xl border transition-all flex flex-col gap-1 ${
+                          assets === a.value
+                            ? "border-mint bg-mint-soft shadow-[0_0_0_1px_hsl(var(--mint))]"
+                            : "border-line bg-card hover:border-aqua hover:-translate-y-0.5"
+                        }`}
+                      >
+                        <strong className="text-blue font-semibold text-[16px]">{a.label}</strong>
+                        <span className="text-[13px] text-ink-3">{a.hint}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {step === 2 && (
+                <div>
+                  <h3 className="font-display text-[22px] md:text-[26px] text-blue mb-2">
+                    How do you prefer to pay for advice?
+                  </h3>
+                  <p className="text-ink-3 mb-6 text-[15px]">
+                    Every advisor in our directory charges transparently. Pick what feels right — you can change later.
+                  </p>
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    {QUIZ_FEES.map((f) => (
+                      <button
+                        key={f.value}
+                        onClick={() => setFeePref(f.value)}
+                        className={`text-left p-5 rounded-2xl border transition-all flex flex-col gap-1 ${
+                          feePref === f.value
+                            ? "border-mint bg-mint-soft shadow-[0_0_0_1px_hsl(var(--mint))]"
+                            : "border-line bg-card hover:border-aqua hover:-translate-y-0.5"
+                        }`}
+                      >
+                        <strong className="text-blue font-semibold text-[16px]">{f.label}</strong>
+                        <span className="text-[13px] text-ink-3">{f.hint}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex items-center justify-between mt-8 pt-6 border-t border-line">
+                <button
+                  onClick={() => setStep(Math.max(0, step - 1))}
+                  disabled={step === 0}
+                  className="inline-flex items-center gap-1.5 text-ink-3 text-sm font-medium disabled:opacity-40 disabled:cursor-not-allowed hover:text-blue transition-colors"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  Back
+                </button>
+                <button
+                  onClick={handleNext}
+                  disabled={!canAdvance}
+                  className="inline-flex items-center gap-2 px-6 py-3 bg-blue text-white rounded-full font-medium text-[14.5px] transition-all hover:bg-blue-light hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0 shadow-[0_4px_14px_hsl(var(--blue)/0.22)]"
+                >
+                  {step === 2 ? "See my matches" : "Continue"}
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-8">
+              <div
+                className="w-16 h-16 mx-auto mb-5 rounded-full flex items-center justify-center text-white"
+                style={{ background: "linear-gradient(135deg, hsl(var(--mint)), hsl(var(--aqua)))" }}
+              >
+                <Check className="w-8 h-8" strokeWidth={3} />
+              </div>
+              <h3 className="font-display text-2xl text-blue mb-2">Your matches are ready.</h3>
+              <p className="text-ink-3 mb-6 max-w-md mx-auto">
+                We've narrowed the directory based on what you shared. Taking you there now…
+              </p>
+              <button
+                onClick={reset}
+                className="text-blue font-medium underline-offset-4 hover:underline text-sm"
+              >
+                Start over
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+/* ------------------------- FAQ ------------------------- */
+const FAQ_ITEMS = [
+  {
+    q: "How much does Financial Professional cost?",
+    a: "It's free for you. We're supported by a flat membership paid by advisors to be listed in our directory — but advisors do not pay per match, per click, or per conversion. That removes the incentive to send you to whoever pays most.",
+  },
+  {
+    q: 'What does "fiduciary" actually mean?',
+    a: 'A fiduciary is legally required to put your interests ahead of their own. Most "advisors" at big banks and brokerages are held to a lower "suitability" standard. Every fiduciary professional in our directory is verified through SEC Form ADV filings and annual re-checks.',
+  },
+  {
+    q: "How do you vet advisors?",
+    a: "Credentials check (CFP®, CFA, CPA, etc.), ADV review for any disclosures, minimum years of independent practice, and a structured interview with our team. We decline the majority of advisors who apply.",
+  },
+  {
+    q: "Can I work with an advisor virtually?",
+    a: "Yes — the vast majority of our advisors work with clients nationwide over video. You can filter by location if you prefer someone local, but you are not limited by geography.",
+  },
+  {
+    q: "What if I don't click with my match?",
+    a: "Every intro call is free and no-obligation. You can browse and reach out to as many advisors as you like — there's no penalty. The goal is that you find the right advisor, not that you pick the first one.",
+  },
+  {
+    q: "Do you share my information?",
+    a: "Only with the specific advisors you ask to meet with, and only the information required to prepare for your intro call. We never sell your data and never hand it to third parties.",
+  },
+];
+
+const FAQ = () => (
+  <section id="faq" className="py-20 md:py-24 bg-sand">
+    <div className="container mx-auto px-5 md:px-6 grid md:grid-cols-[1fr_1.4fr] gap-12 md:gap-16">
+      <div>
+        <span className="eyebrow">FAQ</span>
+        <h2 className="font-display text-[clamp(28px,3.5vw,44px)] font-medium text-blue leading-tight mt-4 mb-4">
+          Questions, answered
+          <br />
+          before you ask.
+        </h2>
+        <p className="text-ink-3 leading-relaxed">
+          Still curious?{" "}
+          <Link to="/advisors" className="text-aqua underline-offset-4 hover:underline">
+            Browse the directory
+          </Link>{" "}
+          or reach out — a real person will reply within a business day.
+        </p>
+      </div>
+
+      <Accordion type="single" collapsible defaultValue="item-0" className="space-y-3">
+        {FAQ_ITEMS.map((f, i) => (
+          <AccordionItem
+            key={i}
+            value={`item-${i}`}
+            className="bg-card border border-line rounded-2xl px-5 md:px-6"
+          >
+            <AccordionTrigger className="text-left font-display text-[17px] md:text-[18px] text-blue hover:no-underline py-5">
+              {f.q}
+            </AccordionTrigger>
+            <AccordionContent className="text-ink-3 text-[15px] leading-relaxed pb-5">
+              {f.a}
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
+    </div>
+  </section>
+);
 
 /* ------------------------- Hero ------------------------- */
 const Hero = () => (
@@ -64,13 +353,13 @@ const Hero = () => (
         </p>
 
         <div className="flex gap-3 flex-wrap mb-10">
-          <Link
-            to="/advisors"
+          <a
+            href="#match"
             className="inline-flex items-center gap-2 px-6 py-4 bg-blue text-white rounded-full font-medium text-[15px] transition-all shadow-[0_6px_20px_hsl(var(--blue)/0.28)] hover:bg-blue-light hover:-translate-y-0.5 hover:shadow-[0_10px_28px_hsl(var(--blue)/0.35)]"
           >
             Find my advisor
             <ArrowRight className="w-4 h-4" />
-          </Link>
+          </a>
           <Link
             to="/advisors"
             className="inline-flex items-center px-6 py-4 bg-transparent text-blue border border-blue rounded-full font-medium text-[15px] transition-all hover:bg-blue hover:text-white"
@@ -419,13 +708,13 @@ const CTASection = () => (
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-4 mb-10">
-            <Link
-              to="/advisors"
+            <a
+              href="#match"
               className="inline-flex items-center gap-2 px-7 py-4 bg-mint text-blue rounded-full font-semibold text-[15px] hover:bg-white transition-all shadow-[0_8px_24px_hsl(var(--mint)/0.4)]"
             >
-              Find my advisor
+              Get matched now
               <ArrowRight className="w-4 h-4" />
-            </Link>
+            </a>
             <Link to="/auth/SignUp" className="text-white/90 underline-offset-4 hover:underline text-sm">
               or join as a financial professional
             </Link>
@@ -479,8 +768,10 @@ const Index = () => {
         <Hero />
         <Stats />
         <HowItWorks />
+        <MatchQuiz />
         <Directory />
         <Specialties />
+        <FAQ />
         <CTASection />
       </div>
     </>
