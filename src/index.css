@@ -5,51 +5,66 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Brand palette (HSL) */
+    --mint: 165 65% 51%;          /* #31d6aa */
+    --mint-2: 165 65% 43%;        /* #26b892 */
+    --mint-soft: 162 60% 90%;     /* #d6f5ec */
+    --aqua: 183 58% 41%;          /* #2CA2A7 */
+    --aqua-2: 184 64% 32%;        /* #1d8388 */
+    --aqua-soft: 187 35% 88%;     /* #d5ecee */
+    --blue: 196 100% 19%;         /* #004660 */
+    --blue-2: 197 100% 14%;       /* #00334a */
+    --blue-3: 198 100% 25%;       /* #005a7d */
+    --sand: 180 30% 96%;          /* #F1F7F7 */
+    --sand-2: 184 22% 91%;        /* #E2EEEF */
+    --ink: 196 100% 19%;
+    --ink-2: 198 100% 25%;
+    --ink-3: 196 31% 35%;         /* #3d6876 */
+    --line: 187 23% 85%;          /* #CFDFE1 */
+    --muted-ink: 195 18% 56%;     /* #7a9aa5 */
+
+    --background: 180 30% 96%;
+    --foreground: 196 100% 19%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 196 100% 19%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 196 100% 19%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 196 100% 19%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 184 22% 91%;
+    --secondary-foreground: 196 100% 19%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 180 30% 96%;
+    --muted-foreground: 195 18% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 162 60% 90%;
+    --accent-foreground: 196 100% 19%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 187 23% 85%;
+    --input: 187 23% 85%;
+    --ring: 196 100% 19%;
 
-    --radius: 0.5rem;
+    --radius: 0.875rem;
 
     --sidebar-background: 0 0% 98%;
-
     --sidebar-foreground: 240 5.3% 26.1%;
-
     --sidebar-primary: 240 5.9% 10%;
-
     --sidebar-primary-foreground: 0 0% 98%;
-
     --sidebar-accent: 240 4.8% 95.9%;
-
     --sidebar-accent-foreground: 240 5.9% 10%;
-
     --sidebar-border: 220 13% 91%;
-
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    --shadow-sm: 0 1px 2px hsl(196 100% 19% / 0.06), 0 2px 8px hsl(196 100% 19% / 0.05);
+    --shadow-md: 0 4px 12px hsl(196 100% 19% / 0.09), 0 16px 40px hsl(196 100% 19% / 0.08);
+    --shadow-lg: 0 20px 60px hsl(196 100% 19% / 0.22);
   }
 
   .dark {
@@ -107,10 +122,59 @@
     margin: 0;
     padding: 0;
     min-height: 100vh;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 
-      Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: hsl(var(--ink));
+  }
+
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 12px;
+    font-weight: 600;
+    color: hsl(var(--aqua));
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .eyebrow::before {
+    content: '';
+    width: 22px;
+    height: 1px;
+    background: hsl(var(--aqua));
+    display: inline-block;
+  }
+
+  ::selection {
+    background: hsl(var(--mint));
+    color: hsl(var(--blue));
+  }
+
+  @keyframes pulse-dot {
+    0%,100% { box-shadow: 0 0 0 3px hsl(var(--mint) / 0.28); }
+    50% { box-shadow: 0 0 0 6px hsl(var(--mint) / 0.08); }
+  }
+  @keyframes card-float {
+    0%,100% { transform: translate(-50%, -50%); }
+    50% { transform: translate(-50%, calc(-50% - 8px)); }
+  }
+  @keyframes float-a {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  @keyframes float-b {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(10px); }
+  }
+  @keyframes match-fill {
+    from { width: 0; }
   }
 
   /* Mobile-first media queries */
