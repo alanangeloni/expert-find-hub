@@ -150,7 +150,7 @@ const Hero = () => (
 
         {/* Floating chip 1 */}
         <div
-          className="absolute top-[14%] left-[4%] sm:left-[4%] -left-[5%] z-30 bg-card border border-line rounded-[22px] shadow-[var(--shadow-md)] py-3.5 px-4.5 px-4 flex items-center gap-3"
+          className="absolute top-[14%] -left-[5%] sm:left-[2%] z-30 bg-card border border-line rounded-[22px] shadow-[var(--shadow-md)] py-3.5 px-4 flex items-center gap-3"
           style={{ animation: "float-a 6s ease-in-out infinite" }}
         >
           <div className="bg-mint-soft text-blue px-2.5 py-1 rounded-full text-[11px] font-semibold">Retirement</div>
