@@ -353,13 +353,13 @@ const Hero = () => (
         </p>
 
         <div className="flex gap-3 flex-wrap mb-10">
-          <Link
-            to="/advisors"
+          <a
+            href="#match"
             className="inline-flex items-center gap-2 px-6 py-4 bg-blue text-white rounded-full font-medium text-[15px] transition-all shadow-[0_6px_20px_hsl(var(--blue)/0.28)] hover:bg-blue-light hover:-translate-y-0.5 hover:shadow-[0_10px_28px_hsl(var(--blue)/0.35)]"
           >
             Find my advisor
             <ArrowRight className="w-4 h-4" />
-          </Link>
+          </a>
           <Link
             to="/advisors"
             className="inline-flex items-center px-6 py-4 bg-transparent text-blue border border-blue rounded-full font-medium text-[15px] transition-all hover:bg-blue hover:text-white"
