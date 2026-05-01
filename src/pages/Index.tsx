@@ -708,13 +708,13 @@ const CTASection = () => (
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-4 mb-10">
-            <Link
-              to="/advisors"
+            <a
+              href="#match"
               className="inline-flex items-center gap-2 px-7 py-4 bg-mint text-blue rounded-full font-semibold text-[15px] hover:bg-white transition-all shadow-[0_8px_24px_hsl(var(--mint)/0.4)]"
             >
-              Find my advisor
+              Get matched now
               <ArrowRight className="w-4 h-4" />
-            </Link>
+            </a>
             <Link to="/auth/SignUp" className="text-white/90 underline-offset-4 hover:underline text-sm">
               or join as a financial professional
             </Link>
