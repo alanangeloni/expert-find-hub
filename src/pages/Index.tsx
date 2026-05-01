@@ -768,8 +768,10 @@ const Index = () => {
         <Hero />
         <Stats />
         <HowItWorks />
+        <MatchQuiz />
         <Directory />
         <Specialties />
+        <FAQ />
         <CTASection />
       </div>
     </>
