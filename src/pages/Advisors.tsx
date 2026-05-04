@@ -137,17 +137,27 @@ const AdvisorSearch = () => {
   };
   
   return (
-    <div className="min-h-screen bg-white">
-      <div className="container mx-auto py-4 md:py-8 px-4">
-        {/* Header Section - Mobile Responsive */}
-        <div className="text-center mb-6 md:mb-8">
-          <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
-            Find a Financial Advisor
-          </h1>
-          <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto px-4">
-            Finding a trusted professional to achieve your financial goals has never been easier
-          </p>
+    <div className="min-h-screen bg-background">
+      {/* Hero header */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-blue via-blue-3 to-aqua text-white">
+        <div className="absolute inset-0 opacity-[0.08]" style={{
+          backgroundImage: 'radial-gradient(circle at 20% 30%, white 1px, transparent 1px), radial-gradient(circle at 80% 70%, white 1px, transparent 1px)',
+          backgroundSize: '48px 48px'
+        }} />
+        <div className="container mx-auto px-4 py-14 md:py-20 relative">
+          <div className="max-w-3xl mx-auto text-center">
+            <span className="eyebrow !text-mint mb-4">Advisor Directory</span>
+            <h1 className="font-display text-4xl md:text-5xl lg:text-6xl font-medium tracking-tight text-white mt-4 mb-4">
+              Find a Financial Advisor
+            </h1>
+            <p className="text-base md:text-lg text-white/80 max-w-2xl mx-auto">
+              Browse vetted, fiduciary professionals — filter by specialty, location, and minimums to find your match.
+            </p>
+          </div>
         </div>
+      </section>
+
+      <div className="container mx-auto py-8 md:py-10 px-4 -mt-8 md:-mt-10 relative z-10">
         
         {/* Search Form - Mobile Responsive */}
         <div className="mb-6 md:mb-8">
