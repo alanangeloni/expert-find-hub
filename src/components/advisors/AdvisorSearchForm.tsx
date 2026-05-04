@@ -83,7 +83,8 @@ export const AdvisorSearchForm = ({
   };
 
   return (
-    <div className="bg-white rounded-lg md:rounded-[20px] shadow-sm border border-slate-100 p-3 md:p-5">
+    <div className="bg-card rounded-2xl shadow-[var(--shadow-md)] border border-line p-3 md:p-5">
+
       {/* Desktop Layout - Single Row */}
       <div className="hidden md:flex md:items-center md:gap-4">
         {/* Search Bar */}
