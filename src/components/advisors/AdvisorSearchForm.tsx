@@ -268,18 +268,18 @@ export const AdvisorSearchForm = ({
 
       {/* Selected Specialties Chips */}
       {selectedSpecialties.length > 0 && (
-        <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-slate-100">
-          <span className="text-xs md:text-sm text-slate-600 font-medium mr-2 py-1">Selected Specialties:</span>
+        <div className="flex flex-wrap gap-2 mt-4 pt-4 border-t border-line">
+          <span className="text-xs md:text-sm text-muted-foreground font-medium mr-2 py-1">Selected Specialties:</span>
           {selectedSpecialties.map(specialty => (
             <div 
               key={specialty}
-              className="bg-emerald-50 text-emerald-900 text-xs md:text-sm px-2 md:px-3 py-1 md:py-1.5 rounded-full flex items-center gap-1 md:gap-2 border border-emerald-200"
+              className="bg-aqua-soft text-blue text-xs md:text-sm px-2 md:px-3 py-1 md:py-1.5 rounded-full flex items-center gap-1 md:gap-2 border border-aqua/30"
             >
               <span className="truncate max-w-[120px] md:max-w-none">{specialty}</span>
               <button 
                 type="button"
                 onClick={() => removeSpecialty(specialty)}
-                className="text-emerald-600 hover:text-emerald-800 focus:outline-none flex-shrink-0"
+                className="text-aqua hover:text-blue focus:outline-none flex-shrink-0"
                 aria-label={`Remove ${specialty}`}
               >
                 <X className="h-3 w-3" />

@@ -36,9 +36,9 @@ export const AdvisorList = ({
 
   if (!advisors || advisors.length === 0) {
     return (
-      <div className="text-center py-12 bg-slate-50 rounded-lg border border-slate-100">
-        <p className="text-gray-500 mb-2">No advisors found matching your criteria.</p>
-        <p className="text-sm text-gray-400">Try adjusting your filters or search term.</p>
+      <div className="text-center py-16 bg-card rounded-2xl border border-line">
+        <p className="text-ink mb-2 font-display text-xl">No advisors found</p>
+        <p className="text-sm text-muted-foreground">Try adjusting your filters or search term.</p>
       </div>
     );
   }

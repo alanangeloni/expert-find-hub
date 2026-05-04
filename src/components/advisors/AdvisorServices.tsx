@@ -21,29 +21,25 @@ export const AdvisorServices = ({ services, advisorName = 'This Advisor' }: Prop
   const servicesArray = Array.isArray(services) ? services : [];
 
   return (
-    <Card className="mb-8 p-6">
-      <h2 className="text-2xl font-bold mb-8">Services {advisorName} Offers</h2>
-      <div className="grid grid-cols-2 gap-4">
+    <Card className="mb-8 p-6 rounded-2xl border-line">
+      <h2 className="font-display text-2xl md:text-3xl text-blue mb-6">Services {advisorName} Offers</h2>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {servicesArray.map((service, index) => {
-          // Skip invalid service items
           if (!service) return null;
-          
           const serviceName = typeof service === 'string' ? service : service?.name;
-          const serviceId = typeof service === 'string' 
-            ? `service-${index}` 
+          const serviceId = typeof service === 'string'
+            ? `service-${index}`
             : service?.id || `service-${index}`;
-          
           if (!serviceName) return null;
-          
           return (
-            <div 
+            <div
               key={serviceId}
-              className="flex items-center p-4 border border-slate-200 rounded-lg hover:border-mint-300 hover:bg-mint-50 transition-colors"
+              className="flex items-center p-4 border border-line rounded-xl hover:border-aqua hover:bg-aqua-soft/40 transition-colors"
             >
-              <div className="w-10 h-10 rounded-full bg-mint-50 flex items-center justify-center mr-4">
-                <div className="w-2 h-2 bg-mint-600 rounded-full"></div>
+              <div className="w-9 h-9 rounded-full bg-gradient-to-br from-mint to-aqua flex items-center justify-center mr-3 flex-shrink-0">
+                <div className="w-2 h-2 bg-white rounded-full" />
               </div>
-              <span className="text-mint-900 font-medium">{serviceName}</span>
+              <span className="text-ink font-medium text-[15px]">{serviceName}</span>
             </div>
           );
         })}
