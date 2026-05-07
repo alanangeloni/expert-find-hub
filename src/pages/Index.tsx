@@ -331,8 +331,7 @@ const Hero = () => (
         </div>
 
         <h1 className="font-display font-medium text-[clamp(36px,5.5vw,68px)] leading-[1.02] text-blue mb-6">
-          The advisor you deserve,
-          <br />
+          Achieve your financial goals with a{" "}
           <span
             className="italic"
             style={{
@@ -343,7 +342,7 @@ const Hero = () => (
               color: "transparent",
             }}
           >
-            matched in 3 minutes.
+            Financial Professional
           </span>
         </h1>
 
