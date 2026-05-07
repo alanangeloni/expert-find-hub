@@ -4,20 +4,13 @@ import { useNavigate } from "react-router-dom";
 import { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
-// Extend the User type to include our custom role in user_metadata
-interface UserWithRole extends User {
-  user_metadata: {
-    role?: string;
-    [key: string]: any;
-  };
-}
-
 interface AuthContextType {
-  user: UserWithRole | null;
+  user: User | null;
   session: Session | null;
   isLoading: boolean;
   signOut: () => Promise<void>;
   isAdmin: boolean;
+  isAdminLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -31,13 +24,14 @@ export const useAuth = () => {
 };
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<UserWithRole | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdminLoading, setIsAdminLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Set up the auth state listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_, session) => {
         setSession(session);
@@ -46,7 +40,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       }
     );
 
-    // Check for existing session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
@@ -58,20 +51,37 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     };
   }, []);
 
+  // Fetch admin status from profiles table - single source of truth
+  useEffect(() => {
+    if (!user) {
+      setIsAdmin(false);
+      setIsAdminLoading(false);
+      return;
+    }
+    setIsAdminLoading(true);
+    supabase
+      .from("profiles")
+      .select("is_admin")
+      .eq("id", user.id)
+      .maybeSingle()
+      .then(({ data }) => {
+        setIsAdmin(data?.is_admin === true);
+        setIsAdminLoading(false);
+      });
+  }, [user]);
+
   const signOut = async () => {
     await supabase.auth.signOut();
     navigate("/");
   };
-
-  // Check if the current user is an admin
-  const isAdmin = user?.user_metadata?.role === 'admin';
 
   const value = {
     user,
     session,
     isLoading,
     signOut,
-    isAdmin
+    isAdmin,
+    isAdminLoading,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
