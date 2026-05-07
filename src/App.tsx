@@ -7,6 +7,7 @@ import { Routes, Route } from "react-router-dom";
 import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminRoute from "./components/AdminRoute";
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 import Index from "./pages/Index";
@@ -71,33 +72,33 @@ const App = () => (
                   <Route
                     path="/admin/blog"
                     element={
-                      <ProtectedRoute>
+                      <AdminRoute>
                         <AdminDashboard />
-                      </ProtectedRoute>
+                      </AdminRoute>
                     }
                   />
                   <Route
                     path="/admin/blog/new"
                     element={
-                      <ProtectedRoute>
+                      <AdminRoute>
                         <BlogEditor />
-                      </ProtectedRoute>
+                      </AdminRoute>
                     }
                   />
                   <Route
                     path="/admin/blog/edit/:slug"
                     element={
-                      <ProtectedRoute>
+                      <AdminRoute>
                         <BlogEditor />
-                      </ProtectedRoute>
+                      </AdminRoute>
                     }
                   />
                   <Route
                     path="/admin/entities"
                     element={
-                      <ProtectedRoute>
+                      <AdminRoute>
                         <AdminEntityDashboard />
-                      </ProtectedRoute>
+                      </AdminRoute>
                     }
                   />
                   <Route path="/app" element={<AppPage />} />
