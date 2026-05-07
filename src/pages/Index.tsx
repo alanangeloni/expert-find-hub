@@ -331,9 +331,9 @@ const Hero = () => (
         </div>
 
         <h1 className="font-display font-medium text-[clamp(36px,5.5vw,68px)] leading-[1.02] text-blue mb-6">
-          Achieve your financial goals with a{" "}
+          Achieve your Financial Goals with a{" "}
           <span
-            className="italic"
+            className="italic inline-block pr-[0.15em]"
             style={{
               background:
                 "linear-gradient(135deg, hsl(var(--aqua)) 0%, hsl(var(--blue)) 60%, hsl(var(--mint)) 100%)",
