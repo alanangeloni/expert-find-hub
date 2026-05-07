@@ -1134,6 +1134,13 @@ export type Database = {
         Args: { category: string; post_id: string }
         Returns: undefined
       }
+      get_advisor_contact: {
+        Args: { _advisor_id: string }
+        Returns: {
+          email: string
+          phone_number: string
+        }[]
+      }
       get_blog_categories: {
         Args: never
         Returns: {
