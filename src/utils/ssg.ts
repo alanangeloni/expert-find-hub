@@ -363,9 +363,9 @@ const generateBlogPostPages = async () => {
       const title = post.title;
       const description = post.excerpt || post.content?.substring(0, 160) || `Read this financial article: ${post.title}`;
       const content = `
-        <h1>${post.title}</h1>
+        <h1>${esc(post.title)}</h1>
         <h2>Financial Insights</h2>
-        <p>${post.excerpt || 'Read this comprehensive financial article to enhance your financial knowledge.'}</p>
+        <p>${post.excerpt ? esc(post.excerpt) : 'Read this comprehensive financial article to enhance your financial knowledge.'}</p>
       `;
       
       const postDir = path.join(blogDir, post.slug);
