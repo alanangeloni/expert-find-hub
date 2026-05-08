@@ -92,6 +92,15 @@ const getBaseHtml = () => {
 </html>`;
 };
 
+// HTML-escape any value before interpolating into static markup
+const esc = (v: unknown): string =>
+  String(v ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
 // Create HTML with specific title, description, and content
 const createHtml = (title: string, description: string, content: string) => {
   const baseHtml = getBaseHtml();
