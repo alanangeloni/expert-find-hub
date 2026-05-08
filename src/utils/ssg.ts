@@ -166,13 +166,13 @@ const generateFirmPages = async () => {
     ensureDir(firmsDir);
     
     for (const firm of firms) {
-      const title = `${firm.name} Review`;
-      const description = `${firm.description || ''} The minimum investment required on ${firm.name} to open an account is ${firm.minimum_investment || 'not specified'}.`;
+      const title = `${esc(firm.name)} Review`;
+      const description = `${esc(firm.description || '')} The minimum investment required on ${esc(firm.name)} to open an account is ${esc(firm.minimum_investment || 'not specified')}.`;
       const content = `
-        <h1>${firm.name} Review</h1>
+        <h1>${esc(firm.name)} Review</h1>
         <h2>Investment Details</h2>
-        <p>${firm.description || `Learn more about ${firm.name} and their investment opportunities.`}</p>
-        <p>The minimum investment required on ${firm.name} to open an account is ${firm.minimum_investment || 'not specified'}.</p>
+        <p>${firm.description ? esc(firm.description) : `Learn more about ${esc(firm.name)} and their investment opportunities.`}</p>
+        <p>The minimum investment required on ${esc(firm.name)} to open an account is ${esc(firm.minimum_investment || 'not specified')}.</p>
       `;
       
       const firmDir = path.join(firmsDir, firm.slug);
