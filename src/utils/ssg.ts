@@ -92,12 +92,21 @@ const getBaseHtml = () => {
 </html>`;
 };
 
+// HTML-escape any value before interpolating into static markup
+const esc = (v: unknown): string =>
+  String(v ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+
 // Create HTML with specific title, description, and content
 const createHtml = (title: string, description: string, content: string) => {
   const baseHtml = getBaseHtml();
   return baseHtml
-    .replace('__TITLE__', title)
-    .replace('__DESCRIPTION__', description)
+    .replace('__TITLE__', esc(title))
+    .replace('__DESCRIPTION__', esc(description))
     .replace('__CONTENT__', content);
 };
 
@@ -157,13 +166,13 @@ const generateFirmPages = async () => {
     ensureDir(firmsDir);
     
     for (const firm of firms) {
-      const title = `${firm.name} Review`;
-      const description = `${firm.description || ''} The minimum investment required on ${firm.name} to open an account is ${firm.minimum_investment || 'not specified'}.`;
+      const title = `${esc(firm.name)} Review`;
+      const description = `${esc(firm.description || '')} The minimum investment required on ${esc(firm.name)} to open an account is ${esc(firm.minimum_investment || 'not specified')}.`;
       const content = `
-        <h1>${firm.name} Review</h1>
+        <h1>${esc(firm.name)} Review</h1>
         <h2>Investment Details</h2>
-        <p>${firm.description || `Learn more about ${firm.name} and their investment opportunities.`}</p>
-        <p>The minimum investment required on ${firm.name} to open an account is ${firm.minimum_investment || 'not specified'}.</p>
+        <p>${firm.description ? esc(firm.description) : `Learn more about ${esc(firm.name)} and their investment opportunities.`}</p>
+        <p>The minimum investment required on ${esc(firm.name)} to open an account is ${esc(firm.minimum_investment || 'not specified')}.</p>
       `;
       
       const firmDir = path.join(firmsDir, firm.slug);
@@ -225,10 +234,10 @@ const generateAdvisorPages = async () => {
       const title = advisor.name;
       const description = `${advisor.position || 'Financial Advisor'} at ${advisor.firm_name || 'Independent'}. ${advisor.personal_bio || `Learn more about ${advisor.name} and their financial advisory services.`}`;
       const content = `
-        <h1>${advisor.name}</h1>
-        <h2>${advisor.position || 'Financial Advisor'}</h2>
-        <p>${advisor.position || 'Financial Advisor'} at ${advisor.firm_name || 'Independent'}.</p>
-        <p>${advisor.personal_bio || `Learn more about ${advisor.name} and their financial advisory services.`}</p>
+        <h1>${esc(advisor.name)}</h1>
+        <h2>${esc(advisor.position || 'Financial Advisor')}</h2>
+        <p>${esc(advisor.position || 'Financial Advisor')} at ${esc(advisor.firm_name || 'Independent')}.</p>
+        <p>${advisor.personal_bio ? esc(advisor.personal_bio) : `Learn more about ${esc(advisor.name)} and their financial advisory services.`}</p>
       `;
       
       const advisorDir = path.join(advisorsDir, advisor.slug);
@@ -286,12 +295,12 @@ const generateAccountingFirmPages = async () => {
     ensureDir(accountingDir);
     
     for (const firm of firms) {
-      const title = `${firm.name} - Accounting Services`;
+      const title = `${esc(firm.name)} - Accounting Services`;
       const description = firm.description || `Professional accounting and tax services from ${firm.name}. Get expert financial guidance for your business and personal needs.`;
       const content = `
-        <h1>${firm.name}</h1>
+        <h1>${esc(firm.name)}</h1>
         <h2>Professional Accounting Services</h2>
-        <p>${firm.description || `Professional accounting and tax services from ${firm.name}.`}</p>
+        <p>${firm.description ? esc(firm.description) : `Professional accounting and tax services from ${esc(firm.name)}.`}</p>
         <p>Get expert financial guidance for your business and personal needs.</p>
       `;
       
@@ -354,9 +363,9 @@ const generateBlogPostPages = async () => {
       const title = post.title;
       const description = post.excerpt || post.content?.substring(0, 160) || `Read this financial article: ${post.title}`;
       const content = `
-        <h1>${post.title}</h1>
+        <h1>${esc(post.title)}</h1>
         <h2>Financial Insights</h2>
-        <p>${post.excerpt || 'Read this comprehensive financial article to enhance your financial knowledge.'}</p>
+        <p>${post.excerpt ? esc(post.excerpt) : 'Read this comprehensive financial article to enhance your financial knowledge.'}</p>
       `;
       
       const postDir = path.join(blogDir, post.slug);
