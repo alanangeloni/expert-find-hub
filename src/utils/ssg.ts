@@ -234,10 +234,10 @@ const generateAdvisorPages = async () => {
       const title = advisor.name;
       const description = `${advisor.position || 'Financial Advisor'} at ${advisor.firm_name || 'Independent'}. ${advisor.personal_bio || `Learn more about ${advisor.name} and their financial advisory services.`}`;
       const content = `
-        <h1>${advisor.name}</h1>
-        <h2>${advisor.position || 'Financial Advisor'}</h2>
-        <p>${advisor.position || 'Financial Advisor'} at ${advisor.firm_name || 'Independent'}.</p>
-        <p>${advisor.personal_bio || `Learn more about ${advisor.name} and their financial advisory services.`}</p>
+        <h1>${esc(advisor.name)}</h1>
+        <h2>${esc(advisor.position || 'Financial Advisor')}</h2>
+        <p>${esc(advisor.position || 'Financial Advisor')} at ${esc(advisor.firm_name || 'Independent')}.</p>
+        <p>${advisor.personal_bio ? esc(advisor.personal_bio) : `Learn more about ${esc(advisor.name)} and their financial advisory services.`}</p>
       `;
       
       const advisorDir = path.join(advisorsDir, advisor.slug);
