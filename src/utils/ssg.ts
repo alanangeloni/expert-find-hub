@@ -105,8 +105,8 @@ const esc = (v: unknown): string =>
 const createHtml = (title: string, description: string, content: string) => {
   const baseHtml = getBaseHtml();
   return baseHtml
-    .replace('__TITLE__', title)
-    .replace('__DESCRIPTION__', description)
+    .replace('__TITLE__', esc(title))
+    .replace('__DESCRIPTION__', esc(description))
     .replace('__CONTENT__', content);
 };
 
