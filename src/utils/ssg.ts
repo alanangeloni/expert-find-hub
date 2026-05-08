@@ -295,12 +295,12 @@ const generateAccountingFirmPages = async () => {
     ensureDir(accountingDir);
     
     for (const firm of firms) {
-      const title = `${firm.name} - Accounting Services`;
+      const title = `${esc(firm.name)} - Accounting Services`;
       const description = firm.description || `Professional accounting and tax services from ${firm.name}. Get expert financial guidance for your business and personal needs.`;
       const content = `
-        <h1>${firm.name}</h1>
+        <h1>${esc(firm.name)}</h1>
         <h2>Professional Accounting Services</h2>
-        <p>${firm.description || `Professional accounting and tax services from ${firm.name}.`}</p>
+        <p>${firm.description ? esc(firm.description) : `Professional accounting and tax services from ${esc(firm.name)}.`}</p>
         <p>Get expert financial guidance for your business and personal needs.</p>
       `;
       
