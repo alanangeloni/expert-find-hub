@@ -162,12 +162,12 @@ const BlogArticle = () => {
       )}
       {/* Hero Section with Cover Image */}
       {post?.cover_image_url ? <div className="w-full h-[40vh] md:h-[50vh] relative bg-center bg-cover" style={{
-      backgroundImage: `url(${post.cover_image_url})`
+      backgroundImage: `url("${post.cover_image_url}")`
     }}>
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-end">
             <div className="container mx-auto px-4 py-8 md:py-12 text-white">
               {post.status === 'draft' && isAdmin && <Badge className="mb-4 bg-yellow-500 hover:bg-yellow-600">Draft</Badge>}
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold drop-shadow-lg max-w-4xl">
+              <h1 className="text-white text-3xl md:text-4xl lg:text-5xl font-bold drop-shadow-lg max-w-4xl">
                 {post.title}
               </h1>
             </div>
