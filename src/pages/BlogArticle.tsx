@@ -162,12 +162,12 @@ const BlogArticle = () => {
       )}
       {/* Hero Section with Cover Image */}
       {post?.cover_image_url ? <div className="w-full h-[40vh] md:h-[50vh] relative bg-center bg-cover" style={{
-      backgroundImage: `url(${post.cover_image_url})`
+      backgroundImage: `url("${post.cover_image_url}")`
     }}>
           <div className="absolute inset-0 bg-black bg-opacity-50 flex items-end">
             <div className="container mx-auto px-4 py-8 md:py-12 text-white">
               {post.status === 'draft' && isAdmin && <Badge className="mb-4 bg-yellow-500 hover:bg-yellow-600">Draft</Badge>}
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold drop-shadow-lg max-w-4xl">
+              <h1 className="text-white text-3xl md:text-4xl lg:text-5xl font-bold drop-shadow-lg max-w-4xl">
                 {post.title}
               </h1>
             </div>
@@ -241,7 +241,7 @@ const BlogArticle = () => {
           <aside className="w-full lg:w-1/3 flex-shrink-0 flex flex-col gap-6">
             {/* Personalized Advice CTA */}
             <div className="bg-brand-blue rounded-2xl p-6 mb-2 text-white shadow">
-              <h4 className="font-bold text-lg mb-2">Need Personalized Advice?</h4>
+              <h4 className="text-white font-bold text-lg mb-2">Need Personalized Advice?</h4>
               <p className="mb-4 text-blue-100">Our financial advisors can help you create a retirement plan tailored to your specific needs and goals.</p>
               <button className="w-full bg-white text-blue-700 font-semibold rounded-lg py-2 hover:bg-blue-50 transition flex items-center justify-center gap-2">
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8s-9-3.582-9-8 4.03-8 9-8 9 3.582 9 8z" /></svg>
