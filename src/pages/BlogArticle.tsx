@@ -157,7 +157,7 @@ const BlogArticle = () => {
         <Seo 
           title={post.title}
           description={post.excerpt || post.content.substring(0, 155) + '...'}
-          canonicalUrl={`https://yoursite.com/blog/${slug}`}
+          canonicalUrl={`https://financial-professional.lovable.app/blog/${slug}`}
         />
       )}
       {/* Hero Section with Cover Image */}

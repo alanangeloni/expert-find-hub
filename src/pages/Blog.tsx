@@ -224,7 +224,7 @@ const Blog = () => {
 };
 const BlogPage = () => {
   return <>
-      <Seo title="Blog | Financial Professional - Increase Your Financial IQ in Minutes!" description="Read the latest financial articles! Learn more about investing, retirement, saving, insurance, and more." canonicalUrl="https://yoursite.com/blog" />
+      <Seo title="Blog | Financial Professional - Increase Your Financial IQ in Minutes!" description="Read the latest financial articles! Learn more about investing, retirement, saving, insurance, and more." canonicalUrl="https://financial-professional.lovable.app/blog" />
       <Blog />
     </>;
 };

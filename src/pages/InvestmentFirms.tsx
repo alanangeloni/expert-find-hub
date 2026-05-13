@@ -183,7 +183,7 @@ const InvestmentFirmsPage = () => {
     "@type": "SearchResultsPage",
     "name": "Investment Firms Directory",
     "description": pageDescription,
-    "url": "https://yoursite.com/firms"
+    "url": "https://financial-professional.lovable.app/firms"
   };
 
   return (
@@ -192,7 +192,7 @@ const InvestmentFirmsPage = () => {
         title={pageTitle} 
         description={pageDescription}
         structuredData={structuredData}
-        canonicalUrl="https://yoursite.com/firms"
+        canonicalUrl="https://financial-professional.lovable.app/firms"
       />
       <InvestmentFirms />
     </>
