@@ -175,7 +175,7 @@ const InvestmentFirms = () => {
 };
 
 const InvestmentFirmsPage = () => {
-  const pageTitle = 'Investment Firms | Financial Professional - Browse 200+ Investment Firms';
+  const pageTitle = 'Investment Firms Directory | Financial Professional';
   const pageDescription = 'Browse and compare over 200 investment firms! Find investments in Stocks, Real Estate, Loans, Collectibles, Wine, Start-ups, Crypto, and more.';
 
   const structuredData = {
