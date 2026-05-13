@@ -8,6 +8,7 @@ interface SeoProps {
   children?: ReactNode;
   structuredData?: object;
   ogImage?: string;
+  ogType?: string;
   canonicalUrl?: string;
 }
 
@@ -17,6 +18,7 @@ export const Seo: React.FC<SeoProps> = ({
   children,
   structuredData,
   ogImage,
+  ogType = 'website',
   canonicalUrl
 }) => {
   return (
@@ -27,7 +29,7 @@ export const Seo: React.FC<SeoProps> = ({
       {/* Open Graph tags */}
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
-      <meta property="og:type" content="website" />
+      <meta property="og:type" content={ogType} />
       {ogImage && <meta property="og:image" content={ogImage} />}
       {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
       

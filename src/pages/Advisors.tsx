@@ -191,7 +191,7 @@ const AdvisorsPage = () => {
     "@type": "SearchResultsPage",
     "name": "Financial Advisors Directory",
     "description": "Browse financial advisors to find the one best suited to help you achieve your financial goals",
-    "url": "https://yoursite.com/advisors"
+    "url": "https://financial-professional.lovable.app/advisors"
   };
 
   return (
@@ -200,7 +200,7 @@ const AdvisorsPage = () => {
         title="Find a Financial Advisor"
         description="Browse financial advisors to find the one best suited to help you achieve your financial goals"
         structuredData={structuredData}
-        canonicalUrl="https://yoursite.com/advisors"
+        canonicalUrl="https://financial-professional.lovable.app/advisors"
       />
       <AdvisorSearch />
     </>

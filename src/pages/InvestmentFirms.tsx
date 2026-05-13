@@ -175,7 +175,7 @@ const InvestmentFirms = () => {
 };
 
 const InvestmentFirmsPage = () => {
-  const pageTitle = 'Investment Firms | Financial Professional - Browse 200+ Investment Firms';
+  const pageTitle = 'Investment Firms Directory | Financial Professional';
   const pageDescription = 'Browse and compare over 200 investment firms! Find investments in Stocks, Real Estate, Loans, Collectibles, Wine, Start-ups, Crypto, and more.';
 
   const structuredData = {
@@ -183,7 +183,7 @@ const InvestmentFirmsPage = () => {
     "@type": "SearchResultsPage",
     "name": "Investment Firms Directory",
     "description": pageDescription,
-    "url": "https://yoursite.com/firms"
+    "url": "https://financial-professional.lovable.app/firms"
   };
 
   return (
@@ -192,7 +192,7 @@ const InvestmentFirmsPage = () => {
         title={pageTitle} 
         description={pageDescription}
         structuredData={structuredData}
-        canonicalUrl="https://yoursite.com/firms"
+        canonicalUrl="https://financial-professional.lovable.app/firms"
       />
       <InvestmentFirms />
     </>

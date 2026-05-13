@@ -53,12 +53,12 @@ const AccountingFirmDetailComponent = () => {
         <Seo 
           title={`${firm.name} | Accounting Firm`}
           description={`${(firm.long_description || firm.description || '').slice(0, 155)}...`}
-          canonicalUrl={`https://yoursite.com/accounting-firms/${slug}`}
+          canonicalUrl={`https://financial-professional.lovable.app/accounting-firms/${slug}`}
           structuredData={{
             "@context": "https://schema.org",
             "@type": "AccountingService",
             "name": firm.name,
-            "url": `https://yoursite.com/accounting-firms/${slug}`
+            "url": `https://financial-professional.lovable.app/accounting-firms/${slug}`
           }}
         />
       )}

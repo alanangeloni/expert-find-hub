@@ -74,13 +74,13 @@ const AccountingFirmsPage = () => {
       <Seo 
         title="Find an Accounting Firm"
         description="Connect with top accounting firms that can help manage your business finances"
-        canonicalUrl="https://yoursite.com/accounting-firms"
+        canonicalUrl="https://financial-professional.lovable.app/accounting-firms"
         structuredData={{
           "@context": "https://schema.org",
           "@type": "SearchResultsPage",
           "name": "Accounting Firms Directory",
           "description": "Connect with top accounting firms that can help manage your business finances",
-          "url": "https://yoursite.com/accounting-firms"
+          "url": "https://financial-professional.lovable.app/accounting-firms"
         }}
       />
       <div className="container mx-auto py-8 px-4">

@@ -1,0 +1,12 @@
+# Financial Professional
+
+> Find a Financial Professional to help plan and manage your wealth — search advisors, planners, insurance, tax and accounting experts.
+
+## Pages
+
+- [Home](/): Search for financial professionals across multiple specialties.
+- [Financial Advisors](/advisors): Browse and compare financial advisors.
+- [Investment Firms](/firms): Directory of investment firms across asset classes.
+- [Accounting Firms](/accounting-firms): Browse accounting and tax firms.
+- [Blog](/blog): Articles on investing, retirement, saving, and insurance.
+- [Advisor Registration](/advisor-registration): For advisors who want to be listed.
