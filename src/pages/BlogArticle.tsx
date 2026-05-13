@@ -158,6 +158,8 @@ const BlogArticle = () => {
           title={post.title}
           description={post.excerpt || post.content.substring(0, 155) + '...'}
           canonicalUrl={`https://financial-professional.lovable.app/blog/${slug}`}
+          ogType="article"
+          ogImage={post.cover_image_url || undefined}
         />
       )}
       {/* Hero Section with Cover Image */}
