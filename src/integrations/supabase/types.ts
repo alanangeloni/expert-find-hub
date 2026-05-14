@@ -1207,6 +1207,9 @@ export type Database = {
         | "Succession Planning"
         | "Tax Planning"
         | "Wealth Management"
+        | "Early Career Planning"
+        | "Special Needs Planning"
+        | "Expat & Cross-Border Planning"
       advisors_licenses:
         | "Annuities"
         | "Health/Disability Insurance"
@@ -1595,6 +1598,9 @@ export const Constants = {
         "Succession Planning",
         "Tax Planning",
         "Wealth Management",
+        "Early Career Planning",
+        "Special Needs Planning",
+        "Expat & Cross-Border Planning",
       ],
       advisors_licenses: [
         "Annuities",
