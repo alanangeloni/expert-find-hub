@@ -529,7 +529,7 @@ const HowItWorks = () => {
   ];
 
   return (
-    <section className="py-20 md:py-24 bg-white border-y border-line">
+    <section className="py-20 md:py-24 bg-white">
       <div className="container mx-auto px-5 md:px-6">
         <div className="max-w-2xl mb-14">
           <span className="eyebrow mb-4">How it works</span>
