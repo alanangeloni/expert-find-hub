@@ -732,7 +732,7 @@ const Index = () => {
       />
       <div className="flex flex-col bg-sand">
         <Hero />
-        <Stats />
+        
         <HowItWorks />
         <MatchQuiz />
         <Directory />
