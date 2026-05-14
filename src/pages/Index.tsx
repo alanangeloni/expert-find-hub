@@ -367,24 +367,6 @@ const Hero = () => (
           </Link>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="flex">
-            {["hsl(var(--mint))", "hsl(var(--aqua))", "hsl(var(--blue))", "hsl(var(--blue-3))"].map((c, i) => (
-              <span
-                key={i}
-                className="w-9 h-9 rounded-full border-2 border-sand -ml-2.5 first:ml-0"
-                style={{ background: c, zIndex: 4 - i }}
-              />
-            ))}
-          </div>
-          <div className="text-[13px] text-ink-3">
-            <div className="flex gap-2 items-center">
-              <span className="text-mint-2 tracking-widest">★★★★★</span>
-              <strong className="text-ink font-semibold">4.9</strong>
-            </div>
-            <span>from 12,400+ matched clients</span>
-          </div>
-        </div>
       </div>
 
       {/* Right visual */}
