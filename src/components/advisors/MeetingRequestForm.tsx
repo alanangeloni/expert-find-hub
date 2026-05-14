@@ -125,14 +125,14 @@ export function MeetingRequestForm({ advisorId, advisorName, onSuccess }: Meetin
     <div className="w-full max-w-2xl mx-auto p-4 sm:p-6">
       {/* Header Section - Mobile Optimized */}
       <div className="text-center mb-6">
-        <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-blue-500 rounded-full mb-3">
+        <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-blue rounded-full mb-3">
           <Calendar className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
         </div>
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
+        <h2 className="font-display text-xl sm:text-2xl font-medium text-blue mb-2">
           Request a Meeting
         </h2>
-        <p className="text-sm sm:text-base text-gray-600">
-          Schedule a consultation with <span className="font-semibold">{advisorName}</span>
+        <p className="text-sm sm:text-base text-ink-3">
+          Schedule a consultation with <span className="font-semibold text-ink">{advisorName}</span>
         </p>
       </div>
 
@@ -142,7 +142,7 @@ export function MeetingRequestForm({ advisorId, advisorName, onSuccess }: Meetin
           <Card>
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center text-lg">
-                <User className="h-4 w-4 mr-2 text-blue-600" />
+                <User className="h-4 w-4 mr-2 text-blue" />
                 Personal Information
               </CardTitle>
             </CardHeader>
@@ -234,7 +234,7 @@ export function MeetingRequestForm({ advisorId, advisorName, onSuccess }: Meetin
           <Card>
             <CardHeader className="pb-4">
               <CardTitle className="flex items-center text-lg">
-                <MessageSquare className="h-4 w-4 mr-2 text-green-600" />
+                <MessageSquare className="h-4 w-4 mr-2 text-mint-2" />
                 Contact Preference
               </CardTitle>
             </CardHeader>
@@ -253,24 +253,24 @@ export function MeetingRequestForm({ advisorId, advisorName, onSuccess }: Meetin
                         defaultValue={field.value}
                         className="space-y-3"
                       >
-                        <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                        <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-sand">
                           <RadioGroupItem value="email" id="email" />
                           <Label htmlFor="email" className="flex items-center cursor-pointer flex-1">
-                            <Mail className="h-4 w-4 mr-2 text-blue-600" />
+                            <Mail className="h-4 w-4 mr-2 text-blue" />
                             Email
                           </Label>
                         </div>
-                        <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                        <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-sand">
                           <RadioGroupItem value="phone" id="phone" />
                           <Label htmlFor="phone" className="flex items-center cursor-pointer flex-1">
-                            <Phone className="h-4 w-4 mr-2 text-blue-600" />
+                            <Phone className="h-4 w-4 mr-2 text-blue" />
                             Phone
                           </Label>
                         </div>
-                        <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                        <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-sand">
                           <RadioGroupItem value="either" id="either" />
                           <Label htmlFor="either" className="flex items-center cursor-pointer flex-1">
-                            <CheckCircle2 className="h-4 w-4 mr-2 text-blue-600" />
+                            <CheckCircle2 className="h-4 w-4 mr-2 text-blue" />
                             Either Email or Phone
                           </Label>
                         </div>
@@ -299,7 +299,7 @@ export function MeetingRequestForm({ advisorId, advisorName, onSuccess }: Meetin
                   <FormItem>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       {discussionTopics.map((topic) => (
-                        <div key={topic} className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-gray-50">
+                        <div key={topic} className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-sand">
                           <Checkbox
                             id={topic}
                             onCheckedChange={(checked) => handleTopicChange(topic, checked as boolean)}
@@ -351,7 +351,7 @@ export function MeetingRequestForm({ advisorId, advisorName, onSuccess }: Meetin
             <Button 
               type="submit" 
               disabled={mutation.isPending}
-              className="h-12 w-full bg-blue-600 hover:bg-blue-700 text-white font-medium"
+              className="h-12 w-full bg-blue hover:bg-blue/90 text-white font-medium"
             >
               {mutation.isPending ? (
                 <>
