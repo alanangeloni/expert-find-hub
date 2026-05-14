@@ -125,14 +125,14 @@ export function MeetingRequestForm({ advisorId, advisorName, onSuccess }: Meetin
     <div className="w-full max-w-2xl mx-auto p-4 sm:p-6">
       {/* Header Section - Mobile Optimized */}
       <div className="text-center mb-6">
-        <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-blue-500 rounded-full mb-3">
+        <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-blue rounded-full mb-3">
           <Calendar className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
         </div>
-        <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
+        <h2 className="font-display text-xl sm:text-2xl font-medium text-blue mb-2">
           Request a Meeting
         </h2>
-        <p className="text-sm sm:text-base text-gray-600">
-          Schedule a consultation with <span className="font-semibold">{advisorName}</span>
+        <p className="text-sm sm:text-base text-ink-3">
+          Schedule a consultation with <span className="font-semibold text-ink">{advisorName}</span>
         </p>
       </div>
 
