@@ -367,24 +367,6 @@ const Hero = () => (
           </Link>
         </div>
 
-        <div className="flex items-center gap-4">
-          <div className="flex">
-            {["hsl(var(--mint))", "hsl(var(--aqua))", "hsl(var(--blue))", "hsl(var(--blue-3))"].map((c, i) => (
-              <span
-                key={i}
-                className="w-9 h-9 rounded-full border-2 border-sand -ml-2.5 first:ml-0"
-                style={{ background: c, zIndex: 4 - i }}
-              />
-            ))}
-          </div>
-          <div className="text-[13px] text-ink-3">
-            <div className="flex gap-2 items-center">
-              <span className="text-mint-2 tracking-widest">★★★★★</span>
-              <strong className="text-ink font-semibold">4.9</strong>
-            </div>
-            <span>from 12,400+ matched clients</span>
-          </div>
-        </div>
       </div>
 
       {/* Right visual */}
@@ -464,21 +446,6 @@ const Hero = () => (
       </div>
     </div>
 
-    {/* Logos strip */}
-    <div className="border-t border-line py-8 bg-white/50 relative">
-      <div className="container mx-auto px-5 md:px-6 flex flex-col md:flex-row items-start md:items-center gap-5 md:gap-10">
-        <span className="text-xs uppercase tracking-[0.16em] text-muted-foreground font-semibold whitespace-nowrap">
-          As seen in
-        </span>
-        <div className="flex gap-7 md:gap-10 flex-wrap items-center flex-1">
-          {["The Wall Street Journal", "Forbes", "Bloomberg", "Barron's", "Kiplinger", "Morningstar"].map((l) => (
-            <span key={l} className="font-display italic text-[17px] font-medium text-ink-3 opacity-70">
-              {l}
-            </span>
-          ))}
-        </div>
-      </div>
-    </div>
   </section>
 );
 
@@ -765,7 +732,7 @@ const Index = () => {
       />
       <div className="flex flex-col bg-sand">
         <Hero />
-        <Stats />
+        
         <HowItWorks />
         <MatchQuiz />
         <Directory />
