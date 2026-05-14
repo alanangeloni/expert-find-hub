@@ -186,7 +186,7 @@ const AdvisorDetail = () => {
                   <Building className="h-5 w-5 mr-3 text-gray-500 flex-shrink-0" />
                   <div>
                     <p className="font-medium text-sm text-gray-700">Minimum Investment</p>
-                    <p>${advisor.minimum}</p>
+                    <p>{advisor.minimum.trim().startsWith('$') ? advisor.minimum : `$${advisor.minimum}`}</p>
                   </div>
                 </div>}
 
