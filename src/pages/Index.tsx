@@ -446,21 +446,6 @@ const Hero = () => (
       </div>
     </div>
 
-    {/* Logos strip */}
-    <div className="border-t border-line py-8 bg-white/50 relative">
-      <div className="container mx-auto px-5 md:px-6 flex flex-col md:flex-row items-start md:items-center gap-5 md:gap-10">
-        <span className="text-xs uppercase tracking-[0.16em] text-muted-foreground font-semibold whitespace-nowrap">
-          As seen in
-        </span>
-        <div className="flex gap-7 md:gap-10 flex-wrap items-center flex-1">
-          {["The Wall Street Journal", "Forbes", "Bloomberg", "Barron's", "Kiplinger", "Morningstar"].map((l) => (
-            <span key={l} className="font-display italic text-[17px] font-medium text-ink-3 opacity-70">
-              {l}
-            </span>
-          ))}
-        </div>
-      </div>
-    </div>
   </section>
 );
 
