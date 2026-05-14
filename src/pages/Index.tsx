@@ -599,15 +599,15 @@ const Directory = () => (
 /* ----------------------- Specialties ----------------------- */
 const Specialties = () => {
   const items = [
-    { label: "Retirement", desc: "SECURE Act, Roth conversions, income planning" },
-    { label: "Tax Strategy", desc: "RSUs, ISOs, QSBS, Roth ladders, backdoor" },
-    { label: "Estate & Trust", desc: "Revocable, irrevocable, gifting, beneficiaries" },
-    { label: "Sustainable", desc: "ESG, climate-aligned, impact portfolios" },
-    { label: "Small Business", desc: "Solo 401k, defined benefit, exit planning" },
-    { label: "Early Career", desc: "Debt, first home, starting to invest" },
-    { label: "Divorce Finance", desc: "CDFA®, asset division, post-divorce" },
-    { label: "Special Needs", desc: "ABLE accounts, SNTs, government benefits" },
-    { label: "Expat & Cross-Border", desc: "US/UK/EU, dual citizenship, FATCA" },
+    { label: "Retirement", desc: "SECURE Act, Roth conversions, income planning", filter: "Retirement Planning" },
+    { label: "Tax Strategy", desc: "RSUs, ISOs, QSBS, Roth ladders, backdoor", filter: "Tax Planning" },
+    { label: "Estate & Trust", desc: "Revocable, irrevocable, gifting, beneficiaries", filter: "Estate/Trust Planning" },
+    { label: "Sustainable", desc: "ESG, climate-aligned, impact portfolios", filter: "Socially Responsible Investing" },
+    { label: "Small Business", desc: "Solo 401k, defined benefit, exit planning", filter: "Small Business Planning" },
+    { label: "Early Career", desc: "Debt, first home, starting to invest", filter: "Early Career Planning" },
+    { label: "Divorce Finance", desc: "CDFA®, asset division, post-divorce", filter: "Divorce Planning" },
+    { label: "Special Needs", desc: "ABLE accounts, SNTs, government benefits", filter: "Special Needs Planning" },
+    { label: "Expat & Cross-Border", desc: "US/UK/EU, dual citizenship, FATCA", filter: "Expat & Cross-Border Planning" },
   ];
   return (
     <section className="py-20 md:py-24 bg-white border-y border-line">
@@ -627,7 +627,7 @@ const Specialties = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {items.map((it) => (
             <Link
-              to="/advisors"
+              to={`/advisors?specialties=${encodeURIComponent(it.filter)}`}
               key={it.label}
               className="group p-6 rounded-[18px] border border-line bg-sand hover:bg-mint-soft hover:border-mint transition-all flex flex-col gap-2"
             >
