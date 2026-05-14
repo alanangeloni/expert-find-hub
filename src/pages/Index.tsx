@@ -68,7 +68,7 @@ const MatchQuiz = () => {
   };
 
   return (
-    <section id="match" className="py-20 md:py-24 bg-white border-y border-line">
+    <section id="match" className="py-20 md:py-24 bg-white">
       <div className="container mx-auto px-5 md:px-6">
         <div className="max-w-2xl mx-auto text-center mb-10">
           <span className="eyebrow">Find your match</span>
