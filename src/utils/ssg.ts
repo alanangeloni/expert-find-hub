@@ -213,9 +213,8 @@ const generateAdvisorPages = async () => {
     console.log('Generating individual advisor pages...');
     
     const { data: advisors, error } = await supabase
-      .from('financial_advisors')
-      .select('id, name, slug, position, firm_name, personal_bio')
-      .not('approved_at', 'is', null);
+      .from('financial_advisors_public')
+      .select('id, name, slug, position, firm_name, personal_bio');
     
     if (error) {
       console.error('Error fetching advisors:', error);
