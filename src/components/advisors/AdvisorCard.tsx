@@ -28,11 +28,24 @@ const formatMin = (m?: string) => {
   return m;
 };
 
+const extractAcronym = (s: string) => {
+  const paren = s.match(/\(([^)]+)\)/);
+  if (paren) return paren[1].trim();
+  const caps = s.match(/\b[A-Z]{2,}\b/g);
+  if (caps && caps.length) return caps.join("");
+  const words = s.trim().split(/\s+/);
+  if (words.length > 1) return words.map((w) => w[0]?.toUpperCase()).join("");
+  return s.toUpperCase();
+};
+
 export const AdvisorCard = ({ advisor }: AdvisorCardProps) => {
   const accentIdx = (advisor.id?.charCodeAt(0) ?? 0) % ACCENTS.length;
   const [a1, a2] = ACCENTS[accentIdx];
 
-  const designations = (advisor.professional_designations ?? []).filter(Boolean).slice(0, 3);
+  const designations = (advisor.professional_designations ?? [])
+    .filter(Boolean)
+    .map(extractAcronym)
+    .slice(0, 3);
   const services = (advisor.advisor_services ?? []).filter(Boolean).slice(0, 3);
   const isFeeOnly = (advisor.compensation ?? []).some((c) =>
     c?.toLowerCase().includes("fee-only") || c?.toLowerCase().includes("fee only")
@@ -132,12 +145,6 @@ export const AdvisorCard = ({ advisor }: AdvisorCardProps) => {
               </strong>
             </div>
           </div>
-          {advisor.verified && (
-            <span className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-mint-ink bg-mint-soft px-2.5 py-1 rounded-full whitespace-nowrap">
-              <span className="w-1.5 h-1.5 rounded-full bg-mint" />
-              Accepting Clients
-            </span>
-          )}
         </div>
       </article>
     </Link>
