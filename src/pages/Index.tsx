@@ -396,7 +396,11 @@ const HomePage = () => {
             <div>
               <span className="keyline" />
               <p className="home-section-eyebrow">Featured advisors</p>
-              <h2>Top-rated professionals ready to help</h2>
+              <h2>
+                Top-rated professionals
+                <br />
+                <em>ready to help</em>
+              </h2>
             </div>
             <Link className="btn btn--outline btn--md" to="/advisors">
               View all advisors
