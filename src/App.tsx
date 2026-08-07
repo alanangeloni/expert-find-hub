@@ -111,7 +111,10 @@ const App = () => (
               </div>
               <Footer />
             </div>
+            <CompareTray />
+            <CompareModal />
           </div>
+          </CompareProvider>
         </AuthProvider>
       </HelmetProvider>
     </TooltipProvider>
