@@ -100,7 +100,7 @@ const AdvisorSearch = () => {
       <Seo
         title="Find a Financial Advisor | Financial Professional"
         description="Search vetted fiduciary financial advisors by specialty, location, and fees. Compare up to 3 advisors side by side — free."
-        canonicalPath="/advisors"
+        canonicalUrl="https://financial-professional.lovable.app/advisors"
       />
 
       <div className="advisor-search__hero">
