@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
 import { User, Settings, FileText, Building2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
