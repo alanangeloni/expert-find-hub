@@ -1,0 +1,215 @@
+/* Supplemental styles in the design-system language for sections that
+   the base design files do not cover (home quiz, FAQ, small shims). */
+
+/* ——— Home: match quiz ——— */
+.home-quiz {
+  padding: var(--space-24) 0;
+  background: var(--cream);
+  border-top: 1px solid var(--gray-200);
+}
+
+.home-quiz__card {
+  max-width: 760px;
+  margin: var(--space-12) auto 0;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-xl, 16px);
+  padding: var(--space-8);
+  box-shadow: 0 24px 60px rgba(10, 10, 10, 0.06);
+}
+
+.home-quiz__progress {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  margin-bottom: var(--space-6);
+}
+
+.home-quiz__progress-bar {
+  flex: 1;
+  height: 4px;
+  background: var(--gray-200);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.home-quiz__progress-bar span {
+  display: block;
+  height: 100%;
+  background: var(--green);
+  border-radius: 999px;
+  transition: width 0.35s ease;
+}
+
+.home-quiz__step {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+  margin: 0;
+  white-space: nowrap;
+}
+
+.home-quiz__title {
+  font-family: var(--font-serif);
+  font-size: var(--text-3xl);
+  font-weight: 500;
+  color: var(--black);
+  margin: 0 0 var(--space-6);
+  line-height: 1.2;
+}
+
+.home-quiz__options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-8);
+}
+
+@media (max-width: 640px) {
+  .home-quiz__options {
+    grid-template-columns: 1fr;
+  }
+  .home-quiz__card {
+    padding: var(--space-5);
+  }
+}
+
+.home-quiz__option {
+  text-align: left;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.home-quiz__option:hover {
+  border-color: var(--gray-400);
+  transform: translateY(-1px);
+}
+
+.home-quiz__option strong {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--black);
+}
+
+.home-quiz__option span {
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+  line-height: 1.45;
+}
+
+.home-quiz__option.is-active {
+  border-color: var(--green);
+  background: var(--green-light);
+  box-shadow: 0 0 0 3px rgba(0, 182, 122, 0.12);
+}
+
+.home-quiz__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}
+
+.home-quiz__done {
+  text-align: center;
+  padding: var(--space-10) 0;
+}
+
+.home-quiz__done h3 {
+  font-family: var(--font-serif);
+  font-size: var(--text-3xl);
+  font-weight: 500;
+  margin: 0 0 var(--space-2);
+}
+
+.home-quiz__done p {
+  color: var(--gray-500);
+  margin: 0;
+}
+
+/* ——— Home: FAQ ——— */
+.home-faq {
+  padding: var(--space-24) 0;
+  background: var(--white);
+}
+
+.home-faq__list {
+  max-width: 820px;
+  margin: var(--space-12) auto 0;
+  border-top: 1px solid var(--gray-200);
+}
+
+.home-faq__item {
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.home-faq__q {
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--black);
+  padding: var(--space-5) 0;
+  text-align: left;
+}
+
+.home-faq__a {
+  font-size: var(--text-base);
+  color: var(--gray-500);
+  line-height: 1.65;
+  padding-bottom: var(--space-5);
+}
+
+/* ——— Featured skeletons ——— */
+.home-featured__skeleton {
+  height: 340px;
+  border-radius: var(--radius-lg);
+  background: var(--gray-100);
+  animation: pulse-soft 1.6s ease-in-out infinite;
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+/* ——— Shims ——— */
+.footer__brand {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.footer__col a {
+  display: block;
+  padding: 6px 0;
+  font-size: var(--text-sm);
+  color: var(--gray-400);
+  text-decoration: none;
+  transition: color 0.16s ease;
+}
+
+.footer__col a:hover {
+  color: var(--white);
+}
+
+.header__cta {
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .header__cta {
+    display: none;
+  }
+}
+
+.header__user :is(button, a) {
+  font-family: var(--font-sans);
+}
