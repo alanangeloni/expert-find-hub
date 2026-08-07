@@ -44,6 +44,7 @@ const App = () => (
       <Sonner />
       <HelmetProvider>
         <AuthProvider>
+          <CompareProvider>
           <ScrollToTop />
           <div className="min-h-screen bg-background font-sans antialiased">
             <Header />
