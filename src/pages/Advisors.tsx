@@ -169,7 +169,11 @@ const AdvisorSearch = () => {
         )}
       </div>
 
-      <NewsletterSignup />
+      <section className="advisor-search__newsletter">
+        <div className="dcontainer">
+          <NewsletterSignup />
+        </div>
+      </section>
     </div>
   );
 };

@@ -410,3 +410,16 @@
     padding: var(--space-6);
   }
 }
+
+/* ——— Advisor search: newsletter spacing ——— */
+.advisor-search__newsletter {
+  margin-top: var(--space-20);
+  padding-bottom: var(--space-24);
+}
+
+@media (max-width: 900px) {
+  .advisor-search__newsletter {
+    margin-top: var(--space-16);
+    padding-bottom: var(--space-16);
+  }
+}
