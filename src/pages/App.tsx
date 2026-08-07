@@ -62,7 +62,7 @@ const AppPage = () => {
           <div className="container mx-auto px-4">
             <p className="text-center text-lg text-muted-foreground italic max-w-3xl mx-auto">
               "Public earns high marks for ease-of-use and fractional shares"
-              <span className="block mt-2 text-sm not-italic">— Bankrate</span>
+              <span className="block mt-2 text-sm not-italic">Bankrate</span>
             </p>
           </div>
         </section>

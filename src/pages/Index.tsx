@@ -58,7 +58,7 @@ const EXPERIENCE_OPTIONS = [
 
 const QUIZ_STEPS = [
   { id: "goals", title: "What matters most?", subtitle: "Pick up to 4 goals or specialties." },
-  { id: "location", title: "Where are you based?", subtitle: "Optional — leave blank for nationwide." },
+  { id: "location", title: "Where are you based?", subtitle: "Optional. Leave blank for nationwide." },
   { id: "fees", title: "Preferred fee style", subtitle: "How would you like to pay for advice?" },
   { id: "assets", title: "Investable assets", subtitle: "Helps us respect advisor minimums." },
   { id: "preferences", title: "Fine-tune the match", subtitle: "A few final preferences." },
@@ -359,7 +359,7 @@ const FAQS = [
   },
   {
     q: "What happens after I reach out?",
-    a: "You'll schedule a free intro call. There is no obligation — talk to as many advisors as you like before deciding.",
+    a: "You'll schedule a free intro call. There is no obligation. Talk to as many advisors as you like before deciding.",
   },
 ];
 
@@ -394,7 +394,7 @@ const HomePage = () => {
             <span className="home-hero__title-serif">with a Financial Professional</span>
           </h1>
           <p className="home-hero__subtitle">
-            We match you with vetted fiduciary financial advisors — based on your goals, values, and
+            We match you with vetted fiduciary financial advisors, based on your goals, values, and
             the way you actually want to work together.
           </p>
 
@@ -472,7 +472,7 @@ const HomePage = () => {
               <em>the right relationship</em>
             </h2>
             <p className="home-section-desc">
-              We cut through the noise so you can focus on what matters — finding someone you trust
+              We cut through the noise so you can focus on what matters: finding someone you trust
               with your financial future.
             </p>
           </div>
@@ -482,13 +482,13 @@ const HomePage = () => {
               {
                 num: "01",
                 title: "Tell us what matters",
-                body: "Take our quick matching quiz — goals, location, fee style, and values. Takes under two minutes.",
+                body: "Take our quick matching quiz: goals, location, fee style, and values. Takes under two minutes.",
                 color: "green" as const,
               },
               {
                 num: "02",
                 title: "Explore & compare",
-                body: "Browse transparent profiles and compare advisors — fees, minimums, credentials, and fit.",
+                body: "Browse transparent profiles and compare advisors: fees, minimums, credentials, and fit.",
                 color: "blue" as const,
               },
               {
@@ -570,13 +570,13 @@ const HomePage = () => {
             </h2>
             <p className="home-section-desc">
               The right advisor can change the trajectory of your financial life. We built this
-              directory to make that match feel intentional — not like another lead-gen form.
+              directory to make that match feel intentional, not like another lead-gen form.
             </p>
             <ul className="home-why__list">
               {[
                 "Every advisor commits to a fiduciary standard",
                 "Transparent fees, minimums, and specialties upfront",
-                "No pay-to-play rankings — ever",
+                "No pay-to-play rankings, ever",
                 "Compare advisors before you commit",
               ].map((item) => (
                 <li key={item}>
@@ -599,7 +599,7 @@ const HomePage = () => {
               <span className="badge badge--green badge--sm">Fiduciary</span>
               <h3>Your interests, legally first</h3>
               <p>
-                Every professional listed is held to a fiduciary standard — they must put your
+                Every professional listed is held to a fiduciary standard. They must put your
                 interests ahead of their own.
               </p>
             </div>
@@ -615,7 +615,7 @@ const HomePage = () => {
               <span className="badge badge--orange badge--sm">Human</span>
               <h3>Match on more than AUM</h3>
               <p>
-                Filter by specialty, values, and life stage — because fit is about more than
+                Filter by specialty, values, and life stage, because fit is about more than
                 portfolio size.
               </p>
             </div>
@@ -652,7 +652,7 @@ const HomePage = () => {
         <div className="dcontainer home-cta__inner">
           <div className="home-cta__text">
             <h2>Ready to find your advisor?</h2>
-            <p>Take the quiz or browse the directory — either way, matching is free.</p>
+            <p>Take the quiz or browse the directory. Either way, matching is free.</p>
           </div>
           <div className="home-cta__actions">
             <a className="btn btn--green btn--lg" href="#match">

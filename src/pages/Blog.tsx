@@ -85,7 +85,7 @@ const Blog = () => {
             </h1>
             <p className="blog-page__sub">
               Practical guides on fiduciaries, fees, life transitions, and how to find advice that actually
-              fits—written without the jargon fog.
+              fits written without the jargon fog.
             </p>
           </div>
           <div className="blog-page__hero-cta">
@@ -200,7 +200,7 @@ const Blog = () => {
         <section className="blog-page__band">
           <div className="blog-page__band-copy">
             <h2>Ready to put this into practice?</h2>
-            <p>Match with fiduciary advisors who fit your goals—or compare a shortlist side by side.</p>
+            <p>Match with fiduciary advisors who fit your goals, or compare a shortlist side by side.</p>
           </div>
           <div className="blog-page__band-actions">
             <Link to="/#match" className="btn btn--green btn--lg">
