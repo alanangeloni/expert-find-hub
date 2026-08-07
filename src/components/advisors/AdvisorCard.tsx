@@ -21,10 +21,22 @@ const hueFor = (name: string) => {
   return h;
 };
 
+const extractAcronym = (designation: string) => {
+  const match = designation.match(/\(([^)]+)\)/);
+  if (match) return match[1];
+  const words = designation.trim().split(/\s+/);
+  if (words.length === 1) return designation;
+  return words.map((w) => w[0]).join("").toUpperCase();
+};
+
 const formatMin = (min?: string) => {
   if (!min) return "No minimum";
-  return min.trim().startsWith("$") ? min : `$${min}`;
+  const raw = min.trim();
+  const numeric = Number(raw.replace(/[$,]/g, ""));
+  if (!Number.isNaN(numeric) && numeric > 0 && numeric < 1000) return `$${numeric.toLocaleString()} min`;
+  return raw.startsWith("$") ? `${raw} min` : `$${raw} min`;
 };
+
 
 export const AdvisorCard = ({ advisor }: AdvisorCardProps) => {
   const navigate = useNavigate();
