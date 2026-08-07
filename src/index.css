@@ -40,23 +40,24 @@
     --blue-accent-h: 224 88% 63%;
     --orange-h: 16 100% 60%;
 
-    /* Legacy token names remapped onto the new palette */
-    --mint: var(--green-h);
-    --mint-2: var(--green-dark-h);
-    --mint-soft: var(--green-light-h);
-    --aqua: var(--blue-accent-h);
-    --aqua-2: 224 62% 53%;
-    --aqua-soft: 224 92% 96%;
-    --blue: var(--black-h);
-    --blue-2: 0 0% 8%;
-    --blue-3: 48 4% 22%;
-    --sand: var(--cream-h);
-    --sand-2: var(--cream-dark-h);
-    --ink: var(--black-h);
-    --ink-2: var(--gray-600-h);
-    --ink-3: var(--gray-500-h);
-    --line: var(--gray-200-h);
-    --muted-ink: var(--gray-400-h);
+    /* Legacy token names remapped onto the new palette (prefixed to avoid
+       collisions with the design-system variables in variables.css) */
+    --lg-mint: var(--green-h);
+    --lg-mint-2: var(--green-dark-h);
+    --lg-mint-soft: var(--green-light-h);
+    --lg-aqua: var(--blue-accent-h);
+    --lg-aqua-2: 224 62% 53%;
+    --lg-aqua-soft: 224 92% 96%;
+    --lg-blue: var(--black-h);
+    --lg-blue-2: 0 0% 8%;
+    --lg-blue-3: 48 4% 22%;
+    --lg-sand: var(--cream-h);
+    --lg-sand-2: var(--cream-dark-h);
+    --lg-ink: var(--black-h);
+    --lg-ink-2: var(--gray-600-h);
+    --lg-ink-3: var(--gray-500-h);
+    --lg-line: var(--gray-200-h);
+
 
     --background: var(--white-h);
     --foreground: var(--black-h);
