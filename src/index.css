@@ -1,3 +1,20 @@
+@import './styles/design/variables.css';
+@import './styles/design/base.css';
+@import './styles/design/Button.css';
+@import './styles/design/Badge.css';
+@import './styles/design/Avatar.css';
+@import './styles/design/StarRating.css';
+@import './styles/design/Header.css';
+@import './styles/design/Footer.css';
+@import './styles/design/AdvisorCard.css';
+@import './styles/design/FirmCard.css';
+@import './styles/design/SearchFilters.css';
+@import './styles/design/HomePage.css';
+@import './styles/design/AdvisorSearchPage.css';
+@import './styles/design/FirmSearchPage.css';
+@import './styles/design/AdvisorDetailPage.css';
+@import './styles/design/FirmDetailPage.css';
+@import './styles/design/MatchQuizPage.css';
 
 @tailwind base;
 @tailwind components;
@@ -5,53 +22,71 @@
 
 @layer base {
   :root {
-    /* Brand palette (HSL) */
-    --mint: 165 65% 51%;          /* #31d6aa */
-    --mint-2: 165 65% 43%;        /* #26b892 */
-    --mint-soft: 162 60% 90%;     /* #d6f5ec */
-    --aqua: 183 58% 41%;          /* #2CA2A7 */
-    --aqua-2: 184 64% 32%;        /* #1d8388 */
-    --aqua-soft: 187 35% 88%;     /* #d5ecee */
-    --blue: 196 100% 19%;         /* #004660 */
-    --blue-2: 197 100% 14%;       /* #00334a */
-    --blue-3: 198 100% 25%;       /* #005a7d */
-    --sand: 180 30% 96%;          /* #F1F7F7 */
-    --sand-2: 184 22% 91%;        /* #E2EEEF */
-    --ink: 196 100% 19%;
-    --ink-2: 198 100% 25%;
-    --ink-3: 196 31% 35%;         /* #3d6876 */
-    --line: 187 23% 85%;          /* #CFDFE1 */
-    --muted-ink: 195 18% 56%;     /* #7a9aa5 */
+    /* Design system palette as HSL triplets */
+    --black-h: 0 0% 4%;
+    --white-h: 0 0% 100%;
+    --cream-h: 40 20% 96%;
+    --cream-dark-h: 45 15% 92%;
+    --gray-100-h: 40 11% 95%;
+    --gray-200-h: 48 9% 90%;
+    --gray-300-h: 45 8% 82%;
+    --gray-400-h: 48 4% 62%;
+    --gray-500-h: 51 4% 44%;
+    --gray-600-h: 50 3% 31%;
+    --gray-700-h: 48 4% 22%;
+    --green-h: 160 100% 36%;
+    --green-dark-h: 160 100% 29%;
+    --green-light-h: 158 62% 94%;
+    --blue-accent-h: 224 88% 63%;
+    --orange-h: 16 100% 60%;
 
-    --background: 180 30% 96%;
-    --foreground: 196 100% 19%;
+    /* Legacy token names remapped onto the new palette */
+    --mint: var(--green-h);
+    --mint-2: var(--green-dark-h);
+    --mint-soft: var(--green-light-h);
+    --aqua: var(--blue-accent-h);
+    --aqua-2: 224 62% 53%;
+    --aqua-soft: 224 92% 96%;
+    --blue: var(--black-h);
+    --blue-2: 0 0% 8%;
+    --blue-3: 48 4% 22%;
+    --sand: var(--cream-h);
+    --sand-2: var(--cream-dark-h);
+    --ink: var(--black-h);
+    --ink-2: var(--gray-600-h);
+    --ink-3: var(--gray-500-h);
+    --line: var(--gray-200-h);
+    --muted-ink: var(--gray-400-h);
+
+    --background: var(--white-h);
+    --foreground: var(--black-h);
 
     --card: 0 0% 100%;
-    --card-foreground: 196 100% 19%;
+    --card-foreground: var(--black-h);
 
     --popover: 0 0% 100%;
-    --popover-foreground: 196 100% 19%;
+    --popover-foreground: var(--black-h);
 
-    --primary: 196 100% 19%;
+    --primary: var(--black-h);
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 184 22% 91%;
-    --secondary-foreground: 196 100% 19%;
+    --secondary: var(--cream-h);
+    --secondary-foreground: var(--black-h);
 
-    --muted: 180 30% 96%;
-    --muted-foreground: 195 18% 45%;
+    --muted: var(--gray-100-h);
+    --muted-foreground: var(--gray-500-h);
 
-    --accent: 162 60% 90%;
-    --accent-foreground: 196 100% 19%;
+    --accent: var(--green-light-h);
+    --accent-foreground: var(--green-dark-h);
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 187 23% 85%;
-    --input: 187 23% 85%;
-    --ring: 196 100% 19%;
+    --border: var(--gray-200-h);
+    --input: var(--gray-200-h);
+    --ring: var(--green-h);
 
-    --radius: 0.875rem;
+    --radius: 12px;
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -61,48 +96,28 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
-
-    --shadow-sm: 0 1px 2px hsl(196 100% 19% / 0.06), 0 2px 8px hsl(196 100% 19% / 0.05);
-    --shadow-md: 0 4px 12px hsl(196 100% 19% / 0.09), 0 16px 40px hsl(196 100% 19% / 0.08);
-    --shadow-lg: 0 20px 60px hsl(196 100% 19% / 0.22);
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
+    --background: 0 0% 4%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 0 0% 100%;
+    --primary-foreground: 0 0% 4%;
+    --secondary: 48 4% 22%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 48 4% 22%;
+    --muted-foreground: 48 4% 62%;
+    --accent: 160 100% 29%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 48 4% 22%;
+    --input: 48 4% 22%;
+    --ring: 160 100% 36%;
   }
 }
 
@@ -122,97 +137,48 @@
     margin: 0;
     padding: 0;
     min-height: 100vh;
-    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
-  h1, h2, h3, h4 {
-    font-family: 'Fraunces', Georgia, serif;
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    color: hsl(var(--ink));
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+    color: var(--black);
+  }
+
+  .serif {
+    font-family: var(--font-serif);
   }
 
   .eyebrow {
+    font-size: var(--text-xs);
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.18em;
-    font-size: 12px;
-    font-weight: 600;
-    color: hsl(var(--aqua));
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .eyebrow::before {
-    content: '';
-    width: 22px;
-    height: 1px;
-    background: hsl(var(--aqua));
-    display: inline-block;
+    letter-spacing: 0.1em;
+    color: var(--gray-500);
   }
 
-  ::selection {
-    background: hsl(var(--mint));
-    color: hsl(var(--blue));
+  :focus-visible {
+    outline: 2px solid var(--green);
+    outline-offset: 2px;
   }
 
-  @keyframes pulse-dot {
-    0%,100% { box-shadow: 0 0 0 3px hsl(var(--mint) / 0.28); }
-    50% { box-shadow: 0 0 0 6px hsl(var(--mint) / 0.08); }
-  }
-  @keyframes card-float {
-    0%,100% { transform: translate(-50%, -50%); }
-    50% { transform: translate(-50%, calc(-50% - 8px)); }
-  }
-  @keyframes float-a {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
-  @keyframes float-b {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(10px); }
-  }
-  @keyframes match-fill {
-    from { width: 0; }
-  }
-
-  /* Mobile-first media queries */
-  @media (max-width: 640px) {
-    h1 {
-      font-size: 1.5rem;
-      line-height: 2rem;
-    }
-    
-    h2 {
-      font-size: 1.25rem;
-      line-height: 1.75rem;
-    }
-    
-    h3 {
-      font-size: 1.125rem;
-      line-height: 1.5rem;
-    }
-    
-    p {
-      font-size: 0.875rem;
-      line-height: 1.25rem;
-    }
-  }
-
-  /* Improve tap targets on mobile */
   button, a, input, select, textarea {
     touch-action: manipulation;
   }
 }
 
-/* Ensure elements can't overflow and break the layout */
 img, video, canvas, svg {
   max-width: 100%;
   height: auto;
 }
 
-/* Prevent horizontal scroll issues */
 .overflow-x-auto {
   -webkit-overflow-scrolling: touch;
 }
