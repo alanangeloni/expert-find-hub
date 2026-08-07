@@ -234,7 +234,7 @@ const BlogArticle = () => {
           <div className="blog-post__side-card">
             <h3>In this journal</h3>
             <p>
-              Guides on fees, fiduciary duty, and life-money transitions—written to help you choose advice with
+              Guides on fees, fiduciary duty, and life-money transitions written to help you choose advice with
               confidence.
             </p>
             <Link to="/blog" className="btn btn--secondary btn--md btn--full">
