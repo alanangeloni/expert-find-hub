@@ -1,231 +1,219 @@
-import React, { useState, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
-import { getBlogPostsWithCount, getBlogCategories, type BlogPost, type BlogCategory } from '@/services/blogService';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Spinner } from '@/components/ui/spinner';
-import { FilterBar } from '@/components/filters/FilterBar';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { format } from 'date-fns';
-import { NewsletterSignup } from '@/components/common/NewsletterSignup';
-import { Seo } from '@/components/seo/Seo';
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, PaginationEllipsis } from '@/components/ui/pagination';
+import React, { useMemo, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { getBlogPosts, getBlogCategories, type BlogPost, type BlogCategory } from "@/services/blogService";
+import { Spinner } from "@/components/ui/spinner";
+import { Seo } from "@/components/seo/Seo";
+import { BlogCard, postExcerpt, readTime } from "@/components/blog/BlogCard";
+
 const Blog = () => {
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [posts, setPosts] = useState<BlogPost[]>([]);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [totalCount, setTotalCount] = useState<number>(0);
-  const postsPerPage = 15;
+  const [searchParams, setSearchParams] = useSearchParams();
+  const category = searchParams.get("category") || "";
+  const [query, setQuery] = useState<string>(searchParams.get("q") || "");
+  const [sort, setSort] = useState<"newest" | "oldest" | "read-time">("newest");
 
-  // Get categories directly from our predefined list
-  const {
-    data: categoriesData,
-    isLoading: categoriesLoading
-  } = useQuery({
-    queryKey: ['blogCategories'],
-    queryFn: getBlogCategories
+  const { data: categoriesData = [] } = useQuery({
+    queryKey: ["blogCategories"],
+    queryFn: getBlogCategories,
   });
 
-  // Fetch blog posts with pagination
-  const {
-    data: postsResponse,
-    isLoading: postsLoading
-  } = useQuery({
-    queryKey: ['blogPosts', selectedCategory, currentPage, searchQuery],
-    queryFn: () => getBlogPostsWithCount({
-      status: 'published',
-      category: selectedCategory === 'all' ? undefined : selectedCategory,
-      limit: postsPerPage,
-      offset: (currentPage - 1) * postsPerPage
-    })
+  const { data: posts = [], isLoading } = useQuery({
+    queryKey: ["blogPosts", "all"],
+    queryFn: () => getBlogPosts({ status: "published", limit: 200 }),
   });
 
-  // Update posts when data changes or when search query changes
-  useEffect(() => {
-    if (postsResponse) {
-      setTotalCount(postsResponse.totalCount);
-      if (searchQuery.trim() === '') {
-        setPosts(postsResponse.posts);
-      } else {
-        const filteredPosts = postsResponse.posts.filter(post => post.title.toLowerCase().includes(searchQuery.toLowerCase()) || post.content.toLowerCase().includes(searchQuery.toLowerCase()) || post.excerpt && post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()));
-        setPosts(filteredPosts);
-      }
+  const featured = posts[0];
+
+  const results = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    let list = posts.filter((p: BlogPost) => p.id !== featured?.id);
+
+    if (category) list = posts.filter((p) => (p.categories || []).includes(category));
+
+    if (q) {
+      const pool = category ? list : posts;
+      list = pool.filter((p) =>
+        [p.title, postExcerpt(p), p.authorName || "", ...(p.categories || [])]
+          .join(" ")
+          .toLowerCase()
+          .includes(q)
+      );
     }
-  }, [postsResponse, searchQuery]);
 
-  // Reset to first page when category or search changes
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [selectedCategory, searchQuery]);
-
-  // Calculate pagination
-  const totalPages = Math.ceil(totalCount / postsPerPage);
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
+    const time = (p: BlogPost) => new Date(p.published_at || p.created_at || 0).getTime();
+    return [...list].sort((a, b) => {
+      if (sort === "oldest") return time(a) - time(b);
+      if (sort === "read-time") return readTime(a) - readTime(b);
+      return time(b) - time(a);
     });
+  }, [posts, featured, category, query, sort]);
+
+  const showFeatured = !category && !query.trim() && Boolean(featured);
+
+  const applyCategory = (cat: string) => {
+    const next = new URLSearchParams(searchParams);
+    if (cat) next.set("category", cat);
+    else next.delete("category");
+    setSearchParams(next, { replace: true });
   };
 
-  // Function to truncate text for post excerpts
-  const truncateText = (text: string, maxLength: number) => {
-    if (text && text.length > maxLength) {
-      return text.substring(0, maxLength) + '...';
-    }
-    return text;
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const next = new URLSearchParams(searchParams);
+    if (query.trim()) next.set("q", query.trim());
+    else next.delete("q");
+    setSearchParams(next, { replace: true });
   };
 
-  // Format date for display
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return '';
-    return format(new Date(dateString), 'MMMM d, yyyy');
-  };
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-  };
-  return <div className="container mx-auto py-8 px-4">
-      <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-2">Financial Insights Blog</h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Expert advice, market insights, and financial planning strategies to help you achieve your financial goals.
-        </p>
-      </div>
+  return (
+    <div className="blog-page page-enter">
+      <Seo
+        title="Financial Journal | Financial Professional"
+        description="Practical guides on fiduciaries, fees, life transitions, and finding financial advice that actually fits."
+        canonicalUrl="https://financial-professional.lovable.app/blog"
+      />
 
-      {/* Search and Filter Bar */}
-      <FilterBar searchPlaceholder="Search articles..." searchQuery={searchQuery} onSearchChange={handleSearchChange} className="mb-8">
-        <div className="flex items-center gap-2">
-          <label htmlFor="category-filter" className="text-sm font-medium text-slate-700 whitespace-nowrap">
-            Category:
-          </label>
-          <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-            <SelectTrigger id="category-filter" className="w-[180px] h-10 rounded-[20px] bg-slate-50 border-slate-100">
-              <SelectValue placeholder="Select category" />
-            </SelectTrigger>
-            <SelectContent className="bg-white border border-slate-200 shadow-lg">
-              <SelectItem value="all">All Posts</SelectItem>
-              {categoriesData?.map((category: BlogCategory) => <SelectItem key={category.id} value={category.name}>
-                  {category.name}
-                </SelectItem>)}
-            </SelectContent>
-          </Select>
+      <div className="blog-page__hero">
+        <div className="container blog-page__hero-inner">
+          <div className="blog-page__hero-copy">
+            <span className="keyline" />
+            <p className="blog-page__eyebrow">The Journal</p>
+            <h1>
+              Clarity for every
+              <br />
+              <em>money decision</em>
+            </h1>
+            <p className="blog-page__sub">
+              Practical guides on fiduciaries, fees, life transitions, and how to find advice that actually
+              fits—written without the jargon fog.
+            </p>
+          </div>
+          <div className="blog-page__hero-cta">
+            <Link to="/#match" className="btn btn--primary btn--lg">
+              Take the matching quiz
+            </Link>
+            <Link to="/advisors" className="btn btn--outline btn--lg">
+              Browse advisors
+            </Link>
+          </div>
         </div>
-      </FilterBar>
-
-      {/* Loading state */}
-      {(postsLoading || categoriesLoading) && <div className="flex justify-center py-12">
-          <Spinner size="lg" />
-        </div>}
-
-      {/* Latest Articles section heading */}
-      <h2 className="text-2xl font-semibold mb-6">Latest Articles</h2>
-      
-      {/* Blog posts grid */}
-      {!postsLoading && posts.length > 0 ? <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-          {posts.map(post => <Card key={post.id} className="overflow-hidden flex flex-col bg-white rounded-xl border border-slate-200 shadow-sm">
-              {/* Image area - slightly larger */}
-              <div className="h-40 w-full bg-slate-100 flex items-center justify-center relative">
-                {post.cover_image_url ? <img src={post.cover_image_url} alt={post.title} className="w-full h-full object-cover" /> : <svg className="w-14 h-14 text-slate-300" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 48 48"><rect x="4" y="4" width="40" height="40" rx="8" fill="#f1f5f9" /><path stroke="#cbd5e1" strokeWidth="2" d="M16 32l6-8 6 8 8-12" /><circle cx="16" cy="20" r="2" fill="#cbd5e1" /></svg>}
-              </div>
-              {/* Card Content - slightly larger */}
-              <CardContent className="flex flex-col flex-grow p-5 pb-4">
-                {/* Category Badge */}
-                {post.categories?.[0] && <span className="inline-block mb-2 px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 text-xs font-semibold">{post.categories[0]}</span>}
-                {/* Title */}
-                <h2 className="text-[17px] font-bold mb-1 text-slate-900 leading-tight line-clamp-2">{post.title}</h2>
-                {/* Excerpt */}
-                <p className="text-slate-600 mb-2 text-[15px] leading-snug line-clamp-2">{truncateText(post.excerpt || post.content, 100)}</p>
-                {/* Author Section */}
-                
-                {/* Footer - one line, small */}
-                <div className="flex items-center justify-between text-xs text-slate-500 border-t pt-2 mt-auto">
-                  <div className="flex items-center gap-2">
-                    <span className="flex items-center gap-1"><svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>{formatDate(post.published_at || post.created_at)}</span>
-                    <span className="flex items-center gap-1"><svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" /><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2" /></svg>{Math.ceil((post.content?.length || 1000) / 1000)} min read</span>
-                  </div>
-                  <Link to={`/blog/${post.slug}`} className="font-semibold text-slate-900 hover:text-blue-700 transition">Read More</Link>
-                </div>
-              </CardContent>
-            </Card>)}
-        </div> : !postsLoading ? <div className="text-center py-12">
-          <p className="text-lg text-gray-600">No articles found for this category.</p>
-        </div> : null}
-
-      {/* Pagination */}
-      {!postsLoading && posts.length > 0 && totalPages > 1 && <div className="flex justify-center mt-8 mb-16">
-          <Pagination>
-            <PaginationContent>
-              {currentPage > 1 && <PaginationItem>
-                  <PaginationPrevious href="#" onClick={e => {
-              e.preventDefault();
-              handlePageChange(currentPage - 1);
-            }} />
-                </PaginationItem>}
-              
-              {/* First page */}
-              {currentPage > 3 && <>
-                  <PaginationItem>
-                    <PaginationLink href="#" onClick={e => {
-                e.preventDefault();
-                handlePageChange(1);
-              }}>
-                      1
-                    </PaginationLink>
-                  </PaginationItem>
-                  {currentPage > 4 && <PaginationItem>
-                      <PaginationEllipsis />
-                    </PaginationItem>}
-                </>}
-              
-              {/* Pages around current page */}
-              {Array.from({
-            length: totalPages
-          }, (_, i) => i + 1).filter(page => Math.abs(page - currentPage) <= 2).map(page => <PaginationItem key={page}>
-                    <PaginationLink href="#" isActive={page === currentPage} onClick={e => {
-              e.preventDefault();
-              handlePageChange(page);
-            }}>
-                      {page}
-                    </PaginationLink>
-                  </PaginationItem>)}
-              
-              {/* Last page */}
-              {currentPage < totalPages - 2 && <>
-                  {currentPage < totalPages - 3 && <PaginationItem>
-                      <PaginationEllipsis />
-                    </PaginationItem>}
-                  <PaginationItem>
-                    <PaginationLink href="#" onClick={e => {
-                e.preventDefault();
-                handlePageChange(totalPages);
-              }}>
-                      {totalPages}
-                    </PaginationLink>
-                  </PaginationItem>
-                </>}
-              
-              {currentPage < totalPages && <PaginationItem>
-                  <PaginationNext href="#" onClick={e => {
-              e.preventDefault();
-              handlePageChange(currentPage + 1);
-            }} />
-                </PaginationItem>}
-            </PaginationContent>
-          </Pagination>
-        </div>}
-
-      {/* Newsletter Signup Section */}
-      <div className="mt-16 mb-4">
-        <NewsletterSignup />
       </div>
-    </div>;
+
+      <div className="container blog-page__body">
+        <form className="blog-page__toolbar" onSubmit={handleSearch}>
+          <div className="blog-page__search">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.3-4.3" />
+            </svg>
+            <input
+              type="search"
+              placeholder="Search articles…"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              aria-label="Search articles"
+            />
+          </div>
+          <select value={sort} onChange={(e) => setSort(e.target.value as typeof sort)} aria-label="Sort articles">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+            <option value="read-time">Shortest read</option>
+          </select>
+        </form>
+
+        <div className="blog-page__categories" role="tablist" aria-label="Categories">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={!category}
+            className={`blog-page__cat ${!category ? "is-on" : ""}`}
+            onClick={() => applyCategory("")}
+          >
+            All
+          </button>
+          {categoriesData.map((cat: BlogCategory) => (
+            <button
+              key={cat.id}
+              type="button"
+              role="tab"
+              aria-selected={category === cat.name}
+              className={`blog-page__cat ${category === cat.name ? "is-on" : ""}`}
+              onClick={() => applyCategory(cat.name)}
+            >
+              {cat.name}
+            </button>
+          ))}
+        </div>
+
+        {isLoading ? (
+          <div className="flex justify-center py-16">
+            <Spinner size="lg" />
+          </div>
+        ) : (
+          <>
+            {showFeatured && featured && (
+              <section className="blog-page__featured" aria-label="Featured article">
+                <BlogCard post={featured} variant="featured" />
+              </section>
+            )}
+
+            <section className="blog-page__list" aria-label="Articles">
+              <div className="blog-page__list-header">
+                <h2>{category ? category : showFeatured ? "More articles" : "All articles"}</h2>
+                <p>
+                  <strong>{results.length}</strong> article{results.length !== 1 ? "s" : ""}
+                </p>
+              </div>
+
+              {results.length === 0 ? (
+                <div className="blog-page__empty">
+                  <div className="blog-page__empty-icon">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <circle cx="11" cy="11" r="8" />
+                      <path d="m21 21-4.3-4.3" />
+                    </svg>
+                  </div>
+                  <h3>No articles match</h3>
+                  <p>Try another category or clear your search.</p>
+                  <button
+                    type="button"
+                    className="btn btn--primary btn--md"
+                    onClick={() => {
+                      setQuery("");
+                      setSearchParams(new URLSearchParams(), { replace: true });
+                    }}
+                  >
+                    Reset filters
+                  </button>
+                </div>
+              ) : (
+                <div className="blog-page__grid">
+                  {results.map((post) => (
+                    <BlogCard key={post.id} post={post} />
+                  ))}
+                </div>
+              )}
+            </section>
+          </>
+        )}
+
+        <section className="blog-page__band">
+          <div className="blog-page__band-copy">
+            <h2>Ready to put this into practice?</h2>
+            <p>Match with fiduciary advisors who fit your goals—or compare a shortlist side by side.</p>
+          </div>
+          <div className="blog-page__band-actions">
+            <Link to="/#match" className="btn btn--green btn--lg">
+              Get matched
+            </Link>
+            <Link to="/advisors" className="btn btn--outline btn--lg blog-page__band-secondary">
+              Search advisors
+            </Link>
+          </div>
+        </section>
+      </div>
+    </div>
+  );
 };
-const BlogPage = () => {
-  return <>
-      <Seo title="Blog | Financial Professional" description="Read the latest financial articles! Learn more about investing, retirement, saving, insurance, and more." canonicalUrl="https://financial-professional.lovable.app/blog" />
-      <Blog />
-    </>;
-};
-export default BlogPage;
+
+export default Blog;
