@@ -1,45 +1,33 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { BlogPost, getBlogPosts } from "@/services/blogService";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
-import { Calendar, Clock, ArrowLeft, Edit, Newspaper } from "lucide-react";
-import { format, parseISO } from "date-fns";
 import { useAuth } from "@/contexts/AuthContext";
 import { Seo } from "@/components/seo/Seo";
 import { supabase } from "@/integrations/supabase/client";
 import ReactMarkdown from "react-markdown";
 import { getPostCategories } from "@/utils/blogRelations";
-import { NewsletterForm } from "@/components/common/NewsletterForm";
+import { BlogCard, postDate, readTime, postExcerpt, authorHue } from "@/components/blog/BlogCard";
 
 const BlogArticle = () => {
-  const {
-    slug
-  } = useParams<{
-    slug: string;
-  }>();
+  const { slug } = useParams<{ slug: string }>();
   const [post, setPost] = useState<BlogPost | null>(null);
-  const [popularArticles, setPopularArticles] = useState<BlogPost[]>([]);
+  const [related, setRelated] = useState<BlogPost[]>([]);
+  const [allCategories, setAllCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const {
-    user
-  } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     const checkAdminStatus = async () => {
       if (!user) return;
       try {
-        const {
-          data
-        } = await supabase.from('profiles').select('is_admin').eq('id', user.id).single();
+        const { data } = await supabase.from("profiles").select("is_admin").eq("id", user.id).single();
         setIsAdmin(data?.is_admin || false);
       } catch (error) {
-        console.error('Error checking admin status:', error);
+        console.error("Error checking admin status:", error);
       }
     };
     checkAdminStatus();
@@ -50,40 +38,18 @@ const BlogArticle = () => {
       if (!slug) return;
       setLoading(true);
       try {
-        // Special handling for admins to see drafts
-        let postData: BlogPost | null = null;
-        if (isAdmin && user) {
-          const {
-            data
-          } = await supabase.from('blog_posts').select('*').eq('slug', slug).maybeSingle();
-          if (data) {
-            // Fetch categories separately
-            const categories = await getPostCategories(data.id);
-            postData = {
-              ...data,
-              categories
-            } as BlogPost;
-          }
-        } else {
-          const {
-            data
-          } = await supabase.from('blog_posts').select('*').eq('slug', slug).eq('status', 'published').maybeSingle();
-          if (data) {
-            // Fetch categories separately
-            const categories = await getPostCategories(data.id);
-            postData = {
-              ...data,
-              categories
-            } as BlogPost;
-          }
-        }
-        if (!postData) {
+        let queryBuilder = supabase.from("blog_posts").select("*").eq("slug", slug);
+        if (!(isAdmin && user)) queryBuilder = queryBuilder.eq("status", "published");
+        const { data } = await queryBuilder.maybeSingle();
+
+        if (!data) {
           setNotFound(true);
           return;
         }
-        setPost(postData);
+        const categories = await getPostCategories(data.id);
+        setPost({ ...data, categories } as BlogPost);
       } catch (error) {
-        console.error('Error fetching blog post:', error);
+        console.error("Error fetching blog post:", error);
         setNotFound(true);
       } finally {
         setLoading(false);
@@ -92,197 +58,238 @@ const BlogArticle = () => {
     fetchBlogPost();
   }, [slug, isAdmin, user]);
 
-  // Get author info
   useEffect(() => {
     const fetchAuthorInfo = async () => {
       if (!post?.author_id) return;
       try {
-        const {
-          data
-        } = await supabase.from('profiles').select('first_name, last_name').eq('id', post.author_id).single();
+        const { data } = await supabase
+          .from("profiles")
+          .select("first_name, last_name")
+          .eq("id", post.author_id)
+          .single();
         if (data) {
-          setPost(prev => prev ? {
-            ...prev,
-            authorName: `${data.first_name} ${data.last_name}`
-          } : null);
+          setPost((prev) => (prev ? { ...prev, authorName: `${data.first_name} ${data.last_name}` } : null));
         }
       } catch (error) {
-        console.error('Error fetching author info:', error);
+        console.error("Error fetching author info:", error);
       }
     };
     fetchAuthorInfo();
   }, [post?.author_id]);
 
-  // Fetch popular articles
   useEffect(() => {
-    const fetchPopularArticles = async () => {
+    const fetchRelated = async () => {
       try {
-        // Get 3 most recent published articles, excluding the current one
-        const articles = await getBlogPosts({
-          status: 'published',
-          limit: 3
-        });
-
-        // Filter out the current article if it's loaded
-        const filteredArticles = post ? articles.filter(article => article.slug !== post.slug).slice(0, 3) : articles;
-        setPopularArticles(filteredArticles);
+        const articles = await getBlogPosts({ status: "published", limit: 12 });
+        setAllCategories(Array.from(new Set(articles.flatMap((a) => a.categories || []))));
+        const others = articles.filter((a) => a.slug !== post?.slug);
+        const primary = post?.categories?.[0];
+        const sorted = primary
+          ? [...others].sort(
+              (a, b) =>
+                Number((b.categories || []).includes(primary)) - Number((a.categories || []).includes(primary))
+            )
+          : others;
+        setRelated(sorted.slice(0, 3));
       } catch (error) {
-        console.error('Error fetching popular articles:', error);
+        console.error("Error fetching related articles:", error);
       }
     };
-    fetchPopularArticles();
-  }, [post?.slug]);
+    fetchRelated();
+  }, [post?.slug, post?.categories]);
 
   if (loading) {
-    return <div className="min-h-screen flex items-center justify-center">
+    return (
+      <div className="min-h-screen flex items-center justify-center">
         <Spinner size="lg" />
-      </div>;
+      </div>
+    );
   }
+
   if (notFound || !post) {
-    return <div className="min-h-screen bg-white pt-16 pb-12 px-4">
-        <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-3xl font-bold mb-4">Blog Post Not Found</h1>
-          <p className="text-lg text-slate-600 mb-6">The blog post you're looking for doesn't exist or has been removed.</p>
-          <Link to="/blog">
-            <Button>
-              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Blog
-            </Button>
+    return (
+      <div className="blog-post blog-post--missing page-enter">
+        <div className="container">
+          <h1>Article not found</h1>
+          <p>This piece may have moved or been unpublished.</p>
+          <Link to="/blog" className="btn btn--primary btn--md">
+            Back to journal
           </Link>
         </div>
-      </div>;
+      </div>
+    );
   }
+
+  const category = post.categories?.[0] || "Insights";
+  const author = post.authorName || "Financial Professional";
+  const sideCategories = allCategories.filter((c) => c !== category).slice(0, 3);
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {post && (
-        <Seo 
-          title={post.title}
-          description={post.excerpt || post.content.substring(0, 155) + '...'}
-          canonicalUrl={`https://financial-professional.lovable.app/blog/${slug}`}
-          ogType="article"
-          ogImage={post.cover_image_url || undefined}
-        />
-      )}
-      {/* Hero Section with Cover Image */}
-      {post?.cover_image_url ? <div className="w-full h-[40vh] md:h-[50vh] relative bg-center bg-cover" style={{
-      backgroundImage: `url("${post.cover_image_url}")`
-    }}>
-          <div className="absolute inset-0 bg-black bg-opacity-50 flex items-end">
-            <div className="container mx-auto px-4 py-8 md:py-12 text-white">
-              {post.status === 'draft' && isAdmin && <Badge className="mb-4 bg-yellow-500 hover:bg-yellow-600">Draft</Badge>}
-              <h1 className="text-white text-3xl md:text-4xl lg:text-5xl font-bold drop-shadow-lg max-w-4xl">
-                {post.title}
-              </h1>
-            </div>
+    <div className="blog-post page-enter">
+      <Seo
+        title={post.title}
+        description={postExcerpt(post).slice(0, 155)}
+        canonicalUrl={`https://financial-professional.lovable.app/blog/${slug}`}
+        ogType="article"
+        ogImage={post.cover_image_url || undefined}
+      />
+
+      <div className="blog-post__top">
+        <div className="container">
+          <div className="blog-post__breadcrumb">
+            <Link to="/blog">Journal</Link>
+            <span>/</span>
+            <Link to={`/blog?category=${encodeURIComponent(category)}`}>{category}</Link>
+            <span>/</span>
+            <span className="blog-post__crumb-current">Article</span>
           </div>
-        </div> : <div className="container mx-auto pt-10 md:pt-14 px-4">
-          {post?.status === 'draft' && isAdmin && <Badge className="mb-4 bg-yellow-500 hover:bg-yellow-600">Draft</Badge>}
-          <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold max-w-4xl">
-            {post?.title}
-          </h1>
-        </div>}
 
-      {/* Blog Content and Sidebar Layout */}
-      <div className="container mx-auto px-4 py-8">
-        <div className="flex flex-col lg:flex-row gap-10">
-          {/* Main Content */}
-          <div className="w-full lg:w-2/3 max-w-3xl">
-            {/* Categories */}
-            {post?.categories && post.categories.length > 0 && <div className="flex flex-wrap gap-2 mb-6">
-                {post.categories.map(category => <Link to={`/blog?category=${category}`} key={category}>
-                    <Badge variant="outline" className="hover:bg-slate-100">
-                      {category}
-                    </Badge>
-                  </Link>)}
-              </div>}
+          <header className="blog-post__header">
+            <div className="blog-post__badges">
+              <span className="badge badge--green badge--md">{category}</span>
+              <span className="blog-post__read">{readTime(post)} min read</span>
+              {post.status === "draft" && isAdmin && <span className="badge badge--neutral badge--md">Draft</span>}
+            </div>
+            <h1>{post.title}</h1>
+            <p className="blog-post__dek">{postExcerpt(post)}</p>
 
-            {/* Article Meta */}
-            {post && <>
-                <div className="flex flex-wrap items-center gap-4 mb-8 text-sm text-slate-600">
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4" />
-                    <span>{format(new Date(post.published_at || post.created_at), 'MMMM d, yyyy')}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4" />
-                    <span>{Math.ceil(post.content.length / 1000)} min read</span>
-                  </div>
-                  {post.authorName && <div className="flex items-center gap-2">
-                      <Avatar className="h-6 w-6">
-                        <AvatarFallback>
-                          {post.authorName.split(' ').map(n => n[0]).join('')}
-                        </AvatarFallback>
-                      </Avatar>
-                      <span>{post.authorName}</span>
-                    </div>}
-                </div>
+            <div className="blog-post__byline">
+              <span
+                className="blog-post__avatar"
+                style={{ background: `hsl(${authorHue(author)} 42% 42%)` }}
+                aria-hidden="true"
+              >
+                {author
+                  .split(" ")
+                  .map((w) => w[0])
+                  .slice(0, 2)
+                  .join("")}
+              </span>
+              <div>
+                <strong>{author}</strong>
+                <span>{postDate(post)}</span>
+              </div>
+            </div>
 
-                {/* Admin Edit Button */}
-                {isAdmin && <div className="mb-8">
-                    <Button variant="outline" onClick={() => navigate(`/admin/blog/edit/${post.slug}`)}>
-                      <Edit className="mr-2 h-4 w-4" /> Edit Post
-                    </Button>
-                  </div>}
+            {isAdmin && (
+              <div className="mt-4">
+                <button
+                  type="button"
+                  className="btn btn--outline btn--sm"
+                  onClick={() => navigate(`/admin/blog/edit/${post.slug}`)}
+                >
+                  Edit post
+                </button>
+              </div>
+            )}
+          </header>
+        </div>
+      </div>
 
-                {/* Article Content */}
-                <article className="prose max-w-none">
-                  <ReactMarkdown>{post.content}</ReactMarkdown>
-                </article>
-              </>}
+      <div className="container blog-post__layout">
+        <article className="blog-post__article">
+          <div className="blog-post__keyline" aria-hidden="true" />
+          {post.cover_image_url && (
+            <img
+              src={post.cover_image_url}
+              alt={post.title}
+              className="w-full rounded-2xl mb-8 object-cover"
+              loading="lazy"
+            />
+          )}
+          <div className="blog-post__content">
+            <ReactMarkdown>{post.content}</ReactMarkdown>
+          </div>
 
-            {/* Back to Blog */}
-            <div className="mt-12 pt-8 border-t">
-              <Link to="/blog">
-                <Button variant="outline">
-                  <ArrowLeft className="mr-2 h-4 w-4" /> Back to Blog
-                </Button>
+          {(post.categories || []).length > 0 && (
+            <div className="blog-post__tags">
+              <span className="blog-post__tags-label">Topics</span>
+              <div className="blog-post__tag-row">
+                {(post.categories || []).map((tag) => (
+                  <Link key={tag} to={`/blog?category=${encodeURIComponent(tag)}`} className="blog-post__tag">
+                    {tag}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div className="blog-post__share-card">
+            <div>
+              <h2>Found this useful?</h2>
+              <p>Match with fiduciary advisors who align with what you just read.</p>
+            </div>
+            <div className="blog-post__share-actions">
+              <Link to="/#match" className="btn btn--primary btn--md">
+                Take the quiz
+              </Link>
+              <Link to="/advisors" className="btn btn--outline btn--md">
+                Browse advisors
               </Link>
             </div>
           </div>
+        </article>
 
-          {/* Sidebar */}
-          <aside className="w-full lg:w-1/3 flex-shrink-0 flex flex-col gap-6">
-            {/* Personalized Advice CTA */}
-            <div className="bg-brand-blue rounded-2xl p-6 mb-2 text-white shadow">
-              <h4 className="text-white font-bold text-lg mb-2">Need Personalized Advice?</h4>
-              <p className="mb-4 text-blue-100">Our financial advisors can help you create a retirement plan tailored to your specific needs and goals.</p>
-              <button className="w-full bg-white text-blue-700 font-semibold rounded-lg py-2 hover:bg-blue-50 transition flex items-center justify-center gap-2">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8s-9-3.582-9-8 4.03-8 9-8 9 3.582 9 8z" /></svg>
-                Schedule a Consultation
-              </button>
+        <aside className="blog-post__sidebar">
+          <div className="blog-post__side-card">
+            <h3>In this journal</h3>
+            <p>
+              Guides on fees, fiduciary duty, and life-money transitions—written to help you choose advice with
+              confidence.
+            </p>
+            <Link to="/blog" className="btn btn--secondary btn--md btn--full">
+              All articles
+            </Link>
+          </div>
+
+          <div className="blog-post__side-card blog-post__side-card--accent">
+            <span className="blog-post__side-eyebrow">Next step</span>
+            <h3>Get matched in 2 minutes</h3>
+            <p>Tell us your goals, fee style, and values. We'll rank fiduciaries who fit.</p>
+            <Link to="/#match" className="btn btn--green btn--md btn--full">
+              Start matching quiz
+            </Link>
+          </div>
+
+          {sideCategories.length > 0 && (
+            <div className="blog-post__side-card">
+              <h3>Categories</h3>
+              <div className="blog-post__side-cats">
+                <Link to={`/blog?category=${encodeURIComponent(category)}`} className="blog-post__side-cat">
+                  {category}
+                </Link>
+                {sideCategories.map((cat) => (
+                  <Link key={cat} to={`/blog?category=${encodeURIComponent(cat)}`} className="blog-post__side-cat">
+                    {cat}
+                  </Link>
+                ))}
+              </div>
             </div>
-
-            {/* Popular Articles */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 mb-2">
-              <h4 className="font-semibold text-base mb-4">Popular Articles</h4>
-              {popularArticles.length > 0 ? <ul className="space-y-4">
-                  {popularArticles.map(article => <li key={article.slug} className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded bg-slate-100 flex items-center justify-center text-slate-400">
-                        <Newspaper className="h-5 w-5" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <Link to={`/blog/${article.slug}`} className="block font-medium text-slate-900 hover:text-blue-700 line-clamp-2 text-sm leading-snug">
-                          {article.title}
-                        </Link>
-                        <div className="text-xs text-slate-500 mt-1">
-                          {format(parseISO(article.published_at || article.created_at), 'MMMM d, yyyy')}
-                        </div>
-                      </div>
-                    </li>)}
-                </ul> : <div className="text-sm text-slate-500">Loading articles...</div>}
-            </div>
-
-            {/* Categories */}
-            
-
-            {/* Newsletter Signup */}
-            <div className="bg-white rounded-2xl border border-slate-200 p-6">
-              <h4 className="font-semibold text-base mb-2">Subscribe to Our Newsletter</h4>
-              <p className="text-sm text-slate-600 mb-4">Get the latest financial insights and planning strategies delivered to your inbox.</p>
-              <NewsletterForm />
-            </div>
-          </aside>
-        </div>
+          )}
+        </aside>
       </div>
+
+      {related.length > 0 && (
+        <section className="blog-post__related">
+          <div className="container">
+            <div className="blog-post__related-header">
+              <div>
+                <span className="keyline" />
+                <p className="blog-post__related-eyebrow">Keep reading</p>
+                <h2>Related articles</h2>
+              </div>
+              <Link to="/blog" className="btn btn--outline btn--md">
+                View all
+              </Link>
+            </div>
+            <div className="blog-post__related-grid">
+              {related.map((p) => (
+                <BlogCard key={p.id} post={p} />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 };
