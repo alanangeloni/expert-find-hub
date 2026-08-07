@@ -21,6 +21,13 @@ export interface Advisor {
   youtube_video_id?: string;
   primary_education?: string;
   disclaimer?: string;
+  firm_address?: string;
+  firm_aum?: string;
+  advisor_sec_crd?: string;
+  firm_sec_crd?: string;
+  link_to_advisor_sec?: string;
+  link_to_firm_sec?: string;
+  linked_firm?: string;
   advisor_services?: string[];
   professional_designations?: string[];
   client_type?: string[];
