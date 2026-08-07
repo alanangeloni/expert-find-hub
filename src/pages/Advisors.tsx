@@ -112,7 +112,7 @@ const AdvisorSearch = () => {
               Search vetted fiduciaries by specialty, location, fees, and more. Compare up to 3 side by side.
             </p>
           </div>
-          <Link to="/#match" className="btn btn--green">
+          <Link to="/#match" className="btn btn--green btn--md">
             Take matching quiz
           </Link>
         </div>
