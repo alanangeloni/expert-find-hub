@@ -98,14 +98,14 @@ ul, ol {
   border: 0;
 }
 
-.container {
+.dcontainer {
   width: 100%;
   max-width: var(--max-width);
   margin: 0 auto;
   padding: 0 var(--space-6);
 }
 
-.container-wide {
+.dcontainer-wide {
   width: 100%;
   max-width: var(--max-width-wide);
   margin: 0 auto;
