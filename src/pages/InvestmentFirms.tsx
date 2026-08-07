@@ -1,202 +1,141 @@
-import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { getInvestmentFirms, type FirmFilter, type InvestmentFirm } from '@/services/investmentFirmsService';
-import { FirmList } from '@/components/firms/FirmList';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Button } from '@/components/ui/button';
-import { Search } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { NewsletterSignup } from '@/components/common/NewsletterSignup';
-import { Seo } from '@/components/seo/Seo';
+import React, { useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getInvestmentFirms } from "@/services/investmentFirmsService";
+import { FirmCard } from "@/components/firms/FirmCard";
+import { SearchFilters, type FirmFilters } from "@/components/search/SearchFilters";
+import { NewsletterSignup } from "@/components/common/NewsletterSignup";
+import { Seo } from "@/components/seo/Seo";
+
+const EMPTY: FirmFilters = { query: "", assetClass: "", minimum: "", sort: "name" };
+
+const parseAum = (aum?: string) => {
+  if (!aum) return 0;
+  const raw = aum.replace(/[$,\s]/g, "").toUpperCase();
+  const num = parseFloat(raw);
+  if (Number.isNaN(num)) return 0;
+  if (raw.includes("T")) return num * 1e12;
+  if (raw.includes("B")) return num * 1e9;
+  if (raw.includes("M")) return num * 1e6;
+  if (raw.includes("K")) return num * 1e3;
+  return num;
+};
 
 const InvestmentFirms = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filters, setFilters] = useState<FirmFilter>({});
-  
-  const formValues = {
-    minimumInvestment: filters.minimumInvestment || "all",
-    assetClass: filters.assetClass || "all",
-  };
+  const [filters, setFilters] = useState<FirmFilters>(EMPTY);
+  const [visible, setVisible] = useState(18);
 
-  // These will be populated from the actual data
-  const [assetClasses, setAssetClasses] = useState<string[]>([]);
-  
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 15;
-  
-  const { data: firmsData, isLoading } = useQuery({
-    queryKey: ['firms', filters, currentPage],
-    queryFn: () => getInvestmentFirms({ ...filters, page: currentPage, pageSize }),
+  const { data, isLoading } = useQuery({
+    queryKey: ["all-firms"],
+    queryFn: () => getInvestmentFirms({ page: 1, pageSize: 1000 }),
   });
-  
-  const firms = firmsData?.data || [];
 
-  // Function to properly format minimum investment values
-  const formatMinimumInvestment = (value: number | null | undefined): string => {
-    if (value === null || value === undefined) return "No minimum";
-    
-    // Convert value to string before using replace
-    const valueStr = value.toString();
-    return `$${valueStr.replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
-  };
+  const firms = data?.data || [];
 
-  // Update asset classes when firms data changes
-  React.useEffect(() => {
-    if (firms) {
-      const uniqueAssetClasses = new Set<string>();
-      firms.forEach(firm => {
-        if (firm.asset_classes) {
-          firm.asset_classes.forEach(ac => uniqueAssetClasses.add(ac));
-        }
-      });
-      setAssetClasses(Array.from(uniqueAssetClasses).sort());
-    }
+  const assetClasses = useMemo(() => {
+    const set = new Set<string>();
+    firms.forEach((f) => (f.asset_classes || f.asset_class || []).forEach((a) => set.add(a)));
+    return Array.from(set).sort();
   }, [firms]);
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
-    setFilters(prev => ({ ...prev, searchQuery: e.target.value }));
-  };
+  const results = useMemo(() => {
+    let list = [...firms];
+    const q = filters.query.trim().toLowerCase();
 
-  const handleMinimumChange = (value: string) => {
-    setFilters(prev => ({ ...prev, minimumInvestment: value === "all" ? undefined : value }));
-  };
+    if (q) {
+      list = list.filter((f) =>
+        [f.name, f.description, f.headquarters, f.address].filter(Boolean).join(" ").toLowerCase().includes(q)
+      );
+    }
+    if (filters.assetClass) {
+      list = list.filter((f) => (f.asset_classes || f.asset_class || []).includes(filters.assetClass));
+    }
+    if (filters.minimum) {
+      const min = Number(filters.minimum);
+      list = list.filter((f) => {
+        const v = f.minimum_investment ?? 0;
+        if (min === 0) return v === 0;
+        if (min === 1000001) return v > 1000000;
+        return v <= min;
+      });
+    }
 
-  const handleAssetClassChange = (value: string) => {
-    setFilters(prev => ({ ...prev, assetClass: value === "all" ? undefined : value }));
-  };
+    list.sort((a, b) => {
+      if (filters.sort === "aum") return parseAum(b.aum) - parseAum(a.aum);
+      if (filters.sort === "rating") return (b.rating || 0) - (a.rating || 0);
+      return a.name.localeCompare(b.name);
+    });
 
-  const clearFilters = () => {
-    setFilters({ searchQuery });
-  };
-  
-  const minimumInvestmentOptions = [
-    { label: "No Minimum", value: "0" },
-    { label: "Under $250k", value: "250000" },
-    { label: "$250k - $500k", value: "250000-500000" },
-    { label: "$500k - $1M", value: "500000-1000000" },
-    { label: "$1M - $5M", value: "1000000-5000000" },
-    { label: "$5M+", value: "5000000" }
-  ];
-  
+    return list;
+  }, [firms, filters]);
+
   return (
-    <div className="container mx-auto py-8 px-4">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">Browse Investment Firms</h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Discover top investment firms that can help you achieve your financial goals
-        </p>
+    <div className="firm-search page-enter">
+      <Seo
+        title="Investment Firms Directory | Financial Professional"
+        description="Browse independent investment firms by asset class, minimum investment, and assets under management."
+        canonicalUrl="https://financial-professional.lovable.app/firms"
+      />
+
+      <div className="firm-search__hero">
+        <div className="dcontainer">
+          <p className="firm-search__eyebrow">Firm directory</p>
+          <h1>Browse independent firms</h1>
+          <p className="firm-search__sub">
+            Discover investment firms by location, asset class, scale, and minimum investment.
+          </p>
+        </div>
       </div>
-      
-      <div className="bg-white rounded-[20px] shadow-sm border border-slate-100 p-4 md:p-5 mb-8">
-        <div className="flex flex-wrap items-center gap-3 md:gap-4">
-          <div className="relative flex-1 min-w-[240px]">
-            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
-              <Search className="h-4 w-4 text-slate-400" />
+
+      <div className="dcontainer firm-search__body">
+        <SearchFilters
+          type="firms"
+          filters={filters}
+          onChange={setFilters}
+          resultCount={results.length}
+          assetClasses={assetClasses}
+        />
+
+        {isLoading ? (
+          <div className="firm-search__grid">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="card-skeleton" />
+            ))}
+          </div>
+        ) : results.length === 0 ? (
+          <div className="firm-search__empty">
+            <div className="firm-search__empty-icon" aria-hidden="true">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                <circle cx="11" cy="11" r="8" />
+                <path d="m21 21-4.3-4.3" />
+              </svg>
             </div>
-            <Input
-              placeholder="Search firms by name or location..."
-              className="pl-10 h-12 rounded-[20px] bg-slate-50 border-slate-100 focus-visible:ring-brand-blue"
-              value={searchQuery}
-              onChange={handleSearchChange}
-            />
+            <h3>No firms match those filters</h3>
+            <p>Try broadening your search or clearing a few filters.</p>
+            <button className="firm-search__empty-btn" onClick={() => setFilters(EMPTY)}>
+              Reset filters
+            </button>
           </div>
-          
-          <div className="flex flex-wrap items-center gap-3">
-            {/* Minimum Investment Filter */}
-            <Select value={formValues.minimumInvestment} onValueChange={handleMinimumChange}>
-              <SelectTrigger className="w-[140px] rounded-[20px] h-12 bg-slate-50 border-slate-100">
-                <SelectValue placeholder="Investment Min" />
-              </SelectTrigger>
-              <SelectContent className="rounded-md bg-white">
-                <SelectItem value="all">All Minimums</SelectItem>
-                {minimumInvestmentOptions.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            
-            {/* Asset Class Filter */}
-            <Select value={formValues.assetClass} onValueChange={handleAssetClassChange}>
-              <SelectTrigger className="w-[180px] rounded-[20px] h-12 bg-slate-50 border-slate-100">
-                <SelectValue placeholder="Asset Class" />
-              </SelectTrigger>
-              <SelectContent className="rounded-md bg-white">
-                <SelectItem value="all">All Classes</SelectItem>
-                {assetClasses.length > 0 ? (
-                  assetClasses.map((assetClass) => (
-                    <SelectItem key={assetClass} value={assetClass}>{assetClass}</SelectItem>
-                  ))
-                ) : (
-                  <SelectItem value="all" disabled>Loading asset classes...</SelectItem>
-                )}
-              </SelectContent>
-            </Select>
-            
-            {/* Clear Filters */}
-            {(formValues.minimumInvestment !== "all" || formValues.assetClass !== "all") && (
-              <Button 
-                variant="outline" 
-                className="rounded-[20px] h-12 border-dashed"
-                onClick={clearFilters}
-              >
-                Clear Filters
-              </Button>
+        ) : (
+          <>
+            <div className="firm-search__grid">
+              {results.slice(0, visible).map((f) => (
+                <FirmCard key={f.id} firm={f} />
+              ))}
+            </div>
+            {visible < results.length && (
+              <div className="flex justify-center mt-10">
+                <button className="btn btn--outline btn--lg" onClick={() => setVisible((v) => v + 18)}>
+                  Load more firms
+                </button>
+              </div>
             )}
-          </div>
-        </div>
+          </>
+        )}
       </div>
-      
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        <div className="col-span-1 lg:hidden">
-          {/* Mobile filters would go here if needed */}
-        </div>
-        
-        <div className="col-span-1 lg:col-span-4">
-<FirmList 
-            firms={firms}
-            isLoading={isLoading}
-            formatMinimumInvestment={formatMinimumInvestment}
-            basePath="/firms"
-            currentPage={currentPage}
-            onPageChange={setCurrentPage}
-            totalCount={firmsData?.total || 0}
-            pageSize={pageSize}
-          />
-        </div>
-      </div>
-      
-      {/* Newsletter Signup Section */}
-      <div className="mt-16 mb-4">
-        <NewsletterSignup />
-      </div>
+
+      <NewsletterSignup />
     </div>
   );
 };
 
-const InvestmentFirmsPage = () => {
-  const pageTitle = 'Investment Firms Directory | Financial Professional';
-  const pageDescription = 'Browse and compare over 200 investment firms! Find investments in Stocks, Real Estate, Loans, Collectibles, Wine, Start-ups, Crypto, and more.';
-
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "SearchResultsPage",
-    "name": "Investment Firms Directory",
-    "description": pageDescription,
-    "url": "https://financial-professional.lovable.app/firms"
-  };
-
-  return (
-    <>
-      <Seo 
-        title={pageTitle} 
-        description={pageDescription}
-        structuredData={structuredData}
-        canonicalUrl="https://financial-professional.lovable.app/firms"
-      />
-      <InvestmentFirms />
-    </>
-  );
-};
-
-export default InvestmentFirmsPage;
+export default InvestmentFirms;
