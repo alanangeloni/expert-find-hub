@@ -182,17 +182,36 @@ const FeaturedAdvisors = () => {
   );
 };
 
-const SPECIALTIES = [
-  "Retirement Planning",
-  "Tax Planning",
-  "Estate/Trust Planning",
-  "Socially Responsible Investing",
-  "Small Business Planning",
-  "Early Career Planning",
-  "Divorce Planning",
-  "Special Needs Planning",
-  "Expat & Cross-Border Planning",
-];
+const SpecialtyGrid = () => {
+  const { data: advisors = [] } = useQuery({ queryKey: ["all-advisors"], queryFn: getAllAdvisors });
+
+  return (
+    <div className="home-specialties__grid">
+      {SPECIALTY_GROUPS.map((group, i) => {
+        const tones = ["green", "blue", "orange"] as const;
+        const tone = tones[i % 3];
+        const count = advisors.filter((a) =>
+          (a.advisor_services || []).some((s) => group.values.includes(s))
+        ).length;
+        return (
+          <Link
+            key={group.label}
+            className={`home-specialty home-specialty--${tone}`}
+            to={`/advisors?specialty=${encodeURIComponent(group.label)}`}
+          >
+            <span className="home-specialty__name">{group.label}</span>
+            <span className="home-specialty__count">
+              {count} advisor{count !== 1 ? "s" : ""}
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </span>
+          </Link>
+        );
+      })}
+    </div>
+  );
+};
 
 const FAQS = [
   {
