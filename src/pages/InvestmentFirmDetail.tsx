@@ -65,8 +65,18 @@ const InvestmentFirmDetailPage = () => {
     firm.minimum_investment || "not specified"
   }.`.slice(0, 155);
 
+  const money = (v: any) => {
+    if (v === null || v === undefined || String(v).trim() === "") return "—";
+    const raw = String(v).trim();
+    if (/^[0-9,.]+$/.test(raw)) {
+      const n = Number(raw.replace(/,/g, ""));
+      if (!Number.isNaN(n)) return `$${n.toLocaleString("en-US")}`;
+    }
+    return raw;
+  };
+
   const stats = [
-    { label: "Min. investment", value: firm.minimum_investment || "—" },
+    { label: "Min. investment", value: money(firm.minimum_investment) },
     { label: "Target return", value: firm.target_return || "—" },
     { label: "AUM", value: firm.aum || "—" },
     {
@@ -80,6 +90,7 @@ const InvestmentFirmDetailPage = () => {
     ["Employees", firm.employees_count],
     ["Payout frequency", firm.payout],
     ["Management fees", firm.fees],
+    ["Min. investment", money(firm.minimum_investment)],
     ["Asset classes", assetClasses.join(", ")],
   ].filter(([, v]) => v !== null && v !== undefined && String(v).trim() !== "");
 
@@ -275,7 +286,7 @@ const InvestmentFirmDetailPage = () => {
                   </a>
                 )}
               </div>
-              <p className="firm-detail__contact-note">
+              <p className="firm-detail__contact-note" style={{ margin: "16px 0 0" }}>
                 Investing involves risk, including possible loss of principal.
               </p>
             </div>
@@ -286,10 +297,10 @@ const InvestmentFirmDetailPage = () => {
                 <ul className="firm-detail__offices">
                   {similarFirms.slice(0, 3).map((f: any) => (
                     <li key={f.id}>
-                      <Link to={`/firms/${f.slug}`}>
-                        <strong>{f.name}</strong>
-                        <span>
-                          Min: {f.minimum_investment || "—"} · Return: {f.target_return || "—"}
+                      <Link to={`/firms/${f.slug}`} style={{ display: "block" }}>
+                        <strong style={{ display: "block" }}>{f.name}</strong>
+                        <span style={{ display: "block" }}>
+                          Min: {money(f.minimum_investment)} · Return: {f.target_return || "—"}
                         </span>
                       </Link>
                     </li>
