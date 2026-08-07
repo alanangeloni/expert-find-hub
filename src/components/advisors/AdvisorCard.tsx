@@ -103,7 +103,7 @@ export const AdvisorCard = ({ advisor }: AdvisorCardProps) => {
         {advisor.fiduciary && <span className="badge badge--green badge--sm">Fiduciary</span>}
         {designations.map((d) => (
           <span key={d} className="badge badge--blue badge--sm">
-            {d}
+            {extractAcronym(d)}
           </span>
         ))}
         {feeStructure && <span className="badge badge--neutral badge--sm">{feeStructure}</span>}
