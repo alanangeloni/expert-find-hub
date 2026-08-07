@@ -370,3 +370,15 @@
     grid-template-columns: 100px repeat(var(--compare-cols), minmax(180px, 1fr));
   }
 }
+
+/* Ensure outline buttons stay legible on the dark comparison surface */
+.compare-modal__profile-actions .btn--outline {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.28);
+  background: transparent;
+}
+.compare-modal__profile-actions .btn--outline:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.5);
+  color: #fff;
+}
