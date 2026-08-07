@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { AdvisorCard } from "@/components/advisors/AdvisorCard";
-import { getAdvisors } from "@/services/advisorsService";
+import { getAdvisors, getAllAdvisors } from "@/services/advisorsService";
+import { SPECIALTY_GROUPS } from "@/constants/specialties";
 import { Seo } from "@/components/seo/Seo";
 import {
   Accordion,
