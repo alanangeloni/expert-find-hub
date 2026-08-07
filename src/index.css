@@ -15,6 +15,7 @@
 @import './styles/design/AdvisorDetailPage.css';
 @import './styles/design/FirmDetailPage.css';
 @import './styles/design/MatchQuizPage.css';
+@import './styles/design/extras.css';
 
 @tailwind base;
 @tailwind components;
