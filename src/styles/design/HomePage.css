@@ -65,7 +65,7 @@
   gap: 8px;
   padding: 6px 14px 6px 10px;
   background: var(--white);
-  border: var(--border);
+  border: var(--d-border);
   border-radius: var(--radius-full);
   font-size: var(--text-sm);
   font-weight: 600;
@@ -198,7 +198,7 @@
 
 /* ——— Trust bar ——— */
 .home-trust {
-  border-bottom: var(--border);
+  border-bottom: var(--d-border);
   background: var(--white);
 }
 
@@ -304,7 +304,7 @@
 .home-how__step {
   padding: var(--space-8);
   border-radius: var(--radius-xl);
-  border: var(--border);
+  border: var(--d-border);
   background: var(--cream);
   position: relative;
   overflow: hidden;
@@ -389,7 +389,7 @@
   gap: var(--space-4);
   padding: var(--space-5) var(--space-6);
   border-radius: var(--radius-lg);
-  border: var(--border);
+  border: var(--d-border);
   background: var(--white);
   text-align: left;
   transition:
@@ -521,7 +521,7 @@
 .home-why__card {
   padding: var(--space-6);
   border-radius: var(--radius-xl);
-  border: var(--border);
+  border: var(--d-border);
   background: var(--cream);
 }
 

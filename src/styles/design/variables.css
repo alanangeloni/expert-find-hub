@@ -96,6 +96,6 @@
   --duration-slow: 400ms;
 
   /* Borders */
-  --border: 1px solid var(--gray-200);
-  --border-strong: 1px solid var(--gray-300);
+  --d-border: 1px solid var(--gray-200);
+  --d-border-strong: 1px solid var(--gray-300);
 }

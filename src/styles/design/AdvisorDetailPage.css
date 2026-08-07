@@ -64,7 +64,7 @@
   gap: var(--space-6);
   padding: var(--space-8);
   background: var(--white);
-  border: var(--border);
+  border: var(--d-border);
   border-radius: var(--radius-xl);
 }
 
@@ -127,7 +127,7 @@
   gap: var(--space-3);
   margin-top: var(--space-5);
   padding-top: var(--space-5);
-  border-top: var(--border);
+  border-top: var(--d-border);
 }
 
 .advisor-detail__mobile-actions-row {
@@ -139,7 +139,7 @@
 .advisor-detail__section {
   padding: var(--space-8);
   background: var(--white);
-  border: var(--border);
+  border: var(--d-border);
   border-radius: var(--radius-xl);
 }
 
@@ -149,7 +149,7 @@
   letter-spacing: -0.02em;
   margin-bottom: var(--space-5);
   padding-bottom: var(--space-4);
-  border-bottom: var(--border);
+  border-bottom: var(--d-border);
 }
 
 .advisor-detail__match-callout {
@@ -163,7 +163,7 @@
   gap: var(--space-3);
   margin-bottom: var(--space-4);
   padding-bottom: var(--space-4);
-  border-bottom: var(--border);
+  border-bottom: var(--d-border);
 }
 
 .advisor-detail__match-head h2 {
@@ -315,7 +315,7 @@
   gap: var(--space-4);
   margin-bottom: var(--space-5);
   padding-bottom: var(--space-4);
-  border-bottom: var(--border);
+  border-bottom: var(--d-border);
 }
 
 .advisor-detail__reviews-header h2 {
@@ -455,7 +455,7 @@
 .advisor-detail__card {
   padding: var(--space-6);
   background: var(--white);
-  border: var(--border);
+  border: var(--d-border);
   border-radius: var(--radius-xl);
 }
 
@@ -489,7 +489,7 @@
   align-items: baseline;
   gap: var(--space-3);
   padding-bottom: var(--space-3);
-  border-bottom: var(--border);
+  border-bottom: var(--d-border);
 }
 
 .advisor-detail__dl div:last-child {
@@ -584,7 +584,7 @@
   gap: 6px;
   margin-top: var(--space-5);
   padding-top: var(--space-5);
-  border-top: var(--border);
+  border-top: var(--d-border);
 }
 
 .advisor-detail__direct span {

@@ -80,7 +80,7 @@
   gap: var(--space-6);
   padding: var(--space-8);
   background: var(--white);
-  border: var(--border);
+  border: var(--d-border);
   border-radius: var(--radius-xl);
 }
 
@@ -156,7 +156,7 @@
   gap: var(--space-3);
   padding: var(--space-6);
   background: var(--white);
-  border: var(--border);
+  border: var(--d-border);
   border-radius: var(--radius-xl);
 }
 
@@ -189,7 +189,7 @@
 .firm-detail__section {
   padding: var(--space-8);
   background: var(--white);
-  border: var(--border);
+  border: var(--d-border);
   border-radius: var(--radius-xl);
 }
 
@@ -199,7 +199,7 @@
   letter-spacing: -0.02em;
   margin-bottom: var(--space-5);
   padding-bottom: var(--space-4);
-  border-bottom: var(--border);
+  border-bottom: var(--d-border);
 }
 
 .firm-detail__section--roster {
@@ -338,7 +338,7 @@
 .firm-detail__card {
   padding: var(--space-6);
   background: var(--white);
-  border: var(--border);
+  border: var(--d-border);
   border-radius: var(--radius-xl);
 }
 
@@ -372,7 +372,7 @@
   align-items: baseline;
   gap: var(--space-3);
   padding-bottom: var(--space-3);
-  border-bottom: var(--border);
+  border-bottom: var(--d-border);
 }
 
 .firm-detail__dl div:last-child {

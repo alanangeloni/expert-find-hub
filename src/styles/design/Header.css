@@ -116,7 +116,7 @@
   flex-direction: column;
   padding: var(--space-4) var(--space-6) var(--space-6);
   background: var(--white);
-  border-bottom: var(--border);
+  border-bottom: var(--d-border);
   animation: fadeUp var(--duration-base) var(--ease-out);
 }
 
@@ -125,7 +125,7 @@
   font-size: var(--text-lg);
   font-weight: 600;
   text-align: left;
-  border-bottom: var(--border);
+  border-bottom: var(--d-border);
   color: var(--black);
 }
 
