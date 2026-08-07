@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Button } from "@/components/ui/button";
 import { User, Settings, FileText, Building2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -42,12 +41,12 @@ const UserMenu = () => {
   // If no user is logged in, show login/signup buttons
   if (!user) {
     return (
-      <div className="flex items-center gap-4">
-        <Link to="/auth/signin">
-          <Button variant="outline">Sign in</Button>
+      <div className="flex items-center gap-2">
+        <Link to="/auth/signin" className="btn btn--outline btn--sm">
+          Sign in
         </Link>
-        <Link to="/auth/signup">
-          <Button className="bg-mint-500 hover:bg-mint-600">Sign up</Button>
+        <Link to="/auth/signup" className="btn btn--green btn--sm">
+          Sign up
         </Link>
       </div>
     );

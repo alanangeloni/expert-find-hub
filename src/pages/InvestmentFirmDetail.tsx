@@ -43,7 +43,7 @@ const InvestmentFirmDetailPage = () => {
         <div className="dcontainer">
           <h1>Investment firm not found</h1>
           <p>The firm you're looking for doesn't exist or has been removed.</p>
-          <Link to="/firms" className="btn btn--green">
+          <Link to="/firms" className="btn btn--green btn--md">
             Browse all firms
           </Link>
         </div>
@@ -281,7 +281,7 @@ const InvestmentFirmDetailPage = () => {
                   </a>
                 )}
                 {firm.website_url && (
-                  <a href={firm.website_url} target="_blank" rel="noopener noreferrer" className="btn btn--outline btn--full">
+                  <a href={firm.website_url} target="_blank" rel="noopener noreferrer" className="btn btn--outline btn--md btn--full">
                     Visit website
                   </a>
                 )}

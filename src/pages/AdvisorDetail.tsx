@@ -44,7 +44,7 @@ const AdvisorDetailPage = () => {
         <div className="dcontainer">
           <h1>Advisor not found</h1>
           <p>The advisor you're looking for doesn't exist or has been removed.</p>
-          <Link to="/advisors" className="btn btn--green">
+          <Link to="/advisors" className="btn btn--green btn--md">
             Browse all advisors
           </Link>
         </div>
@@ -373,7 +373,7 @@ const AdvisorDetailPage = () => {
                     href={advisor.website_url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="btn btn--outline btn--full"
+                    className="btn btn--outline btn--md btn--full"
                   >
                     Visit website
                   </a>
