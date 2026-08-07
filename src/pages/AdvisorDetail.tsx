@@ -305,8 +305,8 @@ const AdvisorDetailPage = () => {
                   <div>
                     <strong>{advisor.firm_name || "Independent practice"}</strong>
                     {advisor.firm_bio && <p style={{ whiteSpace: "pre-line" }}>{advisor.firm_bio}</p>}
-                    {advisor.firm_address && <span>{advisor.firm_address}</span>}
-                    {advisor.firm_aum && <span>{advisor.firm_aum} assets under management</span>}
+                    {advisor.firm_address && <span style={{ display: "block" }}>{advisor.firm_address}</span>}
+                    {advisor.firm_aum && <span style={{ display: "block" }}>{advisor.firm_aum} assets under management</span>}
                   </div>
                 </div>
               </section>
