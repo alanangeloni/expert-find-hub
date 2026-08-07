@@ -31,6 +31,9 @@ import AdminEntityDashboard from "./pages/admin/AdminEntityDashboard";
 import NotFound from "./pages/NotFound";
 import ScrollToTop from "./components/common/ScrollToTop";
 import AppPage from "./pages/App";
+import { CompareProvider } from "./contexts/CompareContext";
+import CompareTray from "./components/compare/CompareTray";
+import CompareModal from "./components/compare/CompareModal";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +44,7 @@ const App = () => (
       <Sonner />
       <HelmetProvider>
         <AuthProvider>
+          <CompareProvider>
           <ScrollToTop />
           <div className="min-h-screen bg-background font-sans antialiased">
             <Header />
@@ -107,7 +111,10 @@ const App = () => (
               </div>
               <Footer />
             </div>
+            <CompareTray />
+            <CompareModal />
           </div>
+          </CompareProvider>
         </AuthProvider>
       </HelmetProvider>
     </TooltipProvider>

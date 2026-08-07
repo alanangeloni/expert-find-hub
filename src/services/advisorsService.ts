@@ -142,3 +142,33 @@ export const getAdvisorBySlug = async (slug: string): Promise<Advisor | null> =>
     return null;
   }
 };
+
+export const getAdvisorsByIds = async (ids: string[]): Promise<Advisor[]> => {
+  if (!ids.length) return [];
+  try {
+    const { data, error } = await supabase
+      .from('financial_advisors_public')
+      .select('*')
+      .in('id', ids);
+    if (error) throw error;
+    const list = (data || []) as unknown as Advisor[];
+    return ids.map((id) => list.find((a) => a.id === id)).filter(Boolean) as Advisor[];
+  } catch (error) {
+    console.error('Error fetching advisors by ids:', error);
+    return [];
+  }
+};
+
+export const getAllAdvisors = async (): Promise<Advisor[]> => {
+  try {
+    const { data, error } = await supabase
+      .from('financial_advisors_public')
+      .select('*')
+      .range(0, 999);
+    if (error) throw error;
+    return (data || []) as unknown as Advisor[];
+  } catch (error) {
+    console.error('Error fetching all advisors:', error);
+    return [];
+  }
+};

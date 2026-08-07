@@ -1,51 +1,24 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Advisor } from "@/services/advisorsService";
+import { CompareToggle } from "@/components/compare/CompareToggle";
+import { useCompareAdvisors } from "@/contexts/CompareContext";
+import { getInitials, hueFor, extractAcronym, formatMinAssets, advisorLocation } from "@/utils/advisorDisplay";
 
 interface AdvisorCardProps {
   advisor: Advisor;
 }
 
-const getInitials = (name: string) =>
-  name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase();
-
-const hueFor = (name: string) => {
-  let h = 0;
-  for (let i = 0; i < name.length; i++) h = (h * 31 + name.charCodeAt(i)) % 360;
-  return h;
-};
-
-const extractAcronym = (designation: string) => {
-  const match = designation.match(/\(([^)]+)\)/);
-  if (match) return match[1];
-  const words = designation.trim().split(/\s+/);
-  if (words.length === 1) return designation;
-  return words.map((w) => w[0]).join("").toUpperCase();
-};
-
-const formatMin = (min?: string) => {
-  if (!min) return "No minimum";
-  const raw = min.trim();
-  const numeric = Number(raw.replace(/[$,]/g, ""));
-  if (!Number.isNaN(numeric) && numeric > 0 && numeric < 1000) return `$${numeric.toLocaleString()} min`;
-  return raw.startsWith("$") ? `${raw} min` : `$${raw} min`;
-};
-
-
 export const AdvisorCard = ({ advisor }: AdvisorCardProps) => {
   const navigate = useNavigate();
+  const { isComparing, toggleCompare, compareIds, max } = useCompareAdvisors();
   const to = `/advisors/${advisor.slug}`;
-  const location = [advisor.city, advisor.state_hq].filter(Boolean).join(", ");
+  const location = advisorLocation(advisor.city, advisor.state_hq);
   const designations = (advisor.professional_designations || []).slice(0, 3);
   const services = (advisor.advisor_services || []).slice(0, 3);
   const extraServices = (advisor.advisor_services || []).length - services.length;
   const feeStructure = (advisor.compensation || [])[0];
+  const comparing = isComparing(advisor.id);
 
   return (
     <article
@@ -62,17 +35,9 @@ export const AdvisorCard = ({ advisor }: AdvisorCardProps) => {
     >
       <div className="advisor-card__top">
         {advisor.headshot_url ? (
-          <img
-            src={advisor.headshot_url}
-            alt={advisor.name}
-            className="avatar avatar--lg object-cover"
-          />
+          <img src={advisor.headshot_url} alt={advisor.name} className="avatar avatar--lg object-cover" />
         ) : (
-          <div
-            className="avatar avatar--lg"
-            style={{ background: `hsl(${hueFor(advisor.name)} 42% 42%)` }}
-            aria-hidden="true"
-          >
+          <div className="avatar avatar--lg" style={{ background: `hsl(${hueFor(advisor.name)} 42% 42%)` }} aria-hidden="true">
             <span>{getInitials(advisor.name)}</span>
           </div>
         )}
@@ -107,7 +72,7 @@ export const AdvisorCard = ({ advisor }: AdvisorCardProps) => {
           </span>
         ))}
         {feeStructure && <span className="badge badge--neutral badge--sm">{feeStructure}</span>}
-        <span className="badge badge--neutral badge--sm">{formatMin(advisor.minimum)}</span>
+        <span className="badge badge--neutral badge--sm">{formatMinAssets(advisor.minimum)}</span>
       </div>
 
       {services.length > 0 && (
@@ -117,11 +82,7 @@ export const AdvisorCard = ({ advisor }: AdvisorCardProps) => {
               {s}
             </span>
           ))}
-          {extraServices > 0 && (
-            <span className="advisor-card__specialty advisor-card__specialty--more">
-              +{extraServices}
-            </span>
-          )}
+          {extraServices > 0 && <span className="advisor-card__specialty advisor-card__specialty--more">+{extraServices}</span>}
         </div>
       )}
 
@@ -130,6 +91,14 @@ export const AdvisorCard = ({ advisor }: AdvisorCardProps) => {
           {advisor.years_of_experience ? `${advisor.years_of_experience} years experience` : "Experienced advisor"}
         </span>
         <div className="advisor-card__footer-right">
+          <CompareToggle
+            active={comparing}
+            disabled={compareIds.length >= max && !comparing}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleCompare(advisor.id);
+            }}
+          />
           <Link to={to} className="advisor-card__cta" onClick={(e) => e.stopPropagation()}>
             View profile
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

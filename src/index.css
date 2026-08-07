@@ -15,6 +15,9 @@
 @import './styles/design/AdvisorDetailPage.css';
 @import './styles/design/FirmDetailPage.css';
 @import './styles/design/MatchQuizPage.css';
+@import './styles/design/CompareToggle.css';
+@import './styles/design/CompareTray.css';
+@import './styles/design/CompareModal.css';
 @import './styles/design/extras.css';
 
 @tailwind base;
