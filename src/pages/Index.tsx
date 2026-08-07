@@ -418,27 +418,8 @@ const HomePage = () => {
             </h2>
           </div>
 
-          <div className="home-specialties__grid">
-            {SPECIALTIES.map((s, i) => {
-              const tones = ["green", "blue", "orange"] as const;
-              const tone = tones[i % 3];
-              return (
-                <Link
-                  key={s}
-                  className={`home-specialty home-specialty--${tone}`}
-                  to={`/advisors?specialties=${encodeURIComponent(s)}`}
-                >
-                  <span className="home-specialty__name">{s}</span>
-                  <span className="home-specialty__count">
-                    Browse advisors
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M5 12h14M12 5l7 7-7 7" />
-                    </svg>
-                  </span>
-                </Link>
-              );
-            })}
-          </div>
+          <SpecialtyGrid />
+
         </div>
       </section>
 
