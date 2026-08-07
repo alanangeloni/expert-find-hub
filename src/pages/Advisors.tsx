@@ -34,11 +34,15 @@ const AdvisorSearch = () => {
     const specialty = searchParams.get("specialty") || searchParams.get("specialties") || "";
     const state = searchParams.get("state") || "";
     const query = searchParams.get("q") || "";
+    const feeStructure = searchParams.get("feeStructure") || "";
+    const fiduciary = searchParams.get("fiduciary");
     setFilters((prev) => ({
       ...prev,
       specialty: specialty ? labelForRawService(specialty) : prev.specialty,
       state: state || prev.state,
       query: query || prev.query,
+      feeStructure: feeStructure || prev.feeStructure,
+      fiduciaryOnly: fiduciary === "1" ? true : prev.fiduciaryOnly,
     }));
   }, [searchParams]);
 
