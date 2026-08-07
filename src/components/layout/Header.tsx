@@ -1,105 +1,112 @@
-import { Link } from "react-router-dom";
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 import UserMenu from "@/components/auth/UserMenu";
 
 const Header = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen);
-  };
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
-  const closeMobileMenu = () => {
-    setIsMobileMenuOpen(false);
-  };
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [location.pathname]);
+
+  const isActive = (path: string) => location.pathname.startsWith(path);
 
   return (
-    <header className="bg-white sticky top-0 z-50">
-      <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <Link to="/" className="flex items-center space-x-2" onClick={closeMobileMenu}>
-          <img 
-            src="https://wqtvpeuhjgqcjbdozzuv.supabase.co/storage/v1/object/public/website-wide-images//630a5745c93c976e2ba4b72d_Fin%20Pro%20Logo%20with%20words.png" 
-            alt="Financial Pro Logo" 
-            className="h-8 md:h-10" 
+    <header
+      className={`header ${scrolled ? "header--scrolled" : ""} ${menuOpen ? "header--open" : ""}`}
+    >
+      <div className="header__inner dcontainer-wide">
+        <Link to="/" className="header__logo" aria-label="Financial Professional home">
+          <img
+            src="https://wqtvpeuhjgqcjbdozzuv.supabase.co/storage/v1/object/public/website-wide-images//630a5745c93c976e2ba4b72d_Fin%20Pro%20Logo%20with%20words.png"
+            alt="Financial Professional logo"
+            className="h-8 md:h-9 w-auto"
           />
         </Link>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center space-x-6">
-          <Link 
-            to="/advisors" 
-            className="text-gray-600 hover:text-brand-blue transition-colors"
+        <nav className="header__nav" aria-label="Primary">
+          <Link
+            to="/advisors"
+            className={`header__link ${isActive("/advisors") ? "is-active" : ""}`}
           >
-            Financial Advisors
+            Find Advisors
           </Link>
-          <Link 
-            to="/firms" 
-            className="text-gray-600 hover:text-brand-blue transition-colors"
-          >
-            Investment Firms
+          <Link to="/firms" className={`header__link ${isActive("/firms") ? "is-active" : ""}`}>
+            Browse Firms
           </Link>
-          <Link 
-            to="/blog" 
-            className="text-gray-600 hover:text-brand-blue transition-colors"
-          >
+          <Link to="/blog" className={`header__link ${isActive("/blog") ? "is-active" : ""}`}>
             Blog
           </Link>
+          <a
+            className="header__link"
+            href="/#how-it-works"
+            onClick={(e) => {
+              e.preventDefault();
+              if (location.pathname !== "/") {
+                navigate("/");
+                setTimeout(
+                  () => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" }),
+                  120
+                );
+              } else {
+                document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" });
+              }
+            }}
+          >
+            How it works
+          </a>
         </nav>
 
-        {/* Desktop User Menu */}
-        <div className="hidden md:block">
-          <UserMenu />
-        </div>
-
-        {/* Mobile Menu Button */}
-        <div className="md:hidden flex items-center space-x-2">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={toggleMobileMenu}
-            className="p-2 hover:bg-gray-100"
-            aria-label="Toggle mobile menu"
+        <div className="header__actions">
+          <div className="header__user hidden md:block">
+            <UserMenu />
+          </div>
+          <button
+            type="button"
+            className="btn btn--primary btn--sm header__cta"
+            onClick={() => navigate("/advisors")}
           >
-            {isMobileMenuOpen ? (
-              <X className="h-6 w-6 text-gray-700" />
-            ) : (
-              <Menu className="h-6 w-6 text-gray-700" />
-            )}
-          </Button>
+            Search advisors
+          </button>
+          <button
+            className="header__burger"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((v) => !v)}
+          >
+            <span />
+            <span />
+            <span />
+          </button>
         </div>
       </div>
 
-      {/* Mobile Navigation Menu */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 shadow-lg z-40">
-          <nav className="px-4 py-6 space-y-1">
-            <Link 
-              to="/advisors" 
-              className="block py-3 px-2 text-gray-700 hover:text-brand-blue hover:bg-gray-50 rounded-md transition-colors font-medium"
-              onClick={closeMobileMenu}
-            >
-              Financial Advisors
-            </Link>
-            <Link 
-              to="/firms" 
-              className="block py-3 px-2 text-gray-700 hover:text-brand-blue hover:bg-gray-50 rounded-md transition-colors font-medium"
-              onClick={closeMobileMenu}
-            >
-              Investment Firms
-            </Link>
-            <Link 
-              to="/blog" 
-              className="block py-3 px-2 text-gray-700 hover:text-brand-blue hover:bg-gray-50 rounded-md transition-colors font-medium"
-              onClick={closeMobileMenu}
-            >
-              Blog
-            </Link>
-            <div className="pt-4 mt-4 border-t border-gray-100">
-              <UserMenu />
-            </div>
-          </nav>
+      {menuOpen && (
+        <div className="header__mobile">
+          <Link className="header__mobile-link" to="/advisors">
+            Find Advisors
+          </Link>
+          <Link className="header__mobile-link" to="/firms">
+            Browse Firms
+          </Link>
+          <Link className="header__mobile-link" to="/blog">
+            Blog
+          </Link>
+          <Link className="header__mobile-link" to="/#how-it-works">
+            How it works
+          </Link>
+          <div className="header__mobile-cta">
+            <UserMenu />
+          </div>
         </div>
       )}
     </header>
