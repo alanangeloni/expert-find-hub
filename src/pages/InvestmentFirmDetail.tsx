@@ -99,9 +99,36 @@ const InvestmentFirmDetailPage = () => {
       <Seo
         title={pageTitle}
         description={pageDescription}
-        canonicalUrl={`https://financial-professional.lovable.app/firms/${slug}`}
+        canonicalUrl={`https://financialprofessional.com/firms/${slug}`}
         ogImage={firm.logo_url || undefined}
+        structuredData={{
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "FinancialService",
+              name: firm.name,
+              description: pageDescription,
+              logo: firm.logo_url || undefined,
+              url: `https://financialprofessional.com/firms/${slug}`,
+              address: firm.headquarters || firm.address || undefined,
+            },
+            {
+              "@type": "BreadcrumbList",
+              itemListElement: [
+                { "@type": "ListItem", position: 1, name: "Home", item: "https://financialprofessional.com/" },
+                { "@type": "ListItem", position: 2, name: "Investment firms", item: "https://financialprofessional.com/firms" },
+                {
+                  "@type": "ListItem",
+                  position: 3,
+                  name: firm.name,
+                  item: `https://financialprofessional.com/firms/${slug}`,
+                },
+              ],
+            },
+          ],
+        }}
       />
+
 
       <div className="dcontainer">
         <nav className="firm-detail__breadcrumb" aria-label="Breadcrumb">

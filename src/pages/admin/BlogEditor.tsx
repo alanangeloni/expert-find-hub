@@ -4,6 +4,7 @@ import { BlogPostForm } from '@/components/blog/BlogPostForm';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { useBlogEditor } from '@/hooks/useBlogEditor';
+import { Seo } from '@/components/seo/Seo';
 
 const BlogEditor = () => {
   const {
@@ -20,6 +21,7 @@ const BlogEditor = () => {
 
   return (
     <div className="container mx-auto py-10">
+      <Seo title="Blog Editor | Financial Professional" description="Internal blog editor." noIndex />
       <h1 className="text-3xl font-semibold mb-5">{slug ? 'Edit Blog Post' : 'Create Blog Post'}</h1>
 
       {isLoading ? (

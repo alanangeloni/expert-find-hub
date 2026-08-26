@@ -82,18 +82,36 @@ const AdvisorDetailPage = () => {
       <Seo
         title={pageTitle}
         description={pageDescription}
-        canonicalUrl={`https://financial-professional.lovable.app/advisors/${slug}`}
+        canonicalUrl={`https://financialprofessional.com/advisors/${slug}`}
         ogImage={advisor.headshot_url || undefined}
         structuredData={{
           "@context": "https://schema.org",
-          "@type": "FinancialService",
-          name: advisor.name,
-          jobTitle: advisor.position || "Financial Advisor",
-          description: pageDescription,
-          image: advisor.headshot_url || undefined,
-          url: `https://financial-professional.lovable.app/advisors/${slug}`,
-          areaServed: location || undefined,
+          "@graph": [
+            {
+              "@type": "FinancialService",
+              name: advisor.name,
+              jobTitle: advisor.position || "Financial Advisor",
+              description: pageDescription,
+              image: advisor.headshot_url || undefined,
+              url: `https://financialprofessional.com/advisors/${slug}`,
+              areaServed: location || undefined,
+            },
+            {
+              "@type": "BreadcrumbList",
+              itemListElement: [
+                { "@type": "ListItem", position: 1, name: "Home", item: "https://financialprofessional.com/" },
+                { "@type": "ListItem", position: 2, name: "Advisors", item: "https://financialprofessional.com/advisors" },
+                {
+                  "@type": "ListItem",
+                  position: 3,
+                  name: advisor.name,
+                  item: `https://financialprofessional.com/advisors/${slug}`,
+                },
+              ],
+            },
+          ],
         }}
+
       />
 
       <div className="dcontainer">

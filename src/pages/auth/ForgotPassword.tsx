@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Mail } from "lucide-react";
+import { Seo } from '@/components/seo/Seo';
 
 const ForgotPassword = () => {
   const { toast } = useToast();
@@ -74,6 +75,7 @@ const ForgotPassword = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <Seo title="Reset Your Password | Financial Professional" description="Request a password reset link for your Financial Professional account." noIndex />
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-brand-blue">
           Reset your password

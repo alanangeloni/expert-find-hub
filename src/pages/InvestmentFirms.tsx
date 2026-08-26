@@ -73,7 +73,7 @@ const InvestmentFirms = () => {
       <Seo
         title="Investment Firms Directory | Financial Professional"
         description="Browse independent investment firms by asset class, minimum investment, and assets under management."
-        canonicalUrl="https://financial-professional.lovable.app/firms"
+        canonicalUrl="https://financialprofessional.com/firms"
       />
 
       <div className="firm-search__hero">
