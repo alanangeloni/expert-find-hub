@@ -10,6 +10,7 @@ interface SeoProps {
   ogImage?: string;
   ogType?: string;
   canonicalUrl?: string;
+  noIndex?: boolean;
 }
 
 export const Seo: React.FC<SeoProps> = ({ 
@@ -19,12 +20,14 @@ export const Seo: React.FC<SeoProps> = ({
   structuredData,
   ogImage,
   ogType = 'website',
-  canonicalUrl
+  canonicalUrl,
+  noIndex = false
 }) => {
   return (
     <Helmet>
       <title>{title}</title>
       <meta name="description" content={description} />
+      {noIndex && <meta name="robots" content="noindex, nofollow" />}
       
       {/* Open Graph tags */}
       <meta property="og:title" content={title} />
@@ -32,6 +35,7 @@ export const Seo: React.FC<SeoProps> = ({
       <meta property="og:type" content={ogType} />
       {ogImage && <meta property="og:image" content={ogImage} />}
       {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
+
       
       {/* Twitter Card tags */}
       <meta name="twitter:card" content="summary_large_image" />
