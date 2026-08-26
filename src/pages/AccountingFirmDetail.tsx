@@ -52,15 +52,29 @@ const AccountingFirmDetailComponent = () => {
       {firm && (
         <Seo 
           title={`${firm.name} | Accounting Firm`}
-          description={`${(firm.long_description || firm.description || '').slice(0, 155)}...`}
+          description={(firm.long_description || firm.description || `Accounting services from ${firm.name}. Compare fees, services and minimums.`).slice(0, 155)}
           canonicalUrl={`https://financialprofessional.com/accounting-firms/${slug}`}
           structuredData={{
             "@context": "https://schema.org",
-            "@type": "AccountingService",
-            "name": firm.name,
-            "url": `https://financialprofessional.com/accounting-firms/${slug}`
+            "@graph": [
+              {
+                "@type": "AccountingService",
+                "name": firm.name,
+                "description": (firm.long_description || firm.description || "").slice(0, 300) || undefined,
+                "url": `https://financialprofessional.com/accounting-firms/${slug}`
+              },
+              {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                  { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://financialprofessional.com/" },
+                  { "@type": "ListItem", "position": 2, "name": "Accounting firms", "item": "https://financialprofessional.com/accounting-firms" },
+                  { "@type": "ListItem", "position": 3, "name": firm.name, "item": `https://financialprofessional.com/accounting-firms/${slug}` }
+                ]
+              }
+            ]
           }}
         />
+
       )}
       <div className="min-h-screen bg-slate-50">
       {/* Hero section */}
