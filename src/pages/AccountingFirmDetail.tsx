@@ -138,12 +138,14 @@ const AccountingFirmDetailComponent = () => {
             </div>
 
             <div className="w-full md:w-auto flex flex-col gap-3 mt-4 md:mt-0">
-              <Button className="w-full md:w-auto bg-brand-blue hover:bg-brand-blue/90">
-                Contact Firm
+              <Button asChild className="w-full md:w-auto bg-brand-blue hover:bg-brand-blue/90">
+                <a href="#contact-firm">Contact Firm</a>
               </Button>
-              <Button variant="outline" className="w-full md:w-auto">
-                Visit Website
-              </Button>
+              {firm.website && (
+                <Button asChild variant="outline" className="w-full md:w-auto">
+                  <a href={firm.website} target="_blank" rel="noopener noreferrer">Visit Website</a>
+                </Button>
+              )}
             </div>
           </div>
         </div>
