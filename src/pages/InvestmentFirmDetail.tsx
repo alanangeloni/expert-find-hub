@@ -99,7 +99,7 @@ const InvestmentFirmDetailPage = () => {
       <Seo
         title={pageTitle}
         description={pageDescription}
-        canonicalUrl={`https://financial-professional.lovable.app/firms/${slug}`}
+        canonicalUrl={`https://financialprofessional.com/firms/${slug}`}
         ogImage={firm.logo_url || undefined}
       />
 

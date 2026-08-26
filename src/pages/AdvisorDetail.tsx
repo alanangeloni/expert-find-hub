@@ -82,7 +82,7 @@ const AdvisorDetailPage = () => {
       <Seo
         title={pageTitle}
         description={pageDescription}
-        canonicalUrl={`https://financial-professional.lovable.app/advisors/${slug}`}
+        canonicalUrl={`https://financialprofessional.com/advisors/${slug}`}
         ogImage={advisor.headshot_url || undefined}
         structuredData={{
           "@context": "https://schema.org",
@@ -91,7 +91,7 @@ const AdvisorDetailPage = () => {
           jobTitle: advisor.position || "Financial Advisor",
           description: pageDescription,
           image: advisor.headshot_url || undefined,
-          url: `https://financial-professional.lovable.app/advisors/${slug}`,
+          url: `https://financialprofessional.com/advisors/${slug}`,
           areaServed: location || undefined,
         }}
       />

@@ -673,10 +673,10 @@ const Index = () => {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "Financial Professional",
-    url: "https://financial-professional.lovable.app/",
+    url: "https://financialprofessional.com/",
     potentialAction: {
       "@type": "SearchAction",
-      target: "https://financial-professional.lovable.app/advisors?search={search_term_string}",
+      target: "https://financialprofessional.com/advisors?search={search_term_string}",
       "query-input": "required name=search_term_string",
     },
   };
@@ -687,7 +687,7 @@ const Index = () => {
         title="Find a Financial Professional | Fiduciary Advisors"
         description="Match with vetted, fee-only fiduciary financial advisors based on your goals, assets, and stage of life. Free to search, free to get matched."
         structuredData={structuredData}
-        canonicalUrl="https://financial-professional.lovable.app/"
+        canonicalUrl="https://financialprofessional.com/"
       />
       <HomePage />
     </>

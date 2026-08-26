@@ -42,7 +42,7 @@ const staticUrls: SitemapUrl[] = [
   }
 ];
 
-export const generateSitemap = async (baseUrl = 'https://financial-professional.lovable.app'): Promise<void> => {
+export const generateSitemap = async (baseUrl = 'https://financialprofessional.com'): Promise<void> => {
   const sitemapXml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${staticUrls.map(url => `  <url>

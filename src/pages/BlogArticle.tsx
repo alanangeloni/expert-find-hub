@@ -129,7 +129,7 @@ const BlogArticle = () => {
       <Seo
         title={post.title}
         description={postExcerpt(post).slice(0, 155)}
-        canonicalUrl={`https://financial-professional.lovable.app/blog/${slug}`}
+        canonicalUrl={`https://financialprofessional.com/blog/${slug}`}
         ogType="article"
         ogImage={post.cover_image_url || undefined}
       />

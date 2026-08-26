@@ -70,7 +70,7 @@ const Blog = () => {
       <Seo
         title="Financial Journal | Financial Professional"
         description="Practical guides on fiduciaries, fees, life transitions, and finding financial advice that actually fits."
-        canonicalUrl="https://financial-professional.lovable.app/blog"
+        canonicalUrl="https://financialprofessional.com/blog"
       />
 
       <div className="blog-page__hero">
