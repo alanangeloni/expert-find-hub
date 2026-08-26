@@ -12,6 +12,7 @@ import { AdvisorManagement } from '@/components/admin/AdvisorManagement';
 import { AccountingFirmManagement } from '@/components/admin/AccountingFirmManagement';
 import { InvestmentFirmManagement } from '@/components/admin/InvestmentFirmManagement';
 import { MeetingRequestsManagement } from '@/components/admin/MeetingRequestsManagement';
+import { Seo } from '@/components/seo/Seo';
 
 const AdminEntityDashboard = () => {
   const { user } = useAuth();
@@ -74,6 +75,7 @@ const AdminEntityDashboard = () => {
 
   return (
     <div className="container mx-auto py-8 px-4">
+      <Seo title="Admin Dashboard | Financial Professional" description="Internal admin dashboard." noIndex />
       <Tabs defaultValue="advisors" className="w-full">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
           <div>

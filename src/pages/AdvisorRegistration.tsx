@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AdvisorForm } from '@/components/advisor-registration/AdvisorRegistrationForm';
+import { Seo } from '@/components/seo/Seo';
 
 const AdvisorRegistration = () => {
   const { user } = useAuth();
@@ -58,6 +59,7 @@ const AdvisorRegistration = () => {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <Seo title="Join as a Financial Advisor | Financial Professional" description="Register your advisory practice and get listed in the Financial Professional directory of vetted advisors." canonicalUrl="https://financialprofessional.com/advisor-registration" />
       <div className="container mx-auto py-8 px-4">
         <div className="max-w-4xl mx-auto">
           <Card>

@@ -11,6 +11,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { AdvisorProfileEdit } from '@/components/advisor-profile/AdvisorProfileEdit';
 import { MeetingRequestsList } from '@/components/advisor-profile/MeetingRequestsList';
 import { Advisor } from '@/services/advisorsService';
+import { Seo } from '@/components/seo/Seo';
 
 const AdvisorProfile = () => {
   const { user } = useAuth();
@@ -109,6 +110,7 @@ const AdvisorProfile = () => {
 
   return (
     <div className="min-h-screen bg-slate-50">
+      <Seo title="Your Advisor Profile | Financial Professional" description="Manage your advisor profile and meeting requests." noIndex />
       <div className="container mx-auto py-8 px-4">
         <div className="max-w-6xl mx-auto">
           <div className="mb-6">

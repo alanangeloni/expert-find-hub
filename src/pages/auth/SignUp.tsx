@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, Mail, User, Phone } from "lucide-react";
+import { Seo } from '@/components/seo/Seo';
 
 const professionalTypes = [
   "Financial Advisor",
@@ -103,6 +104,7 @@ const SignUp = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+      <Seo title="Create an Account | Financial Professional" description="Create a Financial Professional account to save advisors and request introductions." noIndex />
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-brand-blue">
           Create your account
