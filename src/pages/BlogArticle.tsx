@@ -132,7 +132,37 @@ const BlogArticle = () => {
         canonicalUrl={`https://financialprofessional.com/blog/${slug}`}
         ogType="article"
         ogImage={post.cover_image_url || undefined}
+        structuredData={{
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Article",
+              headline: post.title,
+              description: postExcerpt(post).slice(0, 155),
+              image: post.cover_image_url || undefined,
+              datePublished: post.published_at || undefined,
+              dateModified: post.updated_at || post.published_at || undefined,
+              author: { "@type": "Person", name: author },
+              publisher: { "@type": "Organization", name: "Financial Professional" },
+              mainEntityOfPage: `https://financialprofessional.com/blog/${slug}`,
+            },
+            {
+              "@type": "BreadcrumbList",
+              itemListElement: [
+                { "@type": "ListItem", position: 1, name: "Home", item: "https://financialprofessional.com/" },
+                { "@type": "ListItem", position: 2, name: "Journal", item: "https://financialprofessional.com/blog" },
+                {
+                  "@type": "ListItem",
+                  position: 3,
+                  name: post.title,
+                  item: `https://financialprofessional.com/blog/${slug}`,
+                },
+              ],
+            },
+          ],
+        }}
       />
+
 
       <div className="blog-post__top">
         <div className="container">
