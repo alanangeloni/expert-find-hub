@@ -288,21 +288,31 @@ const AccountingFirmDetailComponent = () => {
           </div>
           
           {/* Right column - Contact card */}
-          <div>
+          <div id="contact-firm" className="scroll-mt-24">
             <Card>
               <CardContent className="p-6">
                 <h2 className="text-xl font-semibold mb-4">Contact {firm.name}</h2>
                 <p className="text-gray-600 mb-4">
                   Interested in learning more about how {firm.name} can help with your accounting needs? Get in touch with them today.
                 </p>
-                
-                <Button className="w-full bg-brand-blue hover:bg-brand-blue/90 mb-3">
-                  Request Information
-                </Button>
-                
-                <Button variant="outline" className="w-full">
-                  Visit Website
-                </Button>
+
+                {firm.website ? (
+                  <>
+                    <Button asChild className="w-full bg-brand-blue hover:bg-brand-blue/90 mb-3">
+                      <a href={firm.website} target="_blank" rel="noopener noreferrer">Request Information</a>
+                    </Button>
+
+                    <Button asChild variant="outline" className="w-full">
+                      <a href={firm.website} target="_blank" rel="noopener noreferrer">Visit Website</a>
+                    </Button>
+                  </>
+                ) : (
+                  <p className="text-sm text-gray-500">
+                    Contact details for this firm are not available yet. Browse other{" "}
+                    <a href="/accounting-firms" className="text-brand-blue hover:underline">accounting firms</a>.
+                  </p>
+                )}
+
                 
                 <Separator className="my-6" />
                 
