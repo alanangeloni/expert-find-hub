@@ -11,6 +11,7 @@ const AppPage = () => {
       <Seo 
         title="Investment Platform - Start Trading Today"
         description="Professional investment platform with real-time analytics, earnings insights, and powerful trading tools. Start investing with confidence."
+        noIndex
       />
       
       <main className="min-h-screen p-4 md:p-8">
