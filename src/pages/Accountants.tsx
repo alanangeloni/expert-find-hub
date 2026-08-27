@@ -112,9 +112,7 @@ const Accountants = () => {
             <span className="keyline" />
             <p className="advisor-search__eyebrow">Accountant directory</p>
             <h1>
-              Find your
-              <br />
-              <em>Accountant</em>
+              Find your <em>Accountant</em>
             </h1>
             <p className="advisor-search__sub">
               Search vetted accountants and CPAs by specialty, service, location, and credentials.
