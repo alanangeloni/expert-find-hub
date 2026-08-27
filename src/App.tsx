@@ -13,6 +13,8 @@ import Footer from "./components/layout/Footer";
 import Index from "./pages/Index";
 import Advisors from "./pages/Advisors";
 import AdvisorDetail from "./pages/AdvisorDetail";
+import StatesIndex from "./pages/StatesIndex";
+import StateAdvisors from "./pages/StateAdvisors";
 import AdvisorRegistration from "./pages/AdvisorRegistration";
 import AdvisorProfile from "./pages/AdvisorProfile";
 import InvestmentFirms from "./pages/InvestmentFirms";
