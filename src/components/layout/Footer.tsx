@@ -22,6 +22,7 @@ const Footer = () => {
             <h4>Explore</h4>
             <Link to="/advisors">Find advisors</Link>
             <Link to="/firms">Browse firms</Link>
+            <Link to="/financial-professionals">Browse by state</Link>
             <Link to="/#match">Matching quiz</Link>
             <Link to="/advisors?specialties=Retirement%20Planning">Retirement specialists</Link>
           </div>

@@ -13,6 +13,8 @@ import Footer from "./components/layout/Footer";
 import Index from "./pages/Index";
 import Advisors from "./pages/Advisors";
 import AdvisorDetail from "./pages/AdvisorDetail";
+import StatesIndex from "./pages/StatesIndex";
+import StateAdvisors from "./pages/StateAdvisors";
 import AdvisorRegistration from "./pages/AdvisorRegistration";
 import AdvisorProfile from "./pages/AdvisorProfile";
 import InvestmentFirms from "./pages/InvestmentFirms";
@@ -54,6 +56,8 @@ const App = () => (
                   <Route path="/" element={<Index />} />
                   <Route path="/advisors" element={<Advisors />} />
                   <Route path="/advisors/:slug" element={<AdvisorDetail />} />
+                  <Route path="/financial-professionals" element={<StatesIndex />} />
+                  <Route path="/financial-professionals/:state" element={<StateAdvisors />} />
                   <Route path="/advisor-registration" element={<AdvisorRegistration />} />
                   <Route
                     path="/advisor-profile"
