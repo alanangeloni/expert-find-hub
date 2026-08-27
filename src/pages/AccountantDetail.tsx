@@ -290,11 +290,6 @@ const AccountantDetail = () => {
                     Visit website
                   </a>
                 )}
-                {accountant.email && (
-                  <a href={`mailto:${accountant.email}`} className="btn btn--outline btn--md btn--full">
-                    Contact {accountant.name.split(" ")[0]}
-                  </a>
-                )}
               </div>
             </div>
 
