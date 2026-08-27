@@ -15,8 +15,22 @@
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  gap: var(--space-6);
+  gap: var(--space-10);
   flex-wrap: wrap;
+}
+
+.advisor-search__hero-copy {
+  max-width: 640px;
+}
+
+.advisor-search__hero-copy .keyline {
+  margin-bottom: var(--space-4);
+}
+
+.advisor-search__hero-cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
 }
 
 .advisor-search__eyebrow {
@@ -29,11 +43,19 @@
 }
 
 .advisor-search__hero h1 {
-  font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+  font-size: clamp(2rem, 4.5vw, 3.25rem);
   font-weight: 800;
-  letter-spacing: -0.03em;
-  margin-bottom: var(--space-3);
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+  margin-bottom: var(--space-4);
 }
+
+.advisor-search__hero h1 em {
+  font-family: var(--font-serif, Georgia, serif);
+  font-style: italic;
+  font-weight: 500;
+}
+
 
 .advisor-search__sub {
   font-size: var(--text-base);
