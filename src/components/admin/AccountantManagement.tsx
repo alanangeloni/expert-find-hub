@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, Search, Filter } from "lucide-react";
+import { Plus, Search, Filter, Edit, Trash2, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Select,
   SelectContent,
@@ -30,7 +32,6 @@ import { toast } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Spinner } from "@/components/ui/spinner";
 import { Tables } from "@/integrations/supabase/types";
-import { AdvisorManagementTable } from "./AdvisorManagementTable";
 import { AccountantForm } from "./AccountantForm";
 
 type AccountantRow = Tables<"accountants">;
@@ -180,11 +181,71 @@ export const AccountantManagement = () => {
           <Spinner size="lg" />
         </div>
       ) : (
-        <AdvisorManagementTable
-          advisors={filteredAccountants as never[]}
-          onEdit={(a) => handleEdit(a as never as AccountantRow)}
-          onDelete={(a) => setDeletingAccountant(a as never as AccountantRow)}
-        />
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          {filteredAccountants.map((accountant) => (
+            <Card key={accountant.id}>
+              <CardHeader className="pb-2">
+                <div className="flex items-start justify-between gap-2">
+                  <CardTitle className="text-base">{accountant.name}</CardTitle>
+                  <div className="flex gap-1">
+                    <Badge variant="outline" className="text-xs capitalize">
+                      {accountant.status}
+                    </Badge>
+                    {accountant.verified && (
+                      <Badge variant="outline" className="text-xs">
+                        Verified
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <div className="text-sm text-muted-foreground space-y-1">
+                  {accountant.position && <p>{accountant.position}</p>}
+                  {accountant.firm_name && <p>{accountant.firm_name}</p>}
+                  {(accountant.city || accountant.state_hq) && (
+                    <p>
+                      {[accountant.city, accountant.state_hq].filter(Boolean).join(", ")}
+                    </p>
+                  )}
+                  {accountant.email && <p>{accountant.email}</p>}
+                </div>
+                <div className="flex gap-2">
+                  {accountant.slug && (
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      asChild
+                    >
+                      <a href={`/accountants/${accountant.slug}`} target="_blank" rel="noopener noreferrer">
+                        <Eye className="h-3 w-3 mr-1" />
+                        View
+                      </a>
+                    </Button>
+                  )}
+                  <Button size="sm" variant="outline" onClick={() => handleEdit(accountant)}>
+                    <Edit className="h-3 w-3 mr-1" />
+                    Edit
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="text-destructive hover:text-destructive"
+                    onClick={() => setDeletingAccountant(accountant)}
+                  >
+                    <Trash2 className="h-3 w-3 mr-1" />
+                    Delete
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+          {filteredAccountants.length === 0 && (
+            <p className="col-span-full text-sm text-muted-foreground py-8 text-center">
+              No accountants found.
+            </p>
+          )}
+        </div>
       )}
 
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>

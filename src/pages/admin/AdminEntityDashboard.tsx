@@ -83,7 +83,7 @@ const AdminEntityDashboard = () => {
             <h1 className="text-2xl md:text-3xl font-bold">Entity Management</h1>
             <p className="text-muted-foreground">Manage financial advisors, firms, and meeting requests</p>
           </div>
-          <TabsList className="grid w-full sm:w-auto grid-cols-2 sm:grid-cols-4">
+          <TabsList className="grid w-full sm:w-auto grid-cols-2 sm:grid-cols-5">
             <TabsTrigger value="advisors" className="text-xs sm:text-sm">Advisors</TabsTrigger>
             <TabsTrigger value="accounting" className="text-xs sm:text-sm">Accounting</TabsTrigger>
             <TabsTrigger value="accountants" className="text-xs sm:text-sm">Accountants</TabsTrigger>
