@@ -10,6 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { AdvisorManagement } from '@/components/admin/AdvisorManagement';
 import { AccountingFirmManagement } from '@/components/admin/AccountingFirmManagement';
+import { AccountantManagement } from '@/components/admin/AccountantManagement';
 import { InvestmentFirmManagement } from '@/components/admin/InvestmentFirmManagement';
 import { MeetingRequestsManagement } from '@/components/admin/MeetingRequestsManagement';
 import { Seo } from '@/components/seo/Seo';
@@ -85,6 +86,7 @@ const AdminEntityDashboard = () => {
           <TabsList className="grid w-full sm:w-auto grid-cols-2 sm:grid-cols-4">
             <TabsTrigger value="advisors" className="text-xs sm:text-sm">Advisors</TabsTrigger>
             <TabsTrigger value="accounting" className="text-xs sm:text-sm">Accounting</TabsTrigger>
+            <TabsTrigger value="accountants" className="text-xs sm:text-sm">Accountants</TabsTrigger>
             <TabsTrigger value="investment" className="text-xs sm:text-sm">Investment</TabsTrigger>
             <TabsTrigger value="meetings" className="text-xs sm:text-sm">Meetings</TabsTrigger>
           </TabsList>
@@ -96,6 +98,10 @@ const AdminEntityDashboard = () => {
 
         <TabsContent value="accounting" className="mt-0">
           <AccountingFirmManagement />
+        </TabsContent>
+
+        <TabsContent value="accountants" className="mt-0">
+          <AccountantManagement />
         </TabsContent>
 
         <TabsContent value="investment" className="mt-0">
