@@ -169,8 +169,11 @@ const StateAdvisors = () => {
             <span>{state}</span>
           </nav>
           <h1>
-            Find a Financial Professional in <em>{state}</em>
+            Find a Financial Professional
+            <br />
+            <em>in {state}</em>
           </h1>
+
           <p className="state-page__intro">
             {count > 0 ? (
               <>

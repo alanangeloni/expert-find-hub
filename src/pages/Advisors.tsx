@@ -109,18 +109,29 @@ const AdvisorSearch = () => {
 
       <div className="advisor-search__hero">
         <div className="dcontainer advisor-search__hero-row">
-          <div>
+          <div className="advisor-search__hero-copy">
+            <span className="keyline" />
             <p className="advisor-search__eyebrow">Advisor directory</p>
-            <h1>Find your financial advisor</h1>
+            <h1>
+              Find your financial
+              <br />
+              <em>advisor</em>
+            </h1>
             <p className="advisor-search__sub">
               Search vetted fiduciaries by specialty, location, fees, and more. Compare up to 3 side by side.
             </p>
           </div>
-          <Link to="/#match" className="btn btn--green btn--md">
-            Take matching quiz
-          </Link>
+          <div className="advisor-search__hero-cta">
+            <Link to="/#match" className="btn btn--primary btn--lg">
+              Take the matching quiz
+            </Link>
+            <Link to="/firms" className="btn btn--outline btn--lg">
+              Browse firms
+            </Link>
+          </div>
         </div>
       </div>
+
 
       <div className="dcontainer advisor-search__body">
         <SearchFilters

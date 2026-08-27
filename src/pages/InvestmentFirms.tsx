@@ -77,14 +77,30 @@ const InvestmentFirms = () => {
       />
 
       <div className="firm-search__hero">
-        <div className="dcontainer">
-          <p className="firm-search__eyebrow">Firm directory</p>
-          <h1>Browse independent firms</h1>
-          <p className="firm-search__sub">
-            Discover investment firms by location, asset class, scale, and minimum investment.
-          </p>
+        <div className="dcontainer firm-search__hero-row">
+          <div className="firm-search__hero-copy">
+            <span className="keyline" />
+            <p className="firm-search__eyebrow">Firm directory</p>
+            <h1>
+              Browse independent
+              <br />
+              <em>investment firms</em>
+            </h1>
+            <p className="firm-search__sub">
+              Discover investment firms by location, asset class, scale, and minimum investment.
+            </p>
+          </div>
+          <div className="firm-search__hero-cta">
+            <Link to="/advisors" className="btn btn--primary btn--lg">
+              Browse advisors
+            </Link>
+            <Link to="/#match" className="btn btn--outline btn--lg">
+              Take the matching quiz
+            </Link>
+          </div>
         </div>
       </div>
+
 
       <div className="dcontainer firm-search__body">
         <SearchFilters
