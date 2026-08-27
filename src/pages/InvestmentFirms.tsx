@@ -1,5 +1,7 @@
 import React, { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+
 import { getInvestmentFirms } from "@/services/investmentFirmsService";
 import { FirmCard } from "@/components/firms/FirmCard";
 import { SearchFilters, type FirmFilters } from "@/components/search/SearchFilters";
