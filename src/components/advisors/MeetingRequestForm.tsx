@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -12,7 +12,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   Form,
   FormControl,
@@ -27,7 +26,10 @@ import {
   Phone, 
   MessageSquare, 
   Calendar,
-  CheckCircle2
+  CheckCircle2,
+  ArrowRight,
+  ArrowLeft,
+  Loader2
 } from 'lucide-react';
 import { ADVISOR_SERVICES } from '@/constants/advisorServices';
 
@@ -51,7 +53,17 @@ interface MeetingRequestFormProps {
 
 const discussionTopics = [...ADVISOR_SERVICES, 'Other'];
 
+const steps = [
+  { id: 1, label: 'About you', fields: ['first_name', 'last_name', 'email', 'phone_number'] },
+  { id: 2, label: 'Contact', fields: ['preferred_contact_method'] },
+  { id: 3, label: 'Topics', fields: ['interested_in_discussing'] },
+  { id: 4, label: 'Message', fields: ['message'] },
+];
+
 export function MeetingRequestForm({ advisorId, advisorName, onSuccess }: MeetingRequestFormProps) {
+  const [step, setStep] = useState(1);
+  const [submitted, setSubmitted] = useState(false);
+
   const form = useForm<MeetingRequestData>({
     resolver: zodResolver(meetingRequestSchema),
     defaultValues: {
@@ -83,11 +95,14 @@ export function MeetingRequestForm({ advisorId, advisorName, onSuccess }: Meetin
       if (error) throw error;
     },
     onSuccess: () => {
+      setSubmitted(true);
       toast({ 
         title: 'Meeting request sent successfully!',
         description: `${advisorName} will contact you soon.`
       });
-      onSuccess();
+      setTimeout(() => {
+        onSuccess();
+      }, 2500);
     },
     onError: (error) => {
       toast({ 
@@ -105,39 +120,91 @@ export function MeetingRequestForm({ advisorId, advisorName, onSuccess }: Meetin
   const handleTopicChange = (topic: string, checked: boolean) => {
     const currentTopics = form.getValues('interested_in_discussing');
     if (checked) {
-      form.setValue('interested_in_discussing', [...currentTopics, topic]);
+      form.setValue('interested_in_discussing', [...currentTopics, topic], { shouldValidate: true });
     } else {
-      form.setValue('interested_in_discussing', currentTopics.filter(t => t !== topic));
+      form.setValue('interested_in_discussing', currentTopics.filter(t => t !== topic), { shouldValidate: true });
     }
   };
 
-  return (
-    <div className="w-full max-w-2xl mx-auto p-4 sm:p-6">
-      {/* Header Section - Mobile Optimized */}
-      <div className="text-center mb-6">
-        <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-blue rounded-full mb-3">
-          <Calendar className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
+  const validateStep = async () => {
+    const currentFields = steps[step - 1].fields as Array<keyof MeetingRequestData>;
+    const result = await form.trigger(currentFields);
+    return result;
+  };
+
+  const handleNext = async () => {
+    const isValid = await validateStep();
+    if (isValid) {
+      setStep((s) => Math.min(s + 1, steps.length));
+    }
+  };
+
+  const handleBack = () => {
+    setStep((s) => Math.max(s - 1, 1));
+  };
+
+  if (submitted) {
+    return (
+      <div className="meeting-form">
+        <div className="meeting-form__success">
+          <div className="meeting-form__success-icon">
+            <CheckCircle2 className="h-8 w-8" />
+          </div>
+          <h3 className="meeting-form__success-title">Request Sent</h3>
+          <p className="meeting-form__success-text">
+            Thank you. {advisorName} will reach out to you soon to schedule your meeting.
+          </p>
+          <button className="btn btn--primary btn--full" onClick={onSuccess}>
+            Done
+          </button>
         </div>
-        <h2 className="font-display text-xl sm:text-2xl font-medium text-blue mb-2">
-          Request a Meeting
-        </h2>
-        <p className="text-sm sm:text-base text-ink-3">
-          Schedule a consultation with <span className="font-semibold text-ink">{advisorName}</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="meeting-form">
+      {/* Header */}
+      <div className="meeting-form__header">
+        <div className="meeting-form__icon">
+          <Calendar className="h-6 w-6" />
+        </div>
+        <h2 className="meeting-form__title">Request a Meeting</h2>
+        <p className="meeting-form__subtitle">
+          Schedule a consultation with <strong>{advisorName}</strong>
         </p>
       </div>
 
+      {/* Stepper */}
+      <div className="meeting-form__stepper">
+        {steps.map((s, index) => (
+          <React.Fragment key={s.id}>
+            <div 
+              className={`meeting-form__step ${
+                step === s.id ? 'meeting-form__step--active' : ''
+              } ${step > s.id ? 'meeting-form__step--complete' : ''}`}
+            >
+              <span className="meeting-form__step-number">
+                {step > s.id ? (
+                  <CheckCircle2 className="h-4 w-4" />
+                ) : (
+                  s.id
+                )}
+              </span>
+              <span className="meeting-form__step-label">{s.label}</span>
+            </div>
+            {index < steps.length - 1 && <div className="meeting-form__step-line" />}
+          </React.Fragment>
+        ))}
+      </div>
+
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          {/* Personal Information */}
-          <Card>
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center text-lg">
-                <User className="h-4 w-4 mr-2 text-blue" />
-                Personal Information
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          {/* Step 1: Personal Information */}
+          {step === 1 && (
+            <div className="meeting-form__card">
+              <h3 className="meeting-form__card-title">1. Tell us about yourself</h3>
+              <div className="meeting-form__grid meeting-form__grid--2">
                 <FormField
                   control={form.control}
                   name="first_name"
@@ -175,156 +242,149 @@ export function MeetingRequestForm({ advisorId, advisorName, onSuccess }: Meetin
                 />
               </div>
 
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-medium flex items-center">
-                      <Mail className="h-4 w-4 mr-1" />
-                      Email Address *
-                    </FormLabel>
-                    <FormControl>
-                      <Input 
-                        type="email" 
-                        {...field} 
-                        className="h-11"
-                        placeholder="your@email.com"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="meeting-form__grid mt-4">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium flex items-center gap-1">
+                        <Mail className="h-3.5 w-3.5" />
+                        Email Address *
+                      </FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="email" 
+                          {...field} 
+                          className="h-11"
+                          placeholder="your@email.com"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-              <FormField
-                control={form.control}
-                name="phone_number"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-sm font-medium flex items-center">
-                      <Phone className="h-4 w-4 mr-1" />
-                      Phone Number
-                    </FormLabel>
-                    <FormControl>
-                      <Input 
-                        {...field} 
-                        className="h-11"
-                        placeholder="(555) 123-4567"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </CardContent>
-          </Card>
+                <FormField
+                  control={form.control}
+                  name="phone_number"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-sm font-medium flex items-center gap-1">
+                        <Phone className="h-3.5 w-3.5" />
+                        Phone Number
+                      </FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          className="h-11"
+                          placeholder="(555) 123-4567"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+          )}
 
-          {/* Contact Preferences */}
-          <Card>
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center text-lg">
-                <MessageSquare className="h-4 w-4 mr-2 text-mint-2" />
-                Contact Preference
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
+          {/* Step 2: Contact Preference */}
+          {step === 2 && (
+            <div className="meeting-form__card">
+              <h3 className="meeting-form__card-title">2. How should {advisorName} reach you?</h3>
               <FormField
                 control={form.control}
                 name="preferred_contact_method"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-sm font-medium mb-3 block">
-                      How would you prefer to be contacted? *
-                    </FormLabel>
                     <FormControl>
                       <RadioGroup
                         onValueChange={field.onChange}
-                        defaultValue={field.value}
-                        className="space-y-3"
+                        value={field.value}
+                        className="meeting-form__options"
                       >
-                        <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-sand">
+                        <div className="meeting-form__option">
                           <RadioGroupItem value="email" id="email" />
-                          <Label htmlFor="email" className="flex items-center cursor-pointer flex-1">
-                            <Mail className="h-4 w-4 mr-2 text-blue" />
+                          <Mail className="h-4 w-4 meeting-form__option-icon" />
+                          <Label htmlFor="email" className="meeting-form__option-label">
                             Email
                           </Label>
                         </div>
-                        <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-sand">
+                        <div className="meeting-form__option">
                           <RadioGroupItem value="phone" id="phone" />
-                          <Label htmlFor="phone" className="flex items-center cursor-pointer flex-1">
-                            <Phone className="h-4 w-4 mr-2 text-blue" />
+                          <Phone className="h-4 w-4 meeting-form__option-icon" />
+                          <Label htmlFor="phone" className="meeting-form__option-label">
                             Phone
                           </Label>
                         </div>
-                        <div className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-sand">
+                        <div className="meeting-form__option">
                           <RadioGroupItem value="either" id="either" />
-                          <Label htmlFor="either" className="flex items-center cursor-pointer flex-1">
-                            <CheckCircle2 className="h-4 w-4 mr-2 text-blue" />
+                          <CheckCircle2 className="h-4 w-4 meeting-form__option-icon" />
+                          <Label htmlFor="either" className="meeting-form__option-label">
                             Either Email or Phone
                           </Label>
                         </div>
                       </RadioGroup>
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="mt-3" />
                   </FormItem>
                 )}
               />
-            </CardContent>
-          </Card>
+            </div>
+          )}
 
-          {/* Discussion Topics */}
-          <Card>
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg">Discussion Topics</CardTitle>
-              <CardDescription className="text-sm">
-                What would you like to discuss? (Select all that apply)
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+          {/* Step 3: Discussion Topics */}
+          {step === 3 && (
+            <div className="meeting-form__card">
+              <h3 className="meeting-form__card-title">3. What would you like to discuss?</h3>
               <FormField
                 control={form.control}
                 name="interested_in_discussing"
                 render={() => (
                   <FormItem>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="meeting-form__topics">
                       {discussionTopics.map((topic) => (
-                        <div key={topic} className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-sand">
+                        <div 
+                          key={topic} 
+                          className="meeting-form__topic"
+                          data-state={form.watch('interested_in_discussing').includes(topic) ? 'checked' : 'unchecked'}
+                        >
                           <Checkbox
                             id={topic}
+                            checked={form.watch('interested_in_discussing').includes(topic)}
                             onCheckedChange={(checked) => handleTopicChange(topic, checked as boolean)}
                           />
-                          <Label htmlFor={topic} className="text-sm cursor-pointer flex-1">
+                          <Label htmlFor={topic} className="meeting-form__topic-text">
                             {topic}
                           </Label>
                         </div>
                       ))}
                     </div>
-                    <FormMessage />
+                    <FormMessage className="mt-3" />
                   </FormItem>
                 )}
               />
-            </CardContent>
-          </Card>
+            </div>
+          )}
 
-          {/* Additional Message */}
-          <Card>
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg">Additional Information</CardTitle>
-              <CardDescription className="text-sm">
-                Tell us more about your financial goals or questions
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
+          {/* Step 4: Additional Message */}
+          {step === 4 && (
+            <div className="meeting-form__card">
+              <h3 className="meeting-form__card-title">4. Anything else to share?</h3>
               <FormField
                 control={form.control}
                 name="message"
                 render={({ field }) => (
                   <FormItem>
+                    <FormLabel className="text-sm font-medium flex items-center gap-1 mb-2">
+                      <MessageSquare className="h-3.5 w-3.5" />
+                      Additional Information
+                    </FormLabel>
                     <FormControl>
                       <Textarea 
                         {...field} 
-                        rows={4}
+                        rows={5}
                         className="resize-none"
                         placeholder="Share any specific questions or details about your financial situation..."
                       />
@@ -333,37 +393,61 @@ export function MeetingRequestForm({ advisorId, advisorName, onSuccess }: Meetin
                   </FormItem>
                 )}
               />
-            </CardContent>
-          </Card>
+            </div>
+          )}
 
-          {/* Action Buttons */}
-          <div className="flex flex-col gap-3 pt-4">
-            <Button 
-              type="submit" 
-              disabled={mutation.isPending}
-              className="h-12 w-full bg-blue hover:bg-blue/90 text-white font-medium"
-            >
-              {mutation.isPending ? (
-                <>
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Sending Request...
-                </>
-              ) : (
-                <>
-                  <Calendar className="h-4 w-4 mr-2" />
-                  Send Meeting Request
-                </>
-              )}
-            </Button>
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={onSuccess}
-              disabled={mutation.isPending}
-              className="h-12 w-full"
-            >
-              Cancel
-            </Button>
+          {/* Actions */}
+          <div className="meeting-form__actions">
+            {step < steps.length ? (
+              <Button
+                type="button"
+                onClick={handleNext}
+                className="btn btn--primary btn--full btn--lg h-12"
+              >
+                Next: {steps[step].label}
+                <ArrowRight className="h-4 w-4 ml-1" />
+              </Button>
+            ) : (
+              <Button
+                type="submit"
+                disabled={mutation.isPending}
+                className="btn btn--primary btn--green btn--full btn--lg h-12"
+              >
+                {mutation.isPending ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Sending Request...
+                  </>
+                ) : (
+                  <>
+                    <Calendar className="h-4 w-4 mr-2" />
+                    Send Meeting Request
+                  </>
+                )}
+              </Button>
+            )}
+
+            <div className="meeting-form__actions-row">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleBack}
+                disabled={step === 1 || mutation.isPending}
+                className="btn btn--outline btn--full h-11"
+              >
+                <ArrowLeft className="h-4 w-4 mr-1" />
+                Back
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onSuccess}
+                disabled={mutation.isPending}
+                className="btn btn--outline btn--full h-11"
+              >
+                Cancel
+              </Button>
+            </div>
           </div>
         </form>
       </Form>

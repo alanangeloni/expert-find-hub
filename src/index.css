@@ -22,6 +22,7 @@
 @import './styles/design/BlogCard.css';
 @import './styles/design/BlogPage.css';
 @import './styles/design/BlogPostPage.css';
+@import './styles/design/MeetingRequestForm.css';
 @import './styles/design/extras.css';
 
 @tailwind base;
