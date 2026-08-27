@@ -1,6 +1,7 @@
 @import './styles/design/variables.css';
 @import './styles/design/base.css';
 @import './styles/design/Button.css';
+@import './styles/design/Tooltip.css';
 @import './styles/design/Badge.css';
 @import './styles/design/Avatar.css';
 @import './styles/design/StarRating.css';
