@@ -29,6 +29,7 @@ import {
   Calendar,
   CheckCircle2
 } from 'lucide-react';
+import { ADVISOR_SERVICES } from '@/constants/advisorServices';
 
 const meetingRequestSchema = z.object({
   first_name: z.string().min(1, 'First name is required'),
@@ -48,18 +49,7 @@ interface MeetingRequestFormProps {
   onSuccess: () => void;
 }
 
-const discussionTopics = [
-  'Financial Planning',
-  'Retirement Planning', 
-  'Investment Management',
-  'Tax Planning',
-  'Estate Planning',
-  'Insurance Planning',
-  'Education Planning',
-  'Business Planning',
-  'Debt Management',
-  'Other'
-];
+const discussionTopics = [...ADVISOR_SERVICES, 'Other'];
 
 export function MeetingRequestForm({ advisorId, advisorName, onSuccess }: MeetingRequestFormProps) {
   const form = useForm<MeetingRequestData>({
