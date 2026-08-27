@@ -59,7 +59,7 @@ const AccountantDetail = () => {
           `${accountant.name} is an accountant${accountant.firm_name ? ` at ${accountant.firm_name}` : ""}${location ? ` in ${location}` : ""}.`
         }
         canonicalUrl={`https://financialprofessional.com/accountants/${accountant.slug}`}
-        jsonLd={jsonLd}
+        structuredData={structuredData}
       />
 
       <div className="advisor-search__hero">

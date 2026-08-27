@@ -91,7 +91,7 @@ const AccountantSpecialty = () => {
         title={`Accountants for ${specialty} | Financial Professional`}
         description={`Find vetted accountants who specialize in ${specialty.toLowerCase()}. Compare credentials, services, and pricing.`}
         canonicalUrl={canonical}
-        jsonLd={jsonLd}
+        structuredData={structuredData}
       />
 
       <div className="advisor-search__hero">
