@@ -184,6 +184,9 @@
   font-size: var(--text-sm);
   font-weight: 550;
   color: var(--gray-700);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   transition:
     border-color var(--duration-fast),
     background var(--duration-fast),
