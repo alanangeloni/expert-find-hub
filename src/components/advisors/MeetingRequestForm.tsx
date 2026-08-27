@@ -199,7 +199,7 @@ export function MeetingRequestForm({ advisorId, advisorName, onSuccess }: Meetin
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
-          {/* Step 1: Personal Information */}
+          {/* Step 1: Personal Information & Contact */}
           {step === 1 && (
             <div className="meeting-form__card">
               <h3 className="meeting-form__card-title">1. Tell us about yourself</h3>
@@ -285,58 +285,55 @@ export function MeetingRequestForm({ advisorId, advisorName, onSuccess }: Meetin
                   )}
                 />
               </div>
+
+              <div className="mt-6">
+                <h4 className="text-sm font-medium mb-3">How should {advisorName} reach you? *</h4>
+                <FormField
+                  control={form.control}
+                  name="preferred_contact_method"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          value={field.value}
+                          className="meeting-form__options"
+                        >
+                          <div className="meeting-form__option">
+                            <RadioGroupItem value="email" id="email" />
+                            <Mail className="h-4 w-4 meeting-form__option-icon" />
+                            <Label htmlFor="email" className="meeting-form__option-label">
+                              Email
+                            </Label>
+                          </div>
+                          <div className="meeting-form__option">
+                            <RadioGroupItem value="phone" id="phone" />
+                            <Phone className="h-4 w-4 meeting-form__option-icon" />
+                            <Label htmlFor="phone" className="meeting-form__option-label">
+                              Phone
+                            </Label>
+                          </div>
+                          <div className="meeting-form__option">
+                            <RadioGroupItem value="either" id="either" />
+                            <CheckCircle2 className="h-4 w-4 meeting-form__option-icon" />
+                            <Label htmlFor="either" className="meeting-form__option-label">
+                              Either Email or Phone
+                            </Label>
+                          </div>
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage className="mt-3" />
+                    </FormItem>
+                  )}
+                />
+              </div>
             </div>
           )}
 
-          {/* Step 2: Contact Preference */}
+          {/* Step 2: Discussion Topics */}
           {step === 2 && (
             <div className="meeting-form__card">
-              <h3 className="meeting-form__card-title">2. How should {advisorName} reach you?</h3>
-              <FormField
-                control={form.control}
-                name="preferred_contact_method"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        className="meeting-form__options"
-                      >
-                        <div className="meeting-form__option">
-                          <RadioGroupItem value="email" id="email" />
-                          <Mail className="h-4 w-4 meeting-form__option-icon" />
-                          <Label htmlFor="email" className="meeting-form__option-label">
-                            Email
-                          </Label>
-                        </div>
-                        <div className="meeting-form__option">
-                          <RadioGroupItem value="phone" id="phone" />
-                          <Phone className="h-4 w-4 meeting-form__option-icon" />
-                          <Label htmlFor="phone" className="meeting-form__option-label">
-                            Phone
-                          </Label>
-                        </div>
-                        <div className="meeting-form__option">
-                          <RadioGroupItem value="either" id="either" />
-                          <CheckCircle2 className="h-4 w-4 meeting-form__option-icon" />
-                          <Label htmlFor="either" className="meeting-form__option-label">
-                            Either Email or Phone
-                          </Label>
-                        </div>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage className="mt-3" />
-                  </FormItem>
-                )}
-              />
-            </div>
-          )}
-
-          {/* Step 3: Discussion Topics */}
-          {step === 3 && (
-            <div className="meeting-form__card">
-              <h3 className="meeting-form__card-title">3. What would you like to discuss?</h3>
+              <h3 className="meeting-form__card-title">2. What would you like to discuss?</h3>
               <FormField
                 control={form.control}
                 name="interested_in_discussing"
