@@ -29,6 +29,7 @@ import {
   Calendar,
   CheckCircle2
 } from 'lucide-react';
+import { ADVISOR_SERVICES } from '@/constants/advisorServices';
 
 const meetingRequestSchema = z.object({
   first_name: z.string().min(1, 'First name is required'),
