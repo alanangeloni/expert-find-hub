@@ -1,21 +1,38 @@
-# Fix state page heading styling
+# Match hero headings across directory pages to the Journal style
 
-## Problem
-On the "Browse by state" pages, the H1 ends with a single italic word ("State" or the state name). That lone italic accent at the end of the line looks unbalanced.
+## Goal
+Give the Advisors, Firms, and state pages the same hero treatment the blog uses: green keyline, uppercase eyebrow, a two-line headline where the second line is italic serif, then supporting copy and buttons.
 
-## Resolution
-Italicize a word or phrase earlier in the heading so the accent feels intentional and matches the rhythm of the homepage headings.
+## Blog pattern (reference)
+```text
+▬ (green keyline)
+THE JOURNAL
+Clarity for every
+financial decision   <- italic serif second line
+sub-copy
+[Take the matching quiz] [Browse advisors]
+```
 
 ## Changes
 
-1. **`src/pages/StatesIndex.tsx`** — Change the H1 to italicize the phrase "Financial Professionals":
-   `<h1>Browse <em>Financial Professionals</em> by State</h1>`
+1. **`src/pages/Advisors.tsx`** — Add the green `keyline` above the eyebrow and split the H1 into two lines:
+   `Find your financial` / `<em>advisor</em>`
+   Keep the existing eyebrow, sub-copy, and "Take matching quiz" button; place buttons in a hero CTA row like the blog.
 
-2. **`src/pages/StateAdvisors.tsx`** — Change the H1 to italicize the word "in":
-   `<h1>Find a Financial Professional <em>in</em> {state}</h1>`
+2. **`src/pages/InvestmentFirms.tsx`** — Same treatment:
+   keyline + `Firm directory` eyebrow, H1 as `Browse independent` / `<em>investment firms</em>`, keep sub-copy, and add a hero CTA row (Browse advisors / Take matching quiz) so the layout matches.
 
-3. **`src/styles/design/StatesPage.css`** — Keep the `.states-page__hero h1 em` rule as-is since it is still used.
+3. **`src/pages/StatesIndex.tsx`** — keyline + eyebrow, H1 as
+   `Browse <em>Financial Professionals</em>` / `by State` (two lines, italic on the phrase the user picked).
+
+4. **`src/pages/StateAdvisors.tsx`** — keep the breadcrumb, then H1 as
+   `Find a Financial Professional` / `<em>in {state}</em>` (two lines).
+
+5. **CSS updates** — In `src/styles/design/AdvisorSearchPage.css`, `FirmSearchPage.css`, and `StatesPage.css`:
+   - match the blog's hero sizing/weight (`clamp(2rem, 4.5vw, 3.25rem)`, weight 800, tight tracking, line-height ~1.08)
+   - add the `em` serif-italic rule where missing
+   - add a flex hero row (copy left, CTA buttons right, wrapping on mobile) mirroring `.blog-page__hero-inner`
 
 ## Notes
-- H1 text content stays identical, so SEO is unchanged.
-- No other visual changes to these pages.
+- Headline wording is unchanged, so SEO/H1 targeting stays intact.
+- Filters, cards, and page bodies are untouched; this is hero styling only.
