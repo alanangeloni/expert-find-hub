@@ -214,9 +214,11 @@ const AdvisorDetailPage = () => {
                 <h2>Areas of focus</h2>
                 <div className="advisor-detail__specialty-grid">
                   {services.map((s) => (
-                    <Link key={s} to={`/advisors?specialty=${encodeURIComponent(s)}`} className="advisor-detail__specialty">
-                      {s}
-                    </Link>
+                    <InfoTooltip key={s} content={getSpecialtyTooltip(s)}>
+                      <Link to={`/advisors?specialty=${encodeURIComponent(s)}`} className="advisor-detail__specialty">
+                        {s}
+                      </Link>
+                    </InfoTooltip>
                   ))}
                 </div>
               </section>
