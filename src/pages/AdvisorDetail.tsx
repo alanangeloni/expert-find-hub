@@ -8,6 +8,8 @@ import { MeetingRequestForm } from "@/components/advisors/MeetingRequestForm";
 import { CompareToggle } from "@/components/compare/CompareToggle";
 import { useCompareAdvisors } from "@/contexts/CompareContext";
 import { getInitials, hueFor, extractAcronym, formatMinAssets, advisorLocation } from "@/utils/advisorDisplay";
+import { InfoTooltip } from "@/components/common/InfoTooltip";
+import { getSpecialtyTooltip, getCertificationTooltip, getLicenseTooltip } from "@/constants/definitions";
 import { Seo } from "@/components/seo/Seo";
 
 const Chevron = () => (
