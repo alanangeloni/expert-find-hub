@@ -16,7 +16,10 @@ Create a small reusable tooltip, no new dependencies:
 - New `src/components/common/InfoTooltip.tsx` (or a CSS-only `data-tooltip` span) that shows a definition bubble on hover/focus above the pill, with an arrow, using design tokens (white card, border, shadow, small text).
 - New `src/constants/definitions.ts` with two maps:
   - **Specialty/service definitions** — one-sentence plain-English explanation for each entry in `advisorServices.ts` (e.g. "Retirement Planning: Building a strategy for income, savings, and investments so you can retire comfortably.").
-  - **Certification/designation definitions** — keyed by acronym and full name (CFP, CFA, CPA, ChFC, LUTCF, CIMA, RICP, EA, etc.), each with the full name and a one-line description of what the credential means.
+  - **Certification/designation definitions** — keyed by acronym and full name (CFP, CFA, CPA, ChFC, LUTCF, CIMA, RICP, EA, etc.). Each entry includes:
+    - The full name of the credential
+    - A one-line description of what it means
+    - "What it takes" — the requirements to earn it (education, exams, experience hours/years, ethics), e.g. CFP: bachelor's degree, CFP Board coursework, 6,000 hours of experience, and passing the CFP exam.
 - Wire it up in `src/pages/AdvisorDetail.tsx`:
   - "Areas of focus" pills: hovering a pill shows that specialty's definition.
   - "Designations" badges: hovering an acronym badge shows the full name + definition.
