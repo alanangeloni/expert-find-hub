@@ -364,10 +364,10 @@ export function MeetingRequestForm({ advisorId, advisorName, onSuccess }: Meetin
             </div>
           )}
 
-          {/* Step 4: Additional Message */}
-          {step === 4 && (
+          {/* Step 3: Additional Message */}
+          {step === 3 && (
             <div className="meeting-form__card">
-              <h3 className="meeting-form__card-title">4. Anything else to share?</h3>
+              <h3 className="meeting-form__card-title">3. Anything else to share?</h3>
               <FormField
                 control={form.control}
                 name="message"
