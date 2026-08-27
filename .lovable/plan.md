@@ -23,8 +23,8 @@ Create a small reusable tooltip, no new dependencies:
 - Wire it up in `src/pages/AdvisorDetail.tsx`:
   - "Areas of focus" pills: hovering a pill shows that specialty's definition.
   - "Designations" badges: hovering an acronym badge shows the full name + definition.
-  - "Licenses" badges get the same treatment where a definition exists.
-- Fallback: if no definition exists, no tooltip is shown.
+  - "Licenses" badges: hovering shows the full name and the "what it takes" requirements, just like designations.
+  - If a license type isn't in the map, no tooltip is shown.
 - Tooltips are keyboard accessible (appear on focus) and don't wrap the pill links in a way that breaks click-through to the filtered advisors page.
 
 ## Technical notes
