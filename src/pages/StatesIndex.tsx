@@ -64,9 +64,7 @@ const StatesIndex = () => {
           <span className="keyline" />
           <p className="states-page__eyebrow">Browse by location</p>
           <h1>
-            Browse <em>Financial Professionals</em>
-            <br />
-            by State
+            Browse Financial Professionals <em>by State</em>
           </h1>
           <p className="states-page__sub">
             Find vetted financial professionals, fiduciary advisors, and wealth management firms in your state. Every
