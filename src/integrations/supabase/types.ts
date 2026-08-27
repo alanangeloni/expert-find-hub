@@ -1548,6 +1548,7 @@ export type Database = {
         | "SMB Owners"
         | "VC Backed Startups"
         | "Young Professionals"
+        | "Mid-Market Companies ($10M-$50M)"
       clientele_type:
         | "Individuals"
         | "High Net Worth Individuals"
@@ -1984,6 +1985,7 @@ export const Constants = {
         "SMB Owners",
         "VC Backed Startups",
         "Young Professionals",
+        "Mid-Market Companies ($10M-$50M)",
       ],
       clientele_type: [
         "Individuals",

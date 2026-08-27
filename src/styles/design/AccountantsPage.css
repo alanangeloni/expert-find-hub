@@ -1,0 +1,191 @@
+/* Accountant directory pages: filters, detail layout, specialty page. */
+
+.accountant-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-8);
+}
+
+.accountant-filters__search {
+  flex: 1 1 260px;
+  height: 44px;
+  padding: 0 var(--space-4);
+  border: var(--d-border);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  font-size: var(--text-sm);
+  color: var(--black);
+}
+
+.accountant-filters__search:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 1px;
+}
+
+.accountant-filters__select {
+  height: 44px;
+  padding: 0 var(--space-3);
+  border: var(--d-border);
+  border-radius: var(--radius-md);
+  background: var(--white);
+  font-size: var(--text-sm);
+  color: var(--black);
+}
+
+.accountant-filters__check {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--gray-700);
+  cursor: pointer;
+}
+
+.accountant-filters__count {
+  margin-left: auto;
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+}
+
+.accountant-detail__missing {
+  padding: var(--space-24) var(--space-4);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.accountant-detail__crumbs {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  color: var(--gray-500);
+  margin-bottom: var(--space-6);
+}
+
+.accountant-detail__crumbs a {
+  color: var(--gray-700);
+  font-weight: 500;
+}
+
+.accountant-detail__crumbs a:hover {
+  color: var(--black);
+  text-decoration: underline;
+}
+
+.accountant-detail__hero {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-6);
+}
+
+.accountant-detail__name {
+  font-size: var(--text-4xl, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.accountant-detail__position {
+  font-size: var(--text-base);
+  color: var(--gray-600);
+  margin-top: 2px;
+}
+
+.accountant-detail__firm {
+  font-size: var(--text-base);
+  font-weight: 600;
+  margin-top: 2px;
+}
+
+.accountant-detail__body {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: var(--space-10);
+  padding-bottom: var(--space-24);
+}
+
+@media (max-width: 900px) {
+  .accountant-detail__body {
+    grid-template-columns: 1fr;
+  }
+}
+
+.accountant-detail__main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-8);
+}
+
+.accountant-detail__section h2 {
+  font-size: var(--text-xl);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: var(--space-3);
+}
+
+.accountant-detail__section p {
+  font-size: var(--text-base);
+  color: var(--gray-700);
+  line-height: 1.7;
+}
+
+.accountant-detail__disclaimer {
+  font-size: var(--text-xs);
+  color: var(--gray-500);
+  line-height: 1.6;
+  border-top: var(--d-border);
+  padding-top: var(--space-4);
+}
+
+.accountant-detail__cta-card {
+  position: sticky;
+  top: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-6);
+  background: var(--white);
+  border: var(--d-border);
+  border-radius: var(--radius-xl);
+}
+
+.accountant-detail__cta-card h3 {
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+
+.accountant-detail__cta-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-sm);
+  color: var(--gray-600);
+}
+
+.accountant-detail__cta-note {
+  font-size: var(--text-sm);
+  color: var(--gray-600);
+  line-height: 1.6;
+}
+
+.accountant-detail__cta-btn {
+  justify-content: center;
+  margin-top: var(--space-2);
+}
+
+.accountant-specialty__faq,
+.accountant-specialty__related {
+  margin-top: var(--space-16);
+}
+
+.accountant-specialty__faq h2,
+.accountant-specialty__related h2 {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-bottom: var(--space-4);
+}

@@ -17,6 +17,9 @@ import StatesIndex from "./pages/StatesIndex";
 import StateAdvisors from "./pages/StateAdvisors";
 import ServicesIndex from "./pages/ServicesIndex";
 import ServiceAdvisors from "./pages/ServiceAdvisors";
+import Accountants from "./pages/Accountants";
+import AccountantDetail from "./pages/AccountantDetail";
+import AccountantSpecialty from "./pages/AccountantSpecialty";
 import AdvisorRegistration from "./pages/AdvisorRegistration";
 import AdvisorProfile from "./pages/AdvisorProfile";
 import InvestmentFirms from "./pages/InvestmentFirms";
@@ -62,6 +65,9 @@ const App = () => (
                   <Route path="/financial-professionals/:state" element={<StateAdvisors />} />
                   <Route path="/services" element={<ServicesIndex />} />
                   <Route path="/services/:slug" element={<ServiceAdvisors />} />
+                  <Route path="/accountants" element={<Accountants />} />
+                  <Route path="/accountants/specialty/:slug" element={<AccountantSpecialty />} />
+                  <Route path="/accountants/:slug" element={<AccountantDetail />} />
                   <Route path="/advisor-registration" element={<AdvisorRegistration />} />
                   <Route
                     path="/advisor-profile"
