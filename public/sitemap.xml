@@ -41,6 +41,11 @@
     <priority>0.9</priority>
   </url>
   <url>
+    <loc>https://financialprofessional.com/accountants</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://financialprofessional.com/services/alternative-investments</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -354,6 +359,27 @@
     <loc>https://financialprofessional.com/financial-professionals/wisconsin</loc>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://financialprofessional.com/accountants/specialty/athletes-and-entertainers</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://financialprofessional.com/accountants/specialty/business-owners-entrepreneurs</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://financialprofessional.com/accountants/specialty/high-net-worth-individuals</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://financialprofessional.com/accountants/daniel-potrus</loc>
+    <lastmod>2026-08-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://financialprofessional.com/advisors/brandonkraus</loc>
