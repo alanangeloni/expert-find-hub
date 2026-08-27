@@ -29,6 +29,7 @@ const staticEntries = [
   { path: '/advisor-registration', changefreq: 'monthly', priority: '0.6' },
   { path: '/financial-professionals', changefreq: 'weekly', priority: '0.9' },
   { path: '/services', changefreq: 'weekly', priority: '0.9' },
+  { path: '/accountants', changefreq: 'weekly', priority: '0.8' },
 ];
 
 async function fetchRows(table, query) {
