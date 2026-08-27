@@ -1,5 +1,5 @@
 import React from "react";
-import { SPECIALTY_LABELS, FEE_STRUCTURE_OPTIONS } from "@/constants/specialties";
+import { ALL_SPECIALTY_OPTIONS, FEE_STRUCTURE_OPTIONS } from "@/constants/specialties";
 
 export interface AdvisorFilters {
   query: string;
@@ -74,7 +74,7 @@ export function SearchFilters(props: Props) {
         <div className="filters__row">
           <select value={filters.specialty} onChange={(e) => set("specialty", e.target.value)} aria-label="Specialty">
             <option value="">All specialties</option>
-            {SPECIALTY_LABELS.map((s) => (
+            {ALL_SPECIALTY_OPTIONS.map((s) => (
               <option key={s} value={s}>
                 {s}
               </option>
