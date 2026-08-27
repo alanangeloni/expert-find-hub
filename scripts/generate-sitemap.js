@@ -28,6 +28,7 @@ const staticEntries = [
   { path: '/blog', changefreq: 'daily', priority: '0.8' },
   { path: '/advisor-registration', changefreq: 'monthly', priority: '0.6' },
   { path: '/financial-professionals', changefreq: 'weekly', priority: '0.9' },
+  { path: '/services', changefreq: 'weekly', priority: '0.9' },
 ];
 
 async function fetchRows(table, query) {
@@ -57,9 +58,16 @@ const isoDay = (value) => {
 const stateSlug = (state) =>
   state.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
+const serviceSlug = (service) =>
+  service
+    .toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '');
+
 async function collect() {
   const [advisors, firms, accountingFirms, posts] = await Promise.all([
-    fetchRows('financial_advisors_public', 'select=slug,updated_at,state_hq&slug=not.is.null&limit=5000'),
+    fetchRows('financial_advisors_public', 'select=slug,updated_at,state_hq,advisor_services&slug=not.is.null&limit=5000'),
     fetchRows('investment_firms', 'select=slug,updated_at&slug=not.is.null&limit=5000'),
     fetchRows('accounting_firms', 'select=slug,updated_at&slug=not.is.null&limit=5000'),
     fetchRows('blog_posts', 'select=slug,updated_at,published_at&status=eq.published&slug=not.is.null&limit=5000'),
@@ -69,8 +77,17 @@ async function collect() {
     new Set(advisors.map((r) => r.state_hq).filter(Boolean))
   ).sort();
 
+  const services = Array.from(
+    new Set(advisors.flatMap((r) => r.advisor_services || []).filter(Boolean))
+  ).sort();
+
   return [
     ...staticEntries,
+    ...services.map((service) => ({
+      path: `/services/${serviceSlug(service)}`,
+      changefreq: 'weekly',
+      priority: '0.8',
+    })),
     ...states.map((state) => ({
       path: `/financial-professionals/${stateSlug(state)}`,
       changefreq: 'weekly',

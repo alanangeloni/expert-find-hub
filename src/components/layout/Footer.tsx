@@ -23,15 +23,16 @@ const Footer = () => {
             <Link to="/advisors">Find advisors</Link>
             <Link to="/firms">Browse firms</Link>
             <Link to="/financial-professionals">Browse by state</Link>
+            <Link to="/services">Browse by specialty</Link>
             <Link to="/#match">Matching quiz</Link>
-            <Link to="/advisors?specialties=Retirement%20Planning">Retirement specialists</Link>
+            <Link to="/services/retirement-planning">Retirement specialists</Link>
           </div>
           <div className="footer__col">
             <h4>Specialties</h4>
-            <Link to="/advisors?specialties=Tax%20Planning">Tax planning</Link>
-            <Link to="/advisors?specialties=Business%20Owners">Business owners</Link>
-            <Link to="/advisors?specialties=High%20Net%20Worth">High net worth</Link>
-            <Link to="/advisors?specialties=Estate%20Planning">Estate planning</Link>
+            <Link to="/services/tax-planning">Tax planning</Link>
+            <Link to="/services/small-business-planning">Business owners</Link>
+            <Link to="/services/wealth-management">High net worth</Link>
+            <Link to="/services/estate-trust-planning">Estate planning</Link>
           </div>
           <div className="footer__col">
             <h4>Company</h4>
