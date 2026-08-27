@@ -115,7 +115,7 @@ const AdvisorSearch = () => {
             <h1>
               Find your
               <br />
-              financial <em>advisor</em>
+              <em>financial advisor</em>
             </h1>
             <p className="advisor-search__sub">
               Search vetted fiduciaries by specialty, location, fees, and more. Compare up to 3 side by side.
