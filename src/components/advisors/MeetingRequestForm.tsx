@@ -48,18 +48,7 @@ interface MeetingRequestFormProps {
   onSuccess: () => void;
 }
 
-const discussionTopics = [
-  'Financial Planning',
-  'Retirement Planning', 
-  'Investment Management',
-  'Tax Planning',
-  'Estate Planning',
-  'Insurance Planning',
-  'Education Planning',
-  'Business Planning',
-  'Debt Management',
-  'Other'
-];
+const discussionTopics = [...ADVISOR_SERVICES, 'Other'];
 
 export function MeetingRequestForm({ advisorId, advisorName, onSuccess }: MeetingRequestFormProps) {
   const form = useForm<MeetingRequestData>({
