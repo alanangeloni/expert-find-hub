@@ -14,6 +14,128 @@ export type Database = {
   }
   public: {
     Tables: {
+      accountants: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          bio: string | null
+          city: string | null
+          client_specialties:
+            | Database["public"]["Enums"]["client_specialty_type"][]
+            | null
+          created_at: string
+          credentials: string[] | null
+          disclaimer: string | null
+          email: string | null
+          firm_address: string | null
+          firm_name: string | null
+          headshot_url: string | null
+          id: string
+          linked_firm: string | null
+          minimum_fee: string | null
+          name: string
+          phone_number: string | null
+          position: string | null
+          pricing_note: string | null
+          rejection_reason: string | null
+          services:
+            | Database["public"]["Enums"]["accounting_service_type"][]
+            | null
+          slug: string
+          state_hq: Database["public"]["Enums"]["States"] | null
+          states_served: string[] | null
+          status: string
+          submitted_at: string | null
+          updated_at: string
+          user_id: string | null
+          verified: boolean | null
+          website_url: string | null
+          years_of_experience: number | null
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          bio?: string | null
+          city?: string | null
+          client_specialties?:
+            | Database["public"]["Enums"]["client_specialty_type"][]
+            | null
+          created_at?: string
+          credentials?: string[] | null
+          disclaimer?: string | null
+          email?: string | null
+          firm_address?: string | null
+          firm_name?: string | null
+          headshot_url?: string | null
+          id?: string
+          linked_firm?: string | null
+          minimum_fee?: string | null
+          name: string
+          phone_number?: string | null
+          position?: string | null
+          pricing_note?: string | null
+          rejection_reason?: string | null
+          services?:
+            | Database["public"]["Enums"]["accounting_service_type"][]
+            | null
+          slug: string
+          state_hq?: Database["public"]["Enums"]["States"] | null
+          states_served?: string[] | null
+          status?: string
+          submitted_at?: string | null
+          updated_at?: string
+          user_id?: string | null
+          verified?: boolean | null
+          website_url?: string | null
+          years_of_experience?: number | null
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          bio?: string | null
+          city?: string | null
+          client_specialties?:
+            | Database["public"]["Enums"]["client_specialty_type"][]
+            | null
+          created_at?: string
+          credentials?: string[] | null
+          disclaimer?: string | null
+          email?: string | null
+          firm_address?: string | null
+          firm_name?: string | null
+          headshot_url?: string | null
+          id?: string
+          linked_firm?: string | null
+          minimum_fee?: string | null
+          name?: string
+          phone_number?: string | null
+          position?: string | null
+          pricing_note?: string | null
+          rejection_reason?: string | null
+          services?:
+            | Database["public"]["Enums"]["accounting_service_type"][]
+            | null
+          slug?: string
+          state_hq?: Database["public"]["Enums"]["States"] | null
+          states_served?: string[] | null
+          status?: string
+          submitted_at?: string | null
+          updated_at?: string
+          user_id?: string | null
+          verified?: boolean | null
+          website_url?: string | null
+          years_of_experience?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accountants_linked_firm_fkey"
+            columns: ["linked_firm"]
+            isOneToOne: false
+            referencedRelation: "accounting_firms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       accounting_firms: {
         Row: {
           address: string | null
@@ -973,6 +1095,107 @@ export type Database = {
       }
     }
     Views: {
+      accountants_public: {
+        Row: {
+          bio: string | null
+          city: string | null
+          client_specialties:
+            | Database["public"]["Enums"]["client_specialty_type"][]
+            | null
+          created_at: string | null
+          credentials: string[] | null
+          disclaimer: string | null
+          firm_address: string | null
+          firm_name: string | null
+          headshot_url: string | null
+          id: string | null
+          linked_firm: string | null
+          minimum_fee: string | null
+          name: string | null
+          position: string | null
+          pricing_note: string | null
+          services:
+            | Database["public"]["Enums"]["accounting_service_type"][]
+            | null
+          slug: string | null
+          state_hq: Database["public"]["Enums"]["States"] | null
+          states_served: string[] | null
+          status: string | null
+          updated_at: string | null
+          verified: boolean | null
+          website_url: string | null
+          years_of_experience: number | null
+        }
+        Insert: {
+          bio?: string | null
+          city?: string | null
+          client_specialties?:
+            | Database["public"]["Enums"]["client_specialty_type"][]
+            | null
+          created_at?: string | null
+          credentials?: string[] | null
+          disclaimer?: string | null
+          firm_address?: string | null
+          firm_name?: string | null
+          headshot_url?: string | null
+          id?: string | null
+          linked_firm?: string | null
+          minimum_fee?: string | null
+          name?: string | null
+          position?: string | null
+          pricing_note?: string | null
+          services?:
+            | Database["public"]["Enums"]["accounting_service_type"][]
+            | null
+          slug?: string | null
+          state_hq?: Database["public"]["Enums"]["States"] | null
+          states_served?: string[] | null
+          status?: string | null
+          updated_at?: string | null
+          verified?: boolean | null
+          website_url?: string | null
+          years_of_experience?: number | null
+        }
+        Update: {
+          bio?: string | null
+          city?: string | null
+          client_specialties?:
+            | Database["public"]["Enums"]["client_specialty_type"][]
+            | null
+          created_at?: string | null
+          credentials?: string[] | null
+          disclaimer?: string | null
+          firm_address?: string | null
+          firm_name?: string | null
+          headshot_url?: string | null
+          id?: string | null
+          linked_firm?: string | null
+          minimum_fee?: string | null
+          name?: string | null
+          position?: string | null
+          pricing_note?: string | null
+          services?:
+            | Database["public"]["Enums"]["accounting_service_type"][]
+            | null
+          slug?: string | null
+          state_hq?: Database["public"]["Enums"]["States"] | null
+          states_served?: string[] | null
+          status?: string | null
+          updated_at?: string | null
+          verified?: boolean | null
+          website_url?: string | null
+          years_of_experience?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "accountants_linked_firm_fkey"
+            columns: ["linked_firm"]
+            isOneToOne: false
+            referencedRelation: "accounting_firms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       financial_advisors_public: {
         Row: {
           advisor_sec_crd: string | null
@@ -1134,6 +1357,13 @@ export type Database = {
         Args: { category: string; post_id: string }
         Returns: undefined
       }
+      get_accountant_contact: {
+        Args: { _accountant_id: string }
+        Returns: {
+          email: string
+          phone_number: string
+        }[]
+      }
       get_advisor_contact: {
         Args: { _advisor_id: string }
         Returns: {
@@ -1176,6 +1406,19 @@ export type Database = {
         | "Payroll Services"
         | "Sales Tax"
         | "Tax Preparation"
+        | "Tax Planning & Strategy"
+        | "Business Tax Preparation"
+        | "IRS Representation & Tax Resolution"
+        | "Estate & Trust Tax"
+        | "Accounts Payable/Receivable"
+        | "Business & Entity Formation"
+        | "Business Valuation"
+        | "Controller Services"
+        | "Cash Flow Forecasting"
+        | "Cost Accounting"
+        | "Audit Services"
+        | "QuickBooks Setup & Cleanup"
+        | "Back-Office Support"
       "Advisor Services":
         | "Alternative Investments"
         | "Budgeting"
@@ -1574,6 +1817,19 @@ export const Constants = {
         "Payroll Services",
         "Sales Tax",
         "Tax Preparation",
+        "Tax Planning & Strategy",
+        "Business Tax Preparation",
+        "IRS Representation & Tax Resolution",
+        "Estate & Trust Tax",
+        "Accounts Payable/Receivable",
+        "Business & Entity Formation",
+        "Business Valuation",
+        "Controller Services",
+        "Cash Flow Forecasting",
+        "Cost Accounting",
+        "Audit Services",
+        "QuickBooks Setup & Cleanup",
+        "Back-Office Support",
       ],
       "Advisor Services": [
         "Alternative Investments",
