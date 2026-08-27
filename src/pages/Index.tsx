@@ -419,11 +419,13 @@ const HomePage = () => {
 
           <div className="home-hero__chips">
             <span className="home-hero__chips-label">Popular:</span>
-            {["Retirement Planning", "Tax Planning", "Estate/Trust Planning", "Small Business Planning"].map((s) => (
-              <Link key={s} className="home-hero__chip" to={`/advisors?specialties=${encodeURIComponent(s)}`}>
-                {s}
-              </Link>
-            ))}
+            <div className="home-hero__chips-row">
+              {["Retirement Planning", "Tax Planning", "Estate/Trust Planning", "Small Business Planning"].map((s) => (
+                <Link key={s} className="home-hero__chip" to={`/advisors?specialties=${encodeURIComponent(s)}`}>
+                  {s}
+                </Link>
+              ))}
+            </div>
           </div>
 
           <div className="home-hero__quiz-cta">
