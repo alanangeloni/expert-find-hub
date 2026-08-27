@@ -54,10 +54,9 @@ interface MeetingRequestFormProps {
 const discussionTopics = [...ADVISOR_SERVICES, 'Other'];
 
 const steps = [
-  { id: 1, label: 'About you', fields: ['first_name', 'last_name', 'email', 'phone_number'] },
-  { id: 2, label: 'Contact', fields: ['preferred_contact_method'] },
-  { id: 3, label: 'Topics', fields: ['interested_in_discussing'] },
-  { id: 4, label: 'Message', fields: ['message'] },
+  { id: 1, label: 'About you', fields: ['first_name', 'last_name', 'email', 'phone_number', 'preferred_contact_method'] },
+  { id: 2, label: 'Topics', fields: ['interested_in_discussing'] },
+  { id: 3, label: 'Message', fields: ['message'] },
 ];
 
 export function MeetingRequestForm({ advisorId, advisorName, onSuccess }: MeetingRequestFormProps) {
