@@ -386,7 +386,7 @@ const HomePage = () => {
         <div className="dcontainer home-hero__content">
           <div className="home-hero__eyebrow">
             <span className="home-hero__eyebrow-dot" />
-            Fiduciary advisors. Zero commissions. Real matches.
+            Zero commissions. Real matches.
           </div>
           <h1 className="home-hero__title">
             Achieve your Financial Goals
