@@ -26,6 +26,16 @@ export const SPECIALTY_GROUPS: { label: string; values: string[] }[] = [
 
 export const SPECIALTY_LABELS = SPECIALTY_GROUPS.map((g) => g.label);
 
+// Every filterable option: the grouped public labels plus any individual
+// database services not already covered by a group.
+import { ADVISOR_SERVICES } from "./advisorServices";
+
+const covered = new Set(SPECIALTY_GROUPS.flatMap((g) => [...g.values, g.label]));
+export const ALL_SPECIALTY_OPTIONS: string[] = [
+  ...SPECIALTY_LABELS,
+  ...ADVISOR_SERVICES.filter((s) => !covered.has(s)),
+];
+
 export const valuesForSpecialty = (label: string): string[] => {
   const group = SPECIALTY_GROUPS.find((g) => g.label === label);
   return group ? group.values : [label];
