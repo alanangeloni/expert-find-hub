@@ -20,6 +20,7 @@ Create a small reusable tooltip, no new dependencies:
     - The full name of the credential
     - A one-line description of what it means
     - "What it takes" — the requirements to earn it (education, exams, experience hours/years, ethics), e.g. CFP: bachelor's degree, CFP Board coursework, 6,000 hours of experience, and passing the CFP exam.
+  - **Financial / FINRA license definitions** — keyed by license name (Series 7, Series 66, Series 65, Series 6, Series 63, Series 24, etc.). Each entry includes the full name, what it allows the holder to do, and what it takes to get it (FINRA membership, sponsor/firm, exam, continuing education).
 - Wire it up in `src/pages/AdvisorDetail.tsx`:
   - "Areas of focus" pills: hovering a pill shows that specialty's definition.
   - "Designations" badges: hovering an acronym badge shows the full name + definition.
