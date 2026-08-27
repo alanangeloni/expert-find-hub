@@ -1,0 +1,1 @@
+ALTER TYPE public.client_specialty_type ADD VALUE IF NOT EXISTS 'Mid-Market Companies ($10M-$50M)';
