@@ -233,9 +233,11 @@ const AdvisorDetailPage = () => {
                       <h3>Designations</h3>
                       <div className="advisor-detail__cert-list">
                         {designations.map((d) => (
-                          <span key={d} className="badge badge--blue badge--sm" title={d}>
-                            {extractAcronym(d)}
-                          </span>
+                          <InfoTooltip key={d} content={getCertificationTooltip(d)}>
+                            <span className="badge badge--blue badge--sm">
+                              {extractAcronym(d)}
+                            </span>
+                          </InfoTooltip>
                         ))}
                       </div>
                     </div>
