@@ -66,11 +66,12 @@ const serviceSlug = (service) =>
     .replace(/^-|-$/g, '');
 
 async function collect() {
-  const [advisors, firms, accountingFirms, posts] = await Promise.all([
+  const [advisors, firms, accountingFirms, posts, accountants] = await Promise.all([
     fetchRows('financial_advisors_public', 'select=slug,updated_at,state_hq,advisor_services&slug=not.is.null&limit=5000'),
     fetchRows('investment_firms', 'select=slug,updated_at&slug=not.is.null&limit=5000'),
     fetchRows('accounting_firms', 'select=slug,updated_at&slug=not.is.null&limit=5000'),
     fetchRows('blog_posts', 'select=slug,updated_at,published_at&status=eq.published&slug=not.is.null&limit=5000'),
+    fetchRows('accountants_public', 'select=slug,updated_at,client_specialties&slug=not.is.null&limit=5000'),
   ]);
 
   const states = Array.from(
@@ -79,6 +80,10 @@ async function collect() {
 
   const services = Array.from(
     new Set(advisors.flatMap((r) => r.advisor_services || []).filter(Boolean))
+  ).sort();
+
+  const accountantSpecialties = Array.from(
+    new Set(accountants.flatMap((r) => r.client_specialties || []).filter(Boolean))
   ).sort();
 
   return [
@@ -92,6 +97,17 @@ async function collect() {
       path: `/financial-professionals/${stateSlug(state)}`,
       changefreq: 'weekly',
       priority: '0.8',
+    })),
+    ...accountantSpecialties.map((specialty) => ({
+      path: `/accountants/specialty/${serviceSlug(specialty)}`,
+      changefreq: 'weekly',
+      priority: '0.8',
+    })),
+    ...accountants.map((r) => ({
+      path: `/accountants/${r.slug}`,
+      lastmod: isoDay(r.updated_at),
+      changefreq: 'monthly',
+      priority: '0.7',
     })),
     ...advisors.map((r) => ({
       path: `/advisors/${r.slug}`,
