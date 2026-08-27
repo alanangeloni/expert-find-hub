@@ -66,7 +66,7 @@ const AccountantSpecialty = () => {
     },
   ];
 
-  const jsonLd = [
+  const structuredData = [
     {
       "@context": "https://schema.org",
       "@type": "CollectionPage",

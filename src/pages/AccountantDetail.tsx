@@ -39,7 +39,7 @@ const AccountantDetail = () => {
   }
 
   const location = advisorLocation(accountant.city, accountant.state_hq);
-  const jsonLd = {
+  const structuredData = {
     "@context": "https://schema.org",
     "@type": "Person",
     name: accountant.name,
