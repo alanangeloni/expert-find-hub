@@ -8,6 +8,8 @@ import { MeetingRequestForm } from "@/components/advisors/MeetingRequestForm";
 import { CompareToggle } from "@/components/compare/CompareToggle";
 import { useCompareAdvisors } from "@/contexts/CompareContext";
 import { getInitials, hueFor, extractAcronym, formatMinAssets, advisorLocation } from "@/utils/advisorDisplay";
+import { InfoTooltip } from "@/components/common/InfoTooltip";
+import { getSpecialtyTooltip, getCertificationTooltip, getLicenseTooltip } from "@/constants/definitions";
 import { Seo } from "@/components/seo/Seo";
 
 const Chevron = () => (
@@ -212,9 +214,11 @@ const AdvisorDetailPage = () => {
                 <h2>Areas of focus</h2>
                 <div className="advisor-detail__specialty-grid">
                   {services.map((s) => (
-                    <Link key={s} to={`/advisors?specialty=${encodeURIComponent(s)}`} className="advisor-detail__specialty">
-                      {s}
-                    </Link>
+                    <InfoTooltip key={s} content={getSpecialtyTooltip(s)}>
+                      <Link to={`/advisors?specialty=${encodeURIComponent(s)}`} className="advisor-detail__specialty">
+                        {s}
+                      </Link>
+                    </InfoTooltip>
                   ))}
                 </div>
               </section>
@@ -229,9 +233,11 @@ const AdvisorDetailPage = () => {
                       <h3>Designations</h3>
                       <div className="advisor-detail__cert-list">
                         {designations.map((d) => (
-                          <span key={d} className="badge badge--blue badge--sm" title={d}>
-                            {extractAcronym(d)}
-                          </span>
+                          <InfoTooltip key={d} content={getCertificationTooltip(d)}>
+                            <span className="badge badge--blue badge--sm">
+                              {extractAcronym(d)}
+                            </span>
+                          </InfoTooltip>
                         ))}
                       </div>
                     </div>
@@ -241,9 +247,11 @@ const AdvisorDetailPage = () => {
                       <h3>Licenses</h3>
                       <div className="advisor-detail__cert-list">
                         {licenses.map((l) => (
-                          <span key={l} className="badge badge--neutral badge--sm">
-                            {l}
-                          </span>
+                          <InfoTooltip key={l} content={getLicenseTooltip(l)}>
+                            <span className="badge badge--neutral badge--sm">
+                              {l}
+                            </span>
+                          </InfoTooltip>
                         ))}
                       </div>
                     </div>

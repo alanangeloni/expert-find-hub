@@ -251,10 +251,14 @@
 .advisor-detail__specialty-grid {
   display: flex;
   flex-wrap: wrap;
+  align-items: flex-start;
   gap: 8px;
 }
 
 .advisor-detail__specialty {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   height: 40px;
   padding: 0 16px;
   border-radius: var(--radius-full);
