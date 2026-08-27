@@ -113,9 +113,9 @@ const AdvisorSearch = () => {
             <span className="keyline" />
             <p className="advisor-search__eyebrow">Advisor directory</p>
             <h1>
-              Find your financial
+              Find your
               <br />
-              <em>advisor</em>
+              financial <em>advisor</em>
             </h1>
             <p className="advisor-search__sub">
               Search vetted fiduciaries by specialty, location, fees, and more. Compare up to 3 side by side.
