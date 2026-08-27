@@ -81,7 +81,7 @@ const Blog = () => {
             <h1>
               Clarity for every
               <br />
-              <em>money decision</em>
+              <em>financial decision</em>
             </h1>
             <p className="blog-page__sub">
               Practical guides on fiduciaries, fees, life transitions, and how to find advice that actually
