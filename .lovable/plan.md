@@ -26,7 +26,7 @@ A new "Accountants" tab in the admin entity dashboard with the same pattern as a
 ## Technical notes
 
 - Migration creates `public.accountants` with GRANTs, RLS (public reads limited to approved rows via an `accountants_public` view that omits email/phone; admins full access via `profiles.is_admin`), `updated_at` trigger, and a `get_accountant_contact(uuid)` security-definer function.
-- Two new enums or constant arrays for accountant services and client specialties; the existing `accounting_service_type` and `client_specialty_type` enums already carry these values and will be reused.
+- Client specialties reuse the existing `client_specialty_type` enum (it already covers all values from the screenshot). Accountant services extend the existing `accounting_service_type` enum with the 12 new values via `ALTER TYPE ... ADD VALUE`.
 - New files: `src/constants/accountantSpecialties.ts`, `src/services/accountantsService.ts`, `src/components/accountants/AccountantCard.tsx`, `src/pages/Accountants.tsx`, `src/pages/AccountantDetail.tsx`, `src/pages/AccountantSpecialty.tsx`, `src/components/admin/AccountantManagement.tsx`, `src/components/admin/AccountantForm.tsx`, `src/styles/design/AccountantsPage.css`.
 - Edited: `src/App.tsx` (routes), `src/index.css` (style import), `src/pages/admin/AdminEntityDashboard.tsx` (new tab).
 - Sitemap and navigation stay untouched until you say the pages are ready to launch.
