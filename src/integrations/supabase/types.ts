@@ -1528,6 +1528,26 @@ export type Database = {
         | "Crypto Investors"
         | "Solopreneurs"
         | "SMB Owner"
+        | "Athletes & Entertainers"
+        | "Bootstrapped Companies"
+        | "Business Executives"
+        | "Business Owners/Entrepreneurs"
+        | "Content Creators"
+        | "Cryptocurrency Investors"
+        | "Divorced Individuals"
+        | "Enterprise Companies ($50M+)"
+        | "Generational Wealth Transfer"
+        | "Growing Companies ($1M-$10M)"
+        | "Multi-generational Families"
+        | "Multi-state Returns"
+        | "Pre-Retirees (5-10 years out)"
+        | "Pre-revenue Startups"
+        | "Private Equity-Backed Companies"
+        | "Professors & Educators"
+        | "Retirees"
+        | "SMB Owners"
+        | "VC Backed Startups"
+        | "Young Professionals"
       clientele_type:
         | "Individuals"
         | "High Net Worth Individuals"
@@ -1944,6 +1964,26 @@ export const Constants = {
         "Crypto Investors",
         "Solopreneurs",
         "SMB Owner",
+        "Athletes & Entertainers",
+        "Bootstrapped Companies",
+        "Business Executives",
+        "Business Owners/Entrepreneurs",
+        "Content Creators",
+        "Cryptocurrency Investors",
+        "Divorced Individuals",
+        "Enterprise Companies ($50M+)",
+        "Generational Wealth Transfer",
+        "Growing Companies ($1M-$10M)",
+        "Multi-generational Families",
+        "Multi-state Returns",
+        "Pre-Retirees (5-10 years out)",
+        "Pre-revenue Startups",
+        "Private Equity-Backed Companies",
+        "Professors & Educators",
+        "Retirees",
+        "SMB Owners",
+        "VC Backed Startups",
+        "Young Professionals",
       ],
       clientele_type: [
         "Individuals",
