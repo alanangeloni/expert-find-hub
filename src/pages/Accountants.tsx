@@ -183,18 +183,6 @@ const Accountants = () => {
             </select>
 
             <select
-              value={filters.sort}
-              onChange={(e) => update({ sort: e.target.value as AccountantFilters["sort"] })}
-              aria-label="Sort by"
-            >
-              <option value="experience">Most experienced</option>
-              <option value="name">Name A–Z</option>
-              <option value="firm">Firm A–Z</option>
-            </select>
-          </div>
-
-          <div className="filters__row">
-            <select
               value={filters.credential}
               onChange={(e) => update({ credential: e.target.value })}
               aria-label="Credential"
@@ -205,6 +193,18 @@ const Accountants = () => {
                   {c}
                 </option>
               ))}
+            </select>
+          </div>
+
+          <div className="filters__row">
+            <select
+              value={filters.sort}
+              onChange={(e) => update({ sort: e.target.value as AccountantFilters["sort"] })}
+              aria-label="Sort by"
+            >
+              <option value="experience">Most experienced</option>
+              <option value="name">Name A–Z</option>
+              <option value="firm">Firm A–Z</option>
             </select>
           </div>
 
