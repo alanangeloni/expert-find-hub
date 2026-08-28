@@ -127,86 +127,153 @@ const Accountants = () => {
       </div>
 
       <div className="dcontainer advisor-search__body">
-        <div className="accountant-filters">
-          <input
-            type="search"
-            className="accountant-filters__search"
-            placeholder="Search by name, firm, or keyword"
-            value={filters.query}
-            onChange={(e) => update({ query: e.target.value })}
-            aria-label="Search accountants"
-          />
-          <select
-            className="accountant-filters__select"
-            value={filters.specialty}
-            onChange={(e) => update({ specialty: e.target.value })}
-            aria-label="Filter by specialty"
-          >
-            <option value="">All specialties</option>
-            {ACCOUNTANT_SPECIALTIES.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
-          <select
-            className="accountant-filters__select"
-            value={filters.service}
-            onChange={(e) => update({ service: e.target.value })}
-            aria-label="Filter by service"
-          >
-            <option value="">All services</option>
-            {ACCOUNTANT_SERVICES.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
-          <select
-            className="accountant-filters__select"
-            value={filters.state}
-            onChange={(e) => update({ state: e.target.value })}
-            aria-label="Filter by state"
-          >
-            <option value="">All states</option>
-            {US_STATES.map((s) => (
-              <option key={s} value={s}>
-                {s}
-              </option>
-            ))}
-          </select>
-          <select
-            className="accountant-filters__select"
-            value={filters.credential}
-            onChange={(e) => update({ credential: e.target.value })}
-            aria-label="Filter by credential"
-          >
-            <option value="">All credentials</option>
-            {ACCOUNTANT_CREDENTIALS.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-          <select
-            className="accountant-filters__select"
-            value={filters.sort}
-            onChange={(e) => update({ sort: e.target.value as AccountantFilters["sort"] })}
-            aria-label="Sort results"
-          >
-            <option value="experience">Most experienced</option>
-            <option value="name">Name A-Z</option>
-            <option value="firm">Firm A-Z</option>
-          </select>
-          <label className="accountant-filters__check">
+        <div className="filters">
+          <div className="filters__search">
+            <svg className="filters__search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.3-4.3" />
+            </svg>
             <input
-              type="checkbox"
-              checked={filters.verifiedOnly}
-              onChange={(e) => update({ verifiedOnly: e.target.checked })}
+              type="search"
+              placeholder="Search by name, firm, specialty, or city…"
+              value={filters.query}
+              onChange={(e) => update({ query: e.target.value })}
+              aria-label="Search accountants"
             />
-            Verified only
-          </label>
-          <span className="accountant-filters__count">{results.length} accountants</span>
+          </div>
+
+          <div className="filters__row">
+            <select
+              value={filters.specialty}
+              onChange={(e) => update({ specialty: e.target.value })}
+              aria-label="Specialty"
+            >
+              <option value="">All specialties</option>
+              {ACCOUNTANT_SPECIALTIES.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={filters.service}
+              onChange={(e) => update({ service: e.target.value })}
+              aria-label="Service"
+            >
+              <option value="">All services</option>
+              {ACCOUNTANT_SERVICES.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={filters.state}
+              onChange={(e) => update({ state: e.target.value })}
+              aria-label="State"
+            >
+              <option value="">All locations</option>
+              {US_STATES.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+
+            <select
+              value={filters.credential}
+              onChange={(e) => update({ credential: e.target.value })}
+              aria-label="Credential"
+            >
+              <option value="">All credentials</option>
+              {ACCOUNTANT_CREDENTIALS.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="filters__row">
+            <select
+              value={filters.sort}
+              onChange={(e) => update({ sort: e.target.value as AccountantFilters["sort"] })}
+              aria-label="Sort by"
+            >
+              <option value="experience">Most experienced</option>
+              <option value="name">Name A–Z</option>
+              <option value="firm">Firm A–Z</option>
+            </select>
+          </div>
+
+          <div className="filters__toggles">
+            <label className={`filters__toggle ${filters.verifiedOnly ? "is-on" : ""}`}>
+              <input
+                type="checkbox"
+                checked={filters.verifiedOnly}
+                onChange={(e) => update({ verifiedOnly: e.target.checked })}
+              />
+              <span>Verified</span>
+            </label>
+          </div>
+
+          <div className="filters__footer">
+            <p className="filters__count">
+              <strong>{results.length}</strong> accountant{results.length !== 1 ? "s" : ""} found
+            </p>
+            {(filters.specialty || filters.service || filters.state || filters.credential || filters.verifiedOnly) && (
+              <div className="filters__chips">
+                {filters.specialty && (
+                  <button className="filters__chip" onClick={() => update({ specialty: "" })}>
+                    {filters.specialty}
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M18 6 6 18M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
+                {filters.service && (
+                  <button className="filters__chip" onClick={() => update({ service: "" })}>
+                    {filters.service}
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M18 6 6 18M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
+                {filters.state && (
+                  <button className="filters__chip" onClick={() => update({ state: "" })}>
+                    {filters.state}
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M18 6 6 18M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
+                {filters.credential && (
+                  <button className="filters__chip" onClick={() => update({ credential: "" })}>
+                    {filters.credential}
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M18 6 6 18M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
+                {filters.verifiedOnly && (
+                  <button className="filters__chip" onClick={() => update({ verifiedOnly: false })}>
+                    Verified
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <path d="M18 6 6 18M6 6l12 12" />
+                    </svg>
+                  </button>
+                )}
+                <button
+                  className="filters__clear"
+                  onClick={() => setFilters({ ...filters, specialty: "", service: "", state: "", credential: "", verifiedOnly: false })}
+                >
+                  Clear all
+                </button>
+              </div>
+            )}
+          </div>
         </div>
 
         {isLoading ? (
