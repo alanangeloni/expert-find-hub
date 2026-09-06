@@ -102,9 +102,21 @@ const esc = (v: unknown): string =>
     .replace(/'/g, '&#39;');
 
 // Create HTML with specific title, description, and content
-const createHtml = (title: string, description: string, content: string) => {
+const createHtml = (title: string, description: string, content: string, canonicalPath?: string) => {
   const baseHtml = getBaseHtml();
-  return baseHtml
+  // The base template carries the homepage canonical/og:url; remove them so
+  // generated pages don't canonicalize to the homepage, then set this page's own.
+  let html = baseHtml
+    .replace(/\s*<link rel="canonical"[^>]*>/, '')
+    .replace(/\s*<meta property="og:url"[^>]*>/, '');
+  if (canonicalPath) {
+    const url = `https://financialprofessional.com${canonicalPath}`;
+    html = html.replace(
+      '</head>',
+      `    <link rel="canonical" href="${url}" />\n    <meta property="og:url" content="${url}" />\n  </head>`
+    );
+  }
+  return html
     .replace('__TITLE__', esc(title))
     .replace('__DESCRIPTION__', esc(description))
     .replace('__CONTENT__', content);
