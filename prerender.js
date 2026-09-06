@@ -20,6 +20,11 @@ const routesToPrerender = fs
   for (const url of routesToPrerender) {
     const { appHtml, headTags } = await render(url);
     let html = template.replace(`<!--app-html-->`, appHtml)
+    // Remove the template's homepage canonical/og:url so each page's own
+    // tags from headTags are the only ones present (no duplicate canonicals).
+    html = html
+      .replace(/\s*<link rel="canonical"[^>]*>/, '')
+      .replace(/\s*<meta property="og:url"[^>]*>/, '')
     html = html.replace('</head>', `${headTags}\n</head>`)
 
     const filePath = `dist${url === '/' ? '/index' : url}.html`
