@@ -150,7 +150,7 @@ const generateFirmsPage = () => {
   const firmsDir = path.join(process.cwd(), 'dist', 'firms');
   ensureDir(firmsDir);
   
-  const html = createHtml(title, description, content);
+  const html = createHtml(title, description, content, '/firms');
   fs.writeFileSync(path.join(firmsDir, 'index.html'), html);
   console.log('✅ /firms page generated');
 };
@@ -190,7 +190,7 @@ const generateFirmPages = async () => {
       const firmDir = path.join(firmsDir, firm.slug);
       ensureDir(firmDir);
       
-      const html = createHtml(title, description, content);
+      const html = createHtml(title, description, content, `/firms/${firm.slug}`);
       fs.writeFileSync(path.join(firmDir, 'index.html'), html);
       console.log(`✅ Firm page generated: /firms/${firm.slug}`);
     }
@@ -214,7 +214,7 @@ const generateAdvisorsPage = () => {
   const advisorsDir = path.join(process.cwd(), 'dist', 'advisors');
   ensureDir(advisorsDir);
   
-  const html = createHtml(title, description, content);
+  const html = createHtml(title, description, content, '/advisors');
   fs.writeFileSync(path.join(advisorsDir, 'index.html'), html);
   console.log('✅ /advisors page generated');
 };
@@ -254,7 +254,7 @@ const generateAdvisorPages = async () => {
       const advisorDir = path.join(advisorsDir, advisor.slug);
       ensureDir(advisorDir);
       
-      const html = createHtml(title, description, content);
+      const html = createHtml(title, description, content, `/advisors/${advisor.slug}`);
       fs.writeFileSync(path.join(advisorDir, 'index.html'), html);
       console.log(`✅ Advisor page generated: /advisors/${advisor.slug}`);
     }
@@ -278,7 +278,7 @@ const generateAccountingFirmsPage = () => {
   const accountingDir = path.join(process.cwd(), 'dist', 'accounting-firms');
   ensureDir(accountingDir);
   
-  const html = createHtml(title, description, content);
+  const html = createHtml(title, description, content, '/accounting-firms');
   fs.writeFileSync(path.join(accountingDir, 'index.html'), html);
   console.log('✅ /accounting-firms page generated');
 };
@@ -318,7 +318,7 @@ const generateAccountingFirmPages = async () => {
       const firmDir = path.join(accountingDir, firm.slug);
       ensureDir(firmDir);
       
-      const html = createHtml(title, description, content);
+      const html = createHtml(title, description, content, `/accounting-firms/${firm.slug}`);
       fs.writeFileSync(path.join(firmDir, 'index.html'), html);
       console.log(`✅ Accounting firm page generated: /accounting-firms/${firm.slug}`);
     }
@@ -342,7 +342,7 @@ const generateBlogPage = () => {
   const blogDir = path.join(process.cwd(), 'dist', 'blog');
   ensureDir(blogDir);
   
-  const html = createHtml(title, description, content);
+  const html = createHtml(title, description, content, '/blog');
   fs.writeFileSync(path.join(blogDir, 'index.html'), html);
   console.log('✅ /blog page generated');
 };
@@ -382,7 +382,7 @@ const generateBlogPostPages = async () => {
       const postDir = path.join(blogDir, post.slug);
       ensureDir(postDir);
       
-      const html = createHtml(title, description, content);
+      const html = createHtml(title, description, content, `/blog/${post.slug}`);
       fs.writeFileSync(path.join(postDir, 'index.html'), html);
       console.log(`✅ Blog post page generated: /blog/${post.slug}`);
     }
