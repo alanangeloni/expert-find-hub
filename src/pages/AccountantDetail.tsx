@@ -50,6 +50,9 @@ const AccountantDetail = () => {
 
   const location = advisorLocation(accountant.city, accountant.state_hq);
   const credentials = accountant.credentials || [];
+  const roleBadges = accountant.role_badges || [];
+  const industries = accountant.industries_served || [];
+  const techStack = accountant.tech_stack || [];
   const services = accountant.services || [];
   const clientSpecialties = accountant.client_specialties || [];
   const states = accountant.states_served || [];
