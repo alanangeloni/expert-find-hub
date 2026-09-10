@@ -25,19 +25,27 @@ export type Database = {
             | null
           created_at: string
           credentials: string[] | null
+          dedicated_staff: boolean | null
           disclaimer: string | null
           email: string | null
           firm_address: string | null
           firm_name: string | null
+          founded: number | null
           headshot_url: string | null
           id: string
+          industries_served: string[] | null
           linked_firm: string | null
+          min_revenue: string | null
           minimum_fee: string | null
           name: string
           phone_number: string | null
           position: string | null
           pricing_note: string | null
+          pricing_packages: string | null
+          profile_url: string | null
           rejection_reason: string | null
+          role_badges: string[] | null
+          serves_clients: string | null
           services:
             | Database["public"]["Enums"]["accounting_service_type"][]
             | null
@@ -46,6 +54,9 @@ export type Database = {
           states_served: string[] | null
           status: string
           submitted_at: string | null
+          tagline: string | null
+          team_size: string | null
+          tech_stack: string[] | null
           updated_at: string
           user_id: string | null
           verified: boolean | null
@@ -62,19 +73,27 @@ export type Database = {
             | null
           created_at?: string
           credentials?: string[] | null
+          dedicated_staff?: boolean | null
           disclaimer?: string | null
           email?: string | null
           firm_address?: string | null
           firm_name?: string | null
+          founded?: number | null
           headshot_url?: string | null
           id?: string
+          industries_served?: string[] | null
           linked_firm?: string | null
+          min_revenue?: string | null
           minimum_fee?: string | null
           name: string
           phone_number?: string | null
           position?: string | null
           pricing_note?: string | null
+          pricing_packages?: string | null
+          profile_url?: string | null
           rejection_reason?: string | null
+          role_badges?: string[] | null
+          serves_clients?: string | null
           services?:
             | Database["public"]["Enums"]["accounting_service_type"][]
             | null
@@ -83,6 +102,9 @@ export type Database = {
           states_served?: string[] | null
           status?: string
           submitted_at?: string | null
+          tagline?: string | null
+          team_size?: string | null
+          tech_stack?: string[] | null
           updated_at?: string
           user_id?: string | null
           verified?: boolean | null
@@ -99,19 +121,27 @@ export type Database = {
             | null
           created_at?: string
           credentials?: string[] | null
+          dedicated_staff?: boolean | null
           disclaimer?: string | null
           email?: string | null
           firm_address?: string | null
           firm_name?: string | null
+          founded?: number | null
           headshot_url?: string | null
           id?: string
+          industries_served?: string[] | null
           linked_firm?: string | null
+          min_revenue?: string | null
           minimum_fee?: string | null
           name?: string
           phone_number?: string | null
           position?: string | null
           pricing_note?: string | null
+          pricing_packages?: string | null
+          profile_url?: string | null
           rejection_reason?: string | null
+          role_badges?: string[] | null
+          serves_clients?: string | null
           services?:
             | Database["public"]["Enums"]["accounting_service_type"][]
             | null
@@ -120,6 +150,9 @@ export type Database = {
           states_served?: string[] | null
           status?: string
           submitted_at?: string | null
+          tagline?: string | null
+          team_size?: string | null
+          tech_stack?: string[] | null
           updated_at?: string
           user_id?: string | null
           verified?: boolean | null
@@ -1419,6 +1452,49 @@ export type Database = {
         | "Audit Services"
         | "QuickBooks Setup & Cleanup"
         | "Back-Office Support"
+        | "401(k) & IRA Management"
+        | "Asset Allocation"
+        | "Bank Reconciliation"
+        | "Board & Investor Relations"
+        | "Budgeting & Forecasting"
+        | "Business Succession Planning"
+        | "Business Valuations"
+        | "Capital Structure Planning"
+        | "Cash Flow Management"
+        | "Cash Flow Planning"
+        | "Charitable Giving"
+        | "Debt Management"
+        | "Education Planning"
+        | "Estate Planning"
+        | "Executive Compensation"
+        | "Exit Planning"
+        | "Family Office Services"
+        | "Family Wealth Transfer"
+        | "Financial Advice & Coaching"
+        | "Financial Modeling"
+        | "Financial Planning"
+        | "Financial Reporting"
+        | "Financial Strategy Development"
+        | "Financial Systems Implementation"
+        | "Fundraising Support"
+        | "Individual Tax Preparation"
+        | "Insurance Planning"
+        | "Investment Management"
+        | "Investor Pitch Development"
+        | "Life Transition Planning"
+        | "Pension Planning"
+        | "Philanthropic Planning"
+        | "Portfolio Management"
+        | "Portfolio Rebalancing"
+        | "Process Optimization"
+        | "R&D Tax Credits"
+        | "Real Estate Advisory"
+        | "Retirement Planning"
+        | "Risk Management"
+        | "Social Security Planning"
+        | "Stock Option Planning"
+        | "Tax Loss Harvesting"
+        | "Wealth Management"
       "Advisor Services":
         | "Alternative Investments"
         | "Budgeting"
@@ -2021,6 +2097,49 @@ export const Constants = {
         "Audit Services",
         "QuickBooks Setup & Cleanup",
         "Back-Office Support",
+        "401(k) & IRA Management",
+        "Asset Allocation",
+        "Bank Reconciliation",
+        "Board & Investor Relations",
+        "Budgeting & Forecasting",
+        "Business Succession Planning",
+        "Business Valuations",
+        "Capital Structure Planning",
+        "Cash Flow Management",
+        "Cash Flow Planning",
+        "Charitable Giving",
+        "Debt Management",
+        "Education Planning",
+        "Estate Planning",
+        "Executive Compensation",
+        "Exit Planning",
+        "Family Office Services",
+        "Family Wealth Transfer",
+        "Financial Advice & Coaching",
+        "Financial Modeling",
+        "Financial Planning",
+        "Financial Reporting",
+        "Financial Strategy Development",
+        "Financial Systems Implementation",
+        "Fundraising Support",
+        "Individual Tax Preparation",
+        "Insurance Planning",
+        "Investment Management",
+        "Investor Pitch Development",
+        "Life Transition Planning",
+        "Pension Planning",
+        "Philanthropic Planning",
+        "Portfolio Management",
+        "Portfolio Rebalancing",
+        "Process Optimization",
+        "R&D Tax Credits",
+        "Real Estate Advisory",
+        "Retirement Planning",
+        "Risk Management",
+        "Social Security Planning",
+        "Stock Option Planning",
+        "Tax Loss Harvesting",
+        "Wealth Management",
       ],
       "Advisor Services": [
         "Alternative Investments",
