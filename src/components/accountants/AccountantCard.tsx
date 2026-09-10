@@ -11,7 +11,11 @@ export const AccountantCard = ({ accountant }: AccountantCardProps) => {
   const navigate = useNavigate();
   const to = `/accountants/${accountant.slug}`;
   const location = advisorLocation(accountant.city, accountant.state_hq);
-  const credentials = (accountant.credentials || []).slice(0, 3);
+  const credentials = ((accountant.credentials || []).length
+    ? accountant.credentials || []
+    : accountant.role_badges || []
+  ).slice(0, 3);
+  const summary = accountant.tagline || accountant.bio;
   const specialties = (accountant.client_specialties || []).slice(0, 3);
   const extraSpecialties = (accountant.client_specialties || []).length - specialties.length;
 
@@ -45,7 +49,7 @@ export const AccountantCard = ({ accountant }: AccountantCardProps) => {
         </div>
       </div>
 
-      {accountant.bio && <p className="advisor-card__bio">{accountant.bio}</p>}
+      {summary && <p className="advisor-card__bio">{summary}</p>}
 
       <div className="advisor-card__meta">
         {location && (
