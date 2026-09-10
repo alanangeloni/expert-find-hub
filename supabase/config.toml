@@ -1,1 +1,4 @@
 project_id = "wqtvpeuhjgqcjbdozzuv"
+
+[functions.bulk-import-accountants]
+verify_jwt = false
