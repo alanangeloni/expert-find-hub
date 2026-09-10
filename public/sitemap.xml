@@ -427,14 +427,14 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://financialprofessional.com/advisors/chris-genzler</loc>
-    <lastmod>2025-11-23</lastmod>
+    <loc>https://financialprofessional.com/advisors/hugo-carvajal</loc>
+    <lastmod>2025-12-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://financialprofessional.com/advisors/hugo-carvajal</loc>
-    <lastmod>2025-12-04</lastmod>
+    <loc>https://financialprofessional.com/advisors/chris-genzler</loc>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -457,14 +457,20 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://financialprofessional.com/advisors/jeffrey-broadhurst</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://financialprofessional.com/advisors/nicolepolanco</loc>
     <lastmod>2026-08-30</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://financialprofessional.com/advisors/jeffrey-broadhurst</loc>
-    <lastmod>2025-11-25</lastmod>
+    <loc>https://financialprofessional.com/advisors/sean-delaney</loc>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -477,12 +483,6 @@
   <url>
     <loc>https://financialprofessional.com/advisors/matthew-snipes</loc>
     <lastmod>2026-08-30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://financialprofessional.com/advisors/sean-delaney</loc>
-    <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -637,12 +637,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://financialprofessional.com/advisors/scott-sadler</loc>
-    <lastmod>2025-11-25</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://financialprofessional.com/advisors/andres-ledesma</loc>
     <lastmod>2026-09-02</lastmod>
     <changefreq>monthly</changefreq>
@@ -751,12 +745,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://financialprofessional.com/advisors/frankakridgejr</loc>
-    <lastmod>2025-11-23</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://financialprofessional.com/advisors/jeremyeppley</loc>
     <lastmod>2025-10-18</lastmod>
     <changefreq>monthly</changefreq>
@@ -812,7 +800,7 @@
   </url>
   <url>
     <loc>https://financialprofessional.com/advisors/jay-cohen</loc>
-    <lastmod>2025-11-25</lastmod>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -842,7 +830,7 @@
   </url>
   <url>
     <loc>https://financialprofessional.com/advisors/chad-seegers</loc>
-    <lastmod>2026-08-07</lastmod>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -895,6 +883,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://financialprofessional.com/advisors/anthony-watson</loc>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://financialprofessional.com/advisors/kevinbrady</loc>
     <lastmod>2025-06-09</lastmod>
     <changefreq>monthly</changefreq>
@@ -919,12 +913,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://financialprofessional.com/advisors/keren-lopez</loc>
-    <lastmod>2026-08-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://financialprofessional.com/advisors/blakeparisi</loc>
     <lastmod>2025-10-10</lastmod>
     <changefreq>monthly</changefreq>
@@ -933,6 +921,18 @@
   <url>
     <loc>https://financialprofessional.com/advisors/timmiller</loc>
     <lastmod>2025-10-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://financialprofessional.com/advisors/keren-lopez</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://financialprofessional.com/advisors/frankakridgejr</loc>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -949,6 +949,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://financialprofessional.com/advisors/ryan-hughes</loc>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://financialprofessional.com/advisors/tristan-bolton</loc>
     <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
@@ -957,6 +963,12 @@
   <url>
     <loc>https://financialprofessional.com/advisors/matthew-ure</loc>
     <lastmod>2026-09-01</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://financialprofessional.com/advisors/carlos-dias-jr</loc>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -973,14 +985,26 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://financialprofessional.com/advisors/lucas-casarez</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://financialprofessional.com/advisors/ryanmohr</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://financialprofessional.com/advisors/troywootton</loc>
     <lastmod>2025-10-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://financialprofessional.com/advisors/lucas-casarez</loc>
-    <lastmod>2026-08-07</lastmod>
+    <loc>https://financialprofessional.com/advisors/scott-sadler</loc>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1003,8 +1027,20 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://financialprofessional.com/advisors/lili-vasileff</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://financialprofessional.com/advisors/thomas-hlohinec</loc>
-    <lastmod>2026-08-07</lastmod>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://financialprofessional.com/advisors/lukas-james-dewitt</loc>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1093,20 +1129,20 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://financialprofessional.com/advisors/beata-dragovics</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://financialprofessional.com/advisors/ryansullivan</loc>
     <lastmod>2025-10-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://financialprofessional.com/advisors/beata-dragovics</loc>
-    <lastmod>2026-08-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://financialprofessional.com/advisors/ron-guay</loc>
-    <lastmod>2026-08-07</lastmod>
+    <lastmod>2026-09-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1124,7 +1160,7 @@
   </url>
   <url>
     <loc>https://financialprofessional.com/advisors/amyirvine</loc>
-    <lastmod>2025-11-23</lastmod>
+    <lastmod>2026-09-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1153,25 +1189,25 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://financialprofessional.com/advisors/chad-w-schiel</loc>
-    <lastmod>2026-08-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://financialprofessional.com/advisors/martin-a-federici-jr</loc>
     <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://financialprofessional.com/advisors/justin-buttrick</loc>
-    <lastmod>2026-08-07</lastmod>
+    <loc>https://financialprofessional.com/advisors/chad-w-schiel</loc>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://financialprofessional.com/advisors/michael-mezheritskiy</loc>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://financialprofessional.com/advisors/justin-buttrick</loc>
     <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -1184,25 +1220,19 @@
   </url>
   <url>
     <loc>https://financialprofessional.com/advisors/david-simpson</loc>
-    <lastmod>2026-08-07</lastmod>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://financialprofessional.com/advisors/laneclevenger</loc>
-    <lastmod>2025-11-23</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://financialprofessional.com/advisors/beau-goss</loc>
     <lastmod>2026-08-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://financialprofessional.com/advisors/ryanmohr</loc>
-    <lastmod>2025-11-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1267,12 +1297,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://financialprofessional.com/advisors/lukas-james-dewitt</loc>
-    <lastmod>2026-08-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://financialprofessional.com/advisors/clint-e-landry</loc>
     <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
@@ -1311,12 +1335,6 @@
   <url>
     <loc>https://financialprofessional.com/advisors/jeremy-keil</loc>
     <lastmod>2025-11-03</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://financialprofessional.com/advisors/lili-vasileff</loc>
-    <lastmod>2025-11-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1406,7 +1424,13 @@
   </url>
   <url>
     <loc>https://financialprofessional.com/advisors/gregorybrinkman</loc>
-    <lastmod>2025-11-23</lastmod>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://financialprofessional.com/advisors/jacob-gold</loc>
+    <lastmod>2026-09-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1429,14 +1453,8 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://financialprofessional.com/advisors/jacob-gold</loc>
-    <lastmod>2026-08-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://financialprofessional.com/advisors/cassie-wilson</loc>
-    <lastmod>2026-08-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1651,12 +1669,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://financialprofessional.com/advisors/leighann-miko</loc>
-    <lastmod>2026-08-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://financialprofessional.com/advisors/boris-baranov</loc>
     <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
@@ -1675,6 +1687,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://financialprofessional.com/advisors/leighann-miko</loc>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://financialprofessional.com/advisors/david-haas-cfp-r</loc>
     <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
@@ -1682,12 +1700,6 @@
   </url>
   <url>
     <loc>https://financialprofessional.com/advisors/nicholas-otto</loc>
-    <lastmod>2026-08-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://financialprofessional.com/advisors/anthony-watson</loc>
     <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -1706,12 +1718,6 @@
   </url>
   <url>
     <loc>https://financialprofessional.com/advisors/jim-lear</loc>
-    <lastmod>2026-08-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://financialprofessional.com/advisors/ryan-hughes</loc>
     <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -1759,12 +1765,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://financialprofessional.com/advisors/mark-shone</loc>
-    <lastmod>2026-08-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://financialprofessional.com/advisors/young-t-tran</loc>
     <lastmod>2026-08-07</lastmod>
     <changefreq>monthly</changefreq>
@@ -1772,19 +1772,19 @@
   </url>
   <url>
     <loc>https://financialprofessional.com/advisors/richard-feight</loc>
-    <lastmod>2026-08-07</lastmod>
+    <lastmod>2026-09-07</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://financialprofessional.com/advisors/mark-shone</loc>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
     <loc>https://financialprofessional.com/advisors/frank-wu</loc>
-    <lastmod>2026-08-07</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://financialprofessional.com/advisors/carlos-dias-jr</loc>
-    <lastmod>2026-08-07</lastmod>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
