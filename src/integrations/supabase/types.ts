@@ -1461,6 +1461,80 @@ export type Database = {
         | "Sustainable Investing"
         | "High Net Worth"
         | "Young Professionals"
+        | "Retirement Income"
+        | "Tax Minimization Inv..."
+        | "High Net Worth Planning"
+        | "Estate Planning Strategies"
+        | "Business Ownership Strategies"
+        | "College Planning"
+        | "Ultra High Net Worth Planning"
+        | "Investment Advice with Ongoing Management"
+        | "Investment Planning"
+        | "Retirement Planning & Distribution Rules"
+        | "Philanthropic Planning and Giving"
+        | "Wealth Accumulation ..."
+        | "Insurance"
+        | "Business Retirement Solutions"
+        | "Endowments & Charities"
+        | "High Net Worth Client Needs"
+        | "Estate & Generational Planning Issues"
+        | "Equity Compensation"
+        | "College/Education Planning"
+        | "Retirement Plan Investment Advice"
+        | "Trust Services"
+        | "Advice-Only Financial Planning"
+        | "Charitable Giving"
+        | "Cash Flow/Budgets/Credit Issues"
+        | "Credit & Lending Needs"
+        | "Socially Responsible..."
+        | "Business Continuity Planning"
+        | "Business Valuation Planning"
+        | "Family Governance an..."
+        | "Real Estate Investments"
+        | "Tax Preparation"
+        | "Investment Advice without Ongoing Management"
+        | "Middle Income Client Needs"
+        | "Women's Financial Planning Issues"
+        | "Financial Psychology/Coaching"
+        | "Commission-Based Income Planning"
+        | "Insurance Related Issues"
+        | "Socially Responsible Investments"
+        | "Alternative or Private Investments"
+        | "Annuities"
+        | "Budgeting, Cash Flow, and Record Keeping"
+        | "Business Banking"
+        | "Comprehensive financial planning"
+        | "Creating tax efficient investment portfolios"
+        | "Dealing with Bankruptcy"
+        | "Debt Reduction and Management"
+        | "Defining and Achieving Goals"
+        | "Estate and Distribution Planning"
+        | "Helps clients understand their money"
+        | "Home Purchases and Refinancing"
+        | "IRMA considerations"
+        | "Insurance Analysis"
+        | "Behavioral Investment Advice (six steps)"
+        | "Investments (without commissions)"
+        | "Life Transitions (death, remarriage, windfall, job loss)"
+        | "Mergers & Acquisitions"
+        | "Military and Federal Employee Benefits"
+        | "Portfolio Management"
+        | "Retirement income tax bracket planning"
+        | "Retirement, Widowhood, & Inheritance"
+        | "Roth conversion and IRA distribution planning"
+        | "Social Security timing"
+        | "Spirit AeroSystems and Textron Aviation salaried employees"
+        | "Stock Options, RSUs and Employee Stock Purchase Plans"
+        | "Successful transitions into retirement"
+        | "Sustainable, Responsible, Impact Investing"
+        | "Tax Mitigation and Retirement Planning"
+        | "Tax Planning and Preparation"
+        | "Tax Services"
+        | "Transferring Wealth"
+        | "Wealth Planning"
+        | "long-term wealth building"
+        | "student loan strategies"
+        | "tax-efficient investing"
       advisors_licenses:
         | "Annuities"
         | "Health/Disability Insurance"
@@ -1489,6 +1563,13 @@ export type Database = {
         | "Series 7TO"
         | "Series 53"
         | "Life & Annuities, Health, and Variable Contracts"
+        | "Series 9"
+        | "Series 10"
+        | "Series 4"
+        | "Series 6TO"
+        | "Series 2"
+        | "Series 22"
+        | "Series 8"
       "Asset Class":
         | "Art"
         | "Asset Management"
@@ -1558,6 +1639,72 @@ export type Database = {
         | "Young Professionals"
         | "Medical Professionals"
         | "Tech Professionals"
+        | "Corporate Executives"
+        | "Business Owners/Entrepreneurs"
+        | "Entrepreneurs"
+        | "Wealthy Families"
+        | "Inheritors"
+        | "Business Executives"
+        | "Surviving Spouses"
+        | "Doctors"
+        | "Tech Employees"
+        | "Divorcees"
+        | "New Investors"
+        | "Businesswomen"
+        | "Ultra High Net Worth Individuals"
+        | "Attorneys & Paralegals"
+        | "Equity Compensation"
+        | "Healthcare Workers"
+        | "Women in Tech"
+        | "Partners at Law Firms"
+        | "Startup Employees"
+        | "Professional Athletes"
+        | "Software Engineers"
+        | "Nurses"
+        | "Tech Sales"
+        | "HENRYs (High Earners, Not Rich Yet)"
+        | "Real Estate Agents"
+        | "Single Mothers"
+        | "Dentists"
+        | "Baby Boomers"
+        | "1st Generation Americans"
+        | "Parents of Special Needs Children"
+        | "Veterans & Active Duty Military"
+        | "Teachers"
+        | "Real Estate Developers"
+        | "Cryptocurrency Investors"
+        | "LGBTQ+"
+        | "Building Industry Professionals"
+        | "Government Contractors"
+        | "Generation X"
+        | "Middle Income"
+        | "Pre-Retirees (5-10 years out)"
+        | "Women"
+        | "HENRY (High Earners Not Rich Yet)"
+        | "Equity Compensation (RSUs, Options)"
+        | "Millennials"
+        | "Athletes & Entertainers"
+        | "Multi-generational Families"
+        | "Generational Wealth Transfer"
+        | "First Responders"
+        | "Divorced Individuals"
+        | "Real Estate Investors"
+        | "Content Creators"
+        | "Other"
+        | "Financial independence"
+        | "Real estate"
+        | "Education planning"
+        | "Divorced Women"
+        | "Professors & Educators"
+        | "Entertainers"
+        | "Federal Employees"
+        | "Pre-Retirement Individuals"
+        | "Early- and mid-career healthcare professionals"
+        | "Novice Investors"
+        | "Pre-retirees and retirees"
+        | "Professional Athletes or Entertainers"
+        | "Wichita area residents"
+        | "Women and young families"
       compensation_type:
         | "Fee-Only"
         | "Fee-Based"
@@ -1565,6 +1712,12 @@ export type Database = {
         | "Hourly"
         | "Flat Fee"
         | "Assets Under Management"
+        | "Flat Fee AUM"
+        | "One-Time Financial Plan"
+        | "Flat Fee Hourly Rate"
+        | "Flat Fee Hourly Rate AUM"
+        | "AUM"
+        | "Fixed Fee (Subscription, Retainer, etc.)"
       investor_type:
         | "Individual Investors"
         | "High Net Worth Individuals"
@@ -1641,6 +1794,22 @@ export type Database = {
         | "Chartered Mutual Fund Counselor (CMFC)"
         | "Registered Financial Planner (RFP)"
         | "Master Registered Financial Consultant (MRFC)"
+        | "CPA/PFS"
+        | "Certified Digital Asset Advisor"
+        | "Accredited Financial Counselor"
+        | "Accredited Portfolio Management Advisor (APMA)"
+        | "Behavioral Financial Advisor (BFA)"
+        | "CAP"
+        | "CMT"
+        | "Certified Investment Management Consultant"
+        | "Chartered Market Technician (CMT)"
+        | "ECA"
+        | "Equity Compensation Associate (ECA)"
+        | "Ethical Accredited Wealth Management Advisor"
+        | "National Social Security Advisor"
+        | "Personal Financial Specialist"
+        | "Sustainable, Ethical Accredited Wealth Mgmt Advisor"
+        | "TPCP"
       return_type:
         | "Dividends"
         | "Dividends & Value"
@@ -1894,6 +2063,80 @@ export const Constants = {
         "Sustainable Investing",
         "High Net Worth",
         "Young Professionals",
+        "Retirement Income",
+        "Tax Minimization Inv...",
+        "High Net Worth Planning",
+        "Estate Planning Strategies",
+        "Business Ownership Strategies",
+        "College Planning",
+        "Ultra High Net Worth Planning",
+        "Investment Advice with Ongoing Management",
+        "Investment Planning",
+        "Retirement Planning & Distribution Rules",
+        "Philanthropic Planning and Giving",
+        "Wealth Accumulation ...",
+        "Insurance",
+        "Business Retirement Solutions",
+        "Endowments & Charities",
+        "High Net Worth Client Needs",
+        "Estate & Generational Planning Issues",
+        "Equity Compensation",
+        "College/Education Planning",
+        "Retirement Plan Investment Advice",
+        "Trust Services",
+        "Advice-Only Financial Planning",
+        "Charitable Giving",
+        "Cash Flow/Budgets/Credit Issues",
+        "Credit & Lending Needs",
+        "Socially Responsible...",
+        "Business Continuity Planning",
+        "Business Valuation Planning",
+        "Family Governance an...",
+        "Real Estate Investments",
+        "Tax Preparation",
+        "Investment Advice without Ongoing Management",
+        "Middle Income Client Needs",
+        "Women's Financial Planning Issues",
+        "Financial Psychology/Coaching",
+        "Commission-Based Income Planning",
+        "Insurance Related Issues",
+        "Socially Responsible Investments",
+        "Alternative or Private Investments",
+        "Annuities",
+        "Budgeting, Cash Flow, and Record Keeping",
+        "Business Banking",
+        "Comprehensive financial planning",
+        "Creating tax efficient investment portfolios",
+        "Dealing with Bankruptcy",
+        "Debt Reduction and Management",
+        "Defining and Achieving Goals",
+        "Estate and Distribution Planning",
+        "Helps clients understand their money",
+        "Home Purchases and Refinancing",
+        "IRMA considerations",
+        "Insurance Analysis",
+        "Behavioral Investment Advice (six steps)",
+        "Investments (without commissions)",
+        "Life Transitions (death, remarriage, windfall, job loss)",
+        "Mergers & Acquisitions",
+        "Military and Federal Employee Benefits",
+        "Portfolio Management",
+        "Retirement income tax bracket planning",
+        "Retirement, Widowhood, & Inheritance",
+        "Roth conversion and IRA distribution planning",
+        "Social Security timing",
+        "Spirit AeroSystems and Textron Aviation salaried employees",
+        "Stock Options, RSUs and Employee Stock Purchase Plans",
+        "Successful transitions into retirement",
+        "Sustainable, Responsible, Impact Investing",
+        "Tax Mitigation and Retirement Planning",
+        "Tax Planning and Preparation",
+        "Tax Services",
+        "Transferring Wealth",
+        "Wealth Planning",
+        "long-term wealth building",
+        "student loan strategies",
+        "tax-efficient investing",
       ],
       advisors_licenses: [
         "Annuities",
@@ -1923,6 +2166,13 @@ export const Constants = {
         "Series 7TO",
         "Series 53",
         "Life & Annuities, Health, and Variable Contracts",
+        "Series 9",
+        "Series 10",
+        "Series 4",
+        "Series 6TO",
+        "Series 2",
+        "Series 22",
+        "Series 8",
       ],
       "Asset Class": [
         "Art",
@@ -1996,6 +2246,72 @@ export const Constants = {
         "Young Professionals",
         "Medical Professionals",
         "Tech Professionals",
+        "Corporate Executives",
+        "Business Owners/Entrepreneurs",
+        "Entrepreneurs",
+        "Wealthy Families",
+        "Inheritors",
+        "Business Executives",
+        "Surviving Spouses",
+        "Doctors",
+        "Tech Employees",
+        "Divorcees",
+        "New Investors",
+        "Businesswomen",
+        "Ultra High Net Worth Individuals",
+        "Attorneys & Paralegals",
+        "Equity Compensation",
+        "Healthcare Workers",
+        "Women in Tech",
+        "Partners at Law Firms",
+        "Startup Employees",
+        "Professional Athletes",
+        "Software Engineers",
+        "Nurses",
+        "Tech Sales",
+        "HENRYs (High Earners, Not Rich Yet)",
+        "Real Estate Agents",
+        "Single Mothers",
+        "Dentists",
+        "Baby Boomers",
+        "1st Generation Americans",
+        "Parents of Special Needs Children",
+        "Veterans & Active Duty Military",
+        "Teachers",
+        "Real Estate Developers",
+        "Cryptocurrency Investors",
+        "LGBTQ+",
+        "Building Industry Professionals",
+        "Government Contractors",
+        "Generation X",
+        "Middle Income",
+        "Pre-Retirees (5-10 years out)",
+        "Women",
+        "HENRY (High Earners Not Rich Yet)",
+        "Equity Compensation (RSUs, Options)",
+        "Millennials",
+        "Athletes & Entertainers",
+        "Multi-generational Families",
+        "Generational Wealth Transfer",
+        "First Responders",
+        "Divorced Individuals",
+        "Real Estate Investors",
+        "Content Creators",
+        "Other",
+        "Financial independence",
+        "Real estate",
+        "Education planning",
+        "Divorced Women",
+        "Professors & Educators",
+        "Entertainers",
+        "Federal Employees",
+        "Pre-Retirement Individuals",
+        "Early- and mid-career healthcare professionals",
+        "Novice Investors",
+        "Pre-retirees and retirees",
+        "Professional Athletes or Entertainers",
+        "Wichita area residents",
+        "Women and young families",
       ],
       compensation_type: [
         "Fee-Only",
@@ -2004,6 +2320,12 @@ export const Constants = {
         "Hourly",
         "Flat Fee",
         "Assets Under Management",
+        "Flat Fee AUM",
+        "One-Time Financial Plan",
+        "Flat Fee Hourly Rate",
+        "Flat Fee Hourly Rate AUM",
+        "AUM",
+        "Fixed Fee (Subscription, Retainer, etc.)",
       ],
       investor_type: [
         "Individual Investors",
@@ -2084,6 +2406,22 @@ export const Constants = {
         "Chartered Mutual Fund Counselor (CMFC)",
         "Registered Financial Planner (RFP)",
         "Master Registered Financial Consultant (MRFC)",
+        "CPA/PFS",
+        "Certified Digital Asset Advisor",
+        "Accredited Financial Counselor",
+        "Accredited Portfolio Management Advisor (APMA)",
+        "Behavioral Financial Advisor (BFA)",
+        "CAP",
+        "CMT",
+        "Certified Investment Management Consultant",
+        "Chartered Market Technician (CMT)",
+        "ECA",
+        "Equity Compensation Associate (ECA)",
+        "Ethical Accredited Wealth Management Advisor",
+        "National Social Security Advisor",
+        "Personal Financial Specialist",
+        "Sustainable, Ethical Accredited Wealth Mgmt Advisor",
+        "TPCP",
       ],
       return_type: [
         "Dividends",
