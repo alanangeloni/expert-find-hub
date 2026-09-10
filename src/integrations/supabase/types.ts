@@ -1385,6 +1385,7 @@ export type Database = {
           category_name: string
         }[]
       }
+      import_advisors_bulk: { Args: { rows: Json }; Returns: number }
       remove_all_post_categories: {
         Args: { post_id: string }
         Returns: undefined
