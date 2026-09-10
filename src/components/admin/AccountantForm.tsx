@@ -76,8 +76,118 @@ export const AccountantForm = ({ formData, setFormData }: AccountantFormProps) =
       </div>
 
       <div className="space-y-2">
+        <Label htmlFor="tagline">Tagline</Label>
+        <Input id="tagline" value={formData.tagline || ""} onChange={(e) => updateField("tagline", e.target.value)} />
+      </div>
+
+      <div className="space-y-2">
         <Label htmlFor="bio">Bio</Label>
         <Textarea id="bio" value={formData.bio || ""} onChange={(e) => updateField("bio", e.target.value)} rows={4} />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="team_size">Team Size</Label>
+          <Input
+            id="team_size"
+            value={formData.team_size || ""}
+            onChange={(e) => updateField("team_size", e.target.value)}
+            placeholder="e.g. 41 employees"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="founded">Founded</Label>
+          <Input
+            id="founded"
+            type="number"
+            value={formData.founded ?? ""}
+            onChange={(e) => updateField("founded", e.target.value ? Number(e.target.value) : null)}
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="serves_clients">Serves Clients</Label>
+          <Input
+            id="serves_clients"
+            value={formData.serves_clients || ""}
+            onChange={(e) => updateField("serves_clients", e.target.value)}
+            placeholder="e.g. Nationwide (all US states)"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="min_revenue">Minimum Revenue</Label>
+          <Input
+            id="min_revenue"
+            value={formData.min_revenue || ""}
+            onChange={(e) => updateField("min_revenue", e.target.value)}
+            placeholder="e.g. $1M+"
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="role_badges">Roles (comma separated)</Label>
+          <Input
+            id="role_badges"
+            value={(formData.role_badges || []).join(", ")}
+            onChange={(e) =>
+              updateField(
+                "role_badges",
+                e.target.value.split(",").map((v) => v.trim()).filter(Boolean),
+              )
+            }
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="profile_url">Source Profile URL</Label>
+          <Input
+            id="profile_url"
+            value={formData.profile_url || ""}
+            onChange={(e) => updateField("profile_url", e.target.value)}
+          />
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="industries_served">Industries Served (comma separated)</Label>
+          <Input
+            id="industries_served"
+            value={(formData.industries_served || []).join(", ")}
+            onChange={(e) =>
+              updateField(
+                "industries_served",
+                e.target.value.split(",").map((v) => v.trim()).filter(Boolean),
+              )
+            }
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="tech_stack">Software &amp; Tools (comma separated)</Label>
+          <Input
+            id="tech_stack"
+            value={(formData.tech_stack || []).join(", ")}
+            onChange={(e) =>
+              updateField(
+                "tech_stack",
+                e.target.value.split(",").map((v) => v.trim()).filter(Boolean),
+              )
+            }
+          />
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="pricing_packages">Pricing Packages</Label>
+        <Textarea
+          id="pricing_packages"
+          value={formData.pricing_packages || ""}
+          onChange={(e) => updateField("pricing_packages", e.target.value)}
+          rows={2}
+        />
       </div>
 
       <div className="grid grid-cols-2 gap-4">
@@ -241,6 +351,14 @@ export const AccountantForm = ({ formData, setFormData }: AccountantFormProps) =
             onChange={(e) => updateField("verified", e.target.checked)}
           />
           Verified
+        </label>
+        <label className="flex items-center gap-2 text-sm font-medium">
+          <input
+            type="checkbox"
+            checked={!!formData.dedicated_staff}
+            onChange={(e) => updateField("dedicated_staff", e.target.checked)}
+          />
+          Dedicated staff
         </label>
       </div>
     </div>
