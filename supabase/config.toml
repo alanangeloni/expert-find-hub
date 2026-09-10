@@ -1,3 +1,1 @@
 project_id = "wqtvpeuhjgqcjbdozzuv"
-[functions.bulk-import-advisors]
-verify_jwt = false
