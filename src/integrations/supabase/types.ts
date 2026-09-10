@@ -1868,6 +1868,7 @@ export type Database = {
         | "West Virginia"
         | "Wisconsin"
         | "Wyoming"
+        | "Puerto Rico"
       withdrawal_type: "Anytime" | "Limited" | "Locked Period" | "Scheduled"
     }
     CompositeTypes: {
@@ -2482,6 +2483,7 @@ export const Constants = {
         "West Virginia",
         "Wisconsin",
         "Wyoming",
+        "Puerto Rico",
       ],
       withdrawal_type: ["Anytime", "Limited", "Locked Period", "Scheduled"],
     },

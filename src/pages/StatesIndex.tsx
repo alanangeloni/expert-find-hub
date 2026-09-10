@@ -54,7 +54,7 @@ const StatesIndex = () => {
     <div className="states-page page-enter">
       <Seo
         title="Browse Financial Professionals by State | Financial Professional"
-        description="Find a financial professional in your state. Browse vetted fiduciary financial professionals, advisors, and firms across all 50 states and Washington, D.C."
+        description="Find a financial professional in your state. Browse vetted fiduciary financial professionals, advisors, and firms across all 50 states, Washington, D.C., and Puerto Rico."
         canonicalUrl={`${BASE}/financial-professionals`}
         structuredData={structuredData}
       />

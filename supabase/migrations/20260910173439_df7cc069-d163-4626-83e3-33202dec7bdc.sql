@@ -1,0 +1,1 @@
+ALTER TYPE "States" ADD VALUE IF NOT EXISTS 'Puerto Rico';
