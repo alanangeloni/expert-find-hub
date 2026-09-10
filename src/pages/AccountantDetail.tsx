@@ -50,6 +50,9 @@ const AccountantDetail = () => {
 
   const location = advisorLocation(accountant.city, accountant.state_hq);
   const credentials = accountant.credentials || [];
+  const roleBadges = accountant.role_badges || [];
+  const industries = accountant.industries_served || [];
+  const techStack = accountant.tech_stack || [];
   const services = accountant.services || [];
   const clientSpecialties = accountant.client_specialties || [];
   const states = accountant.states_served || [];
@@ -130,7 +133,7 @@ const AccountantDetail = () => {
               <div className="advisor-detail__intro">
                 <div className="advisor-detail__badges">
                   {accountant.verified && <span className="badge badge--green">Verified</span>}
-                  {credentials.slice(0, 4).map((c) => (
+                  {(credentials.length ? credentials : roleBadges).slice(0, 4).map((c) => (
                     <span key={c} className="badge badge--neutral">
                       {c}
                     </span>
@@ -138,7 +141,8 @@ const AccountantDetail = () => {
                 </div>
 
                 <h1>{accountant.name}</h1>
-                <p className="advisor-detail__title">{accountant.position || "Accountant"}</p>
+                <p className="advisor-detail__title">{accountant.position || roleBadges[0] || "Accountant"}</p>
+                {accountant.tagline && <p className="advisor-detail__bio">{accountant.tagline}</p>}
                 {accountant.firm_name &&
                   (accountant.website_url ? (
                     <a
@@ -163,7 +167,8 @@ const AccountantDetail = () => {
                       {location}
                     </span>
                   )}
-                  {!!accountant.years_of_experience && <span>{accountant.years_of_experience} years experience</span>}
+                  {!!accountant.years_of_experience && <span>{accountant.years_of_experience} years in business</span>}
+                  {accountant.team_size && <span>{accountant.team_size}</span>}
                   {accountant.minimum_fee && <span>{accountant.minimum_fee} minimum</span>}
                 </div>
               </div>
@@ -203,6 +208,45 @@ const AccountantDetail = () => {
                     </InfoTooltip>
                   ))}
                 </div>
+              </section>
+            )}
+
+            {industries.length > 0 && (
+              <section className="advisor-detail__section">
+                <h2>Industries served</h2>
+                <div className="advisor-detail__specialty-grid">
+                  {industries.map((i) => (
+                    <span key={i} className="advisor-detail__specialty">
+                      {i}
+                    </span>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {techStack.length > 0 && (
+              <section className="advisor-detail__section">
+                <h2>Software &amp; tools</h2>
+                <div className="advisor-detail__specialty-grid">
+                  {techStack.map((t) => (
+                    <span key={t} className="advisor-detail__specialty">
+                      {t}
+                    </span>
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {(accountant.pricing_packages || accountant.pricing_note || accountant.minimum_fee) && (
+              <section className="advisor-detail__section">
+                <h2>Pricing</h2>
+                {accountant.pricing_packages && (
+                  <p className="advisor-detail__bio" style={{ whiteSpace: "pre-line" }}>
+                    {accountant.pricing_packages}
+                  </p>
+                )}
+                {accountant.pricing_note && <p className="advisor-detail__bio">{accountant.pricing_note}</p>}
+                {accountant.minimum_fee && <p className="advisor-detail__bio">Minimums: {accountant.minimum_fee}</p>}
               </section>
             )}
 
@@ -276,8 +320,32 @@ const AccountantDetail = () => {
                 </div>
                 <div>
                   <dt>Credentials</dt>
-                  <dd>{credentials.join(", ") || "Not listed"}</dd>
+                  <dd>{(credentials.length ? credentials : roleBadges).join(", ") || "Not listed"}</dd>
                 </div>
+                {accountant.team_size && (
+                  <div>
+                    <dt>Team size</dt>
+                    <dd>{accountant.team_size}</dd>
+                  </div>
+                )}
+                {!!accountant.founded && (
+                  <div>
+                    <dt>Founded</dt>
+                    <dd>{accountant.founded}</dd>
+                  </div>
+                )}
+                {accountant.serves_clients && (
+                  <div>
+                    <dt>Serves clients</dt>
+                    <dd>{accountant.serves_clients}</dd>
+                  </div>
+                )}
+                {accountant.dedicated_staff !== null && accountant.dedicated_staff !== undefined && (
+                  <div>
+                    <dt>Dedicated staff</dt>
+                    <dd>{accountant.dedicated_staff ? "Yes" : "No"}</dd>
+                  </div>
+                )}
               </dl>
               <div className="advisor-detail__actions">
                 {accountant.website_url && (

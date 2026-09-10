@@ -1137,16 +1137,24 @@ export type Database = {
             | null
           created_at: string | null
           credentials: string[] | null
+          dedicated_staff: boolean | null
           disclaimer: string | null
           firm_address: string | null
           firm_name: string | null
+          founded: number | null
           headshot_url: string | null
           id: string | null
+          industries_served: string[] | null
           linked_firm: string | null
+          min_revenue: string | null
           minimum_fee: string | null
           name: string | null
           position: string | null
           pricing_note: string | null
+          pricing_packages: string | null
+          profile_url: string | null
+          role_badges: string[] | null
+          serves_clients: string | null
           services:
             | Database["public"]["Enums"]["accounting_service_type"][]
             | null
@@ -1154,6 +1162,9 @@ export type Database = {
           state_hq: Database["public"]["Enums"]["States"] | null
           states_served: string[] | null
           status: string | null
+          tagline: string | null
+          team_size: string | null
+          tech_stack: string[] | null
           updated_at: string | null
           verified: boolean | null
           website_url: string | null
@@ -1167,16 +1178,24 @@ export type Database = {
             | null
           created_at?: string | null
           credentials?: string[] | null
+          dedicated_staff?: boolean | null
           disclaimer?: string | null
           firm_address?: string | null
           firm_name?: string | null
+          founded?: number | null
           headshot_url?: string | null
           id?: string | null
+          industries_served?: string[] | null
           linked_firm?: string | null
+          min_revenue?: string | null
           minimum_fee?: string | null
           name?: string | null
           position?: string | null
           pricing_note?: string | null
+          pricing_packages?: string | null
+          profile_url?: string | null
+          role_badges?: string[] | null
+          serves_clients?: string | null
           services?:
             | Database["public"]["Enums"]["accounting_service_type"][]
             | null
@@ -1184,6 +1203,9 @@ export type Database = {
           state_hq?: Database["public"]["Enums"]["States"] | null
           states_served?: string[] | null
           status?: string | null
+          tagline?: string | null
+          team_size?: string | null
+          tech_stack?: string[] | null
           updated_at?: string | null
           verified?: boolean | null
           website_url?: string | null
@@ -1197,16 +1219,24 @@ export type Database = {
             | null
           created_at?: string | null
           credentials?: string[] | null
+          dedicated_staff?: boolean | null
           disclaimer?: string | null
           firm_address?: string | null
           firm_name?: string | null
+          founded?: number | null
           headshot_url?: string | null
           id?: string | null
+          industries_served?: string[] | null
           linked_firm?: string | null
+          min_revenue?: string | null
           minimum_fee?: string | null
           name?: string | null
           position?: string | null
           pricing_note?: string | null
+          pricing_packages?: string | null
+          profile_url?: string | null
+          role_badges?: string[] | null
+          serves_clients?: string | null
           services?:
             | Database["public"]["Enums"]["accounting_service_type"][]
             | null
@@ -1214,6 +1244,9 @@ export type Database = {
           state_hq?: Database["public"]["Enums"]["States"] | null
           states_served?: string[] | null
           status?: string | null
+          tagline?: string | null
+          team_size?: string | null
+          tech_stack?: string[] | null
           updated_at?: string | null
           verified?: boolean | null
           website_url?: string | null

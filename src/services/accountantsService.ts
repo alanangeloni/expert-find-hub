@@ -25,6 +25,17 @@ export interface Accountant {
   status?: string;
   created_at?: string;
   updated_at?: string;
+  tagline?: string;
+  profile_url?: string;
+  role_badges?: string[];
+  team_size?: string;
+  founded?: number;
+  serves_clients?: string;
+  dedicated_staff?: boolean;
+  tech_stack?: string[];
+  pricing_packages?: string;
+  industries_served?: string[];
+  min_revenue?: string;
 }
 
 // Public reads go through the secure view that omits email, phone, and user_id
