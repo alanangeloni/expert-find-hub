@@ -133,7 +133,7 @@ const AccountantDetail = () => {
               <div className="advisor-detail__intro">
                 <div className="advisor-detail__badges">
                   {accountant.verified && <span className="badge badge--green">Verified</span>}
-                  {credentials.slice(0, 4).map((c) => (
+                  {(credentials.length ? credentials : roleBadges).slice(0, 4).map((c) => (
                     <span key={c} className="badge badge--neutral">
                       {c}
                     </span>
@@ -141,7 +141,8 @@ const AccountantDetail = () => {
                 </div>
 
                 <h1>{accountant.name}</h1>
-                <p className="advisor-detail__title">{accountant.position || "Accountant"}</p>
+                <p className="advisor-detail__title">{accountant.position || roleBadges[0] || "Accountant"}</p>
+                {accountant.tagline && <p className="advisor-detail__bio">{accountant.tagline}</p>}
                 {accountant.firm_name &&
                   (accountant.website_url ? (
                     <a
@@ -166,7 +167,8 @@ const AccountantDetail = () => {
                       {location}
                     </span>
                   )}
-                  {!!accountant.years_of_experience && <span>{accountant.years_of_experience} years experience</span>}
+                  {!!accountant.years_of_experience && <span>{accountant.years_of_experience} years in business</span>}
+                  {accountant.team_size && <span>{accountant.team_size}</span>}
                   {accountant.minimum_fee && <span>{accountant.minimum_fee} minimum</span>}
                 </div>
               </div>
