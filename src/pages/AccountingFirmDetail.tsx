@@ -52,8 +52,11 @@ const AccountingFirmDetailComponent = () => {
     <>
       {firm && (
         <Seo 
-          title={`${firm.name} | Accounting Firm`}
-          description={(firm.long_description || firm.description || `Accounting services from ${firm.name}. Compare fees, services and minimums.`).slice(0, 155)}
+          title={seoTitle(firm.name, "Accounting Firm")}
+          description={seoDescription(
+            firm.description || firm.long_description || `Accounting services from ${firm.name}`,
+            "Compare services, fees, and minimums, then get in touch."
+          )}
           canonicalUrl={`https://financialprofessional.com/accounting-firms/${slug}`}
           structuredData={{
             "@context": "https://schema.org",
