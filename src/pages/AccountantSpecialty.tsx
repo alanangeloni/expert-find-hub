@@ -4,6 +4,7 @@ import { Link, useParams } from "react-router-dom";
 import { getAllAccountants } from "@/services/accountantsService";
 import { AccountantCard } from "@/components/accountants/AccountantCard";
 import { Seo } from "@/components/seo/Seo";
+import { seoTitle, seoDescription } from "@/utils/seoText";
 import { Spinner } from "@/components/ui/spinner";
 import {
   Accordion,
@@ -88,8 +89,11 @@ const AccountantSpecialty = () => {
   return (
     <div className="advisor-search page-enter">
       <Seo
-        title={`Accountants for ${specialty} | Financial Professional`}
-        description={`Find vetted accountants who specialize in ${specialty.toLowerCase()}. Compare credentials, services, and pricing.`}
+        title={seoTitle(`Accountants for ${specialty}`)}
+        description={seoDescription(
+          `Find vetted accountants who specialize in ${specialty.toLowerCase()}`,
+          "Compare credentials, services, industries served, and pricing before you reach out."
+        )}
         canonicalUrl={canonical}
         structuredData={structuredData}
       />

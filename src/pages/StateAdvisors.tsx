@@ -7,6 +7,7 @@ import { SearchFilters, type AdvisorFilters } from "@/components/search/SearchFi
 import { valuesForSpecialty, SPECIALTY_GROUPS } from "@/constants/specialties";
 import { NewsletterSignup } from "@/components/common/NewsletterSignup";
 import { Seo } from "@/components/seo/Seo";
+import { seoTitle, seoDescription } from "@/utils/seoText";
 import { US_STATES, stateFromSlug, stateSlug } from "@/constants/states";
 import { advisorLocation, formatMinAssets } from "@/utils/advisorDisplay";
 import NotFound from "./NotFound";
@@ -118,8 +119,14 @@ const StateAdvisors = () => {
 
   const description =
     count > 0
-      ? `Compare ${count} vetted financial professionals in ${state}. See specialties, fees, minimums, and credentials, then request a meeting free.`
-      : `Find a financial professional serving ${state}. Browse vetted fiduciary advisors and request a meeting free.`;
+      ? seoDescription(
+          `Compare ${count} vetted financial professionals in ${state}`,
+          "See specialties, fees, minimums, and credentials, then request a meeting free."
+        )
+      : seoDescription(
+          `Find a financial professional serving ${state}`,
+          "See specialties, fees, minimums, and credentials, then request a meeting free."
+        );
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -154,11 +161,10 @@ const StateAdvisors = () => {
   return (
     <div className="states-page page-enter">
       <Seo
-        title={`Financial Professionals in ${state} | Find a Financial Professional`}
+        title={seoTitle(`Financial Professionals in ${state}`)}
         description={description}
         canonicalUrl={canonical}
         structuredData={structuredData}
-        noIndex={count === 0}
       />
 
       <div className="states-page__hero">
