@@ -63,15 +63,14 @@ const AdvisorDetailPage = () => {
   const comparing = isComparing(advisor.id);
   const firmTone = ["green", "blue", "orange"][hueFor(advisor.firm_name || advisor.name) % 3];
 
-  const pageTitle = `${advisor.name} — ${advisor.position || "Financial Advisor"}${
-    advisor.firm_name ? ` at ${advisor.firm_name}` : ""
-  }`.slice(0, 60);
-  const pageDescription = (
+  const pageTitle = seoTitle(`${advisor.name}, ${advisor.position || "Financial Advisor"}`);
+  const pageDescription = seoDescription(
     advisor.personal_bio ||
-    `${advisor.position || "Financial advisor"}${advisor.firm_name ? ` at ${advisor.firm_name}` : ""}${
-      location ? ` in ${location}` : ""
-    }. Request an introduction today.`
-  ).slice(0, 155);
+      `${advisor.position || "Financial advisor"}${advisor.firm_name ? ` at ${advisor.firm_name}` : ""}${
+        location ? ` in ${location}` : ""
+      }`,
+    "See specialties, fees, minimums, and credentials, then request an introduction free."
+  );
 
   const requestBtn = (
     <button type="button" className="btn btn--green btn--lg btn--full" onClick={() => setMeetingOpen(true)}>
