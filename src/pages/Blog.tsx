@@ -68,8 +68,8 @@ const Blog = () => {
   return (
     <div className="blog-page page-enter">
       <Seo
-        title="Financial Journal | Financial Professional"
-        description="Practical guides on fiduciaries, fees, life transitions, and finding financial advice that actually fits."
+        title="The Journal: Money Guides | Financial Professional"
+        description="Practical guides on fiduciaries, fees, life transitions, and finding financial advice that actually fits your situation. Written for real decisions."
         canonicalUrl="https://financialprofessional.com/blog"
       />
 

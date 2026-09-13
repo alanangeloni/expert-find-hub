@@ -74,7 +74,7 @@ const InvestmentFirms = () => {
     <div className="firm-search page-enter">
       <Seo
         title="Investment Firms Directory | Financial Professional"
-        description="Browse independent investment firms by asset class, minimum investment, and assets under management."
+        description="Browse independent investment firms by asset class, minimum investment, and assets under management. Compare fees, returns, and liquidity in one place."
         canonicalUrl="https://financialprofessional.com/firms"
       />
 

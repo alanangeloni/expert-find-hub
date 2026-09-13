@@ -50,7 +50,7 @@ const ServicesIndex = () => {
   return (
     <div className="services-page page-enter">
       <Seo
-        title="Financial Advisor Services by Specialty | Financial Professional"
+        title="Financial Advisor Services by Specialty"
         description="Browse financial professionals by specialty, from retirement and tax planning to estate, business, and investment management. Compare vetted fiduciaries free."
         canonicalUrl={`${BASE}/services`}
         structuredData={structuredData}
