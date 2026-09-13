@@ -72,8 +72,8 @@ const AccountingFirmsPage = () => {
   return (
     <>
       <Seo 
-        title="Find an Accounting Firm"
-        description="Connect with top accounting firms that can help manage your business finances"
+        title="Accounting Firms Directory | Financial Professional"
+        description="Connect with accounting firms that handle bookkeeping, tax, and business finance. Compare services, minimums, and locations before you reach out."
         canonicalUrl="https://financialprofessional.com/accounting-firms"
         structuredData={{
           "@context": "https://schema.org",

@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getInvestmentFirmBySlug, getSimilarFirms } from "@/services/investmentFirmsService";
 import { Seo } from "@/components/seo/Seo";
+import { seoTitle, seoDescription } from "@/utils/seoText";
 import { hueFor } from "@/utils/advisorDisplay";
 
 const Chevron = () => (
@@ -60,10 +61,12 @@ const InvestmentFirmDetailPage = () => {
   const moneyMakingMethods: any[] = firm.money_making_methods || [];
   const assetClasses: string[] = firm.asset_classes || [];
 
-  const pageTitle = `${firm.name} Review`.slice(0, 60);
-  const pageDescription = `${firm.description || `${firm.name} investment firm review.`} Minimum investment: ${
-    firm.minimum_investment || "not specified"
-  }.`.slice(0, 155);
+  const pageTitle = seoTitle(`${firm.name} Review`);
+  const pageDescription = seoDescription(
+    firm.description || `${firm.name} investment firm review`,
+    `Minimum investment: ${firm.minimum_investment || "not specified"}.`,
+    "Compare fees, liquidity, and returns."
+  );
 
   const money = (v: any) => {
     if (v === null || v === undefined || String(v).trim() === "") return "—";

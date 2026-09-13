@@ -8,6 +8,7 @@ import { BlogCard } from "@/components/blog/BlogCard";
 import { SearchFilters, type AdvisorFilters } from "@/components/search/SearchFilters";
 import { NewsletterSignup } from "@/components/common/NewsletterSignup";
 import { Seo } from "@/components/seo/Seo";
+import { seoTitle, seoDescription } from "@/utils/seoText";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { valuesForSpecialty } from "@/constants/specialties";
 import {
@@ -153,9 +154,10 @@ const ServiceAdvisors = () => {
   const definition = serviceDefinition(service);
   const checklist = serviceChecklist(service);
   const faqs = serviceFaqs(service);
-  const description = `Find a financial professional for ${service.toLowerCase()}. Compare ${
-    count > 0 ? `${count} vetted` : "vetted"
-  } fiduciary advisors on credentials, fees, and minimums, then request a free introduction.`;
+  const description = seoDescription(
+    `Find a financial professional for ${service.toLowerCase()}`,
+    `Compare ${count > 0 ? `${count} vetted` : "vetted"} fiduciary advisors on credentials, fees, and minimums, then request a free introduction.`
+  );
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -197,7 +199,7 @@ const ServiceAdvisors = () => {
   return (
     <div className="services-page page-enter">
       <Seo
-        title={`${service} Financial Advisors | Financial Professional`}
+        title={seoTitle(`${service} Advisors`)}
         description={description}
         canonicalUrl={canonical}
         structuredData={structuredData}

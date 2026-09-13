@@ -101,8 +101,8 @@ const Accountants = () => {
   return (
     <div className="advisor-search page-enter">
       <Seo
-        title="Find an Accountant | Financial Professional"
-        description="Search vetted accountants and CPAs by specialty, service, location, and credentials."
+        title="Find an Accountant or CPA | Financial Professional"
+        description="Search vetted accountants and CPAs by specialty, service, location, and credentials. Compare pricing and industries served, then request an introduction free."
         canonicalUrl="https://financialprofessional.com/accountants"
       />
 
