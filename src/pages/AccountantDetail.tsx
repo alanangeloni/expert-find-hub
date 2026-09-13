@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { getAccountantBySlug } from "@/services/accountantsService";
 import { Seo } from "@/components/seo/Seo";
+import { seoTitle, seoDescription } from "@/utils/seoText";
 import { InfoTooltip } from "@/components/common/InfoTooltip";
 import { accountantSpecialtySlug, accountantSpecialtyDefinition } from "@/constants/accountants";
 import { CERTIFICATION_DEFINITIONS } from "@/constants/definitions";

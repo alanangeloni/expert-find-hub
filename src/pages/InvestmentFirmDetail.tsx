@@ -3,6 +3,7 @@ import { Link, useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getInvestmentFirmBySlug, getSimilarFirms } from "@/services/investmentFirmsService";
 import { Seo } from "@/components/seo/Seo";
+import { seoTitle, seoDescription } from "@/utils/seoText";
 import { hueFor } from "@/utils/advisorDisplay";
 
 const Chevron = () => (

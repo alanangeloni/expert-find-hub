@@ -4,6 +4,7 @@ import { BlogPost, getBlogPosts } from "@/services/blogService";
 import { Spinner } from "@/components/ui/spinner";
 import { useAuth } from "@/contexts/AuthContext";
 import { Seo } from "@/components/seo/Seo";
+import { seoTitle, seoDescription } from "@/utils/seoText";
 import { supabase } from "@/integrations/supabase/client";
 import ReactMarkdown from "react-markdown";
 import { getPostCategories } from "@/utils/blogRelations";

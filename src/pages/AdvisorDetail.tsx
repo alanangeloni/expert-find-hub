@@ -11,6 +11,7 @@ import { getInitials, hueFor, extractAcronym, formatMinAssets, advisorLocation }
 import { InfoTooltip } from "@/components/common/InfoTooltip";
 import { getSpecialtyTooltip, getCertificationTooltip, getLicenseTooltip } from "@/constants/definitions";
 import { Seo } from "@/components/seo/Seo";
+import { seoTitle, seoDescription } from "@/utils/seoText";
 
 const Chevron = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

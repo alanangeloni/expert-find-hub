@@ -10,6 +10,7 @@ import { Separator } from "@/components/ui/separator";
 import { getAccountingFirmBySlug } from "@/services/accountingFirmsService";
 import Header from "@/components/layout/Header";
 import { Seo } from "@/components/seo/Seo";
+import { seoTitle, seoDescription } from "@/utils/seoText";
 
 const AccountingFirmDetailComponent = () => {
   const { slug } = useParams<{ slug: string }>();
