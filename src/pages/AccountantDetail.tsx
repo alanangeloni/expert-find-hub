@@ -59,17 +59,18 @@ const AccountantDetail = () => {
   const states = accountant.states_served || [];
   const firmTone = ["green", "blue", "orange"][hueFor(accountant.firm_name || accountant.name) % 3];
 
-  const pageDescription = (
+  const pageDescription = seoDescription(
     accountant.bio ||
-    `${accountant.position || "Accountant"}${accountant.firm_name ? ` at ${accountant.firm_name}` : ""}${
-      location ? ` in ${location}` : ""
-    }.`
-  ).slice(0, 155);
+      `${accountant.position || "Accountant"}${accountant.firm_name ? ` at ${accountant.firm_name}` : ""}${
+        location ? ` in ${location}` : ""
+      }`,
+    "See services, industries served, pricing, and credentials, then request an introduction."
+  );
 
   return (
     <div className="advisor-detail page-enter">
       <Seo
-        title={`${accountant.name}${credentials.length ? `, ${credentials[0]}` : ""} | Financial Professional`}
+        title={seoTitle(`${accountant.name}${credentials.length ? `, ${credentials[0]}` : ""}`)}
         description={pageDescription}
         canonicalUrl={`https://financialprofessional.com/accountants/${accountant.slug}`}
         ogImage={accountant.headshot_url || undefined}
