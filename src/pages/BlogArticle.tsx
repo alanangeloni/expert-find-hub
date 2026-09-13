@@ -44,6 +44,17 @@ const BlogArticle = () => {
         const { data } = await queryBuilder.maybeSingle();
 
         if (!data) {
+          // Old, unsafe article addresses (spaces, colons, capitals) now live in
+          // blog_slug_redirects. Send visitors and crawlers to the new address.
+          const { data: redirect } = await supabase
+            .from("blog_slug_redirects")
+            .select("new_slug")
+            .eq("old_slug", slug)
+            .maybeSingle();
+          if (redirect?.new_slug && redirect.new_slug !== slug) {
+            navigate(`/blog/${redirect.new_slug}`, { replace: true });
+            return;
+          }
           setNotFound(true);
           return;
         }
