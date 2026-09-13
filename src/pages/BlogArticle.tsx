@@ -128,9 +128,9 @@ const BlogArticle = () => {
   return (
     <div className="blog-post page-enter">
       <Seo
-        title={post.title}
-        description={postExcerpt(post).slice(0, 155)}
-        canonicalUrl={`https://financialprofessional.com/blog/${slug}`}
+        title={seoTitle(post.title)}
+        description={seoDescription(postExcerpt(post), "Read the full guide on Financial Professional.")}
+        canonicalUrl={`https://financialprofessional.com/blog/${post.slug}`}
         ogType="article"
         ogImage={post.cover_image_url || undefined}
         structuredData={{
@@ -139,7 +139,7 @@ const BlogArticle = () => {
             {
               "@type": "Article",
               headline: post.title,
-              description: postExcerpt(post).slice(0, 155),
+              description: seoDescription(postExcerpt(post), "Read the full guide on Financial Professional."),
               image: post.cover_image_url || undefined,
               datePublished: post.published_at || undefined,
               dateModified: post.updated_at || post.published_at || undefined,
