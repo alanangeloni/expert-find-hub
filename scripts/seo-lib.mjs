@@ -283,6 +283,8 @@ export async function collectPages() {
       lastmod: isoDay(a.updated_at),
       changefreq: 'monthly',
       priority: '0.7',
+      titleBase: `${a.name}, ${a.position || 'Financial Advisor'}`,
+      context: loc || a.firm_name || undefined,
     });
   }
 
@@ -342,6 +344,8 @@ export async function collectPages() {
       lastmod: isoDay(a.updated_at),
       changefreq: 'monthly',
       priority: '0.7',
+      titleBase: `${a.name}${creds ? `, ${creds}` : ''}`,
+      context: loc || a.firm_name || undefined,
     });
   }
 
@@ -412,10 +416,73 @@ export async function collectPages() {
 
   // De-duplicate by canonical path, keeping the first entry.
   const seen = new Set();
-  return pages.filter((p) => {
+  const unique = pages.filter((p) => {
     const key = canonicalPath(p.path);
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
   });
+
+  return finishMetadata(unique);
+}
+
+/* ------------------------------------------------- length + uniqueness */
+
+const FILLERS = {
+  '/advisors/': [
+    'Review this advisor’s specialties, credentials, fee structure, and account minimums.',
+    'Request a free introduction through Financial Professional.',
+  ],
+  '/accountants/': [
+    'Review this accountant’s services, industries served, credentials, and pricing.',
+    'Request a free introduction through Financial Professional.',
+  ],
+  '/firms/': [
+    'Review the firm’s asset class, fees, liquidity terms, and historical returns.',
+    'Compare it with other investment firms on Financial Professional.',
+  ],
+  '/accounting-firms/': [
+    'Review the firm’s services, locations, client types, and engagement minimums.',
+    'Compare accounting firms on Financial Professional.',
+  ],
+  '/blog/': [
+    'A plain-English guide from the Financial Professional journal.',
+    'Written to help you make a better money decision.',
+  ],
+  '/': ['Free to search and free to get matched with a vetted fiduciary.'],
+};
+
+const fillersFor = (path) => {
+  for (const prefix of Object.keys(FILLERS)) {
+    if (prefix !== '/' && path.startsWith(prefix)) return FILLERS[prefix];
+  }
+  return FILLERS['/'];
+};
+
+function finishMetadata(pages) {
+  const titleSeen = new Map();
+  const descSeen = new Map();
+
+  for (const page of pages) {
+    // Pad short descriptions to the 150-158 character window.
+    page.description = seoDescription(page.description, ...fillersFor(page.path));
+
+    const t = page.title;
+    const tCount = (titleSeen.get(t) || 0) + 1;
+    titleSeen.set(t, tCount);
+    if (tCount > 1 && page.context) {
+      page.title = seoTitle(`${page.titleBase || t.split(' | ')[0]}, ${page.context}`);
+    }
+
+    const d = page.description;
+    const dCount = (descSeen.get(d) || 0) + 1;
+    descSeen.set(d, dCount);
+    if (dCount > 1 && page.context) {
+      page.description = seoDescription(`${page.context}: ${d}`, ...fillersFor(page.path));
+    }
+    delete page.titleBase;
+    delete page.context;
+  }
+
+  return pages;
 }
