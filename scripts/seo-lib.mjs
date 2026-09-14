@@ -45,7 +45,7 @@ export async function fetchRows(table, query) {
 const collapse = (v) =>
   String(v ?? '')
     .replace(/&amp;/g, '&')
-    .replace(/&/g, 'and')
+    .replace(/&/g, ' and ')
     .replace(/["<>]/g, '')
     .replace(/\s+/g, ' ')
     .trim();
@@ -76,10 +76,10 @@ export const seoDescription = (base, ...filler) => {
     const next = collapse(extra);
     if (!next) continue;
     const joined = `${text.replace(/[.\s]+$/, '')}. ${next}`.replace(/^\.\s*/, '');
-    if (joined.length <= 158) text = joined;
+    if (joined.length <= 160) text = joined;
   }
-  if (text.length <= 158) return text;
-  return clampAtWord(text, 158, '…');
+  if (text.length <= 160) return text;
+  return clampAtWord(text, 160, '…');
 };
 
 const stripMarkup = (v) =>
@@ -91,7 +91,7 @@ const stripMarkup = (v) =>
 export const slugify = (value) =>
   String(value ?? '')
     .toLowerCase()
-    .replace(/&/g, 'and')
+    .replace(/&/g, ' and ')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 
@@ -452,6 +452,12 @@ const FILLERS = {
   '/': ['Free to search and free to get matched with a vetted fiduciary.'],
 };
 
+const SHORT_TAILS = [
+  'Free to browse on Financial Professional.',
+  'No cost, no obligation.',
+  'Updated regularly.',
+];
+
 const fillersFor = (path) => {
   for (const prefix of Object.keys(FILLERS)) {
     if (prefix !== '/' && path.startsWith(prefix)) return FILLERS[prefix];
@@ -465,7 +471,7 @@ function finishMetadata(pages) {
 
   for (const page of pages) {
     // Pad short descriptions to the 150-158 character window.
-    page.description = seoDescription(page.description, ...fillersFor(page.path));
+    page.description = seoDescription(page.description, ...fillersFor(page.path), ...SHORT_TAILS);
 
     const t = page.title;
     const tCount = (titleSeen.get(t) || 0) + 1;
@@ -478,7 +484,7 @@ function finishMetadata(pages) {
     const dCount = (descSeen.get(d) || 0) + 1;
     descSeen.set(d, dCount);
     if (dCount > 1 && page.context) {
-      page.description = seoDescription(`${page.context}: ${d}`, ...fillersFor(page.path));
+      page.description = seoDescription(`${page.context}: ${d}`, ...fillersFor(page.path), ...SHORT_TAILS);
     }
     delete page.titleBase;
     delete page.context;

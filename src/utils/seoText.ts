@@ -4,12 +4,12 @@
 const SUFFIX = "Financial Professional";
 export const TITLE_MAX = 60;
 export const DESC_MIN = 150;
-export const DESC_MAX = 158;
+export const DESC_MAX = 160;
 
 const collapse = (value: string) =>
   String(value ?? "")
     .replace(/&amp;/g, "&")
-    .replace(/&/g, "and")
+    .replace(/&/g, " and ")
     .replace(/["<>]/g, "")
     .replace(/\s+/g, " ")
     .trim();
