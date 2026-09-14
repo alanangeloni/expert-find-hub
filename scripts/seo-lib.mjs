@@ -42,7 +42,13 @@ export async function fetchRows(table, query) {
 
 /* ----------------------------------------------------------------- text */
 
-const collapse = (v) => String(v ?? '').replace(/\s+/g, ' ').trim();
+const collapse = (v) =>
+  String(v ?? '')
+    .replace(/&amp;/g, '&')
+    .replace(/&/g, ' and ')
+    .replace(/["<>]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
 
 export const clampAtWord = (value, max, ellipsis = '') => {
   const text = collapse(value);
@@ -59,8 +65,7 @@ export const seoTitle = (main, suffix = 'Financial Professional') => {
   if (!suffix) return clampAtWord(head, 60);
   const tail = ` | ${suffix}`;
   if (head.length + tail.length <= 60) return `${head}${tail}`;
-  const room = 60 - tail.length;
-  if (room >= 24) return `${clampAtWord(head, room)}${tail}`;
+  // Never cut the page's own name to keep the brand suffix: drop the suffix.
   return clampAtWord(head, 60);
 };
 
@@ -71,10 +76,10 @@ export const seoDescription = (base, ...filler) => {
     const next = collapse(extra);
     if (!next) continue;
     const joined = `${text.replace(/[.\s]+$/, '')}. ${next}`.replace(/^\.\s*/, '');
-    if (joined.length <= 158) text = joined;
+    if (joined.length <= 160) text = joined;
   }
-  if (text.length <= 158) return text;
-  return clampAtWord(text, 158, '…');
+  if (text.length <= 160) return text;
+  return clampAtWord(text, 160, '…');
 };
 
 const stripMarkup = (v) =>
@@ -86,7 +91,7 @@ const stripMarkup = (v) =>
 export const slugify = (value) =>
   String(value ?? '')
     .toLowerCase()
-    .replace(/&/g, 'and')
+    .replace(/&/g, ' and ')
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '');
 
@@ -278,6 +283,8 @@ export async function collectPages() {
       lastmod: isoDay(a.updated_at),
       changefreq: 'monthly',
       priority: '0.7',
+      titleBase: `${a.name}, ${a.position || 'Financial Advisor'}`,
+      context: loc || a.firm_name || undefined,
     });
   }
 
@@ -337,6 +344,8 @@ export async function collectPages() {
       lastmod: isoDay(a.updated_at),
       changefreq: 'monthly',
       priority: '0.7',
+      titleBase: `${a.name}${creds ? `, ${creds}` : ''}`,
+      context: loc || a.firm_name || undefined,
     });
   }
 
@@ -407,10 +416,79 @@ export async function collectPages() {
 
   // De-duplicate by canonical path, keeping the first entry.
   const seen = new Set();
-  return pages.filter((p) => {
+  const unique = pages.filter((p) => {
     const key = canonicalPath(p.path);
     if (seen.has(key)) return false;
     seen.add(key);
     return true;
   });
+
+  return finishMetadata(unique);
+}
+
+/* ------------------------------------------------- length + uniqueness */
+
+const FILLERS = {
+  '/advisors/': [
+    'Review this advisor’s specialties, credentials, fee structure, and account minimums.',
+    'Request a free introduction through Financial Professional.',
+  ],
+  '/accountants/': [
+    'Review this accountant’s services, industries served, credentials, and pricing.',
+    'Request a free introduction through Financial Professional.',
+  ],
+  '/firms/': [
+    'Review the firm’s asset class, fees, liquidity terms, and historical returns.',
+    'Compare it with other investment firms on Financial Professional.',
+  ],
+  '/accounting-firms/': [
+    'Review the firm’s services, locations, client types, and engagement minimums.',
+    'Compare accounting firms on Financial Professional.',
+  ],
+  '/blog/': [
+    'A plain-English guide from the Financial Professional journal.',
+    'Written to help you make a better money decision.',
+  ],
+  '/': ['Free to search and free to get matched with a vetted fiduciary.'],
+};
+
+const SHORT_TAILS = [
+  'Free to browse on Financial Professional.',
+  'No cost, no obligation.',
+  'Updated regularly.',
+];
+
+const fillersFor = (path) => {
+  for (const prefix of Object.keys(FILLERS)) {
+    if (prefix !== '/' && path.startsWith(prefix)) return FILLERS[prefix];
+  }
+  return FILLERS['/'];
+};
+
+function finishMetadata(pages) {
+  const titleSeen = new Map();
+  const descSeen = new Map();
+
+  for (const page of pages) {
+    // Pad short descriptions to the 150-158 character window.
+    page.description = seoDescription(page.description, ...fillersFor(page.path), ...SHORT_TAILS);
+
+    const t = page.title;
+    const tCount = (titleSeen.get(t) || 0) + 1;
+    titleSeen.set(t, tCount);
+    if (tCount > 1 && page.context) {
+      page.title = seoTitle(`${page.titleBase || t.split(' | ')[0]}, ${page.context}`);
+    }
+
+    const d = page.description;
+    const dCount = (descSeen.get(d) || 0) + 1;
+    descSeen.set(d, dCount);
+    if (dCount > 1 && page.context) {
+      page.description = seoDescription(`${page.context}: ${d}`, ...fillersFor(page.path), ...SHORT_TAILS);
+    }
+    delete page.titleBase;
+    delete page.context;
+  }
+
+  return pages;
 }
