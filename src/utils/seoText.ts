@@ -6,7 +6,13 @@ export const TITLE_MAX = 60;
 export const DESC_MIN = 150;
 export const DESC_MAX = 158;
 
-const collapse = (value: string) => String(value ?? "").replace(/\s+/g, " ").trim();
+const collapse = (value: string) =>
+  String(value ?? "")
+    .replace(/&amp;/g, "&")
+    .replace(/&/g, "and")
+    .replace(/["<>]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
 
 /** Truncate at a word boundary. Adds `ellipsis` only when text was actually cut. */
 export const clampAtWord = (value: string, max: number, ellipsis = ""): string => {
@@ -28,8 +34,7 @@ export const seoTitle = (main: string, suffix: string | null = SUFFIX): string =
   if (!suffix) return clampAtWord(head, TITLE_MAX);
   const tail = ` | ${suffix}`;
   if (head.length + tail.length <= TITLE_MAX) return `${head}${tail}`;
-  const room = TITLE_MAX - tail.length;
-  if (room >= 24) return `${clampAtWord(head, room)}${tail}`;
+  // Never cut the page's own name to keep the brand suffix: drop the suffix.
   return clampAtWord(head, TITLE_MAX);
 };
 

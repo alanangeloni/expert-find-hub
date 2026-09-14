@@ -42,7 +42,13 @@ export async function fetchRows(table, query) {
 
 /* ----------------------------------------------------------------- text */
 
-const collapse = (v) => String(v ?? '').replace(/\s+/g, ' ').trim();
+const collapse = (v) =>
+  String(v ?? '')
+    .replace(/&amp;/g, '&')
+    .replace(/&/g, 'and')
+    .replace(/["<>]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
 
 export const clampAtWord = (value, max, ellipsis = '') => {
   const text = collapse(value);
@@ -59,8 +65,7 @@ export const seoTitle = (main, suffix = 'Financial Professional') => {
   if (!suffix) return clampAtWord(head, 60);
   const tail = ` | ${suffix}`;
   if (head.length + tail.length <= 60) return `${head}${tail}`;
-  const room = 60 - tail.length;
-  if (room >= 24) return `${clampAtWord(head, room)}${tail}`;
+  // Never cut the page's own name to keep the brand suffix: drop the suffix.
   return clampAtWord(head, 60);
 };
 
