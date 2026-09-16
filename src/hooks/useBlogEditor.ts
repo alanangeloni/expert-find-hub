@@ -9,7 +9,7 @@ import { getPostCategories } from '@/utils/blogRelations';
 import { BlogPost } from '@/services/blogService';
 import { createBlogPost, updateBlogPost } from '@/services/blogService';
 import { toast } from '@/components/ui/use-toast';
-import { blogPostSchema, type BlogPostFormValues, type BlogCategoryType } from '@/types/blog';
+import { blogPostSchema, type BlogPostFormValues, type BlogCategoryType, type BlogStatus } from '@/types/blog';
 
 export const useBlogEditor = () => {
   // Get the slug from the URL params
@@ -58,7 +58,7 @@ export const useBlogEditor = () => {
         const fullPost = {
           ...postData,
           categories,
-          status: postData.status as 'draft' | 'published'
+          status: postData.status as BlogStatus
         };
         
         console.log('Full post data with categories:', fullPost);
@@ -83,6 +83,7 @@ export const useBlogEditor = () => {
       cover_image_url: '',
       status: 'draft',
       categories: [],
+      published_at: '',
     },
   });
 
@@ -97,6 +98,7 @@ export const useBlogEditor = () => {
         cover_image_url: existingPost.cover_image_url || '',
         status: existingPost.status,
         categories: existingPost.categories as BlogCategoryType[] || [],
+        published_at: existingPost.published_at || '',
       };
       console.log('Resetting form with data:', formData);
       
@@ -128,8 +130,9 @@ export const useBlogEditor = () => {
       content: string;
       excerpt?: string;
       cover_image_url?: string;
-      status: "draft" | "published";
+      status: BlogStatus;
       categories?: string[];
+      published_at?: string | null;
     }) => createBlogPost(postData),
     onSuccess: () => {
       toast({ title: "Blog post created successfully!" });
@@ -153,9 +156,9 @@ export const useBlogEditor = () => {
       content: string;
       excerpt?: string;
       cover_image_url?: string;
-      status: "draft" | "published";
+      status: BlogStatus;
       categories?: string[];
-      published_at?: string;
+      published_at?: string | null;
     }) => updateBlogPost(id, postData),
     onSuccess: () => {
       toast({ title: "Blog post updated successfully!" });
@@ -171,6 +174,12 @@ export const useBlogEditor = () => {
     },
   });
 
+  const resolvePublishedAt = (data: BlogPostFormValues): string | null => {
+    if (data.published_at) return new Date(data.published_at).toISOString();
+    if (data.status === 'published') return new Date().toISOString();
+    return null;
+  };
+
   const onSubmit = (data: BlogPostFormValues) => {
     if (slug && existingPost) {
       updatePostMutation.mutate({
@@ -182,7 +191,7 @@ export const useBlogEditor = () => {
         cover_image_url: data.cover_image_url,
         status: data.status,
         categories: data.categories,
-        published_at: existingPost.published_at,
+        published_at: resolvePublishedAt(data),
       });
     } else {
       createPostMutation.mutate({
@@ -193,6 +202,7 @@ export const useBlogEditor = () => {
         cover_image_url: data.cover_image_url,
         status: data.status,
         categories: data.categories,
+        published_at: resolvePublishedAt(data),
       });
     }
   };
