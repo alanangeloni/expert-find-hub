@@ -1,6 +1,14 @@
 import { supabase } from "@/integrations/supabase/client";
 import { getPostCategories } from "@/utils/blogRelations";
-import { BLOG_CATEGORIES, type BlogCategoryType } from "@/types/blog";
+import { BLOG_CATEGORIES, type BlogCategoryType, type BlogStatus } from "@/types/blog";
+
+// A post is live when it is published, or scheduled and its time has arrived.
+const applyLiveFilter = (query: any) => {
+  const now = new Date().toISOString();
+  return query.or(
+    `and(status.eq.published,published_at.is.null),and(status.eq.published,published_at.lte.${now}),and(status.eq.scheduled,published_at.lte.${now})`
+  );
+};
 
 // Export the BlogPost interface
 export interface BlogPost {
@@ -10,8 +18,8 @@ export interface BlogPost {
   content: string;
   excerpt?: string;
   cover_image_url?: string;
-  status: 'draft' | 'published';
-  published_at?: string;
+  status: BlogStatus;
+  published_at?: string | null;
   created_at: string;
   updated_at: string;
   author_id?: string;
@@ -58,7 +66,7 @@ export const uploadBlogImage = async (file: File): Promise<string | null> => {
 };
 
 export const getBlogPosts = async (options: {
-  status?: 'draft' | 'published' | 'all';
+  status?: 'draft' | 'published' | 'scheduled' | 'all';
   category?: string;
   limit?: number;
   offset?: number;
@@ -68,7 +76,9 @@ export const getBlogPosts = async (options: {
     let query = supabase.from('blog_posts').select('*');
 
     // Apply filters
-    if (options.status && options.status !== 'all') {
+    if (options.status === 'published') {
+      query = applyLiveFilter(query);
+    } else if (options.status && options.status !== 'all') {
       query = query.eq('status', options.status);
     }
     
@@ -103,7 +113,7 @@ export const getBlogPosts = async (options: {
       return {
         ...post,
         categories: postCategories,
-        status: post.status as 'draft' | 'published'
+        status: post.status as BlogStatus
       } as BlogPost;
     }));
     
@@ -123,7 +133,7 @@ export const getBlogPosts = async (options: {
 
 // Get blog posts with pagination count
 export const getBlogPostsWithCount = async (options: {
-  status?: 'draft' | 'published' | 'all';
+  status?: 'draft' | 'published' | 'scheduled' | 'all';
   category?: string;
   limit?: number;
   offset?: number;
@@ -133,7 +143,9 @@ export const getBlogPostsWithCount = async (options: {
     let query = supabase.from('blog_posts').select('*', { count: 'exact' });
 
     // Apply filters
-    if (options.status && options.status !== 'all') {
+    if (options.status === 'published') {
+      query = applyLiveFilter(query);
+    } else if (options.status && options.status !== 'all') {
       query = query.eq('status', options.status);
     }
     
@@ -166,7 +178,7 @@ export const getBlogPostsWithCount = async (options: {
       return {
         ...post,
         categories: postCategories,
-        status: post.status as 'draft' | 'published'
+        status: post.status as BlogStatus
       } as BlogPost;
     }));
     
@@ -204,7 +216,7 @@ export const getBlogPostBySlug = async (slug: string): Promise<BlogPost | null> 
     return { 
       ...data, 
       categories,
-      status: data.status as 'draft' | 'published'
+      status: data.status as BlogStatus
     } as BlogPost;
   } catch (error: any) {
     console.error(`Error fetching blog post with slug ${slug}:`, error);

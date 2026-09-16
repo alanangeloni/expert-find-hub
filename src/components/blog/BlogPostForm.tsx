@@ -21,6 +21,15 @@ interface BlogPostFormProps {
   setCoverImageUrl: (url: string) => void;
 }
 
+// Converts a stored ISO timestamp into the value a datetime-local input expects.
+const toLocalInput = (value?: string | null) => {
+  if (!value) return '';
+  const d = new Date(value);
+  if (Number.isNaN(d.getTime())) return '';
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+};
+
 export const BlogPostForm = ({
   control,
   errors,
@@ -165,10 +174,33 @@ export const BlogPostForm = ({
                   <SelectContent>
                     <SelectItem value="draft">Draft</SelectItem>
                     <SelectItem value="published">Published</SelectItem>
+                    <SelectItem value="scheduled">Scheduled</SelectItem>
                   </SelectContent>
                 </Select>
               )}
             />
+          </div>
+
+          <div>
+            <Label htmlFor="published_at" className="block text-sm font-medium text-gray-700">
+              Publish date &amp; time
+            </Label>
+            <Controller
+              name="published_at"
+              control={control}
+              render={({ field }) => (
+                <Input
+                  type="datetime-local"
+                  id="published_at"
+                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                  value={toLocalInput(field.value)}
+                  onChange={(e) => field.onChange(e.target.value ? new Date(e.target.value).toISOString() : '')}
+                />
+              )}
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Set a past date for imported articles, or a future date with status "Scheduled" to publish automatically.
+            </p>
           </div>
 
           <div>

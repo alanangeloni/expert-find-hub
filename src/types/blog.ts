@@ -14,6 +14,8 @@ export const BLOG_CATEGORIES = [
 
 export type BlogCategoryType = typeof BLOG_CATEGORIES[number];
 
+export type BlogStatus = 'draft' | 'published' | 'scheduled';
+
 export interface BlogPost {
   id: string;
   title: string;
@@ -21,7 +23,7 @@ export interface BlogPost {
   content: string;
   excerpt?: string;
   cover_image_url?: string;
-  status: 'draft' | 'published';
+  status: BlogStatus;
   author_id?: string;
   published_at?: string;
   created_at?: string;
@@ -41,9 +43,9 @@ export const blogPostSchema = z.object({
   content: z.string().min(1, "Content is required"),
   excerpt: z.string().optional(),
   cover_image_url: z.string().optional(),
-  status: z.enum(['draft', 'published']),
+  status: z.enum(['draft', 'published', 'scheduled']),
   categories: z.array(z.string()).optional(),
-  published_at: z.string().optional(),
+  published_at: z.string().optional().nullable(),
 });
 
 export type BlogPostFormValues = z.infer<typeof blogPostSchema>;

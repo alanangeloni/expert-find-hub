@@ -40,7 +40,12 @@ const BlogArticle = () => {
       setLoading(true);
       try {
         let queryBuilder = supabase.from("blog_posts").select("*").eq("slug", slug);
-        if (!(isAdmin && user)) queryBuilder = queryBuilder.eq("status", "published");
+        if (!(isAdmin && user)) {
+          const now = new Date().toISOString();
+          queryBuilder = queryBuilder.or(
+            `and(status.eq.published,published_at.is.null),and(status.eq.published,published_at.lte.${now}),and(status.eq.scheduled,published_at.lte.${now})`
+          );
+        }
         const { data } = await queryBuilder.maybeSingle();
 
         if (!data) {
@@ -190,7 +195,10 @@ const BlogArticle = () => {
             <div className="blog-post__badges">
               <span className="badge badge--green badge--md">{category}</span>
               <span className="blog-post__read">{readTime(post)} min read</span>
-              {post.status === "draft" && isAdmin && <span className="badge badge--neutral badge--md">Draft</span>}
+              {isAdmin && post.status === "draft" && <span className="badge badge--neutral badge--md">Draft</span>}
+              {isAdmin && post.status === "scheduled" && new Date(post.published_at || 0) > new Date() && (
+                <span className="badge badge--neutral badge--md">Scheduled</span>
+              )}
             </div>
             <h1>{post.title}</h1>
             <p className="blog-post__dek">{postExcerpt(post)}</p>
