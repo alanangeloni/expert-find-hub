@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -26,12 +26,54 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { AdminListToolbar } from '@/components/admin/AdminListToolbar';
+import { AdminPagination } from '@/components/admin/AdminPagination';
+import {
+  compareByStringField,
+  matchesSearchQuery,
+  useAdminListPipeline,
+  type AdminSortCompare,
+} from '@/hooks/useAdminListPipeline';
+
+type InvestmentFirmRow = {
+  id: string;
+  name: string;
+  headquarters?: string | null;
+  slug?: string | null;
+  verified?: boolean | null;
+  aum?: string | null;
+  minimum_investment?: number | null;
+  asset_class?: string | null;
+};
 
 export function InvestmentFirmManagement() {
   const [selectedFirm, setSelectedFirm] = useState(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [verifiedFilter, setVerifiedFilter] = useState('all');
+  const [sortKey, setSortKey] = useState('name_asc');
   const queryClient = useQueryClient();
+
+  const sortCompare = useMemo(() => {
+    const minInvAsc: AdminSortCompare<InvestmentFirmRow> = (a, b) =>
+      (a.minimum_investment ?? 0) - (b.minimum_investment ?? 0);
+    const minInvDesc: AdminSortCompare<InvestmentFirmRow> = (a, b) =>
+      (b.minimum_investment ?? 0) - (a.minimum_investment ?? 0);
+    return {
+      name_asc: compareByStringField<InvestmentFirmRow>((f) => f.name, true),
+      name_desc: compareByStringField<InvestmentFirmRow>((f) => f.name, false),
+      min_asc: minInvAsc,
+      min_desc: minInvDesc,
+    };
+  }, []);
 
   const { data: firms = [], isLoading } = useQuery({
     queryKey: ['investment-firms-admin'],
@@ -85,6 +127,29 @@ export function InvestmentFirmManagement() {
     queryClient.invalidateQueries({ queryKey: ['investment-firms-admin'] });
   };
 
+  const {
+    paginatedItems: visibleFirms,
+    totalCount,
+    totalPages,
+    page,
+    setPage,
+    rangeStart,
+    rangeEnd,
+  } = useAdminListPipeline({
+    items: firms as InvestmentFirmRow[],
+    searchQuery,
+    searchMatch: (f, q) =>
+      matchesSearchQuery(q, [f.name, f.headquarters, f.slug]),
+    filterFn: (f) => {
+      if (verifiedFilter === 'verified') return Boolean(f.verified);
+      if (verifiedFilter === 'unverified') return !f.verified;
+      return true;
+    },
+    sortKey,
+    sortCompare,
+    resetDeps: [verifiedFilter],
+  });
+
   if (isLoading) {
     return (
       <div className="flex justify-center py-8">
@@ -95,31 +160,67 @@ export function InvestmentFirmManagement() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center flex-wrap gap-4">
         <h2 className="text-xl font-semibold">Investment Firms ({firms.length})</h2>
-        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
-          <DialogTrigger asChild>
-            <Button onClick={handleAdd}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Firm
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle>
-                {selectedFirm ? 'Edit Investment Firm' : 'Add New Investment Firm'}
-              </DialogTitle>
-            </DialogHeader>
-            <InvestmentFirmForm 
-              firm={selectedFirm}
-              onSuccess={handleFormSuccess}
-            />
-          </DialogContent>
-        </Dialog>
       </div>
 
+      <AdminListToolbar
+        searchQuery={searchQuery}
+        onSearchQueryChange={setSearchQuery}
+        searchPlaceholder="Search by name, headquarters, or slug..."
+        totalCount={totalCount}
+        rangeStart={rangeStart}
+        rangeEnd={rangeEnd}
+        filters={
+          <>
+            <Select value={verifiedFilter} onValueChange={setVerifiedFilter}>
+              <SelectTrigger className="w-[160px]">
+                <SelectValue placeholder="Verified" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All firms</SelectItem>
+                <SelectItem value="verified">Verified</SelectItem>
+                <SelectItem value="unverified">Not verified</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={sortKey} onValueChange={setSortKey}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Sort" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="name_asc">Name A–Z</SelectItem>
+                <SelectItem value="name_desc">Name Z–A</SelectItem>
+                <SelectItem value="min_asc">Min investment ↑</SelectItem>
+                <SelectItem value="min_desc">Min investment ↓</SelectItem>
+              </SelectContent>
+            </Select>
+          </>
+        }
+        actions={
+          <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+            <DialogTrigger asChild>
+              <Button onClick={handleAdd}>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Firm
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>
+                  {selectedFirm ? 'Edit Investment Firm' : 'Add New Investment Firm'}
+                </DialogTitle>
+              </DialogHeader>
+              <InvestmentFirmForm
+                firm={selectedFirm}
+                onSuccess={handleFormSuccess}
+              />
+            </DialogContent>
+          </Dialog>
+        }
+      />
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {firms.map((firm) => (
+        {visibleFirms.map((firm) => (
           <Card key={firm.id}>
             <CardHeader className="pb-2">
               <div className="flex justify-between items-start">
@@ -162,7 +263,16 @@ export function InvestmentFirmManagement() {
             </CardContent>
           </Card>
         ))}
+        {visibleFirms.length === 0 && (
+          <p className="col-span-full text-center text-muted-foreground py-8">
+            No investment firms match your filters.
+          </p>
+        )}
       </div>
+
+      {totalCount > 0 && (
+        <AdminPagination page={page} totalPages={totalPages} onPageChange={setPage} />
+      )}
 
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>

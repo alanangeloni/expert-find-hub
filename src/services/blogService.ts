@@ -31,6 +31,54 @@ export interface BlogPostsResponse {
   totalCount: number;
 }
 
+export type BlogAdminSort = "newest" | "oldest" | "title_asc" | "title_desc";
+
+/** Categories stored on `blog_posts.blog_category` (Supabase enum). */
+export const ADMIN_BLOG_DB_CATEGORIES = [
+  "Banking",
+  "Business",
+  "Loans",
+  "Investing",
+  "Insurance",
+  "Interview",
+  "Finance",
+  "Taxes",
+  "Real Estate",
+  "Retirement",
+  "Reviews",
+] as const;
+
+export type AdminBlogDbCategory = (typeof ADMIN_BLOG_DB_CATEGORIES)[number];
+
+function mapBlogPostRow(
+  post: Record<string, unknown>
+): BlogPost {
+  const blogCategory = post.blog_category as string | null | undefined;
+  return {
+    ...(post as BlogPost),
+    status: post.status as "draft" | "published",
+    categories: blogCategory ? [blogCategory] : [],
+  };
+}
+
+function applyBlogAdminSort<T extends { order: (...args: never[]) => T }>(
+  query: T,
+  sort: BlogAdminSort = "newest"
+): T {
+  switch (sort) {
+    case "oldest":
+      return query.order("created_at", { ascending: true });
+    case "title_asc":
+      return query.order("title", { ascending: true });
+    case "title_desc":
+      return query.order("title", { ascending: false });
+    default:
+      return query
+        .order("published_at", { ascending: false, nullsFirst: false })
+        .order("created_at", { ascending: false });
+  }
+}
+
 export const uploadBlogImage = async (file: File): Promise<string | null> => {
   try {
     const fileExt = file.name.split('.').pop();
@@ -121,66 +169,89 @@ export const getBlogPosts = async (options: {
   }
 };
 
-// Get blog posts with pagination count
 export const getBlogPostsWithCount = async (options: {
-  status?: 'draft' | 'published' | 'all';
+  status?: "draft" | "published" | "all";
   category?: string;
+  blogCategory?: string;
+  searchQuery?: string;
+  sort?: BlogAdminSort;
   limit?: number;
   offset?: number;
   authorId?: string;
+  /** When true, skip N+1 category fetch (admin list). */
+  adminList?: boolean;
 } = {}): Promise<BlogPostsResponse> => {
   try {
-    let query = supabase.from('blog_posts').select('*', { count: 'exact' });
+    let query = supabase.from("blog_posts").select("*", { count: "exact" });
 
-    // Apply filters
-    if (options.status && options.status !== 'all') {
-      query = query.eq('status', options.status);
+    if (options.status && options.status !== "all") {
+      query = query.eq("status", options.status);
     }
-    
+
     if (options.authorId) {
-      query = query.eq('author_id', options.authorId);
+      query = query.eq("author_id", options.authorId);
     }
-    
-    // Order by published date or created date
-    query = query.order('published_at', { ascending: false })
-                 .order('created_at', { ascending: false });
 
-    if (options.offset && options.limit) {
-      query = query.range(options.offset, options.offset + options.limit - 1);
+    if (options.blogCategory && options.blogCategory !== "all") {
+      query = query.eq("blog_category", options.blogCategory);
+    }
+
+    const search = options.searchQuery?.trim();
+    if (search) {
+      const pattern = `%${search.replace(/[%_\\]/g, "\\$&")}%`;
+      query = query.or(
+        `title.ilike.${pattern},excerpt.ilike.${pattern},slug.ilike.${pattern}`
+      );
+    }
+
+    query = applyBlogAdminSort(query, options.sort ?? "newest");
+
+    if (options.offset !== undefined && options.limit) {
+      query = query.range(
+        options.offset,
+        options.offset + options.limit - 1
+      );
     } else if (options.limit) {
       query = query.limit(options.limit);
     }
 
     const { data, error, count } = await query;
-    
+
     if (error) {
-      console.error('Error fetching blog posts with count:', error);
+      console.error("Error fetching blog posts with count:", error);
       return { posts: [], totalCount: 0 };
     }
-    
+
     if (!data) return { posts: [], totalCount: 0 };
-    
-    // Get categories for each post using our utility function
-    const posts = await Promise.all(data.map(async (post) => {
-      const postCategories = await getPostCategories(post.id);
+
+    if (options.adminList) {
       return {
-        ...post,
-        categories: postCategories,
-        status: post.status as 'draft' | 'published'
-      } as BlogPost;
-    }));
-    
-    // Filter by category if specified
+        posts: data.map((post) => mapBlogPostRow(post as Record<string, unknown>)),
+        totalCount: count ?? 0,
+      };
+    }
+
+    const posts = await Promise.all(
+      data.map(async (post) => {
+        const postCategories = await getPostCategories(post.id);
+        return {
+          ...post,
+          categories: postCategories,
+          status: post.status as "draft" | "published",
+        } as BlogPost;
+      })
+    );
+
     let filteredPosts = posts;
     if (options.category) {
-      filteredPosts = posts.filter(post => 
-        post.categories && post.categories.includes(options.category)
+      filteredPosts = posts.filter(
+        (post) => post.categories && post.categories.includes(options.category!)
       );
     }
-    
+
     return { posts: filteredPosts, totalCount: count || 0 };
   } catch (error) {
-    console.error('Error in getBlogPostsWithCount:', error);
+    console.error("Error in getBlogPostsWithCount:", error);
     return { posts: [], totalCount: 0 };
   }
 };
