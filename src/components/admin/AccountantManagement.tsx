@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Plus, Search, Filter, Edit, Trash2, Eye } from "lucide-react";
+import { Plus, Filter, Edit, Trash2, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -33,6 +32,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { Spinner } from "@/components/ui/spinner";
 import { Tables } from "@/integrations/supabase/types";
 import { AccountantForm } from "./AccountantForm";
+import { AdminListToolbar } from "@/components/admin/AdminListToolbar";
+import { AdminPagination } from "@/components/admin/AdminPagination";
+import {
+  compareByDateField,
+  compareByStringField,
+  matchesSearchQuery,
+  useAdminListPipeline,
+} from "@/hooks/useAdminListPipeline";
 
 type AccountantRow = Tables<"accountants">;
 
@@ -57,6 +64,17 @@ const fetchAccountants = async (): Promise<AccountantRow[]> => {
 export const AccountantManagement = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [sortKey, setSortKey] = useState("newest");
+
+  const sortCompare = useMemo(
+    () => ({
+      newest: compareByDateField<AccountantRow>((a) => a.created_at, false),
+      oldest: compareByDateField<AccountantRow>((a) => a.created_at, true),
+      name_asc: compareByStringField<AccountantRow>((a) => a.name, true),
+      name_desc: compareByStringField<AccountantRow>((a) => a.name, false),
+    }),
+    []
+  );
   const [editingAccountant, setEditingAccountant] = useState<AccountantRow | null>(null);
   const [deletingAccountant, setDeletingAccountant] = useState<AccountantRow | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -68,15 +86,23 @@ export const AccountantManagement = () => {
     queryFn: fetchAccountants,
   });
 
-  const filteredAccountants = accountants.filter((a) => {
-    const q = searchQuery.toLowerCase();
-    const matchesSearch =
-      !q ||
-      a.name.toLowerCase().includes(q) ||
-      (a.firm_name || "").toLowerCase().includes(q) ||
-      (a.email || "").toLowerCase().includes(q);
-    const matchesStatus = statusFilter === "all" || a.status === statusFilter;
-    return matchesSearch && matchesStatus;
+  const {
+    paginatedItems: filteredAccountants,
+    totalCount,
+    totalPages,
+    page,
+    setPage,
+    rangeStart,
+    rangeEnd,
+  } = useAdminListPipeline({
+    items: accountants,
+    searchQuery,
+    searchMatch: (a, q) =>
+      matchesSearchQuery(q, [a.name, a.firm_name, a.email]),
+    filterFn: (a) => statusFilter === "all" || a.status === statusFilter,
+    sortKey,
+    sortCompare,
+    resetDeps: [statusFilter],
   });
 
   const handleAdd = () => {
@@ -145,36 +171,48 @@ export const AccountantManagement = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between gap-4 flex-wrap">
-        <div className="flex items-center gap-3 flex-1 min-w-[280px]">
-          <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search by name, firm, or email..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
-            />
-          </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[160px]">
-              <Filter className="h-4 w-4 mr-2" />
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
-              <SelectItem value="draft">Draft</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="approved">Approved</SelectItem>
-              <SelectItem value="rejected">Rejected</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <Button onClick={handleAdd}>
-          <Plus className="h-4 w-4 mr-2" />
-          Add Accountant
-        </Button>
-      </div>
+      <AdminListToolbar
+        searchQuery={searchQuery}
+        onSearchQueryChange={setSearchQuery}
+        searchPlaceholder="Search by name, firm, or email..."
+        totalCount={totalCount}
+        rangeStart={rangeStart}
+        rangeEnd={rangeEnd}
+        filters={
+          <>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-[160px]">
+                <Filter className="h-4 w-4 mr-2" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="draft">Draft</SelectItem>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="approved">Approved</SelectItem>
+                <SelectItem value="rejected">Rejected</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={sortKey} onValueChange={setSortKey}>
+              <SelectTrigger className="w-[160px]">
+                <SelectValue placeholder="Sort" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="newest">Newest</SelectItem>
+                <SelectItem value="oldest">Oldest</SelectItem>
+                <SelectItem value="name_asc">Name A–Z</SelectItem>
+                <SelectItem value="name_desc">Name Z–A</SelectItem>
+              </SelectContent>
+            </Select>
+          </>
+        }
+        actions={
+          <Button onClick={handleAdd}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Accountant
+          </Button>
+        }
+      />
 
       {isLoading ? (
         <div className="flex justify-center py-12">
@@ -246,6 +284,10 @@ export const AccountantManagement = () => {
             </p>
           )}
         </div>
+      )}
+
+      {!isLoading && totalCount > 0 && (
+        <AdminPagination page={page} totalPages={totalPages} onPageChange={setPage} />
       )}
 
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>

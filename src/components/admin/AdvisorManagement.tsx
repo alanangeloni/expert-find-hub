@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -32,6 +32,80 @@ import {
   TabsList,
   TabsTrigger,
 } from '@/components/ui/tabs';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { AdminListToolbar } from '@/components/admin/AdminListToolbar';
+import { AdminPagination } from '@/components/admin/AdminPagination';
+import {
+  compareByDateField,
+  compareByStringField,
+  matchesSearchQuery,
+  useAdminListPipeline,
+} from '@/hooks/useAdminListPipeline';
+
+type AdvisorRow = {
+  id: string;
+  status: string;
+  name: string;
+  firm_name?: string | null;
+  email?: string | null;
+  city?: string | null;
+  state_hq?: string | null;
+  created_at?: string | null;
+  [key: string]: unknown;
+};
+
+function AdvisorTabPanel({
+  advisors,
+  status,
+  searchQuery,
+  sortKey,
+  sortCompare,
+  emptyMessage,
+  renderAdvisorCard,
+}: {
+  advisors: AdvisorRow[];
+  status: string;
+  searchQuery: string;
+  sortKey: string;
+  sortCompare: Record<string, (a: AdvisorRow, b: AdvisorRow) => number>;
+  emptyMessage: string;
+  renderAdvisorCard: (advisor: AdvisorRow) => React.ReactNode;
+}) {
+  const { paginatedItems, totalCount, totalPages, page, setPage, rangeStart, rangeEnd } =
+    useAdminListPipeline({
+      items: advisors,
+      filterFn: (a) => a.status === status,
+      searchQuery,
+      searchMatch: (a, q) =>
+        matchesSearchQuery(q, [a.name, a.firm_name, a.email, a.city, a.state_hq]),
+      sortKey,
+      sortCompare,
+      resetDeps: [status],
+    });
+
+  return (
+    <div className="space-y-4">
+      {totalCount > 0 && (
+        <p className="text-sm text-muted-foreground">
+          Showing {rangeStart}–{rangeEnd} of {totalCount}
+        </p>
+      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {paginatedItems.map(renderAdvisorCard)}
+        {totalCount === 0 && (
+          <p className="text-gray-500 col-span-full text-center py-8">{emptyMessage}</p>
+        )}
+      </div>
+      <AdminPagination page={page} totalPages={totalPages} onPageChange={setPage} />
+    </div>
+  );
+}
 
 export function AdvisorManagement() {
   const [selectedAdvisor, setSelectedAdvisor] = useState(null);
@@ -39,7 +113,19 @@ export function AdvisorManagement() {
   const [isViewOpen, setIsViewOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('pending');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortKey, setSortKey] = useState('newest');
   const queryClient = useQueryClient();
+
+  const sortCompare = useMemo(
+    () => ({
+      newest: compareByDateField<AdvisorRow>((a) => a.created_at, false),
+      oldest: compareByDateField<AdvisorRow>((a) => a.created_at, true),
+      name_asc: compareByStringField<AdvisorRow>((a) => a.name, true),
+      name_desc: compareByStringField<AdvisorRow>((a) => a.name, false),
+    }),
+    []
+  );
 
   const { data: advisors = [], isLoading } = useQuery({
     queryKey: ['advisors-admin'],
@@ -126,7 +212,7 @@ export function AdvisorManagement() {
     );
   }
 
-  const renderAdvisorCard = (advisor: any) => (
+  const renderAdvisorCard = (advisor: AdvisorRow) => (
     <Card key={advisor.id}>
       <CardHeader className="pb-2">
         <div className="flex justify-between items-start">
@@ -191,13 +277,32 @@ export function AdvisorManagement() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center flex-wrap gap-4">
         <h2 className="text-xl font-semibold">Financial Advisors Management</h2>
         <Button onClick={handleAdd}>
           <Plus className="h-4 w-4 mr-2" />
           Add Advisor
         </Button>
       </div>
+
+      <AdminListToolbar
+        searchQuery={searchQuery}
+        onSearchQueryChange={setSearchQuery}
+        searchPlaceholder="Search by name, firm, email, or location..."
+        filters={
+          <Select value={sortKey} onValueChange={setSortKey}>
+            <SelectTrigger className="w-[160px]">
+              <SelectValue placeholder="Sort" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="newest">Newest</SelectItem>
+              <SelectItem value="oldest">Oldest</SelectItem>
+              <SelectItem value="name_asc">Name A–Z</SelectItem>
+              <SelectItem value="name_desc">Name Z–A</SelectItem>
+            </SelectContent>
+          </Select>
+        }
+      />
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-4">
@@ -216,47 +321,51 @@ export function AdvisorManagement() {
         </TabsList>
 
         <TabsContent value="pending">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {pendingAdvisors.map(renderAdvisorCard)}
-            {pendingAdvisors.length === 0 && (
-              <p className="text-gray-500 col-span-full text-center py-8">
-                No pending advisor registrations.
-              </p>
-            )}
-          </div>
+          <AdvisorTabPanel
+            advisors={advisors as AdvisorRow[]}
+            status="pending_approval"
+            searchQuery={searchQuery}
+            sortKey={sortKey}
+            sortCompare={sortCompare}
+            emptyMessage="No pending advisor registrations."
+            renderAdvisorCard={renderAdvisorCard}
+          />
         </TabsContent>
 
         <TabsContent value="approved">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {approvedAdvisors.map(renderAdvisorCard)}
-            {approvedAdvisors.length === 0 && (
-              <p className="text-gray-500 col-span-full text-center py-8">
-                No approved advisors.
-              </p>
-            )}
-          </div>
+          <AdvisorTabPanel
+            advisors={advisors as AdvisorRow[]}
+            status="approved"
+            searchQuery={searchQuery}
+            sortKey={sortKey}
+            sortCompare={sortCompare}
+            emptyMessage="No approved advisors."
+            renderAdvisorCard={renderAdvisorCard}
+          />
         </TabsContent>
 
         <TabsContent value="rejected">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {rejectedAdvisors.map(renderAdvisorCard)}
-            {rejectedAdvisors.length === 0 && (
-              <p className="text-gray-500 col-span-full text-center py-8">
-                No rejected advisor registrations.
-              </p>
-            )}
-          </div>
+          <AdvisorTabPanel
+            advisors={advisors as AdvisorRow[]}
+            status="rejected"
+            searchQuery={searchQuery}
+            sortKey={sortKey}
+            sortCompare={sortCompare}
+            emptyMessage="No rejected advisor registrations."
+            renderAdvisorCard={renderAdvisorCard}
+          />
         </TabsContent>
 
         <TabsContent value="drafts">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {draftAdvisors.map(renderAdvisorCard)}
-            {draftAdvisors.length === 0 && (
-              <p className="text-gray-500 col-span-full text-center py-8">
-                No draft advisor profiles.
-              </p>
-            )}
-          </div>
+          <AdvisorTabPanel
+            advisors={advisors as AdvisorRow[]}
+            status="draft"
+            searchQuery={searchQuery}
+            sortKey={sortKey}
+            sortCompare={sortCompare}
+            emptyMessage="No draft advisor profiles."
+            renderAdvisorCard={renderAdvisorCard}
+          />
         </TabsContent>
       </Tabs>
 
