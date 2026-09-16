@@ -355,7 +355,7 @@ const generateBlogPostPages = async () => {
     const { data: posts, error } = await supabase
       .from('blog_posts')
       .select('id, title, slug, excerpt, content')
-      .eq('status', 'published');
+      .or(`and(status.eq.published,published_at.is.null),and(status.eq.published,published_at.lte.${new Date().toISOString()}),and(status.eq.scheduled,published_at.lte.${new Date().toISOString()})`);
     
     if (error) {
       console.error('Error fetching blog posts:', error);
