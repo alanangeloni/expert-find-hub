@@ -263,7 +263,7 @@ export async function collectPages() {
     ),
     fetchRows(
       'blog_posts',
-      'select=slug,title,excerpt,content,updated_at,published_at&status=eq.published&slug=not.is.null&limit=5000'
+      'select=slug,title,excerpt,content,updated_at,published_at&status=in.(published,scheduled)&published_at=lte.${encodeURIComponent(new Date().toISOString())}&slug=not.is.null&limit=5000'
     ),
   ]);
 
