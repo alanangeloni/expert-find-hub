@@ -1,32 +1,52 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import { dbCategoryToUiLabels, uiCategoriesToDb } from "@/utils/blogCategoryMap";
+import type { Database } from "@/integrations/supabase/types";
+
+type DbBlogCategory = Database["public"]["Enums"]["blog_category"];
 
 export const getPostCategories = async (postId: string): Promise<string[]> => {
   try {
-    // Since blog_post_categories table doesn't exist in the current schema,
-    // we'll return an empty array for now
-    console.log('Getting categories for post:', postId);
-    return [];
+    const { data, error } = await supabase
+      .from("blog_posts")
+      .select("blog_category")
+      .eq("id", postId)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Error fetching post category:", error);
+      return [];
+    }
+
+    return dbCategoryToUiLabels(data?.blog_category as DbBlogCategory | null);
   } catch (error) {
-    console.error('Error fetching post categories:', error);
+    console.error("Error fetching post categories:", error);
     return [];
   }
 };
 
+export const setPostCategory = async (
+  postId: string,
+  categories?: string[]
+): Promise<void> => {
+  const blog_category = uiCategoriesToDb(categories);
+
+  const { error } = await supabase
+    .from("blog_posts")
+    .update({ blog_category })
+    .eq("id", postId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+};
+
+/** @deprecated Use setPostCategory — only one category is stored in `blog_category`. */
 export const addCategoryToPost = async (postId: string, category: string): Promise<void> => {
-  try {
-    // Placeholder for adding category to post
-    console.log('Adding category to post:', postId, category);
-  } catch (error) {
-    console.error('Error adding category to post:', error);
-  }
+  await setPostCategory(postId, [category]);
 };
 
-export const removeCategoryFromPost = async (postId: string, category: string): Promise<void> => {
-  try {
-    // Placeholder for removing category from post
-    console.log('Removing category from post:', postId, category);
-  } catch (error) {
-    console.error('Error removing category from post:', error);
-  }
+/** @deprecated Use setPostCategory with an empty list to clear. */
+export const removeCategoryFromPost = async (_postId: string, _category: string): Promise<void> => {
+  console.warn("removeCategoryFromPost is a no-op; update categories via the blog editor save.");
 };

@@ -167,7 +167,7 @@ export const BlogPostForm = ({
               name="status"
               control={control}
               render={({ field }) => (
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select onValueChange={field.onChange} value={field.value}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
