@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { AdvisorCard } from "@/components/advisors/AdvisorCard";
 import { getAdvisors, getAllAdvisors } from "@/services/advisorsService";
 import { SPECIALTY_GROUPS } from "@/constants/specialties";
+import { ALL_SERVICES, serviceSlug } from "@/constants/serviceContent";
 import { Seo } from "@/components/seo/Seo";
 import {
   Accordion,
@@ -320,11 +321,12 @@ const SpecialtyGrid = () => {
         const count = advisors.filter((a) =>
           (a.advisor_services || []).some((s) => group.values.includes(s))
         ).length;
+        const slugSource = group.values.find((v) => ALL_SERVICES.includes(v)) || group.values[0] || group.label;
         return (
           <Link
             key={group.label}
             className={`home-specialty home-specialty--${tone}`}
-            to={`/advisors?specialty=${encodeURIComponent(group.label)}`}
+            to={`/services/${serviceSlug(slugSource)}`}
           >
             <span className="home-specialty__name">{group.label}</span>
             <span className="home-specialty__count">
@@ -371,7 +373,7 @@ const HomePage = () => {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     const q = heroQuery.trim();
-    navigate(q ? `/advisors?search=${encodeURIComponent(q)}` : "/advisors");
+    navigate(q ? `/advisors?q=${encodeURIComponent(q)}` : "/advisors");
   };
 
   return (
@@ -421,7 +423,7 @@ const HomePage = () => {
             <span className="home-hero__chips-label">Popular:</span>
             <div className="home-hero__chips-row">
               {["Retirement Planning", "Tax Planning", "Estate/Trust Planning", "Small Business Planning"].map((s) => (
-                <Link key={s} className="home-hero__chip" to={`/advisors?specialties=${encodeURIComponent(s)}`}>
+                <Link key={s} className="home-hero__chip" to={`/services/${serviceSlug(s)}`}>
                   {s}
                 </Link>
               ))}
@@ -678,7 +680,7 @@ const Index = () => {
     url: "https://financialprofessional.com/",
     potentialAction: {
       "@type": "SearchAction",
-      target: "https://financialprofessional.com/advisors?search={search_term_string}",
+      target: "https://financialprofessional.com/advisors?q={search_term_string}",
       "query-input": "required name=search_term_string",
     },
   };

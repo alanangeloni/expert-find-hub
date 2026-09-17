@@ -4,7 +4,7 @@
 
 import { writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
-import { collectPages, absoluteUrl, xmlEscape } from './seo-lib.mjs';
+import { collectPages, absoluteUrl, xmlEscape, isIndexable } from './seo-lib.mjs';
 
 function toXml(entries) {
   const urls = entries.map((e) =>
@@ -29,6 +29,6 @@ function toXml(entries) {
   ].join('\n');
 }
 
-const entries = await collectPages();
+const entries = (await collectPages()).filter(isIndexable);
 writeFileSync(resolve('public/sitemap.xml'), toXml(entries), 'utf-8');
 console.log(`sitemap.xml written (${entries.length} entries)`);

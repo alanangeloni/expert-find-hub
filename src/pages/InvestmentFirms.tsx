@@ -7,6 +7,7 @@ import { FirmCard } from "@/components/firms/FirmCard";
 import { SearchFilters, type FirmFilters } from "@/components/search/SearchFilters";
 import { NewsletterSignup } from "@/components/common/NewsletterSignup";
 import { Seo } from "@/components/seo/Seo";
+import { CrawlIndex } from "@/components/seo/CrawlIndex";
 
 const EMPTY: FirmFilters = { query: "", assetClass: "", minimum: "", sort: "name" };
 
@@ -147,6 +148,10 @@ const InvestmentFirms = () => {
                 </button>
               </div>
             )}
+            <CrawlIndex
+              title="All matching firms"
+              items={results.map((f) => ({ href: `/firms/${f.slug}`, label: f.name }))}
+            />
           </>
         )}
       </div>

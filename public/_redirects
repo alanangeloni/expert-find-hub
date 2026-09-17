@@ -1,35 +1,57 @@
+# Trailing slashes should not create a second indexable URL.
+/*/ /:splat 301
 
-# Serve the prerendered static HTML for each route when it exists,
-# otherwise fall back to the single-page app shell.
+# Legacy Webflow / CMS URLs still present in Google's index.
+/finpro /advisors 301
+/finpro/ /advisors 301
+/finpro/:slug /advisors/:slug 301
+/professionals /advisors 301
+/professionals/ /advisors 301
+/professionals/:slug /advisors/:slug 301
+/learn /blog 301
+/learn/ /blog 301
+/financial-u /blog 301
+/about / 301
+/about-us / 301
 
-# Investment firms
+# Serve the prerendered static HTML for each public route when it exists.
 /firms/:slug /firms/:slug/index.html 200
 /firms /firms/index.html 200
 
-# Financial advisors
 /advisors/:slug /advisors/:slug/index.html 200
 /advisors /advisors/index.html 200
 
-# Accounting firms
 /accounting-firms/:slug /accounting-firms/:slug/index.html 200
 /accounting-firms /accounting-firms/index.html 200
 
-# Accountants
 /accountants/specialty/:slug /accountants/specialty/:slug/index.html 200
 /accountants/:slug /accountants/:slug/index.html 200
 /accountants /accountants/index.html 200
 
-# Specialty (service) landing pages
 /services/:slug /services/:slug/index.html 200
 /services /services/index.html 200
 
-# State landing pages
 /financial-professionals/:state /financial-professionals/:state/index.html 200
 /financial-professionals /financial-professionals/index.html 200
 
-# Blog
 /blog/:slug /blog/:slug/index.html 200
 /blog /blog/index.html 200
 
-# All other routes fallback to SPA
-/* /index.html 200
+/directory /directory/index.html 200
+/advisor-registration /advisor-registration/index.html 200
+
+# Private SPA routes: keep working on refresh, but never look like the homepage.
+/auth/signin /auth/signin/index.html 200
+/auth/signup /auth/signup/index.html 200
+/auth/forgot-password /auth/forgot-password/index.html 200
+/auth/reset-password /auth/reset-password/index.html 200
+/advisor-profile /advisor-profile/index.html 200
+/app /app/index.html 200
+/admin/blog/new /admin/blog/new/index.html 200
+/admin/blog /admin/blog/index.html 200
+/admin/entities /admin/entities/index.html 200
+/admin/* /admin/blog/index.html 200
+
+# Unknown URLs must return a real 404 instead of the homepage (HTTP 200 +
+# homepage canonical is why Google collapses so many URLs as duplicates).
+/* /404.html 404

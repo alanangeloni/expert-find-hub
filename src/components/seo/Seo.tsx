@@ -27,7 +27,7 @@ export const Seo: React.FC<SeoProps> = ({
     <Helmet>
       <title>{title}</title>
       <meta name="description" content={description} />
-      {noIndex && <meta name="robots" content="noindex, nofollow" />}
+      <meta name="robots" content={noIndex ? "noindex, nofollow" : "index, follow"} />
       
       {/* Open Graph tags */}
       <meta property="og:title" content={title} />

@@ -8,6 +8,7 @@ import { BlogCard } from "@/components/blog/BlogCard";
 import { SearchFilters, type AdvisorFilters } from "@/components/search/SearchFilters";
 import { NewsletterSignup } from "@/components/common/NewsletterSignup";
 import { Seo } from "@/components/seo/Seo";
+import { CrawlIndex } from "@/components/seo/CrawlIndex";
 import { seoTitle, seoDescription } from "@/utils/seoText";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { valuesForSpecialty } from "@/constants/specialties";
@@ -203,7 +204,7 @@ const ServiceAdvisors = () => {
         description={description}
         canonicalUrl={canonical}
         structuredData={structuredData}
-        noIndex={count === 0}
+        noIndex={!isLoading && count === 0}
       />
 
       <div className="services-page__hero">
@@ -285,6 +286,10 @@ const ServiceAdvisors = () => {
                 </button>
               </div>
             )}
+            <CrawlIndex
+              title="All matching professionals"
+              items={results.map((a) => ({ href: `/advisors/${a.slug}`, label: a.name }))}
+            />
           </>
         )}
 
