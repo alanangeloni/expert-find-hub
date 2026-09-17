@@ -11,6 +11,7 @@ import AdminRoute from "./components/AdminRoute";
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 import Index from "./pages/Index";
+import Directory from "./pages/Directory";
 import Advisors from "./pages/Advisors";
 import AdvisorDetail from "./pages/AdvisorDetail";
 import StatesIndex from "./pages/StatesIndex";
@@ -83,6 +84,7 @@ const App = () => (
                   <Route path="/accounting-firms/:slug" element={<AccountingFirmDetail />} />
                   <Route path="/blog" element={<Blog />} />
                   <Route path="/blog/:slug" element={<BlogArticle />} />
+                  <Route path="/directory" element={<Directory />} />
                   <Route path="/auth/signin" element={<SignIn />} />
                   <Route path="/auth/signup" element={<SignUp />} />
                   <Route path="/auth/forgot-password" element={<ForgotPassword />} />

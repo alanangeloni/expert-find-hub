@@ -4,6 +4,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { getAllAccountants } from "@/services/accountantsService";
 import { AccountantCard } from "@/components/accountants/AccountantCard";
 import { Seo } from "@/components/seo/Seo";
+import { CrawlIndex } from "@/components/seo/CrawlIndex";
 import { US_STATES } from "@/constants/states";
 import { ACCOUNTANT_SERVICES, ACCOUNTANT_SPECIALTIES, ACCOUNTANT_CREDENTIALS } from "@/constants/accountants";
 import { advisorLocation } from "@/utils/advisorDisplay";
@@ -310,6 +311,10 @@ const Accountants = () => {
                 </button>
               </div>
             )}
+            <CrawlIndex
+              title="All matching accountants"
+              items={results.map((a) => ({ href: `/accountants/${a.slug}`, label: a.name }))}
+            />
           </>
         )}
       </div>

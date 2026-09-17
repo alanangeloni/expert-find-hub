@@ -7,8 +7,10 @@ import { SearchFilters, type AdvisorFilters } from "@/components/search/SearchFi
 import { valuesForSpecialty, SPECIALTY_GROUPS } from "@/constants/specialties";
 import { NewsletterSignup } from "@/components/common/NewsletterSignup";
 import { Seo } from "@/components/seo/Seo";
+import { CrawlIndex } from "@/components/seo/CrawlIndex";
 import { seoTitle, seoDescription } from "@/utils/seoText";
 import { US_STATES, stateFromSlug, stateSlug } from "@/constants/states";
+import { serviceSlug } from "@/constants/serviceContent";
 import { advisorLocation, formatMinAssets } from "@/utils/advisorDisplay";
 import NotFound from "./NotFound";
 
@@ -165,6 +167,7 @@ const StateAdvisors = () => {
         description={description}
         canonicalUrl={canonical}
         structuredData={structuredData}
+        noIndex={!isLoading && count === 0}
       />
 
       <div className="states-page__hero">
@@ -249,6 +252,10 @@ const StateAdvisors = () => {
                 </button>
               </div>
             )}
+            <CrawlIndex
+              title={`All matching professionals in ${state}`}
+              items={results.map((a) => ({ href: `/advisors/${a.slug}`, label: a.name }))}
+            />
           </>
         )}
 
@@ -257,11 +264,7 @@ const StateAdvisors = () => {
             <h2>Browse by specialty in {state}</h2>
             <div className="state-page__links">
               {topSpecialties.map((s) => (
-                <Link
-                  key={s}
-                  to={`/advisors?state=${encodeURIComponent(state)}&specialty=${encodeURIComponent(s)}`}
-                  className="state-page__link"
-                >
+                <Link key={s} to={`/services/${serviceSlug(s)}`} className="state-page__link">
                   {labelForRawService(s)}
                 </Link>
               ))}

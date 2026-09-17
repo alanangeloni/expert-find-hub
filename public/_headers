@@ -1,0 +1,14 @@
+/auth/*
+  X-Robots-Tag: noindex, nofollow
+
+/admin/*
+  X-Robots-Tag: noindex, nofollow
+
+/advisor-profile
+  X-Robots-Tag: noindex, nofollow
+
+/app
+  X-Robots-Tag: noindex, nofollow
+
+/404.html
+  X-Robots-Tag: noindex, nofollow

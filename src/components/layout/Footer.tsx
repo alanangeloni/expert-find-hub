@@ -24,6 +24,7 @@ const Footer = () => {
             <Link to="/firms">Browse firms</Link>
             <Link to="/financial-professionals">Browse by state</Link>
             <Link to="/services">Browse by specialty</Link>
+            <Link to="/accountants">Find accountants</Link>
             <Link to="/#match">Matching quiz</Link>
             <Link to="/services/retirement-planning">Retirement specialists</Link>
           </div>
@@ -37,6 +38,7 @@ const Footer = () => {
           <div className="footer__col">
             <h4>Company</h4>
             <Link to="/blog">Blog</Link>
+            <Link to="/directory">Site directory</Link>
             <Link to="/advisor-registration">For advisors</Link>
             <Link to="/auth/signin">Log in</Link>
           </div>

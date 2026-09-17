@@ -7,6 +7,7 @@ import { SearchFilters, type AdvisorFilters } from "@/components/search/SearchFi
 import { valuesForSpecialty, SPECIALTY_GROUPS } from "@/constants/specialties";
 import { NewsletterSignup } from "@/components/common/NewsletterSignup";
 import { Seo } from "@/components/seo/Seo";
+import { CrawlIndex } from "@/components/seo/CrawlIndex";
 import { advisorLocation, formatMinAssets } from "@/utils/advisorDisplay";
 
 const EMPTY: AdvisorFilters = {
@@ -33,7 +34,7 @@ const AdvisorSearch = () => {
   useEffect(() => {
     const specialty = searchParams.get("specialty") || searchParams.get("specialties") || "";
     const state = searchParams.get("state") || "";
-    const query = searchParams.get("q") || "";
+    const query = searchParams.get("q") || searchParams.get("search") || "";
     const feeStructure = searchParams.get("feeStructure") || "";
     const fiduciary = searchParams.get("fiduciary");
     setFilters((prev) => ({
@@ -176,6 +177,10 @@ const AdvisorSearch = () => {
                 </button>
               </div>
             )}
+            <CrawlIndex
+              title="All matching advisors"
+              items={results.map((a) => ({ href: `/advisors/${a.slug}`, label: a.name }))}
+            />
           </>
         )}
       </div>

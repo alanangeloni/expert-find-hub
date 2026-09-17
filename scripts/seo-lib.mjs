@@ -143,6 +143,139 @@ export const US_STATES = [
   'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming',
 ];
 
+// Keep in sync with src/constants/advisorServices.ts so every SPA service route
+// is prerendered (empty ones are noindexed and omitted from the sitemap).
+export const ALL_SERVICES = [
+  'Alternative Investments',
+  'Budgeting',
+  'Business Succession Planning',
+  'Cash Flow Analysis',
+  'Cryptocurrency & NFTs',
+  'Debt Management',
+  'Divorce Planning',
+  'Early Career Planning',
+  'Education Planning',
+  'Elder Care',
+  'Employee/Employer Benefits',
+  'Environment, Social, and Governance',
+  'Estate/Trust Planning',
+  'Expat & Cross-Border Planning',
+  'Financial Planning',
+  'Health Care',
+  'Inheritance',
+  'Insurance Planning',
+  'Investment Management',
+  'Life Transitions',
+  'Long-term Care',
+  'Philanthropy Planning',
+  'Portfolio Construction',
+  'Retirement Income Management',
+  'Retirement Planning',
+  'Small Business Planning',
+  'Socially Responsible Investing',
+  'Social Security Planning',
+  'Special Needs Planning',
+  'Sports and Entertainment',
+  'Succession Planning',
+  'Tax Planning',
+  'Wealth Management',
+];
+
+export const ACCOUNTANT_SPECIALTIES = [
+  'Athletes & Entertainers',
+  'Bootstrapped Companies',
+  'Business Executives',
+  'Business Owners/Entrepreneurs',
+  'Content Creators',
+  'Cryptocurrency Investors',
+  'Crypto Investors',
+  'Digital Nomads',
+  'Divorced Individuals',
+  'E-commerce Businesses',
+  'Enterprise Companies ($50M+)',
+  'Equity Compensation (RSUs, Stock Options)',
+  'Generational Wealth Transfer',
+  'Growing Companies ($1M-$10M)',
+  'HENRY (High Earners Not Rich Yet)',
+  'High Net Worth Individuals',
+  'International/Expats',
+  'K1 Partnership Income',
+  'Mid-Market Companies ($10M-$50M)',
+  'Multi-generational Families',
+  'Multi-state Returns',
+  'Pre-Retirees (5-10 years out)',
+  'Pre-revenue Startups',
+  'Private Equity-Backed Companies',
+  'Professors & Educators',
+  'QSBS Holders',
+  'Real Estate Investors',
+  'Retirees',
+  'SMB Owner',
+  'SMB Owners',
+  'Solopreneurs',
+  'Ultra High Net Worth Individuals',
+  'VC Backed',
+  'VC Backed Startups',
+  'Young Professionals',
+];
+
+const PRIVATE_PAGES = [
+  {
+    path: '/auth/signin',
+    title: 'Sign In | Financial Professional',
+    description: 'Sign in to your Financial Professional account.',
+    noIndex: true,
+  },
+  {
+    path: '/auth/signup',
+    title: 'Create an Account | Financial Professional',
+    description: 'Create a Financial Professional account to save advisors and request introductions.',
+    noIndex: true,
+  },
+  {
+    path: '/auth/forgot-password',
+    title: 'Reset Your Password | Financial Professional',
+    description: 'Request a password reset link for your Financial Professional account.',
+    noIndex: true,
+  },
+  {
+    path: '/auth/reset-password',
+    title: 'Set a New Password | Financial Professional',
+    description: 'Choose a new password for your Financial Professional account.',
+    noIndex: true,
+  },
+  {
+    path: '/advisor-profile',
+    title: 'Your Advisor Profile | Financial Professional',
+    description: 'Manage your advisor profile and meeting requests.',
+    noIndex: true,
+  },
+  {
+    path: '/app',
+    title: 'Investment Platform | Financial Professional',
+    description: 'Professional investment tools on Financial Professional.',
+    noIndex: true,
+  },
+  {
+    path: '/admin/blog',
+    title: 'Admin | Financial Professional',
+    description: 'Internal admin dashboard.',
+    noIndex: true,
+  },
+  {
+    path: '/admin/blog/new',
+    title: 'Admin | Financial Professional',
+    description: 'Internal blog editor.',
+    noIndex: true,
+  },
+  {
+    path: '/admin/entities',
+    title: 'Admin | Financial Professional',
+    description: 'Internal admin dashboard.',
+    noIndex: true,
+  },
+];
+
 // Asset classes that are not advisory businesses. Their profile pages stay
 // reachable, but they are excluded from the firms section of the sitemap.
 const NON_ADVISORY_ASSET_CLASSES = new Set(['Cryptocurrency']);
@@ -158,6 +291,9 @@ const staticPages = [
     ),
     changefreq: 'weekly',
     priority: '1.0',
+    h1: 'Achieve your Financial Goals with a Financial Professional',
+    linkName: 'Home',
+    kind: 'hub',
   },
   {
     path: '/advisors',
@@ -168,6 +304,9 @@ const staticPages = [
     ),
     changefreq: 'daily',
     priority: '0.9',
+    h1: 'Find your Financial Advisor',
+    linkName: 'Find advisors',
+    kind: 'hub',
   },
   {
     path: '/financial-professionals',
@@ -178,6 +317,9 @@ const staticPages = [
     ),
     changefreq: 'weekly',
     priority: '0.9',
+    h1: 'Browse Financial Professionals by State',
+    linkName: 'Browse by state',
+    kind: 'hub',
   },
   {
     path: '/services',
@@ -188,6 +330,9 @@ const staticPages = [
     ),
     changefreq: 'weekly',
     priority: '0.9',
+    h1: 'Browse Financial Professionals by Specialty',
+    linkName: 'Browse by specialty',
+    kind: 'hub',
   },
   {
     path: '/firms',
@@ -198,6 +343,9 @@ const staticPages = [
     ),
     changefreq: 'daily',
     priority: '0.9',
+    h1: 'Browse independent investment firms',
+    linkName: 'Investment firms',
+    kind: 'hub',
   },
   {
     path: '/accountants',
@@ -208,6 +356,9 @@ const staticPages = [
     ),
     changefreq: 'daily',
     priority: '0.8',
+    h1: 'Find your Accountant',
+    linkName: 'Accountants',
+    kind: 'hub',
   },
   {
     path: '/accounting-firms',
@@ -218,6 +369,9 @@ const staticPages = [
     ),
     changefreq: 'weekly',
     priority: '0.8',
+    h1: 'Accounting firms directory',
+    linkName: 'Accounting firms',
+    kind: 'hub',
   },
   {
     path: '/blog',
@@ -228,6 +382,21 @@ const staticPages = [
     ),
     changefreq: 'daily',
     priority: '0.8',
+    h1: 'The Journal: Money Guides',
+    linkName: 'Journal',
+    kind: 'hub',
+  },
+  {
+    path: '/directory',
+    title: seoTitle('Site Directory'),
+    description: seoDescription(
+      'Browse every financial professional directory page, including advisors, firms, accountants, specialties, states, and journal articles.'
+    ),
+    changefreq: 'weekly',
+    priority: '0.6',
+    h1: 'Site directory',
+    linkName: 'Site directory',
+    kind: 'hub',
   },
   {
     path: '/advisor-registration',
@@ -238,6 +407,9 @@ const staticPages = [
     ),
     changefreq: 'monthly',
     priority: '0.6',
+    h1: 'List your advisor profile',
+    linkName: 'For advisors',
+    kind: 'hub',
   },
 ];
 
@@ -285,26 +457,36 @@ export async function collectPages() {
       priority: '0.7',
       titleBase: `${a.name}, ${a.position || 'Financial Advisor'}`,
       context: loc || a.firm_name || undefined,
+      h1: a.name,
+      linkName: a.name,
+      kind: 'advisor',
     });
   }
 
-  // Service (specialty) landing pages
+  // Service (specialty) landing pages — every SPA route, including empty ones.
   const serviceCounts = new Map();
   for (const a of advisors) {
     for (const s of a.advisor_services || []) {
       serviceCounts.set(s, (serviceCounts.get(s) || 0) + 1);
     }
   }
-  for (const [service, count] of [...serviceCounts.entries()].sort()) {
+  for (const service of [...ALL_SERVICES].sort()) {
+    const count = serviceCounts.get(service) || 0;
     pages.push({
       path: `/services/${slugify(service)}`,
       title: seoTitle(`${service} Advisors`),
       description: seoDescription(
         `Find a financial professional for ${service.toLowerCase()}`,
-        `Compare ${count} vetted fiduciary advisors on credentials, fees, and minimums, then request a free introduction.`
+        count > 0
+          ? `Compare ${count} vetted fiduciary advisors on credentials, fees, and minimums, then request a free introduction.`
+          : 'Compare vetted fiduciary advisors on credentials, fees, and minimums, then request a free introduction.'
       ),
       changefreq: 'weekly',
       priority: '0.8',
+      h1: `Find a Financial Professional for ${service}`,
+      linkName: service,
+      kind: 'service',
+      noIndex: count === 0,
     });
   }
 
@@ -326,6 +508,10 @@ export async function collectPages() {
       ),
       changefreq: 'weekly',
       priority: '0.8',
+      h1: `Find a Financial Professional in ${state}`,
+      linkName: state,
+      kind: 'state',
+      noIndex: count === 0,
     });
   }
 
@@ -346,13 +532,23 @@ export async function collectPages() {
       priority: '0.7',
       titleBase: `${a.name}${creds ? `, ${creds}` : ''}`,
       context: loc || a.firm_name || undefined,
+      h1: a.name,
+      linkName: a.name,
+      kind: 'accountant',
     });
   }
 
-  // Accountant specialty pages
-  const specialties = new Set();
+  // Accountant specialty pages — every SPA route, including empty ones.
+  const specialties = new Set(ACCOUNTANT_SPECIALTIES);
   for (const a of accountants) for (const s of a.client_specialties || []) specialties.add(s);
+  const specialtyCounts = new Map();
+  for (const a of accountants) {
+    for (const s of a.client_specialties || []) {
+      specialtyCounts.set(s, (specialtyCounts.get(s) || 0) + 1);
+    }
+  }
   for (const specialty of [...specialties].sort()) {
+    const count = specialtyCounts.get(specialty) || 0;
     pages.push({
       path: `/accountants/specialty/${slugify(specialty)}`,
       title: seoTitle(`Accountants for ${specialty}`),
@@ -362,12 +558,16 @@ export async function collectPages() {
       ),
       changefreq: 'weekly',
       priority: '0.7',
+      h1: `Accountants for ${specialty}`,
+      linkName: specialty,
+      kind: 'accountant-specialty',
+      noIndex: count === 0,
     });
   }
 
-  // Investment firm profiles (advisory businesses only)
+  // Investment firm profiles. Non-advisory asset classes stay reachable but
+  // are omitted from the sitemap so they don't compete for crawl budget.
   for (const f of firms) {
-    if (NON_ADVISORY_ASSET_CLASSES.has(f.asset_class)) continue;
     const min = f.minimum_investment != null ? `$${Number(f.minimum_investment).toLocaleString('en-US')}` : 'not specified';
     pages.push({
       path: `/firms/${f.slug}`,
@@ -380,6 +580,10 @@ export async function collectPages() {
       lastmod: isoDay(f.updated_at),
       changefreq: 'monthly',
       priority: '0.7',
+      h1: `${f.name} Review`,
+      linkName: f.name,
+      kind: 'firm',
+      inSitemap: !NON_ADVISORY_ASSET_CLASSES.has(f.asset_class),
     });
   }
 
@@ -395,6 +599,9 @@ export async function collectPages() {
       lastmod: isoDay(f.updated_at),
       changefreq: 'monthly',
       priority: '0.7',
+      h1: f.name,
+      linkName: f.name,
+      kind: 'accounting-firm',
     });
   }
 
@@ -411,6 +618,19 @@ export async function collectPages() {
       changefreq: 'monthly',
       priority: '0.7',
       ogType: 'article',
+      h1: p.title,
+      linkName: p.title,
+      kind: 'article',
+    });
+  }
+
+  for (const priv of PRIVATE_PAGES) {
+    pages.push({
+      ...priv,
+      h1: priv.title.split(' | ')[0],
+      linkName: priv.title.split(' | ')[0],
+      kind: 'private',
+      inSitemap: false,
     });
   }
 
@@ -424,6 +644,62 @@ export async function collectPages() {
   });
 
   return finishMetadata(unique);
+}
+
+export const isIndexable = (page) => !page.noIndex && page.inSitemap !== false;
+
+const HUB_LINKS = [
+  { path: '/', name: 'Home' },
+  { path: '/advisors', name: 'Find advisors' },
+  { path: '/services', name: 'Browse by specialty' },
+  { path: '/financial-professionals', name: 'Browse by state' },
+  { path: '/firms', name: 'Investment firms' },
+  { path: '/accountants', name: 'Accountants' },
+  { path: '/blog', name: 'Journal' },
+  { path: '/directory', name: 'Site directory' },
+];
+
+const childrenOf = (pages, prefix) =>
+  pages
+    .filter((p) => isIndexable(p) && p.path.startsWith(`${prefix}/`) && !p.path.slice(prefix.length + 1).includes('/'))
+    .map((p) => ({ path: canonicalPath(p.path), name: p.linkName || p.h1 || p.title }));
+
+/** Internal links to embed in prerendered HTML so crawlers can discover URLs without JavaScript. */
+export function discoveryLinks(page, pages) {
+  const hubs = HUB_LINKS.filter((h) => h.path !== page.path);
+  if (page.path === '/') {
+    return [
+      ...hubs,
+      ...childrenOf(pages, '/services'),
+      ...childrenOf(pages, '/financial-professionals'),
+      ...childrenOf(pages, '/blog'),
+    ];
+  }
+  if (page.path === '/directory') {
+    return [
+      ...hubs,
+      ...childrenOf(pages, '/services'),
+      ...childrenOf(pages, '/financial-professionals'),
+      ...childrenOf(pages, '/advisors'),
+      ...childrenOf(pages, '/firms'),
+      ...childrenOf(pages, '/accountants'),
+      ...childrenOf(pages, '/accountants/specialty'),
+      ...childrenOf(pages, '/blog'),
+    ];
+  }
+  if (page.path === '/advisors') return [...hubs, ...childrenOf(pages, '/advisors'), ...childrenOf(pages, '/services')];
+  if (page.path === '/firms') return [...hubs, ...childrenOf(pages, '/firms')];
+  if (page.path === '/accountants') {
+    return [...hubs, ...childrenOf(pages, '/accountants'), ...childrenOf(pages, '/accountants/specialty')];
+  }
+  if (page.path === '/blog') return [...hubs, ...childrenOf(pages, '/blog')];
+  if (page.path === '/services') return [...hubs, ...childrenOf(pages, '/services')];
+  if (page.path === '/financial-professionals') return [...hubs, ...childrenOf(pages, '/financial-professionals')];
+  if (page.path === '/accounting-firms') return [...hubs, ...childrenOf(pages, '/accounting-firms')];
+  if (page.kind === 'advisor') return hubs.filter((h) => ['/advisors', '/services', '/financial-professionals'].includes(h.path));
+  if (page.kind === 'firm') return hubs.filter((h) => ['/firms', '/advisors'].includes(h.path));
+  if (page.kind === 'article') return hubs.filter((h) => ['/blog', '/advisors'].includes(h.path));
+  return hubs.slice(0, 6);
 }
 
 /* ------------------------------------------------- length + uniqueness */

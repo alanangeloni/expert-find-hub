@@ -96,6 +96,7 @@ const AccountantSpecialty = () => {
         )}
         canonicalUrl={canonical}
         structuredData={structuredData}
+        noIndex={!isLoading && results.length === 0}
       />
 
       <div className="advisor-search__hero">
