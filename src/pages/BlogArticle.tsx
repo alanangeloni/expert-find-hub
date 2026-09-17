@@ -201,7 +201,9 @@ const BlogArticle = () => {
               )}
             </div>
             <h1>{post.title}</h1>
-            <p className="blog-post__dek">{postExcerpt(post)}</p>
+            {post.excerpt?.trim() ? (
+              <p className="blog-post__dek">{post.excerpt}</p>
+            ) : null}
 
             <div className="blog-post__byline">
               <span

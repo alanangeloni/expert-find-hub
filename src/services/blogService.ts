@@ -1,6 +1,31 @@
 import { supabase } from "@/integrations/supabase/client";
 import { getPostCategories } from "@/utils/blogRelations";
-import { BLOG_CATEGORIES, type BlogCategoryType, type BlogStatus } from "@/types/blog";
+import { uiCategoriesToDb } from "@/utils/blogCategoryMap";
+import { BLOG_CATEGORIES, type BlogStatus } from "@/types/blog";
+
+export type BlogPostWriteInput = {
+  title: string;
+  slug: string;
+  content: string;
+  excerpt?: string;
+  cover_image_url?: string;
+  status: BlogStatus;
+  published_at?: string | null;
+  author_id?: string;
+  categories?: string[];
+};
+
+const toDbRow = (post: BlogPostWriteInput) => ({
+  title: post.title,
+  slug: post.slug,
+  content: post.content,
+  excerpt: post.excerpt ?? null,
+  cover_image_url: post.cover_image_url ?? null,
+  status: post.status,
+  author_id: post.author_id ?? null,
+  published_at: post.published_at ?? null,
+  blog_category: uiCategoriesToDb(post.categories),
+});
 
 // A post is live when it is published, or scheduled and its time has arrived.
 const applyLiveFilter = (query: any) => {
@@ -232,54 +257,37 @@ export const getBlogCategories = async (): Promise<BlogCategory[]> => {
   }));
 };
 
-export const createBlogPost = async (post: Omit<BlogPost, 'id' | 'created_at' | 'updated_at'>): Promise<BlogPost | null> => {
-  try {
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .insert([{
-        title: post.title,
-        slug: post.slug,
-        content: post.content,
-        excerpt: post.excerpt,
-        cover_image_url: post.cover_image_url,
-        status: post.status,
-        author_id: post.author_id,
-        published_at: post.published_at
-      }])
-      .select()
-      .single();
+export const createBlogPost = async (post: BlogPostWriteInput): Promise<BlogPost> => {
+  const { data, error } = await supabase
+    .from("blog_posts")
+    .insert([toDbRow(post)])
+    .select()
+    .single();
 
-    if (error) {
-      console.error('Error creating blog post:', error);
-      return null;
-    }
-
-    return data as BlogPost;
-  } catch (error) {
-    console.error('Error creating blog post:', error);
-    return null;
+  if (error) {
+    console.error("Error creating blog post:", error);
+    throw new Error(error.message);
   }
+
+  const categories = await getPostCategories(data.id);
+  return { ...data, categories, status: data.status as BlogStatus } as BlogPost;
 };
 
-export const updateBlogPost = async (id: string, updates: Partial<BlogPost>): Promise<BlogPost | null> => {
-  try {
-    const { data, error } = await supabase
-      .from('blog_posts')
-      .update(updates)
-      .eq('id', id)
-      .select()
-      .single();
+export const updateBlogPost = async (id: string, updates: BlogPostWriteInput): Promise<BlogPost> => {
+  const { data, error } = await supabase
+    .from("blog_posts")
+    .update(toDbRow(updates))
+    .eq("id", id)
+    .select()
+    .single();
 
-    if (error) {
-      console.error('Error updating blog post:', error);
-      return null;
-    }
-
-    return data as BlogPost;
-  } catch (error) {
-    console.error('Error updating blog post:', error);
-    return null;
+  if (error) {
+    console.error("Error updating blog post:", error);
+    throw new Error(error.message);
   }
+
+  const categories = await getPostCategories(data.id);
+  return { ...data, categories, status: data.status as BlogStatus } as BlogPost;
 };
 
 export const deleteBlogPost = async (id: string): Promise<boolean> => {
