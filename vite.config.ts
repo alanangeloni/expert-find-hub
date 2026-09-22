@@ -7,8 +7,9 @@ import { componentTagger } from "lovable-tagger";
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => ({
   server: {
-    host: "::",
+    host: true,
     port: 8080,
+    strictPort: true,
   },
   plugins: [
     react(),
@@ -29,6 +30,6 @@ export default defineConfig(({ command }) => ({
   // Configure fallback for SPA routing while preserving static files
   preview: {
     port: 8080,
-    host: "::",
+    host: true,
   },
 }));

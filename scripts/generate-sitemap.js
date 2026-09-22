@@ -29,6 +29,10 @@ function toXml(entries) {
   ].join('\n');
 }
 
-const entries = await collectPages();
-writeFileSync(resolve('public/sitemap.xml'), toXml(entries), 'utf-8');
-console.log(`sitemap.xml written (${entries.length} entries)`);
+try {
+  const entries = await collectPages();
+  writeFileSync(resolve('public/sitemap.xml'), toXml(entries), 'utf-8');
+  console.log(`sitemap.xml written (${entries.length} entries)`);
+} catch (err) {
+  console.warn('sitemap.xml skipped:', err.message);
+}

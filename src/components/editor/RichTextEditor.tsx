@@ -2,7 +2,8 @@ import React, { useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
-import { Bold, Italic, Underline, Heading2, ListOrdered, List, Quote, Image, Link } from "lucide-react";
+import { Bold, Italic, Underline, Heading2, ListOrdered, List, Quote, Image, Link, Calculator } from "lucide-react";
+import { CATALOG } from "@/features/calculators/catalog";
 
 interface RichTextEditorProps {
   value: string;
@@ -214,6 +215,30 @@ export function RichTextEditor({
         >
           <Image className="h-4 w-4" />
         </Button>
+
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button type="button" variant="ghost" size="sm" title="Insert calculator">
+              <Calculator className="h-4 w-4" />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-64 p-2 max-h-72 overflow-auto">
+            <div className="flex flex-col gap-1">
+              {CATALOG.map((calculator) => (
+                <Button
+                  key={calculator.id}
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="justify-start"
+                  onClick={() => insertMarkdown(`\n{{calculator:${calculator.slug}}}\n`)}
+                >
+                  {calculator.name}
+                </Button>
+              ))}
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
       
       <Textarea

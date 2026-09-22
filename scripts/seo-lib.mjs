@@ -27,6 +27,7 @@ export async function fetchRows(table, query) {
   try {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, {
       headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` },
+      signal: AbortSignal.timeout(8000),
     });
     if (!res.ok) {
       console.warn(`seo: ${table} returned ${res.status}`);
@@ -218,6 +219,100 @@ const staticPages = [
     ),
     changefreq: 'weekly',
     priority: '0.8',
+  },
+  {
+    path: '/calculators',
+    title: seoTitle('Financial Calculators'),
+    description: seoDescription(
+      'Run mortgage, debt, savings, retirement, and tax calculators in your browser',
+      'Then match with a fiduciary advisor using the same numbers.'
+    ),
+    changefreq: 'monthly',
+    priority: '0.8',
+  },
+  {
+    path: '/calculators/mortgage-payment',
+    title: seoTitle('Mortgage Payment Calculator'),
+    description: seoDescription('Full PITI payment with taxes, insurance and a year-by-year payoff schedule.'),
+    changefreq: 'monthly',
+    priority: '0.7',
+  },
+  {
+    path: '/calculators/home-affordability',
+    title: seoTitle('Home Affordability Calculator'),
+    description: seoDescription('Solve for the maximum price using debt-to-income limits and live rate scenarios.'),
+    changefreq: 'monthly',
+    priority: '0.7',
+  },
+  {
+    path: '/calculators/auto-loan',
+    title: seoTitle('Auto Loan Calculator'),
+    description: seoDescription('Roll in trade-in, down payment and sales tax to see the true cost of the car.'),
+    changefreq: 'monthly',
+    priority: '0.7',
+  },
+  {
+    path: '/calculators/debt-payoff',
+    title: seoTitle('Debt Payoff Calculator'),
+    description: seoDescription('Add every card and loan, add extra monthly cash and watch the debt-free date move.'),
+    changefreq: 'monthly',
+    priority: '0.7',
+  },
+  {
+    path: '/calculators/savings-goal',
+    title: seoTitle('Savings Goal Calculator'),
+    description: seoDescription('Time to reach any target at a given rate, plus the monthly amount to get there faster.'),
+    changefreq: 'monthly',
+    priority: '0.7',
+  },
+  {
+    path: '/calculators/budget-builder',
+    title: seoTitle('Budget Builder Calculator'),
+    description: seoDescription('Split take-home pay into needs, wants and savings and see the gap instantly.'),
+    changefreq: 'monthly',
+    priority: '0.7',
+  },
+  {
+    path: '/calculators/investment-growth',
+    title: seoTitle('Investment Growth Calculator'),
+    description: seoDescription('See what your starting balance plus monthly contributions becomes over any horizon.'),
+    changefreq: 'monthly',
+    priority: '0.7',
+  },
+  {
+    path: '/calculators/retirement-planner',
+    title: seoTitle('Retirement Planner Calculator'),
+    description: seoDescription('Project to your retirement age and find the monthly amount that closes the gap.'),
+    changefreq: 'monthly',
+    priority: '0.7',
+  },
+  {
+    path: '/calculators/retirement-drawdown',
+    title: seoTitle('Retirement Drawdown Calculator'),
+    description: seoDescription('Model withdrawals against returns and inflation to find your safe spending rate.'),
+    changefreq: 'monthly',
+    priority: '0.7',
+  },
+  {
+    path: '/calculators/federal-tax-estimator',
+    title: seoTitle('Federal Tax Estimator'),
+    description: seoDescription('2024 brackets, standard deduction, FICA and effective rate on your income.'),
+    changefreq: 'monthly',
+    priority: '0.7',
+  },
+  {
+    path: '/calculators/self-employment-tax',
+    title: seoTitle('Self-Employment Tax Calculator'),
+    description: seoDescription('Compute self-employment tax, the half deduction and what to set aside each quarter.'),
+    changefreq: 'monthly',
+    priority: '0.7',
+  },
+  {
+    path: '/calculators/net-worth',
+    title: seoTitle('Net Worth Calculator'),
+    description: seoDescription('Total up everything you own and owe to see the number that actually matters.'),
+    changefreq: 'monthly',
+    priority: '0.7',
   },
   {
     path: '/blog',
