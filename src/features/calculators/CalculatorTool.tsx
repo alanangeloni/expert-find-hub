@@ -38,9 +38,10 @@ const PANELS: Record<CalculatorId, ComponentType> = {
 type Props = {
   id: CalculatorId;
   embed?: boolean;
+  showHeader?: boolean;
 };
 
-export default function CalculatorTool({ id, embed = false }: Props) {
+export default function CalculatorTool({ id, embed = false, showHeader = true }: Props) {
   const meta = calculatorById(id);
   const [summary, setSummary] = useState('');
   const [resetToken, setResetToken] = useState(0);
@@ -55,33 +56,36 @@ export default function CalculatorTool({ id, embed = false }: Props) {
 
   return (
     <SummaryContext.Provider value={setSummary}>
-      <div className={`fp-calc ${embed ? 'fp-calc--embed' : ''}`}>
-        <div className="fp-tool">
-          <header className="fp-tool__head">
-            <span className="fp-tool__icon" style={{ color: meta.accent, borderColor: `${meta.accent}44` }}>
-              <Icon name={meta.icon} size={20} />
-            </span>
-            <div>
-              <span className="fp-tool__cat">{meta.category}</span>
-              <h2 className="fp-tool__title">{meta.name}</h2>
-              <p className="fp-tool__tagline">{meta.tagline}</p>
-            </div>
-          </header>
-          <Panel key={`${id}-${resetToken}`} />
-          <footer className="fp-tool__foot">
-            <button type="button" className="btn btn--sm" onClick={reset}>
-              Reset
-            </button>
-            <Link
-              to={`/?calculator=${meta.slug}#match`}
-              className="btn btn--accent btn--sm"
-              onClick={() => saveHandoff(meta, summary)}
-            >
-              Use these numbers
-              <Icon name="arrow-right" size={15} />
-            </Link>
-          </footer>
+      <div className={embed ? "fp-calc fp-calc--embed" : "calc-tool"}>
+        <div className={embed ? "fp-tool" : "fp-calc fp-calc--page"}>
+          <div className="fp-tool">
+            {showHeader && (
+              <header className="fp-tool__head">
+                <span className="fp-tool__icon" style={{ color: meta.accent, borderColor: `${meta.accent}44` }}>
+                  <Icon name={meta.icon} size={20} />
+                </span>
+                <div>
+                  <span className="fp-tool__cat">{meta.category}</span>
+                  <h2 className="fp-tool__title">{meta.name}</h2>
+                  <p className="fp-tool__tagline">{meta.tagline}</p>
+                </div>
+              </header>
+            )}
+            <Panel key={`${id}-${resetToken}`} />
+          </div>
         </div>
+        <footer className={embed ? "fp-tool__foot" : "calc-tool__foot"}>
+          <button type="button" className="btn btn--outline btn--md" onClick={reset}>
+            Reset
+          </button>
+          <Link
+            to={`/?calculator=${meta.slug}#match`}
+            className="btn btn--green btn--md"
+            onClick={() => saveHandoff(meta, summary)}
+          >
+            Use these numbers
+          </Link>
+        </footer>
       </div>
     </SummaryContext.Provider>
   );

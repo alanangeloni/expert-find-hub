@@ -652,3 +652,34 @@
     padding-bottom: var(--space-16);
   }
 }
+
+/* Calculator directory uses the same cards as the firm directory. */
+a.firm-card {
+  color: inherit;
+  text-decoration: none;
+}
+
+.calc-tool {
+  background: var(--white);
+  border: var(--d-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-6);
+}
+
+.calc-tool .fp-tool {
+  border: 0;
+  box-shadow: none;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.calc-tool__foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
+  border-top: var(--d-border);
+}
