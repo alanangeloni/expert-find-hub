@@ -116,20 +116,25 @@ const MatchQuiz = () => {
   return (
     <section className="home-quiz" id="match">
       <div className="dcontainer">
-        <div className="home-section-header">
-          <span className="keyline" />
-          <p className="home-section-eyebrow">Find your match</p>
-          <h2>
-            A few questions.
-            <br />
-            <em>The right shortlist.</em>
-          </h2>
-          <p className="home-section-desc">
-            Answer below and we'll narrow the directory to the advisors most aligned with your situation.
-          </p>
-        </div>
-
         <div className="home-quiz__card">
+          <header className="home-quiz__head">
+            <div>
+              <span className="home-quiz__rule" aria-hidden="true" />
+              <p className="home-quiz__eyebrow">Find your match</p>
+              <h2 className="home-quiz__headline">
+                A few questions. <em>The right shortlist.</em>
+              </h2>
+              <p className="home-quiz__lead">
+                Answer below and we'll narrow the directory to the advisors most aligned with your situation.
+              </p>
+            </div>
+            {!done && (
+              <span className="home-quiz__count">
+                Step {step + 1} of {QUIZ_STEPS.length}
+              </span>
+            )}
+          </header>
+
           {!done ? (
             <>
               {handoff && (
@@ -138,139 +143,150 @@ const MatchQuiz = () => {
                 </p>
               )}
 
-              <ol className="home-quiz__steps" aria-label="Progress">
-                {QUIZ_STEPS.map((item, index) => (
-                  <li
-                    key={item.id}
-                    className={`home-quiz__step-pill ${
-                      index === step ? "is-current" : index < step ? "is-done" : ""
-                    }`}
-                  >
-                    <span>{index < step ? "✓" : index + 1}</span>
-                    {item.title}
-                  </li>
-                ))}
-              </ol>
-
-              <h3 className="home-quiz__title">{current.title}</h3>
-              <p className="home-quiz__subtitle">{current.subtitle}</p>
-
-              {current.id === "goals" && (
-                <div className="home-quiz__chips">
-                  {QUIZ_GOALS.map((g) => (
-                    <button
-                      key={g.value}
-                      type="button"
-                      aria-pressed={goals.includes(g.value)}
-                      className={`home-quiz__chip ${goals.includes(g.value) ? "is-active" : ""}`}
-                      onClick={() => toggleGoal(g.value)}
+              {step > 0 && (
+                <ol className="home-quiz__steps" aria-label="Progress">
+                  {QUIZ_STEPS.map((item, index) => (
+                    <li
+                      key={item.id}
+                      className={`home-quiz__step-pill ${
+                        index === step ? "is-current" : index < step ? "is-done" : ""
+                      }`}
                     >
-                      {g.label}
-                    </button>
+                      <span>{index < step ? "✓" : index + 1}</span>
+                      {item.title}
+                    </li>
                   ))}
-                </div>
+                </ol>
               )}
 
-              {current.id === "location" && (
-                <div className="home-quiz__chips">
-                  {US_STATES.map((s) => (
+              <div className="home-quiz__panel">
+                <p className="home-quiz__ask">{current.title}</p>
+                <p className="home-quiz__hint">{current.subtitle}</p>
+
+                {current.id === "goals" && (
+                  <div className="home-quiz__chips">
+                    {QUIZ_GOALS.map((g) => (
+                      <button
+                        key={g.value}
+                        type="button"
+                        aria-pressed={goals.includes(g.value)}
+                        className={`home-quiz__chip ${goals.includes(g.value) ? "is-active" : ""}`}
+                        onClick={() => toggleGoal(g.value)}
+                      >
+                        {g.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {current.id === "location" && (
+                  <div className="home-quiz__chips">
+                    {US_STATES.map((s) => (
+                      <button
+                        key={s}
+                        type="button"
+                        aria-pressed={state === s}
+                        className={`home-quiz__chip home-quiz__chip--sm ${state === s ? "is-active" : ""}`}
+                        onClick={() => setState(state === s ? "" : s)}
+                      >
+                        {s}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {current.id === "fees" && (
+                  <div className="home-quiz__seg" role="group" aria-label="Preferred fee style">
                     <button
-                      key={s}
                       type="button"
-                      aria-pressed={state === s}
-                      className={`home-quiz__chip home-quiz__chip--sm ${state === s ? "is-active" : ""}`}
-                      onClick={() => setState(state === s ? "" : s)}
+                      className={`home-quiz__seg-item ${fees.length === 0 ? "is-active" : ""}`}
+                      onClick={() => setFees([])}
                     >
-                      {s}
+                      No preference
                     </button>
-                  ))}
-                </div>
-              )}
+                    {QUIZ_FEES.map((f) => (
+                      <button
+                        key={f.value}
+                        type="button"
+                        className={`home-quiz__seg-item ${fees.includes(f.value) ? "is-active" : ""}`}
+                        title={f.hint}
+                        onClick={() => toggleFee(f.value)}
+                      >
+                        {f.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
 
-              {current.id === "fees" && (
-                <div className="home-quiz__options">
-                  {QUIZ_FEES.map((f) => (
+                {current.id === "assets" && (
+                  <div className="home-quiz__chips">
+                    {QUIZ_ASSETS.map((a) => (
+                      <button
+                        key={a.value}
+                        type="button"
+                        aria-pressed={assets === a.value}
+                        className={`home-quiz__chip ${assets === a.value ? "is-active" : ""}`}
+                        title={a.hint}
+                        onClick={() => setAssets(a.value)}
+                      >
+                        {a.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {current.id === "preferences" && (
+                  <div className="home-quiz__prefs">
                     <button
-                      key={f.value}
                       type="button"
-                      className={`home-quiz__option ${fees.includes(f.value) ? "is-active" : ""}`}
-                      onClick={() => toggleFee(f.value)}
+                      className={`home-quiz__switch ${fiduciaryOnly ? "is-on" : ""}`}
+                      aria-pressed={fiduciaryOnly}
+                      onClick={() => setFiduciaryOnly(!fiduciaryOnly)}
                     >
-                      <strong>{f.label}</strong>
-                      <span>{f.hint}</span>
+                      <span className="home-quiz__switch-track" aria-hidden="true">
+                        <span />
+                      </span>
+                      <span>
+                        Fiduciary only <em>— legally obligated to put you first</em>
+                      </span>
                     </button>
-                  ))}
-                  <button
-                    type="button"
-                    className={`home-quiz__option ${fees.length === 0 ? "is-active" : ""}`}
-                    onClick={() => setFees([])}
-                  >
-                    <strong>No preference</strong>
-                    <span>Keep all fee models open</span>
-                  </button>
-                </div>
-              )}
-
-              {current.id === "assets" && (
-                <div className="home-quiz__options">
-                  {QUIZ_ASSETS.map((a) => (
-                    <button
-                      key={a.value}
-                      type="button"
-                      className={`home-quiz__option ${assets === a.value ? "is-active" : ""}`}
-                      onClick={() => setAssets(a.value)}
-                    >
-                      <strong>{a.label}</strong>
-                      <span>{a.hint}</span>
-                    </button>
-                  ))}
-                </div>
-              )}
-
-              {current.id === "preferences" && (
-                <div className="home-quiz__prefs">
-                  <button
-                    type="button"
-                    className={`home-quiz__option ${fiduciaryOnly ? "is-active" : ""}`}
-                    onClick={() => setFiduciaryOnly(!fiduciaryOnly)}
-                    aria-pressed={fiduciaryOnly}
-                  >
-                    <strong>Fiduciary only</strong>
-                    <span>Legally obligated to put you first</span>
-                  </button>
-
-                  <div className="home-quiz__field">
-                    <h4>Minimum experience</h4>
-                    <div className="home-quiz__chips">
-                      {EXPERIENCE_OPTIONS.map((e) => (
-                        <button
-                          key={e.value}
-                          type="button"
-                          className={`home-quiz__chip home-quiz__chip--sm ${experience === e.value ? "is-active" : ""}`}
-                          onClick={() => setExperience(e.value)}
-                        >
-                          {e.label}
-                        </button>
-                      ))}
+                    <div>
+                      <p className="home-quiz__ask">Minimum experience</p>
+                      <div className="home-quiz__chips">
+                        {EXPERIENCE_OPTIONS.map((e) => (
+                          <button
+                            key={e.value}
+                            type="button"
+                            className={`home-quiz__chip ${experience === e.value ? "is-active" : ""}`}
+                            onClick={() => setExperience(e.value)}
+                          >
+                            {e.label}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
 
               {note && <p className="home-quiz__note">{note}</p>}
 
-              <div className="home-quiz__actions">
+              <footer className="home-quiz__foot">
                 {step > 0 ? (
-                  <button type="button" className="btn btn--outline btn--md" onClick={() => setStep(step - 1)}>
+                  <button type="button" className="home-quiz__back" onClick={() => setStep(step - 1)}>
                     Back
                   </button>
                 ) : (
-                  <span />
+                  <p className="home-quiz__promise">
+                    <span aria-hidden="true">✓</span>
+                    Free, no obligation — and we never sell your details.
+                  </p>
                 )}
-                <button type="button" className="btn btn--green btn--md" disabled={!canAdvance} onClick={handleNext}>
+                <button type="button" className="home-quiz__next" disabled={!canAdvance} onClick={handleNext}>
                   {step === QUIZ_STEPS.length - 1 ? "See my matches" : "Continue"}
+                  <span aria-hidden="true">→</span>
                 </button>
-              </div>
+              </footer>
             </>
           ) : (
             <div className="home-quiz__done">
