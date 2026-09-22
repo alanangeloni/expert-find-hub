@@ -10,7 +10,10 @@ export function useMeasure<T extends HTMLElement>(): [RefObject<T>, number] {
     const node = ref.current;
     if (!node) return;
 
-    const update = () => setWidth(node.getBoundingClientRect().width);
+    const update = () => {
+      const next = Math.round(node.getBoundingClientRect().width);
+      setWidth((prev) => (prev === next ? prev : next));
+    };
     update();
 
     if (typeof ResizeObserver === 'undefined') {

@@ -27,6 +27,7 @@ export async function fetchRows(table, query) {
   try {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, {
       headers: { apikey: SUPABASE_KEY, Authorization: `Bearer ${SUPABASE_KEY}` },
+      signal: AbortSignal.timeout(8000),
     });
     if (!res.ok) {
       console.warn(`seo: ${table} returned ${res.status}`);
