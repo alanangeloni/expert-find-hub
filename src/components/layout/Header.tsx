@@ -43,6 +43,9 @@ const Header = () => {
           <Link to="/firms" className={`header__link ${isActive("/firms") ? "is-active" : ""}`}>
             Browse Firms
           </Link>
+          <Link to="/calculators" className={`header__link ${isActive("/calculators") ? "is-active" : ""}`}>
+            Calculators
+          </Link>
           <Link to="/blog" className={`header__link ${isActive("/blog") ? "is-active" : ""}`}>
             Blog
           </Link>
@@ -97,6 +100,9 @@ const Header = () => {
           </Link>
           <Link className="header__mobile-link" to="/firms">
             Browse Firms
+          </Link>
+          <Link className="header__mobile-link" to="/calculators">
+            Calculators
           </Link>
           <Link className="header__mobile-link" to="/blog">
             Blog

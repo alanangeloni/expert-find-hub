@@ -9,6 +9,8 @@ import { supabase } from "@/integrations/supabase/client";
 import ReactMarkdown from "react-markdown";
 import { getPostCategories } from "@/utils/blogRelations";
 import { BlogCard, postDate, readTime, postExcerpt, authorHue } from "@/components/blog/BlogCard";
+import { calculatorBySlug } from "@/features/calculators/catalog";
+import CalculatorTool from "@/features/calculators/CalculatorTool";
 
 const BlogArticle = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -250,7 +252,16 @@ const BlogArticle = () => {
             />
           )}
           <div className="blog-post__content">
-            <ReactMarkdown>{post.content}</ReactMarkdown>
+            {post.content.split(/(\{\{calculator:[a-z0-9-]+\}\})/g).map((part, index) => {
+              const token = part.match(/^\{\{calculator:([a-z0-9-]+)\}\}$/);
+              if (token) {
+                const calculator = calculatorBySlug(token[1]);
+                if (!calculator) return null;
+                return <CalculatorTool key={`calc-${calculator.id}-${index}`} id={calculator.id} embed />;
+              }
+              if (!part.trim()) return null;
+              return <ReactMarkdown key={`md-${index}`}>{part}</ReactMarkdown>;
+            })}
           </div>
 
           {(post.categories || []).length > 0 && (

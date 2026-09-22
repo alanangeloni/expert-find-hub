@@ -5,8 +5,15 @@ const ScrollToTop = () => {
   const location = useLocation();
 
   useEffect(() => {
+    if (location.hash) {
+      const target = document.getElementById(location.hash.slice(1));
+      if (target) {
+        target.scrollIntoView();
+        return;
+      }
+    }
     window.scrollTo(0, 0);
-  }, [location]);
+  }, [location.pathname, location.search, location.hash]);
 
   return null;
 };

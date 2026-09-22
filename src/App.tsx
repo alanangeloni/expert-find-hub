@@ -28,6 +28,8 @@ import AccountingFirms from "./pages/AccountingFirms";
 import AccountingFirmDetail from "./pages/AccountingFirmDetail";
 import Blog from "./pages/Blog";
 import BlogArticle from "./pages/BlogArticle";
+import Calculators from "./pages/Calculators";
+import CalculatorPage from "./pages/CalculatorPage";
 import SignIn from "./pages/auth/SignIn";
 import SignUp from "./pages/auth/SignUp";
 import ForgotPassword from "./pages/auth/ForgotPassword";
@@ -81,6 +83,8 @@ const App = () => (
                   <Route path="/firms/:slug" element={<InvestmentFirmDetail />} />
                   <Route path="/accounting-firms" element={<AccountingFirms />} />
                   <Route path="/accounting-firms/:slug" element={<AccountingFirmDetail />} />
+                  <Route path="/calculators" element={<Calculators />} />
+                  <Route path="/calculators/:slug" element={<CalculatorPage />} />
                   <Route path="/blog" element={<Blog />} />
                   <Route path="/blog/:slug" element={<BlogArticle />} />
                   <Route path="/auth/signin" element={<SignIn />} />
