@@ -5,15 +5,23 @@ export type CalculatorId =
   | 'mortgage'
   | 'affordability'
   | 'auto'
+  | 'refinance'
+  | 'rentbuy'
   | 'loan'
   | 'savings'
   | 'invest'
   | 'retirement'
   | 'withdrawal'
+  | 'match401k'
+  | 'fees'
   | 'tax'
   | 'self-employed'
+  | 'roth'
   | 'budget'
-  | 'networth';
+  | 'networth'
+  | 'college'
+  | 'inflation'
+  | 'insurance';
 
 export type CalculatorMeta = {
   id: CalculatorId;
@@ -74,6 +82,30 @@ export const CATALOG: CalculatorMeta[] = [
     icon: 'car',
     accent: '#0f9b8e',
     keywords: 'car vehicle finance lease trade in',
+  },
+  {
+    id: 'refinance',
+    slug: 'refinance-break-even',
+    goal: 'Wealth Management',
+    name: 'Refinance break-even',
+    tagline: 'When a lower rate pays for itself',
+    blurb: 'Compare your current mortgage with a new rate and see the month the closing costs are covered.',
+    category: 'Home & auto',
+    icon: 'bank',
+    accent: '#2f6fed',
+    keywords: 'refinance mortgage rate closing costs break even',
+  },
+  {
+    id: 'rentbuy',
+    slug: 'rent-vs-buy',
+    goal: 'Wealth Management',
+    name: 'Rent vs buy',
+    tagline: 'Which one leaves you ahead',
+    blurb: 'Compare the wealth from buying a home with the wealth from renting and investing the difference.',
+    category: 'Home & auto',
+    icon: 'home',
+    accent: '#17b26a',
+    keywords: 'rent buy house mortgage opportunity cost',
   },
   {
     id: 'loan',
@@ -148,6 +180,30 @@ export const CATALOG: CalculatorMeta[] = [
     keywords: '4% rule withdrawal sequence inflation drawdown annuity',
   },
   {
+    id: 'match401k',
+    slug: '401k-match',
+    goal: 'Retirement Planning',
+    name: '401(k) match',
+    tagline: 'Your contribution plus the employer match',
+    blurb: 'See the balance a salary deferral and employer match can reach, and whether match dollars are left behind.',
+    category: 'Investing',
+    icon: 'trending',
+    accent: '#0f9b8e',
+    keywords: '401k employer match contribution retirement deferral',
+  },
+  {
+    id: 'fees',
+    slug: 'investment-fees',
+    goal: 'Wealth Management',
+    name: 'Investment fees',
+    tagline: 'What a higher fee costs over time',
+    blurb: 'Compare the same portfolio at two annual fees and see the dollars the higher fee keeps.',
+    category: 'Investing',
+    icon: 'percent',
+    accent: '#dc5468',
+    keywords: 'expense ratio advisory fee aum cost drag',
+  },
+  {
     id: 'tax',
     slug: 'federal-tax-estimator',
     goal: 'Tax Planning',
@@ -172,6 +228,18 @@ export const CATALOG: CalculatorMeta[] = [
     keywords: '1099 freelancer contractor quarterly estimated se tax',
   },
   {
+    id: 'roth',
+    slug: 'roth-vs-traditional',
+    goal: 'Tax Planning',
+    name: 'Roth vs traditional',
+    tagline: 'Which account leaves more after tax',
+    blurb: 'Put the same pre-tax dollars in a Roth or a traditional account and compare the spendable balance.',
+    category: 'Taxes',
+    icon: 'receipt',
+    accent: '#7c5cf0',
+    keywords: 'roth ira traditional 401k tax bracket retirement',
+  },
+  {
     id: 'networth',
     slug: 'net-worth',
     goal: 'High Net Worth',
@@ -182,6 +250,42 @@ export const CATALOG: CalculatorMeta[] = [
     icon: 'shield',
     accent: '#7c5cf0',
     keywords: 'balance sheet assets liabilities wealth progress',
+  },
+  {
+    id: 'college',
+    slug: 'college-savings',
+    goal: 'Education Planning',
+    name: 'College savings',
+    tagline: 'Monthly savings for a future tuition bill',
+    blurb: "Inflate today's college cost across the years in school and find the monthly savings that covers it.",
+    category: 'Planning',
+    icon: 'bookmark',
+    accent: '#7c5cf0',
+    keywords: '529 college tuition education savings inflation',
+  },
+  {
+    id: 'inflation',
+    slug: 'inflation',
+    goal: 'Wealth Management',
+    name: 'Inflation',
+    tagline: 'Future cost and buying power',
+    blurb: "See what today's dollars cost later, or what a sum you hold today will buy after inflation.",
+    category: 'Planning',
+    icon: 'percent',
+    accent: '#d98324',
+    keywords: 'inflation purchasing power cost of living cpi',
+  },
+  {
+    id: 'insurance',
+    slug: 'life-insurance',
+    goal: 'Insurance Planning',
+    name: 'Life insurance needs',
+    tagline: 'Income replacement after what you already have',
+    blurb: 'Estimate coverage from years of income, debts, and goals, then subtract savings and policies you already own.',
+    category: 'Planning',
+    icon: 'shield',
+    accent: '#2f6fed',
+    keywords: 'life insurance income replacement term coverage',
   },
 ];
 

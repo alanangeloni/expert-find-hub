@@ -2,6 +2,8 @@ import { Link, useParams } from "react-router-dom";
 import { Seo } from "@/components/seo/Seo";
 import { CATALOG, calculatorBySlug } from "@/features/calculators/catalog";
 import CalculatorTool from "@/features/calculators/CalculatorTool";
+import CalculatorGuide from "@/features/calculators/CalculatorGuide";
+import { guideFor } from "@/features/calculators/guides";
 
 const CalculatorPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -25,7 +27,11 @@ const CalculatorPage = () => {
     );
   }
 
-  const others = CATALOG.filter((item) => item.id !== meta.id).slice(0, 4);
+  const others = [
+    ...CATALOG.filter((item) => item.id !== meta.id && item.category === meta.category),
+    ...CATALOG.filter((item) => item.id !== meta.id && item.category !== meta.category),
+  ].slice(0, 4);
+  const guide = guideFor(meta.id);
 
   return (
     <div className="firm-search page-enter">
@@ -33,6 +39,14 @@ const CalculatorPage = () => {
         title={`${meta.name} Calculator | Financial Professional`}
         description={meta.blurb}
         canonicalUrl={`https://financialprofessional.com/calculators/${meta.slug}`}
+        structuredData={{
+          "@type": "FAQPage",
+          mainEntity: guide.faqs.map((faq) => ({
+            "@type": "Question",
+            name: faq.q,
+            acceptedAnswer: { "@type": "Answer", text: faq.a },
+          })),
+        }}
       />
 
       <div className="firm-search__hero">
@@ -67,6 +81,7 @@ const CalculatorPage = () => {
 
       <div className="dcontainer firm-search__body">
         <CalculatorTool id={meta.id} showHeader={false} />
+        <CalculatorGuide name={meta.name} guide={guide} />
         <section>
           <p className="firm-search__eyebrow">More calculators</p>
           <div className="firm-search__grid">

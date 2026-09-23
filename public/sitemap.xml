@@ -101,6 +101,46 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://financialprofessional.com/calculators/refinance-break-even</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://financialprofessional.com/calculators/rent-vs-buy</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://financialprofessional.com/calculators/401k-match</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://financialprofessional.com/calculators/investment-fees</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://financialprofessional.com/calculators/roth-vs-traditional</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://financialprofessional.com/calculators/college-savings</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://financialprofessional.com/calculators/inflation</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://financialprofessional.com/calculators/life-insurance</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://financialprofessional.com/blog</loc>
     <changefreq>daily</changefreq>
     <priority>0.8</priority>
