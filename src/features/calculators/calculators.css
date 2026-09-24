@@ -1651,6 +1651,33 @@
   margin: 28px 0;
 }
 
+.calc-article .blog-post__content h2 {
+  font-family: var(--font-sans);
+  font-size: var(--text-2xl);
+  font-weight: 750;
+  letter-spacing: -0.03em;
+  margin-top: var(--space-4);
+}
+
+.calc-article .blog-post__content h3 {
+  font-family: var(--font-sans);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  margin-top: var(--space-2);
+}
+
+.calc-article__byline {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--gray-500);
+  margin-bottom: var(--space-8);
+}
+
+.calc-article .blog-post__side-cat {
+  display: block;
+  text-decoration: none;
+}
+
 .calc-guide {
   display: flex;
   flex-direction: column;

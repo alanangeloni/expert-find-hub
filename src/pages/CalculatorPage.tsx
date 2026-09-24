@@ -4,6 +4,7 @@ import { CATALOG, calculatorBySlug } from "@/features/calculators/catalog";
 import CalculatorTool from "@/features/calculators/CalculatorTool";
 import CalculatorGuide from "@/features/calculators/CalculatorGuide";
 import { guideFor } from "@/features/calculators/guides";
+import { articleFor } from "@/features/calculators/articles";
 
 const CalculatorPage = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -32,6 +33,7 @@ const CalculatorPage = () => {
     ...CATALOG.filter((item) => item.id !== meta.id && item.category !== meta.category),
   ].slice(0, 4);
   const guide = guideFor(meta.id);
+  const article = articleFor(meta.id);
 
   return (
     <div className="firm-search page-enter">
@@ -81,7 +83,7 @@ const CalculatorPage = () => {
 
       <div className="dcontainer firm-search__body">
         <CalculatorTool id={meta.id} showHeader={false} />
-        <CalculatorGuide name={meta.name} guide={guide} />
+        <CalculatorGuide name={meta.name} guide={guide} article={article} />
         <section>
           <p className="firm-search__eyebrow">More calculators</p>
           <div className="firm-search__grid">
