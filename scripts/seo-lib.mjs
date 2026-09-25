@@ -315,6 +315,76 @@ const staticPages = [
     priority: '0.7',
   },
   {
+    path: '/calculators/refinance-break-even',
+    title: seoTitle('Refinance Break-Even Calculator'),
+    description: seoDescription(
+      'Compare your current mortgage with a new rate and see the month the closing costs are covered.'
+    ),
+    changefreq: 'monthly',
+    priority: '0.7',
+  },
+  {
+    path: '/calculators/rent-vs-buy',
+    title: seoTitle('Rent vs Buy Calculator'),
+    description: seoDescription(
+      'Compare the wealth from buying a home with the wealth from renting and investing the difference.'
+    ),
+    changefreq: 'monthly',
+    priority: '0.7',
+  },
+  {
+    path: '/calculators/401k-match',
+    title: seoTitle('401(k) Match Calculator'),
+    description: seoDescription(
+      'See the balance a salary deferral and employer match can reach, and whether match dollars are left behind.'
+    ),
+    changefreq: 'monthly',
+    priority: '0.7',
+  },
+  {
+    path: '/calculators/investment-fees',
+    title: seoTitle('Investment Fee Calculator'),
+    description: seoDescription('Compare the same portfolio at two annual fees and see the dollars the higher fee keeps.'),
+    changefreq: 'monthly',
+    priority: '0.7',
+  },
+  {
+    path: '/calculators/roth-vs-traditional',
+    title: seoTitle('Roth vs Traditional Calculator'),
+    description: seoDescription(
+      'Put the same pre-tax dollars in a Roth or a traditional account and compare the spendable balance.'
+    ),
+    changefreq: 'monthly',
+    priority: '0.7',
+  },
+  {
+    path: '/calculators/college-savings',
+    title: seoTitle('College Savings Calculator'),
+    description: seoDescription(
+      "Inflate today's college cost across the years in school and find the monthly savings that covers it."
+    ),
+    changefreq: 'monthly',
+    priority: '0.7',
+  },
+  {
+    path: '/calculators/inflation',
+    title: seoTitle('Inflation Calculator'),
+    description: seoDescription(
+      "See what today's dollars cost later, or what a sum you hold today will buy after inflation."
+    ),
+    changefreq: 'monthly',
+    priority: '0.7',
+  },
+  {
+    path: '/calculators/life-insurance',
+    title: seoTitle('Life Insurance Needs Calculator'),
+    description: seoDescription(
+      'Estimate coverage from years of income, debts, and goals, then subtract savings and policies you already own.'
+    ),
+    changefreq: 'monthly',
+    priority: '0.7',
+  },
+  {
     path: '/blog',
     title: seoTitle('The Journal: Money Guides'),
     description: seoDescription(

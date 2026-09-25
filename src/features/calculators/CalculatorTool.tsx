@@ -19,6 +19,14 @@ import WithdrawalPanel from './panels/WithdrawalPanel';
 import TaxPanel from './panels/TaxPanel';
 import SelfEmployedPanel from './panels/SelfEmployedPanel';
 import NetWorthPanel from './panels/NetWorthPanel';
+import RefinancePanel from './panels/RefinancePanel';
+import RentBuyPanel from './panels/RentBuyPanel';
+import Match401kPanel from './panels/Match401kPanel';
+import RothPanel from './panels/RothPanel';
+import CollegePanel from './panels/CollegePanel';
+import InflationPanel from './panels/InflationPanel';
+import InsurancePanel from './panels/InsurancePanel';
+import FeesPanel from './panels/FeesPanel';
 
 const PANELS: Record<CalculatorId, ComponentType> = {
   mortgage: MortgagePanel,
@@ -33,6 +41,14 @@ const PANELS: Record<CalculatorId, ComponentType> = {
   tax: TaxPanel,
   'self-employed': SelfEmployedPanel,
   networth: NetWorthPanel,
+  refinance: RefinancePanel,
+  rentbuy: RentBuyPanel,
+  match401k: Match401kPanel,
+  roth: RothPanel,
+  college: CollegePanel,
+  inflation: InflationPanel,
+  insurance: InsurancePanel,
+  fees: FeesPanel,
 };
 
 type Props = {
