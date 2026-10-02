@@ -171,6 +171,16 @@ const staticPages = [
     priority: '0.9',
   },
   {
+    path: '/find-a-financial-professional',
+    title: seoTitle('Matching Quiz'),
+    description: seoDescription(
+      'Take our 2-minute quiz to get matched with vetted accountants and fiduciary financial advisors',
+      'Free, private, and no obligation.'
+    ),
+    changefreq: 'weekly',
+    priority: '0.9',
+  },
+  {
     path: '/financial-professionals',
     title: seoTitle('Financial Professionals by State'),
     description: seoDescription(
