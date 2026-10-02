@@ -34,6 +34,8 @@ import SignIn from "./pages/auth/SignIn";
 import SignUp from "./pages/auth/SignUp";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
 import BlogEditor from "./pages/admin/BlogEditor";
 import AdminDashboard from "./components/admin/AdminDashboard";
 import AdminEntityDashboard from "./pages/admin/AdminEntityDashboard";
@@ -91,6 +93,8 @@ const App = () => (
                   <Route path="/auth/signup" element={<SignUp />} />
                   <Route path="/auth/forgot-password" element={<ForgotPassword />} />
                   <Route path="/auth/reset-password" element={<ResetPassword />} />
+                  <Route path="/terms" element={<Terms />} />
+                  <Route path="/privacy" element={<Privacy />} />
                   <Route
                     path="/admin/blog"
                     element={

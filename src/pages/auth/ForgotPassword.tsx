@@ -1,13 +1,9 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Mail } from "lucide-react";
-import { Seo } from '@/components/seo/Seo';
+import { Seo } from "@/components/seo/Seo";
 
 const ForgotPassword = () => {
   const { toast } = useToast();
@@ -31,10 +27,14 @@ const ForgotPassword = () => {
         title: "Password reset email sent",
         description: "Check your inbox for a link to reset your password",
       });
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "An error occurred sending the password reset email";
       toast({
         title: "Error",
-        description: error.message || "An error occurred sending the password reset email",
+        description: message,
         variant: "destructive",
       });
     } finally {
@@ -42,86 +42,93 @@ const ForgotPassword = () => {
     }
   };
 
-  if (resetSent) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-        <div className="sm:mx-auto sm:w-full sm:max-w-md">
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-brand-blue">
-            Check your email
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            We've sent a password reset link to {email}
-          </p>
-        </div>
-        <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md text-center">
-          <p className="text-sm text-gray-600">
-            Didn't receive an email?{" "}
-            <button 
-              onClick={() => setResetSent(false)} 
-              className="font-medium text-brand-blue hover:text-brand-teal"
-            >
-              Try again
-            </button>
-          </p>
-          <p className="mt-4">
-            <Link to="/auth/signin" className="font-medium text-brand-blue hover:text-brand-teal">
-              Back to sign in
-            </Link>
-          </p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <Seo title="Reset Your Password | Financial Professional" description="Request a password reset link for your Financial Professional account." noIndex />
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-brand-blue">
-          Reset your password
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Enter your email address and we'll send you a link to reset your password
-        </p>
+    <div className="auth-page page-enter">
+      <Seo
+        title="Reset Your Password | Financial Professional"
+        description="Request a password reset link for your Financial Professional account."
+        noIndex
+      />
+      <div className="auth-page__bg" aria-hidden="true">
+        <div className="auth-page__orb auth-page__orb--1" />
+        <div className="auth-page__orb auth-page__orb--2" />
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form onSubmit={handleResetPassword} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email address</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="pl-9"
-                  placeholder="you@example.com"
-                />
-              </div>
-            </div>
+      <div className="auth-shell">
+        <div className="auth-brand">
+          <span className="keyline" />
+          <p className="auth-eyebrow">Account recovery</p>
+          <h1>
+            {resetSent ? (
+              <>
+                Check your
+                <br />
+                <em>email</em>
+              </>
+            ) : (
+              <>
+                Reset your
+                <br />
+                <em>password</em>
+              </>
+            )}
+          </h1>
+          <p>
+            {resetSent
+              ? `We sent a reset link to ${email}.`
+              : "Enter your email and we’ll send a secure reset link."}
+          </p>
+        </div>
 
-            <div>
-              <Button 
-                type="submit" 
-                className="w-full bg-brand-blue hover:bg-brand-blue/90"
-                disabled={isLoading}
+        <div className="auth-panel">
+          {resetSent ? (
+            <div className="auth-actions">
+              <button
+                type="button"
+                className="btn btn--outline btn--lg btn--full"
+                onClick={() => setResetSent(false)}
               >
-                {isLoading ? "Sending..." : "Send reset link"}
-              </Button>
+                Try a different email
+              </button>
+              <p className="auth-switch" style={{ textAlign: "center" }}>
+                <Link to="/auth/signin">Back to sign in</Link>
+              </p>
             </div>
+          ) : (
+            <form onSubmit={handleResetPassword} className="auth-form">
+              <div className="auth-field">
+                <label htmlFor="email">Email address *</label>
+                <div className="auth-input-wrap">
+                  <Mail className="h-4 w-4" aria-hidden="true" />
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    className="auth-input"
+                    autoComplete="email"
+                    required
+                    aria-required="true"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@firm.com"
+                  />
+                </div>
+              </div>
 
-            <div className="text-center">
-              <Link to="/auth/signin" className="font-medium text-brand-blue hover:text-brand-teal text-sm">
-                Back to sign in
-              </Link>
-            </div>
-          </form>
+              <div className="auth-actions">
+                <button
+                  type="submit"
+                  className="btn btn--green btn--lg btn--full"
+                  disabled={isLoading}
+                >
+                  {isLoading ? "Sending…" : "Send reset link"}
+                </button>
+                <p className="auth-switch" style={{ textAlign: "center" }}>
+                  <Link to="/auth/signin">Back to sign in</Link>
+                </p>
+              </div>
+            </form>
+          )}
         </div>
       </div>
     </div>

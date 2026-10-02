@@ -38,6 +38,7 @@ const Footer = () => {
             <h4>Company</h4>
             <Link to="/calculators">Calculators</Link>
             <Link to="/blog">Blog</Link>
+            <Link to="/auth/signup">List your profile</Link>
             <Link to="/advisor-registration">For advisors</Link>
             <Link to="/auth/signin">Log in</Link>
           </div>
@@ -47,7 +48,8 @@ const Footer = () => {
       <div className="footer__bottom dcontainer">
         <p>&copy; {new Date().getFullYear()} Financial Professional. All rights reserved.</p>
         <div className="footer__legal">
-          <span>Connecting you with financial experts</span>
+          <Link to="/terms">Terms</Link>
+          <Link to="/privacy">Privacy</Link>
         </div>
       </div>
     </footer>
