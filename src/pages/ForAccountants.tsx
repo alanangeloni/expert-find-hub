@@ -70,6 +70,14 @@ const ForAccountants = () => {
         </section>
 
         <section className="for-pro__section">
+          <h2>Audience</h2>
+          <p>
+            Financial Professional&apos;s consumer channels (including Instagram at over 675,000
+            followers) exist to send people toward real professionals.
+          </p>
+        </section>
+
+        <section className="for-pro__section">
           <h2>What your profile should show</h2>
           <p>
             Credentials, services you actually offer, who you serve (individuals, business owners,

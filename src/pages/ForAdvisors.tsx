@@ -72,6 +72,14 @@ const ForAdvisors = () => {
         </section>
 
         <section className="for-pro__section">
+          <h2>Audience</h2>
+          <p>
+            Financial Professional&apos;s consumer channels (including Instagram at over 675,000
+            followers) exist to send people toward real professionals.
+          </p>
+        </section>
+
+        <section className="for-pro__section">
           <h2>How you get found</h2>
           <p>
             Profile in the marketplace, specialty and location paths, and consumer match flow. Do
