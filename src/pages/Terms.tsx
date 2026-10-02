@@ -3,34 +3,41 @@ import { Seo } from "@/components/seo/Seo";
 
 const Terms = () => {
   return (
-    <div className="legal-page page-enter">
+    <div className="advisor-search page-enter">
       <Seo
         title="Terms of Service | Financial Professional"
         description="Terms of Service for Financial Professional, the fiduciary advisor marketplace."
         canonicalUrl="https://financialprofessional.com/terms"
       />
-      <section className="legal-hero">
-        <div className="legal-hero__bg" aria-hidden="true">
-          <div className="legal-hero__orb legal-hero__orb--1" />
-          <div className="legal-hero__orb legal-hero__orb--2" />
-        </div>
-        <div className="dcontainer legal-hero__content">
-          <span className="keyline" />
-          <p className="legal-eyebrow">Legal</p>
-          <h1>
-            Terms of
-            <br />
-            <em>Service</em>
-          </h1>
-          <p className="legal-lead">
-            These terms govern your use of Financial Professional, including advisor signup,
-            directory listings, and related services.
-          </p>
-          <p className="legal-updated">Last updated: October 2, 2026</p>
-        </div>
-      </section>
 
-      <article className="dcontainer legal-body">
+      <div className="advisor-search__hero">
+        <div className="dcontainer advisor-search__hero-row">
+          <div className="advisor-search__hero-copy">
+            <span className="keyline" />
+            <p className="advisor-search__eyebrow">Legal</p>
+            <h1>
+              Terms of
+              <br />
+              <em>Service</em>
+            </h1>
+            <p className="advisor-search__sub">
+              These terms govern your use of Financial Professional, including advisor signup,
+              directory listings, and related services.
+            </p>
+            <p className="legal-updated">Last updated: October 2, 2026</p>
+          </div>
+          <div className="advisor-search__hero-cta">
+            <Link to="/privacy" className="btn btn--outline btn--lg">
+              Privacy Policy
+            </Link>
+            <Link to="/advisors" className="btn btn--primary btn--lg">
+              Browse advisors
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <article className="dcontainer advisor-search__body legal-body">
         <section>
           <h2>1. Acceptance of terms</h2>
           <p>

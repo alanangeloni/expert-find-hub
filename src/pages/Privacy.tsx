@@ -3,34 +3,41 @@ import { Seo } from "@/components/seo/Seo";
 
 const Privacy = () => {
   return (
-    <div className="legal-page page-enter">
+    <div className="advisor-search page-enter">
       <Seo
         title="Privacy Policy | Financial Professional"
         description="Privacy Policy explaining how Financial Professional collects, uses, and protects personal information."
         canonicalUrl="https://financialprofessional.com/privacy"
       />
-      <section className="legal-hero">
-        <div className="legal-hero__bg" aria-hidden="true">
-          <div className="legal-hero__orb legal-hero__orb--1" />
-          <div className="legal-hero__orb legal-hero__orb--2" />
-        </div>
-        <div className="dcontainer legal-hero__content">
-          <span className="keyline keyline-blue" />
-          <p className="legal-eyebrow">Legal</p>
-          <h1>
-            Privacy
-            <br />
-            <em>Policy</em>
-          </h1>
-          <p className="legal-lead">
-            This policy explains how Financial Professional collects, uses, and shares information
-            when you use our advisor marketplace and related services.
-          </p>
-          <p className="legal-updated">Last updated: October 2, 2026</p>
-        </div>
-      </section>
 
-      <article className="dcontainer legal-body">
+      <div className="advisor-search__hero">
+        <div className="dcontainer advisor-search__hero-row">
+          <div className="advisor-search__hero-copy">
+            <span className="keyline" />
+            <p className="advisor-search__eyebrow">Legal</p>
+            <h1>
+              Privacy
+              <br />
+              <em>Policy</em>
+            </h1>
+            <p className="advisor-search__sub">
+              This policy explains how Financial Professional collects, uses, and shares information
+              when you use our advisor marketplace and related services.
+            </p>
+            <p className="legal-updated">Last updated: October 2, 2026</p>
+          </div>
+          <div className="advisor-search__hero-cta">
+            <Link to="/terms" className="btn btn--outline btn--lg">
+              Terms of Service
+            </Link>
+            <Link to="/advisors" className="btn btn--primary btn--lg">
+              Browse advisors
+            </Link>
+          </div>
+        </div>
+      </div>
+
+      <article className="dcontainer advisor-search__body legal-body">
         <section>
           <h2>1. Scope</h2>
           <p>
