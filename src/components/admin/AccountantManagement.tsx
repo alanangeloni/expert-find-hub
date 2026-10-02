@@ -107,12 +107,23 @@ export const AccountantManagement = () => {
       delete payload.updated_at;
 
       if (editingAccountant) {
-        const { error } = await supabase.from("accountants").update(payload as never).eq("id", editingAccountant.id);
+        const { data, error } = await supabase
+          .from("accountants")
+          .update(payload as never)
+          .eq("id", editingAccountant.id)
+          .select("id")
+          .single();
         if (error) throw error;
+        if (!data) throw new Error("Accountant update did not persist.");
         toast.success("Accountant updated");
       } else {
-        const { error } = await supabase.from("accountants").insert(payload as never);
+        const { data, error } = await supabase
+          .from("accountants")
+          .insert(payload as never)
+          .select("id")
+          .single();
         if (error) throw error;
+        if (!data) throw new Error("Accountant create did not persist.");
         toast.success("Accountant created");
       }
       setIsFormOpen(false);

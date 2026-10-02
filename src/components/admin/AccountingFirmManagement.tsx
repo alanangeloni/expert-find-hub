@@ -48,12 +48,15 @@ export function AccountingFirmManagement() {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('accounting_firms')
         .delete()
-        .eq('id', id);
-      
+        .eq('id', id)
+        .select('id')
+        .single();
+
       if (error) throw error;
+      if (!data) throw new Error('Firm delete did not persist. Check admin RLS policies.');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['accounting-firms-admin'] });

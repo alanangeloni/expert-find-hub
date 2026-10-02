@@ -28,6 +28,7 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
+import { HeadshotUpload } from '@/components/common/HeadshotUpload';
 
 import { CLIENT_TYPES, type ClientType } from '@/constants/clientTypes';
 import { ADVISOR_SERVICES, type AdvisorService } from '@/constants/advisorServices';
@@ -142,6 +143,7 @@ const formSchema = z.object({
   client_type: z.array(clientTypeEnum).max(10, 'Maximum 10 client types allowed').optional(),
   states_registered_in: z.array(z.enum(US_STATES as unknown as [string, ...string[]])).max(50, 'Maximum 50 states allowed').optional(),
   fiduciary: z.boolean().default(false),
+  headshot_url: z.string().url().optional().or(z.literal('')).nullable(),
   terms: z.boolean().refine((value) => value === true, {
     message: 'You must accept the terms and conditions.',
   }),
@@ -201,6 +203,7 @@ export const AdvisorForm = ({
       client_type: [],
       states_registered_in: [],
       fiduciary: false,
+      headshot_url: null,
       terms: false,
     },
   });
@@ -297,6 +300,7 @@ export const AdvisorForm = ({
         client_type: (formData.client_type || []) as ClientType[],
         states_registered_in: (formData.states_registered_in || []) as USState[],
         fiduciary: formData.fiduciary,
+        headshot_url: formData.headshot_url || null,
         verified: false,
         status: 'pending_approval'
       };
@@ -611,6 +615,24 @@ export const AdvisorForm = ({
                             e.target.value === '' ? undefined : Number(e.target.value)
                           )
                         }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="headshot_url"
+                render={({ field }) => (
+                  <FormItem className="md:col-span-2">
+                    <FormControl>
+                      <HeadshotUpload
+                        currentHeadshotUrl={field.value}
+                        onHeadshotChange={field.onChange}
+                        disabled={fieldDisabled}
+                        label="Profile photo"
                       />
                     </FormControl>
                     <FormMessage />
