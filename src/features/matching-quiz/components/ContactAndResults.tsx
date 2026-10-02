@@ -174,7 +174,7 @@ export function ResultsReveal({
     <div className="quiz-results">
       <div className="quiz-results__hero">
         <div className="quiz-results__hero-inner">
-          <span className="keyline" />
+          <span className="home-quiz__rule" aria-hidden="true" />
           <p className="quiz-results__eyebrow">Your matches</p>
           <h1>
             {matches.length} {label}{" "}
@@ -253,7 +253,7 @@ export function Confirmation({
 
   return (
     <div className="quiz-confirm dcontainer">
-      <span className="keyline" />
+      <span className="home-quiz__rule" aria-hidden="true" />
       <p className="quiz-results__eyebrow">You&apos;re all set</p>
       <h1>
         Next steps <em>from here</em>

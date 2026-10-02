@@ -545,7 +545,7 @@ export function LogisticsStep({
       <div className="quiz__field mt-8">
         <h3>{STATE_LABEL}</h3>
         {!answers.outsideUs && (
-          <div className="quiz__chips quiz__chips--compact">
+          <div className="home-quiz__chips">
             {US_STATES.map((s) => (
               <ChipOption
                 key={s}

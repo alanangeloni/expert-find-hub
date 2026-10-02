@@ -1,71 +1,70 @@
 import { Link } from "react-router-dom";
 import { TOTAL_STEPS } from "../types";
 
-interface ProgressBarProps {
-  step: number;
-}
-
-export function QuizProgressBar({ step }: ProgressBarProps) {
-  const pct = Math.min(100, Math.max(0, (step / TOTAL_STEPS) * 100));
-  return (
-    <div className="quiz__progress" role="progressbar" aria-valuenow={step} aria-valuemin={1} aria-valuemax={TOTAL_STEPS} aria-label={`Step ${step} of ${TOTAL_STEPS}`}>
-      <div className="quiz__progress-fill" style={{ width: `${pct}%` }} />
-    </div>
-  );
-}
+const STEP_LABELS = [
+  "Your priority",
+  "What you need",
+  "Your situation",
+  "Financials",
+  "Timing & location",
+  "Your details",
+];
 
 export function QuizShell({
   step,
   children,
-  showProgress = true,
 }: {
   step: number;
   children: React.ReactNode;
   showProgress?: boolean;
 }) {
   return (
-    <div className="quiz">
-      <div className="quiz__shell">
-        {showProgress && <QuizProgressBar step={step} />}
-        <div className="dcontainer quiz__layout">
-          <aside className="quiz__rail">
-            <Link to="/" className="quiz__back-home">
-              ← Back to home
-            </Link>
-            <p className="quiz__rail-eyebrow">Get matched</p>
-            <h2>
-              Find your
-              <br />
-              <em>financial pro</em>
-            </h2>
-            <ol className="quiz__steps" aria-label="Quiz steps">
-              {[
-                "Your priority",
-                "What you need",
-                "Your situation",
-                "Financials",
-                "Timing & location",
-                "Your details",
-              ].map((label, i) => {
-                const n = i + 1;
-                const cls =
-                  n === step ? "is-current" : n < step ? "is-done" : "";
-                return (
-                  <li key={label} className={cls}>
-                    <span className="quiz__step-num">{n < step ? "✓" : n}</span>
-                    <span className="quiz__step-label">{label}</span>
-                  </li>
-                );
-              })}
-            </ol>
-            <p className="quiz__rail-note">
-              About 2 minutes. Free, no obligation — and we never sell your details.
-            </p>
-          </aside>
-          <div className="quiz__main">{children}</div>
+    <section className="home-quiz quiz-page">
+      <div className="dcontainer">
+        <div className="home-quiz__card quiz-page__card">
+          <header className="home-quiz__head">
+            <div>
+              <span className="home-quiz__rule" aria-hidden="true" />
+              <p className="home-quiz__eyebrow">Find your match</p>
+              <h1 className="home-quiz__headline">
+                A few questions. <em>The right shortlist.</em>
+              </h1>
+              <p className="home-quiz__lead">
+                Tell us whether you need an accountant or a financial advisor. We&apos;ll walk you
+                through six quick steps — free, private, and no obligation.
+              </p>
+            </div>
+            <span className="home-quiz__count">
+              Step {step} of {TOTAL_STEPS}
+            </span>
+          </header>
+
+          <ol className="home-quiz__steps" aria-label="Progress">
+            {STEP_LABELS.map((label, index) => {
+              const n = index + 1;
+              const cls =
+                n === step ? "is-current" : n < step ? "is-done" : "";
+              return (
+                <li key={label} className={`home-quiz__step-pill ${cls}`}>
+                  <span>{n < step ? "✓" : n}</span>
+                  {label}
+                </li>
+              );
+            })}
+          </ol>
+
+          {children}
+
+          <p className="home-quiz__promise quiz-page__privacy-foot">
+            <span aria-hidden="true">✓</span>
+            Free, no obligation — and we never sell your details.
+          </p>
+          <p className="quiz-page__home-link">
+            <Link to="/">← Back to home</Link>
+          </p>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -83,7 +82,7 @@ export function OptionCard({
   return (
     <button
       type="button"
-      className={`quiz__option ${selected ? "is-on" : ""}`}
+      className={`home-quiz__option ${selected ? "is-active" : ""}`}
       aria-pressed={selected}
       onClick={onClick}
     >
@@ -105,7 +104,7 @@ export function ChipOption({
   return (
     <button
       type="button"
-      className={`quiz__chip ${selected ? "is-on" : ""}`}
+      className={`home-quiz__chip ${selected ? "is-active" : ""}`}
       aria-pressed={selected}
       onClick={onClick}
     >
@@ -124,7 +123,12 @@ export function ContinueButton({
   label?: string;
 }) {
   return (
-    <button type="button" className="btn btn--primary btn--lg quiz__continue" disabled={disabled} onClick={onClick}>
+    <button
+      type="button"
+      className="home-quiz__next"
+      disabled={disabled}
+      onClick={onClick}
+    >
       {label}
       <span aria-hidden="true">→</span>
     </button>
@@ -133,8 +137,8 @@ export function ContinueButton({
 
 export function BackButton({ onClick }: { onClick: () => void }) {
   return (
-    <button type="button" className="quiz__back" onClick={onClick}>
-      ← Back
+    <button type="button" className="home-quiz__back" onClick={onClick}>
+      Back
     </button>
   );
 }
@@ -153,14 +157,14 @@ export function StepCard({
   footer?: React.ReactNode;
 }) {
   return (
-    <div className="quiz__card">
-      <header className="quiz__card-header">
-        {eyebrow ? <span className="quiz__step-indicator">{eyebrow}</span> : null}
-        <h1>{title}</h1>
-        {subtitle ? <p>{subtitle}</p> : null}
-      </header>
-      <div className="quiz__card-body">{children}</div>
-      {footer ? <footer className="quiz__card-footer">{footer}</footer> : null}
-    </div>
+    <>
+      {eyebrow ? <p className="quiz-page__phase-eyebrow">{eyebrow}</p> : null}
+      <div className="home-quiz__panel">
+        <p className="home-quiz__ask">{title}</p>
+        {subtitle ? <p className="home-quiz__hint">{subtitle}</p> : null}
+        {children}
+      </div>
+      {footer ? <footer className="home-quiz__foot">{footer}</footer> : null}
+    </>
   );
 }
