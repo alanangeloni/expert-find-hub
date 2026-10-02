@@ -69,7 +69,7 @@ const ForAdvisors = () => {
           <h1>
             Get found by people already looking
             <br />
-            for a <em>fiduciary</em>
+            for a <em>financial advisor</em>
           </h1>
           <p className="for-pro__hero-sub">
             Financial Professional is a consumer marketplace that matches households with vetted
