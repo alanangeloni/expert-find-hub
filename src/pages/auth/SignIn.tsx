@@ -77,7 +77,15 @@ const SignIn = () => {
           </h1>
           <p className="auth-switch">
             New here?{" "}
-            <Link to="/auth/signup">Create an account</Link>
+            <Link
+              to={
+                redirectTo && redirectTo !== "/"
+                  ? `/auth/signup?redirect=${encodeURIComponent(redirectTo)}`
+                  : "/auth/signup"
+              }
+            >
+              Create an account
+            </Link>
           </p>
         </div>
 

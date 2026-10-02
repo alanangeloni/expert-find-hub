@@ -40,6 +40,7 @@ import { toast } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 import { AccountantForm } from "./AccountantForm";
+import { AccountantApprovalActions } from "./AccountantApprovalActions";
 import { AdminListToolbar } from "./AdminListToolbar";
 import { AdminPagination } from "./AdminPagination";
 import { AdminBulkBar } from "./AdminBulkBar";
@@ -56,7 +57,7 @@ type AccountantRow = Tables<"accountants">;
 
 const ACCOUNTANT_STATUSES = [
   "draft",
-  "pending",
+  "pending_approval",
   "approved",
   "rejected",
 ] as const;
@@ -65,7 +66,7 @@ type AccountantStatus = (typeof ACCOUNTANT_STATUSES)[number];
 
 const STATUS_LABELS: Record<AccountantStatus, string> = {
   draft: "Draft",
-  pending: "Pending",
+  pending_approval: "Pending approval",
   approved: "Approved",
   rejected: "Rejected",
 };
@@ -251,9 +252,14 @@ export const AccountantManagement = () => {
   };
 
   const updateStatus = async (id: string, status: AccountantStatus) => {
+    const payload: Record<string, unknown> = { status };
+    if (status === "approved") {
+      payload.verified = true;
+      payload.approved_at = new Date().toISOString();
+    }
     const { data, error: updateError } = await supabase
       .from("accountants")
-      .update({ status } as never)
+      .update(payload as never)
       .eq("id", id)
       .select()
       .single();
@@ -425,7 +431,7 @@ export const AccountantManagement = () => {
         <Button
           size="sm"
           variant="outline"
-          onClick={() => handleBulkStatus("pending")}
+          onClick={() => handleBulkStatus("pending_approval")}
         >
           Set Pending
         </Button>
@@ -601,6 +607,15 @@ export const AccountantManagement = () => {
               {editingAccountant ? "Edit Accountant" : "Add Accountant"}
             </DialogTitle>
           </DialogHeader>
+          {editingAccountant && (
+            <AccountantApprovalActions
+              accountant={editingAccountant}
+              onUpdate={() => {
+                refetch();
+                setIsFormOpen(false);
+              }}
+            />
+          )}
           <AccountantForm formData={formData} setFormData={setFormData} />
           <div className="flex justify-end gap-3 pt-4">
             <Button variant="outline" onClick={() => setIsFormOpen(false)}>

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { AdvisorForm } from "@/components/advisor-registration/AdvisorRegistrationForm";
+import { AccountantRegistrationForm } from "@/components/accountant-registration/AccountantRegistrationForm";
 import { EmailVerificationBanner } from "@/components/auth/EmailVerificationBanner";
 import { Seo } from "@/components/seo/Seo";
 import {
@@ -12,11 +12,11 @@ import {
   isEmailVerified,
 } from "@/lib/authHelpers";
 import {
-  ADVISOR_REGISTRATION_PATH,
+  ACCOUNTANT_REGISTRATION_PATH,
   setStoredRegistrationPath,
 } from "@/lib/registrationPaths";
 
-const AdvisorRegistration = () => {
+const AccountantRegistration = () => {
   const { user, isLoading } = useAuth();
   const navigate = useNavigate();
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -24,7 +24,7 @@ const AdvisorRegistration = () => {
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    setStoredRegistrationPath(ADVISOR_REGISTRATION_PATH);
+    setStoredRegistrationPath(ACCOUNTANT_REGISTRATION_PATH);
   }, []);
 
   useEffect(() => {
@@ -38,7 +38,6 @@ const AdvisorRegistration = () => {
     }
   }, [user]);
 
-  // When returning from email link, refresh user so email_confirmed_at is current
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const hash = window.location.hash;
@@ -70,14 +69,16 @@ const AdvisorRegistration = () => {
   const verified = isEmailVerified(user);
   const prefill = getUserPrefill(user);
   const bannerEmail = user?.email || pendingEmail || prefill.email;
+  const signupHref = `/auth/signup?intent=accountant&redirect=${encodeURIComponent(ACCOUNTANT_REGISTRATION_PATH)}`;
+  const signinHref = `/auth/signin?redirect=${encodeURIComponent(ACCOUNTANT_REGISTRATION_PATH)}`;
 
   if (isLoading || refreshing) {
     return (
       <div className="onboard-page page-enter">
         <Seo
-          title="Join as a Financial Advisor | Financial Professional"
-          description="Register your advisory practice and get listed in the Financial Professional directory of vetted advisors."
-          canonicalUrl="https://financialprofessional.com/advisor-registration"
+          title="Join as an Accountant | Financial Professional"
+          description="Register your accounting practice and get listed in the Financial Professional directory of vetted accountants."
+          canonicalUrl="https://financialprofessional.com/accountant-registration"
         />
         <div className="onboard-loading">Loading your account…</div>
       </div>
@@ -88,9 +89,9 @@ const AdvisorRegistration = () => {
     return (
       <div className="onboard-page page-enter">
         <Seo
-          title="Join as a Financial Advisor | Financial Professional"
-          description="Register your advisory practice and get listed in the Financial Professional directory of vetted advisors."
-          canonicalUrl="https://financialprofessional.com/advisor-registration"
+          title="Join as an Accountant | Financial Professional"
+          description="Register your accounting practice and get listed in the Financial Professional directory of vetted accountants."
+          canonicalUrl="https://financialprofessional.com/accountant-registration"
         />
         <section className="onboard-hero">
           <div className="onboard-hero__bg" aria-hidden="true">
@@ -99,7 +100,7 @@ const AdvisorRegistration = () => {
           </div>
           <div className="dcontainer onboard-hero__content">
             <span className="keyline" />
-            <p className="auth-eyebrow">For advisors</p>
+            <p className="auth-eyebrow">For accountants</p>
             <h1>
               List your profile on
               <br />
@@ -121,16 +122,13 @@ const AdvisorRegistration = () => {
                   <h2>Verify, then sign in</h2>
                   <p>
                     After you confirm <strong>{pendingEmail}</strong>, sign in to continue your
-                    advisor registration.
+                    accountant registration.
                   </p>
                   <div className="onboard-gate__actions">
-                    <Link
-                      className="btn btn--green btn--lg"
-                      to={`/auth/signin?redirect=${encodeURIComponent("/advisor-registration")}`}
-                    >
+                    <Link className="btn btn--green btn--lg" to={signinHref}>
                       Sign in
                     </Link>
-                    <Link className="btn btn--outline btn--lg" to="/auth/signup">
+                    <Link className="btn btn--outline btn--lg" to={signupHref}>
                       Back to signup
                     </Link>
                   </div>
@@ -140,16 +138,13 @@ const AdvisorRegistration = () => {
               <div className="onboard-gate">
                 <h2>Sign in to continue</h2>
                 <p>
-                  You need an account before you can submit an advisor profile for review.
+                  You need an account before you can submit an accountant profile for review.
                 </p>
                 <div className="onboard-gate__actions">
-                  <Link
-                    className="btn btn--green btn--lg"
-                    to={`/auth/signin?redirect=${encodeURIComponent("/advisor-registration")}`}
-                  >
+                  <Link className="btn btn--green btn--lg" to={signinHref}>
                     Sign in
                   </Link>
-                  <Link className="btn btn--outline btn--lg" to="/auth/signup">
+                  <Link className="btn btn--outline btn--lg" to={signupHref}>
                     Create account
                   </Link>
                 </div>
@@ -166,7 +161,7 @@ const AdvisorRegistration = () => {
       <div className="onboard-page page-enter">
         <Seo
           title="Registration Submitted | Financial Professional"
-          description="Your advisor profile has been submitted for review."
+          description="Your accountant profile has been submitted for review."
           noIndex
         />
         <section className="onboard-hero">
@@ -194,8 +189,8 @@ const AdvisorRegistration = () => {
               <button type="button" className="btn btn--green btn--lg" onClick={() => navigate("/")}>
                 Return home
               </button>
-              <Link className="btn btn--outline btn--lg" to="/advisor-profile">
-                View account profile
+              <Link className="btn btn--outline btn--lg" to="/accountants">
+                Browse accountants
               </Link>
             </div>
           </div>
@@ -207,9 +202,9 @@ const AdvisorRegistration = () => {
   return (
     <div className="onboard-page page-enter">
       <Seo
-        title="Join as a Financial Advisor | Financial Professional"
-        description="Register your advisory practice and get listed in the Financial Professional directory of vetted advisors."
-        canonicalUrl="https://financialprofessional.com/advisor-registration"
+        title="Join as an Accountant | Financial Professional"
+        description="Register your accounting practice and get listed in the Financial Professional directory of vetted accountants."
+        canonicalUrl="https://financialprofessional.com/accountant-registration"
       />
       <section className="onboard-hero">
         <div className="onboard-hero__bg" aria-hidden="true">
@@ -218,14 +213,14 @@ const AdvisorRegistration = () => {
         </div>
         <div className="dcontainer onboard-hero__content">
           <span className="keyline" />
-          <p className="auth-eyebrow">Advisor onboarding</p>
+          <p className="auth-eyebrow">Accountant onboarding</p>
           <h1>
             Build a profile clients
             <br />
             <em>can trust</em>
           </h1>
           <p>
-            Transparent fees, credentials, and specialties — listed in a directory designed for
+            Clear services, credentials, and specialties — listed in a directory designed for
             serious matches, not lead spam.
           </p>
         </div>
@@ -258,7 +253,7 @@ const AdvisorRegistration = () => {
           </div>
 
           <div className="onboard-form-wrap" aria-disabled={!verified}>
-            <AdvisorForm
+            <AccountantRegistrationForm
               onSuccess={() => setIsSubmitted(true)}
               disabled={!verified}
               initialValues={{
@@ -276,4 +271,4 @@ const AdvisorRegistration = () => {
   );
 };
 
-export default AdvisorRegistration;
+export default AccountantRegistration;
