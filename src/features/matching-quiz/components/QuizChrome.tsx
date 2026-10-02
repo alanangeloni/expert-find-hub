@@ -157,7 +157,7 @@ export function StepCard({
   footer?: React.ReactNode;
 }) {
   return (
-    <>
+    <div className="quiz-page__step">
       {eyebrow ? <p className="quiz-page__phase-eyebrow">{eyebrow}</p> : null}
       <div className="home-quiz__panel">
         <p className="home-quiz__ask">{title}</p>
@@ -165,6 +165,6 @@ export function StepCard({
         {children}
       </div>
       {footer ? <footer className="home-quiz__foot">{footer}</footer> : null}
-    </>
+    </div>
   );
 }

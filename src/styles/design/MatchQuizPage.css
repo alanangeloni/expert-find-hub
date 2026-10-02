@@ -12,6 +12,10 @@
   max-width: 880px;
 }
 
+.quiz-page__step {
+  min-width: 0;
+}
+
 .quiz-page__phase-eyebrow {
   margin: 0 0 10px;
   font-size: 11.5px;
