@@ -393,34 +393,6 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Advisor listing CTA */}
-      <section className="home-advisor-cta" aria-labelledby="list-profile-heading">
-        <div className="dcontainer">
-          <div className="home-advisor-cta__inner">
-            <div className="home-advisor-cta__copy">
-              <span className="keyline" />
-              <h2 id="list-profile-heading">
-                Are you an advisor?
-                <br />
-                <em>List your profile</em>
-              </h2>
-              <p>
-                Join a fiduciary-first directory built for transparent matches — not pay-to-play
-                lead gen. Create your account and submit a public profile for review.
-              </p>
-            </div>
-            <div className="home-advisor-cta__actions">
-              <Link className="btn btn--green btn--lg" to="/auth/signup">
-                List your profile
-              </Link>
-              <Link className="btn btn--outline btn--lg" to="/advisor-registration">
-                Continue registration
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* CTA band */}
       <section className="home-cta">
         <div className="dcontainer home-cta__inner">
