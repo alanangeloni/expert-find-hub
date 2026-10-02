@@ -35,13 +35,8 @@ const BENEFITS = [
   },
   {
     tone: "orange" as const,
-    title: "Match + browse.",
-    body: "Quiz and directory so households can find you either way.",
-  },
-  {
-    tone: "green" as const,
-    title: "Advisors and accountants together.",
-    body: "Households don't experience wealth and tax as separate vendors.",
+    title: "Match + browse. Advisors and accountants together.",
+    body: "Quiz and directory so households can find you either way. Households don't experience wealth and tax as separate vendors.",
   },
 ];
 

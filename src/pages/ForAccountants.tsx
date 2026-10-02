@@ -11,7 +11,7 @@ const BENEFITS = [
   {
     tone: "green" as const,
     title: "Same anti-lead-mill model.",
-    body: "Flat listing, not pay-per-click.",
+    body: "Flat listing, not pay-per-click. No pay-to-play rankings.",
   },
   {
     tone: "blue" as const,
@@ -25,11 +25,6 @@ const BENEFITS = [
   },
   {
     tone: "green" as const,
-    title: "No pay-to-play rankings.",
-    body: "",
-  },
-  {
-    tone: "blue" as const,
     title: "Browse + match paths for accountant intent as those flows go live.",
     body: "",
   },

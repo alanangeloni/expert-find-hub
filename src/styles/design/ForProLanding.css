@@ -240,14 +240,21 @@
   font-weight: 550;
 }
 
-/* ——— Why benefit cards ——— */
+/* ——— Why benefit cards ———
+   Flex wrap + centered last row so odd counts never leave a lone
+   left-aligned card. Prefer even counts (6 / 4) in page data. */
 .for-pro__benefit-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: var(--space-5);
 }
 
 .for-pro__benefit {
+  box-sizing: border-box;
+  flex: 0 1 calc((100% - 2 * var(--space-5)) / 3);
+  width: calc((100% - 2 * var(--space-5)) / 3);
+  max-width: calc((100% - 2 * var(--space-5)) / 3);
   padding: var(--space-6);
   border-radius: var(--radius-xl);
   border: var(--d-border);
@@ -256,6 +263,13 @@
     border-color var(--duration-fast),
     box-shadow var(--duration-fast),
     transform var(--duration-fast) var(--ease-out);
+}
+
+/* 4-card grids use a balanced 2×2 */
+.for-pro__benefit-grid--2col .for-pro__benefit {
+  flex-basis: calc((100% - var(--space-5)) / 2);
+  width: calc((100% - var(--space-5)) / 2);
+  max-width: calc((100% - var(--space-5)) / 2);
 }
 
 .for-pro__benefit:hover {
@@ -496,7 +510,13 @@
 
 /* ——— Responsive ——— */
 @media (max-width: 960px) {
-  .for-pro__benefit-grid,
+  .for-pro__benefit-grid .for-pro__benefit,
+  .for-pro__benefit-grid--2col .for-pro__benefit {
+    flex-basis: 100%;
+    width: 100%;
+    max-width: 100%;
+  }
+
   .for-pro__steps {
     grid-template-columns: 1fr;
   }
