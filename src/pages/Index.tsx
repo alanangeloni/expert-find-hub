@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { AdvisorCard } from "@/components/advisors/AdvisorCard";
-import { getAdvisors, getAllAdvisors } from "@/services/advisorsService";
+import { getAdvisors, getAllAdvisors, sortPhotoFirst } from "@/services/advisorsService";
 import { SPECIALTY_GROUPS } from "@/constants/specialties";
 import { Seo } from "@/components/seo/Seo";
 import {
@@ -20,9 +20,9 @@ const FeaturedAdvisors = () => {
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await getAdvisors({ page: 1, pageSize: 12 });
-        const shuffled = [...(data || [])].sort(() => 0.5 - Math.random());
-        setAdvisors(shuffled.slice(0, 3));
+        const { data } = await getAdvisors({ page: 1, pageSize: 100 });
+        const withPhotos = sortPhotoFirst(data || []).filter((a) => a.headshot_url);
+        setAdvisors(withPhotos.slice(0, 6));
       } catch (e) {
         console.error(e);
       } finally {

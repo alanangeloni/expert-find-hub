@@ -166,6 +166,18 @@ export const getAdvisorsByIds = async (ids: string[]): Promise<Advisor[]> => {
   }
 };
 
+const shuffle = <T,>(list: T[]): T[] => [...list].sort(() => 0.5 - Math.random());
+
+/**
+ * Advisors with a profile photo sort first; ordering within each group
+ * (photo / no photo) is randomized so placement stays fair for everyone.
+ */
+export const sortPhotoFirst = (list: Advisor[]): Advisor[] => {
+  const withPhoto = shuffle(list.filter((a) => !!a.headshot_url));
+  const withoutPhoto = shuffle(list.filter((a) => !a.headshot_url));
+  return [...withPhoto, ...withoutPhoto];
+};
+
 export const getAllAdvisors = async (): Promise<Advisor[]> => {
   try {
     const { data, error } = await supabase
