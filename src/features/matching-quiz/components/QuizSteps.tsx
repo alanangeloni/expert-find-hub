@@ -87,13 +87,11 @@ export function PrimaryStep({
   selected: QuizPath | null;
   onSelect: (path: QuizPath) => void;
 }) {
-  const options = [...PRIMARY_OPTIONS].sort((a, b) =>
-    a.title.localeCompare(b.title)
-  );
+  // Fixed owner order — Taxes left, Wealth right. Always render both cards.
   return (
     <StepCard title={PRIMARY_QUESTION} subtitle={PRIMARY_SUBTEXT}>
-      <div className="quiz__option-grid">
-        {options.map((o) => (
+      <div className="home-quiz__options" role="group" aria-label="Financial priority">
+        {PRIMARY_OPTIONS.map((o) => (
           <OptionCard
             key={o.path}
             title={o.title}

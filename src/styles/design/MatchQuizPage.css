@@ -3,13 +3,29 @@
 
 .quiz-page {
   min-height: calc(100vh - var(--header-height));
+  /* Soft mint / warm off-white — same plane as homepage home-quiz */
   background: #f4f3ee;
   border-top: 1px solid var(--gray-200);
   padding: var(--space-12) 0 var(--space-16);
 }
 
+.quiz-page.home-quiz {
+  /* Avoid double vertical padding from .home-quiz */
+  padding: var(--space-12) 0 var(--space-16);
+}
+
 .quiz-page__card {
   max-width: 880px;
+}
+
+/* Ensure option Links on homepage Step 1 preview look like buttons */
+a.home-quiz__option {
+  text-decoration: none;
+  color: inherit;
+}
+
+.home-quiz__options {
+  margin-bottom: 0;
 }
 
 .quiz-page__step {

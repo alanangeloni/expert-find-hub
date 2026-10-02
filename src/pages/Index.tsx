@@ -299,7 +299,7 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Match quiz entry — dedicated SPA at /find-a-financial-professional */}
+      {/* Match quiz entry — Step 1 preview; full SPA at /find-a-financial-professional */}
       <section className="home-quiz" id="match">
         <div className="dcontainer">
           <div className="home-quiz__card">
@@ -312,20 +312,53 @@ const HomePage = () => {
                 </h2>
                 <p className="home-quiz__lead">
                   Tell us whether you need an accountant or a financial advisor. We&apos;ll walk you
-                  through six quick steps and surface professionals from our directory.
+                  through six quick steps — free, private, and no obligation.
                 </p>
               </div>
+              <span className="home-quiz__count">Step 1 of 6</span>
             </header>
-            <footer className="home-quiz__foot">
-              <p className="home-quiz__promise">
-                <span aria-hidden="true">✓</span>
-                Free, no obligation — and we never sell your details.
-              </p>
-              <Link className="home-quiz__next" to="/find-a-financial-professional">
-                Take the 2-min quiz
-                <span aria-hidden="true">→</span>
-              </Link>
-            </footer>
+            <ol className="home-quiz__steps" aria-label="Progress">
+              {[
+                "Your priority",
+                "What you need",
+                "Your situation",
+                "Financials",
+                "Timing & location",
+                "Your details",
+              ].map((label, index) => (
+                <li
+                  key={label}
+                  className={`home-quiz__step-pill ${index === 0 ? "is-current" : ""}`}
+                >
+                  <span>{index + 1}</span>
+                  {label}
+                </li>
+              ))}
+            </ol>
+            <div className="home-quiz__panel">
+              <p className="home-quiz__ask">What&apos;s your biggest financial priority right now?</p>
+              <p className="home-quiz__hint">Pick the one that&apos;s most pressing.</p>
+              <div className="home-quiz__options" role="group" aria-label="Financial priority">
+                <Link
+                  className="home-quiz__option"
+                  to="/find-a-financial-professional?path=tax"
+                >
+                  <strong>Taxes &amp; accounting</strong>
+                  <span>CPA, tax strategy, tax prep</span>
+                </Link>
+                <Link
+                  className="home-quiz__option"
+                  to="/find-a-financial-professional?path=wealth"
+                >
+                  <strong>Wealth &amp; financial planning</strong>
+                  <span>Financial advisor, investing, retirement</span>
+                </Link>
+              </div>
+            </div>
+            <p className="home-quiz__promise">
+              <span aria-hidden="true">✓</span>
+              Free, no obligation — and we never sell your details.
+            </p>
           </div>
         </div>
       </section>

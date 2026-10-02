@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Seo } from "@/components/seo/Seo";
 import { quizAnalytics } from "./analytics";
 import {
@@ -43,6 +44,7 @@ import {
 } from "./types";
 
 const MatchingQuizPage = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [answers, setAnswers] = useState<QuizAnswers>(INITIAL_ANSWERS);
   const [phase, setPhase] = useState<QuizPhase>("primary");
   const [sessionId, setSessionId] = useState(() => getOrCreateSessionId());
@@ -51,15 +53,51 @@ const MatchingQuizPage = () => {
   const [matches, setMatches] = useState<QuizMatchCard[]>([]);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const startedRef = useRef(false);
+  const bootRef = useRef(false);
 
   useEffect(() => {
+    if (bootRef.current) return;
+    bootRef.current = true;
+
+    const pathParam = searchParams.get("path");
+    const isReload =
+      typeof performance !== "undefined" &&
+      (performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming | undefined)
+        ?.type === "reload";
+
+    if (pathParam === "tax" || pathParam === "wealth") {
+      clearQuizState();
+      const nextAnswers = ensureSliderDefaults({
+        ...INITIAL_ANSWERS,
+        path: pathParam,
+      });
+      setAnswers(nextAnswers);
+      setPhase("services");
+      setSearchParams({}, { replace: true });
+      setHydrated(true);
+      return;
+    }
+
+    // Fresh entry (Get Matched / Take the 2-min quiz) always opens Step 1 with both
+    // priority cards visible. Reload mid-quiz restores progress.
+    if (!isReload) {
+      clearQuizState();
+      setAnswers(INITIAL_ANSWERS);
+      setPhase("primary");
+      setHydrated(true);
+      return;
+    }
+
     const saved = loadQuizState();
     if (saved && saved.phase !== "confirmation") {
       setAnswers(ensureSliderDefaults(saved.answers));
       setPhase(saved.phase === "results" ? "contact" : saved.phase);
+    } else {
+      setAnswers(INITIAL_ANSWERS);
+      setPhase("primary");
     }
     setHydrated(true);
-  }, []);
+  }, [searchParams, setSearchParams]);
 
   useEffect(() => {
     if (!hydrated || startedRef.current) return;
@@ -173,7 +211,21 @@ const MatchingQuizPage = () => {
     }
   };
 
-  if (!hydrated) return null;
+  if (!hydrated) {
+    // Never blank the start — show Step 1 chrome immediately while state settles
+    return (
+      <>
+        <Seo
+          title="Find a Financial Professional | Matching Quiz"
+          description="Answer a few questions to get matched with accountants or financial advisors."
+          canonicalUrl="https://financialprofessional.com/find-a-financial-professional"
+        />
+        <QuizShell step={1}>
+          <PrimaryStep selected={null} onSelect={() => undefined} />
+        </QuizShell>
+      </>
+    );
+  }
 
   const step = PHASE_STEP[phase];
   const showShell = phase !== "results" && phase !== "confirmation";
