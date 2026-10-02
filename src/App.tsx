@@ -21,6 +21,7 @@ import Accountants from "./pages/Accountants";
 import AccountantDetail from "./pages/AccountantDetail";
 import AccountantSpecialty from "./pages/AccountantSpecialty";
 import AdvisorRegistration from "./pages/AdvisorRegistration";
+import AccountantRegistration from "./pages/AccountantRegistration";
 import AdvisorProfile from "./pages/AdvisorProfile";
 import InvestmentFirms from "./pages/InvestmentFirms";
 import InvestmentFirmDetail from "./pages/InvestmentFirmDetail";
@@ -73,6 +74,7 @@ const App = () => (
                   <Route path="/accountants/specialty/:slug" element={<AccountantSpecialty />} />
                   <Route path="/accountants/:slug" element={<AccountantDetail />} />
                   <Route path="/advisor-registration" element={<AdvisorRegistration />} />
+                  <Route path="/accountant-registration" element={<AccountantRegistration />} />
                   <Route
                     path="/advisor-profile"
                     element={

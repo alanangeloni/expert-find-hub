@@ -3,12 +3,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, RefreshCw } from "lucide-react";
 import { clearPendingVerifyEmail, isEmailVerified } from "@/lib/authHelpers";
+import {
+  ACCOUNTANT_REGISTRATION_PATH,
+  getStoredRegistrationPath,
+} from "@/lib/registrationPaths";
 
 interface EmailVerificationBannerProps {
   email: string;
   compact?: boolean;
   onResent?: () => void;
   onVerified?: () => void;
+  /** Override destination after verification (defaults to stored registration path). */
+  redirectTo?: string;
 }
 
 export const EmailVerificationBanner = ({
@@ -16,10 +22,15 @@ export const EmailVerificationBanner = ({
   compact = false,
   onResent,
   onVerified,
+  redirectTo,
 }: EmailVerificationBannerProps) => {
   const { toast } = useToast();
   const [isResending, setIsResending] = useState(false);
   const [isChecking, setIsChecking] = useState(false);
+
+  const destination = redirectTo || getStoredRegistrationPath();
+  const profileNoun =
+    destination === ACCOUNTANT_REGISTRATION_PATH ? "accountant" : "advisor";
 
   const handleResend = async () => {
     if (!email) return;
@@ -29,7 +40,7 @@ export const EmailVerificationBanner = ({
         type: "signup",
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/advisor-registration`,
+          emailRedirectTo: `${window.location.origin}${destination}`,
         },
       });
       if (error) throw error;
@@ -63,7 +74,7 @@ export const EmailVerificationBanner = ({
           description: "You’re cleared to continue registration.",
         });
         onVerified?.();
-        window.location.assign("/advisor-registration");
+        window.location.assign(destination);
         return;
       }
       toast({
@@ -97,7 +108,7 @@ export const EmailVerificationBanner = ({
         <p className="verify-banner__title">Verify your email to continue</p>
         <p className="verify-banner__text">
           We sent a verification link to <strong>{email || "your inbox"}</strong>. Open that email
-          and confirm your address before you can submit your advisor profile.
+          and confirm your address before you can submit your {profileNoun} profile.
         </p>
       </div>
       <div className="verify-banner__actions">

@@ -33,6 +33,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Spinner } from "@/components/ui/spinner";
 import { Tables } from "@/integrations/supabase/types";
 import { AccountantForm } from "./AccountantForm";
+import { AccountantApprovalActions } from "./AccountantApprovalActions";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/ui/tabs";
 
 type AccountantRow = Tables<"accountants">;
 
@@ -57,6 +64,7 @@ const fetchAccountants = async (): Promise<AccountantRow[]> => {
 export const AccountantManagement = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [activeTab, setActiveTab] = useState("pending");
   const [editingAccountant, setEditingAccountant] = useState<AccountantRow | null>(null);
   const [deletingAccountant, setDeletingAccountant] = useState<AccountantRow | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
@@ -67,6 +75,11 @@ export const AccountantManagement = () => {
     queryKey: ["admin-accountants"],
     queryFn: fetchAccountants,
   });
+
+  const pendingAccountants = accountants.filter((a) => a.status === "pending_approval");
+  const approvedAccountants = accountants.filter((a) => a.status === "approved");
+  const rejectedAccountants = accountants.filter((a) => a.status === "rejected");
+  const draftAccountants = accountants.filter((a) => a.status === "draft");
 
   const filteredAccountants = accountants.filter((a) => {
     const q = searchQuery.toLowerCase();
@@ -143,6 +156,66 @@ export const AccountantManagement = () => {
     return <div className="text-destructive">Error loading accountants: {(error as Error).message}</div>;
   }
 
+  const renderAccountantCard = (accountant: AccountantRow) => (
+    <Card key={accountant.id}>
+      <CardHeader className="pb-2">
+        <div className="flex items-start justify-between gap-2">
+          <CardTitle className="text-base">{accountant.name}</CardTitle>
+          <div className="flex gap-1">
+            {accountant.verified && (
+              <Badge variant="outline" className="text-xs">
+                Verified
+              </Badge>
+            )}
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        <div className="text-sm text-muted-foreground space-y-1">
+          {accountant.position && <p>{accountant.position}</p>}
+          {accountant.firm_name && <p>{accountant.firm_name}</p>}
+          {(accountant.city || accountant.state_hq) && (
+            <p>
+              {[accountant.city, accountant.state_hq].filter(Boolean).join(", ")}
+            </p>
+          )}
+          {accountant.email && <p>{accountant.email}</p>}
+          {accountant.submitted_at && (
+            <p className="text-xs">
+              Submitted: {new Date(accountant.submitted_at).toLocaleDateString()}
+            </p>
+          )}
+        </div>
+
+        <AccountantApprovalActions accountant={accountant} onUpdate={() => refetch()} />
+
+        <div className="flex gap-2">
+          {accountant.slug && (
+            <Button size="sm" variant="ghost" asChild>
+              <a href={`/accountants/${accountant.slug}`} target="_blank" rel="noopener noreferrer">
+                <Eye className="h-3 w-3 mr-1" />
+                View
+              </a>
+            </Button>
+          )}
+          <Button size="sm" variant="outline" onClick={() => handleEdit(accountant)}>
+            <Edit className="h-3 w-3 mr-1" />
+            Edit
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="text-destructive hover:text-destructive"
+            onClick={() => setDeletingAccountant(accountant)}
+          >
+            <Trash2 className="h-3 w-3 mr-1" />
+            Delete
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-4 flex-wrap">
@@ -157,14 +230,14 @@ export const AccountantManagement = () => {
             />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[160px]">
+            <SelectTrigger className="w-[180px]">
               <Filter className="h-4 w-4 mr-2" />
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Statuses</SelectItem>
               <SelectItem value="draft">Draft</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="pending_approval">Pending Approval</SelectItem>
               <SelectItem value="approved">Approved</SelectItem>
               <SelectItem value="rejected">Rejected</SelectItem>
             </SelectContent>
@@ -180,72 +253,72 @@ export const AccountantManagement = () => {
         <div className="flex justify-center py-12">
           <Spinner size="lg" />
         </div>
-      ) : (
+      ) : statusFilter !== "all" || searchQuery ? (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {filteredAccountants.map((accountant) => (
-            <Card key={accountant.id}>
-              <CardHeader className="pb-2">
-                <div className="flex items-start justify-between gap-2">
-                  <CardTitle className="text-base">{accountant.name}</CardTitle>
-                  <div className="flex gap-1">
-                    <Badge variant="outline" className="text-xs capitalize">
-                      {accountant.status}
-                    </Badge>
-                    {accountant.verified && (
-                      <Badge variant="outline" className="text-xs">
-                        Verified
-                      </Badge>
-                    )}
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div className="text-sm text-muted-foreground space-y-1">
-                  {accountant.position && <p>{accountant.position}</p>}
-                  {accountant.firm_name && <p>{accountant.firm_name}</p>}
-                  {(accountant.city || accountant.state_hq) && (
-                    <p>
-                      {[accountant.city, accountant.state_hq].filter(Boolean).join(", ")}
-                    </p>
-                  )}
-                  {accountant.email && <p>{accountant.email}</p>}
-                </div>
-                <div className="flex gap-2">
-                  {accountant.slug && (
-                    <Button
-                      size="sm"
-                      variant="ghost"
-                      asChild
-                    >
-                      <a href={`/accountants/${accountant.slug}`} target="_blank" rel="noopener noreferrer">
-                        <Eye className="h-3 w-3 mr-1" />
-                        View
-                      </a>
-                    </Button>
-                  )}
-                  <Button size="sm" variant="outline" onClick={() => handleEdit(accountant)}>
-                    <Edit className="h-3 w-3 mr-1" />
-                    Edit
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="text-destructive hover:text-destructive"
-                    onClick={() => setDeletingAccountant(accountant)}
-                  >
-                    <Trash2 className="h-3 w-3 mr-1" />
-                    Delete
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+          {filteredAccountants.map(renderAccountantCard)}
           {filteredAccountants.length === 0 && (
             <p className="col-span-full text-sm text-muted-foreground py-8 text-center">
               No accountants found.
             </p>
           )}
         </div>
+      ) : (
+        <Tabs value={activeTab} onValueChange={setActiveTab}>
+          <TabsList>
+            <TabsTrigger value="pending">
+              Pending ({pendingAccountants.length})
+            </TabsTrigger>
+            <TabsTrigger value="approved">
+              Approved ({approvedAccountants.length})
+            </TabsTrigger>
+            <TabsTrigger value="rejected">
+              Rejected ({rejectedAccountants.length})
+            </TabsTrigger>
+            <TabsTrigger value="draft">
+              Draft ({draftAccountants.length})
+            </TabsTrigger>
+          </TabsList>
+          <TabsContent value="pending" className="mt-4">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {pendingAccountants.map(renderAccountantCard)}
+              {pendingAccountants.length === 0 && (
+                <p className="col-span-full text-sm text-muted-foreground py-8 text-center">
+                  No pending accountant registrations.
+                </p>
+              )}
+            </div>
+          </TabsContent>
+          <TabsContent value="approved" className="mt-4">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {approvedAccountants.map(renderAccountantCard)}
+              {approvedAccountants.length === 0 && (
+                <p className="col-span-full text-sm text-muted-foreground py-8 text-center">
+                  No approved accountants.
+                </p>
+              )}
+            </div>
+          </TabsContent>
+          <TabsContent value="rejected" className="mt-4">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {rejectedAccountants.map(renderAccountantCard)}
+              {rejectedAccountants.length === 0 && (
+                <p className="col-span-full text-sm text-muted-foreground py-8 text-center">
+                  No rejected accountants.
+                </p>
+              )}
+            </div>
+          </TabsContent>
+          <TabsContent value="draft" className="mt-4">
+            <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              {draftAccountants.map(renderAccountantCard)}
+              {draftAccountants.length === 0 && (
+                <p className="col-span-full text-sm text-muted-foreground py-8 text-center">
+                  No draft accountants.
+                </p>
+              )}
+            </div>
+          </TabsContent>
+        </Tabs>
       )}
 
       <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>

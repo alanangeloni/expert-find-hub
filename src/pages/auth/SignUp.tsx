@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
@@ -10,6 +10,13 @@ import {
   isEmailVerified,
   setPendingVerifyEmail,
 } from "@/lib/authHelpers";
+import {
+  ACCOUNTANT_PROFESSIONAL_TYPES,
+  ACCOUNTANT_REGISTRATION_PATH,
+  ADVISOR_REGISTRATION_PATH,
+  resolveRegistrationPath,
+  setStoredRegistrationPath,
+} from "@/lib/registrationPaths";
 
 const professionalTypes = [
   "Financial Advisor",
@@ -19,16 +26,25 @@ const professionalTypes = [
   "Tax Professional",
   "Retirement Specialist",
   "Insurance Agent",
+  ...ACCOUNTANT_PROFESSIONAL_TYPES,
 ];
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
+
+  const intent = searchParams.get("intent");
+  const redirectParam = searchParams.get("redirect");
+
+  const defaultProfessionalType =
+    intent === "accountant" ? ACCOUNTANT_PROFESSIONAL_TYPES[0] : professionalTypes[0];
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     phoneNumber: "",
-    professionalType: professionalTypes[0],
+    professionalType: defaultProfessionalType,
     email: "",
     password: "",
     confirmPassword: "",
@@ -38,6 +54,22 @@ const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [pendingEmail, setPendingEmail] = useState<string | null>(null);
   const [termsError, setTermsError] = useState(false);
+
+  const registrationPath = useMemo(
+    () =>
+      resolveRegistrationPath({
+        redirect: redirectParam,
+        intent,
+        professionalType: formData.professionalType,
+      }),
+    [redirectParam, intent, formData.professionalType]
+  );
+
+  const isAccountantPath = registrationPath === ACCOUNTANT_REGISTRATION_PATH;
+
+  useEffect(() => {
+    setStoredRegistrationPath(registrationPath);
+  }, [registrationPath]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -74,12 +106,19 @@ const SignUp = () => {
 
     setIsLoading(true);
 
+    const destination = resolveRegistrationPath({
+      redirect: redirectParam,
+      intent,
+      professionalType: formData.professionalType,
+    });
+    setStoredRegistrationPath(destination);
+
     try {
       const { data, error } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
         options: {
-          emailRedirectTo: `${window.location.origin}/advisor-registration`,
+          emailRedirectTo: `${window.location.origin}${destination}`,
           data: {
             first_name: formData.firstName,
             last_name: formData.lastName,
@@ -107,9 +146,11 @@ const SignUp = () => {
       if (verified && data.session) {
         toast({
           title: "Welcome aboard",
-          description: "Your account is ready. Continue to your advisor profile.",
+          description: isAccountantPath
+            ? "Your account is ready. Continue to your accountant profile."
+            : "Your account is ready. Continue to your advisor profile.",
         });
-        navigate("/advisor-registration");
+        navigate(destination);
         return;
       }
 
@@ -131,12 +172,15 @@ const SignUp = () => {
     }
   };
 
+  const signInHref = `/auth/signin?redirect=${encodeURIComponent(registrationPath)}`;
+  const profileNoun = isAccountantPath ? "accountant" : "advisor";
+
   if (pendingEmail) {
     return (
       <div className="auth-page page-enter">
         <Seo
           title="Verify your email | Financial Professional"
-          description="Verify your Financial Professional account email to continue advisor registration."
+          description={`Verify your Financial Professional account email to continue ${profileNoun} registration.`}
           noIndex
         />
         <div className="auth-page__bg" aria-hidden="true">
@@ -153,8 +197,8 @@ const SignUp = () => {
               <em>email address</em>
             </h1>
             <p>
-              Your account was created. Confirm your email, then continue to list your public
-              advisor profile.
+              Your account was created. Confirm your email, then continue to list your public{" "}
+              {profileNoun} profile.
             </p>
           </div>
           <div className="auth-panel">
@@ -163,13 +207,12 @@ const SignUp = () => {
               <button
                 type="button"
                 className="btn btn--green btn--lg btn--full"
-                onClick={() => navigate("/advisor-registration")}
+                onClick={() => navigate(registrationPath)}
               >
-                Continue to advisor registration
+                Continue to {profileNoun} registration
               </button>
               <p className="auth-switch" style={{ textAlign: "center" }}>
-                Already verified?{" "}
-                <Link to="/auth/signin?redirect=/advisor-registration">Sign in</Link>
+                Already verified? <Link to={signInHref}>Sign in</Link>
               </p>
             </div>
           </div>
@@ -182,7 +225,7 @@ const SignUp = () => {
     <div className="auth-page page-enter">
       <Seo
         title="Create an Account | Financial Professional"
-        description="Create a Financial Professional account to list your advisor profile and connect with clients."
+        description="Create a Financial Professional account to list your advisor or accountant profile and connect with clients."
         noIndex
       />
       <div className="auth-page__bg" aria-hidden="true">
@@ -193,16 +236,37 @@ const SignUp = () => {
       <div className="auth-shell auth-shell--wide">
         <div className="auth-brand">
           <span className="keyline" />
-          <p className="auth-eyebrow">For advisors</p>
+          <p className="auth-eyebrow">
+            {isAccountantPath ? "For accountants" : "For advisors"}
+          </p>
           <h1>
             List your
             <br />
             <em>profile</em>
           </h1>
           <p className="auth-switch">
-            Already have an account?{" "}
-            <Link to="/auth/signin?redirect=/advisor-registration">Sign in</Link>
+            Already have an account? <Link to={signInHref}>Sign in</Link>
           </p>
+          {!isAccountantPath && (
+            <p className="auth-switch" style={{ marginTop: "0.75rem" }}>
+              Are you an accountant?{" "}
+              <Link
+                to={`/auth/signup?intent=accountant&redirect=${encodeURIComponent(ACCOUNTANT_REGISTRATION_PATH)}`}
+              >
+                Create an accountant profile
+              </Link>
+            </p>
+          )}
+          {isAccountantPath && (
+            <p className="auth-switch" style={{ marginTop: "0.75rem" }}>
+              Are you an advisor?{" "}
+              <Link
+                to={`/auth/signup?intent=advisor&redirect=${encodeURIComponent(ADVISOR_REGISTRATION_PATH)}`}
+              >
+                Create an advisor profile
+              </Link>
+            </p>
+          )}
         </div>
 
         <div className="auth-panel">

@@ -23,8 +23,8 @@ const Terms = () => {
             <em>Service</em>
           </h1>
           <p className="legal-lead">
-            These terms govern your use of Financial Professional, including advisor signup,
-            directory listings, and related services.
+            These terms govern your use of Financial Professional, including advisor and accountant
+            signup, directory listings, and related services.
           </p>
           <p className="legal-updated">Last updated: October 2, 2026</p>
         </div>
