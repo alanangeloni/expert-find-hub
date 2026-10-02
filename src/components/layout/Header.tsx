@@ -79,9 +79,9 @@ const Header = () => {
           <button
             type="button"
             className="btn btn--primary btn--sm header__cta"
-            onClick={() => navigate("/advisors")}
+            onClick={() => navigate("/find-a-financial-professional")}
           >
-            Search advisors
+            Get Matched
           </button>
           <button
             className="header__burger"
@@ -112,6 +112,9 @@ const Header = () => {
           </Link>
           <Link className="header__mobile-link" to="/#how-it-works">
             How it works
+          </Link>
+          <Link className="header__mobile-link" to="/find-a-financial-professional">
+            Get Matched
           </Link>
           <div className="header__mobile-cta">
             <UserMenu />

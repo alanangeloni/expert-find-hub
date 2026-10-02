@@ -146,7 +146,7 @@ export default function CalculatorGuide({ name, guide, article }: Props) {
           <span className="blog-post__side-eyebrow">Next step</span>
           <h3>Use the number with an advisor</h3>
           <p>Send this result into the matching quiz when you want a fiduciary to look at the same figures.</p>
-          <Link to="/#match" className="btn btn--primary btn--sm">
+          <Link to="/find-a-financial-professional" className="btn btn--primary btn--sm">
             Take the matching quiz
           </Link>
         </div>

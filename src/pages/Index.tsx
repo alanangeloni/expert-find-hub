@@ -11,7 +11,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import MatchQuiz from "@/components/home/MatchQuiz";
 
 /* --------------------------- Featured advisors --------------------------- */
 const FeaturedAdvisors = () => {
@@ -174,9 +173,9 @@ const HomePage = () => {
 
           <div className="home-hero__quiz-cta">
             <p>Not sure where to start?</p>
-            <a className="btn btn--green btn--lg" href="#match">
-              Take the 2-min matching quiz
-            </a>
+            <Link className="btn btn--green btn--lg" to="/find-a-financial-professional">
+              Take the 2-min quiz
+            </Link>
           </div>
         </div>
       </section>
@@ -253,9 +252,9 @@ const HomePage = () => {
           </div>
 
           <div className="home-how__cta">
-            <a className="btn btn--primary btn--lg" href="#match">
+            <Link className="btn btn--primary btn--lg" to="/find-a-financial-professional">
               Start the matching quiz
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -300,8 +299,69 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Match quiz */}
-      <MatchQuiz />
+      {/* Match quiz entry — Step 1 preview; full SPA at /find-a-financial-professional */}
+      <section className="home-quiz" id="match">
+        <div className="dcontainer">
+          <div className="home-quiz__card">
+            <header className="home-quiz__head">
+              <div>
+                <span className="home-quiz__rule" aria-hidden="true" />
+                <p className="home-quiz__eyebrow">Find your match</p>
+                <h2 className="home-quiz__headline">
+                  A few questions. <em>The right shortlist.</em>
+                </h2>
+                <p className="home-quiz__lead">
+                  Tell us whether you need an accountant or a financial advisor. We&apos;ll walk you
+                  through six quick steps — free, private, and no obligation.
+                </p>
+              </div>
+              <span className="home-quiz__count">Step 1 of 6</span>
+            </header>
+            <ol className="home-quiz__steps" aria-label="Progress">
+              {[
+                "Your priority",
+                "What you need",
+                "Your situation",
+                "Financials",
+                "Timing & location",
+                "Your details",
+              ].map((label, index) => (
+                <li
+                  key={label}
+                  className={`home-quiz__step-pill ${index === 0 ? "is-current" : ""}`}
+                >
+                  <span>{index + 1}</span>
+                  {label}
+                </li>
+              ))}
+            </ol>
+            <div className="home-quiz__panel">
+              <p className="home-quiz__ask">What&apos;s your biggest financial priority right now?</p>
+              <p className="home-quiz__hint">Pick the one that&apos;s most pressing.</p>
+              <div className="home-quiz__options" role="group" aria-label="Financial priority">
+                <Link
+                  className="home-quiz__option"
+                  to="/find-a-financial-professional?path=tax"
+                >
+                  <strong>Taxes &amp; accounting</strong>
+                  <span>CPA, tax strategy, tax prep</span>
+                </Link>
+                <Link
+                  className="home-quiz__option"
+                  to="/find-a-financial-professional?path=wealth"
+                >
+                  <strong>Wealth &amp; financial planning</strong>
+                  <span>Financial advisor, investing, retirement</span>
+                </Link>
+              </div>
+            </div>
+            <p className="home-quiz__promise">
+              <span aria-hidden="true">✓</span>
+              Free, no obligation — and we never sell your details.
+            </p>
+          </div>
+        </div>
+      </section>
 
       {/* Why */}
       <section className="home-why">
@@ -335,7 +395,7 @@ const HomePage = () => {
                 </li>
               ))}
             </ul>
-            <a className="btn btn--green btn--lg" href="#match">
+            <a className="btn btn--green btn--lg" href="/find-a-financial-professional">
               Start matching
             </a>
           </div>
@@ -401,9 +461,9 @@ const HomePage = () => {
             <p>Take the quiz or browse the directory. Either way, matching is free.</p>
           </div>
           <div className="home-cta__actions">
-            <a className="btn btn--green btn--lg" href="#match">
+            <Link className="btn btn--green btn--lg" to="/find-a-financial-professional">
               Take the quiz
-            </a>
+            </Link>
             <Link className="btn btn--outline btn--lg home-cta__secondary" to="/advisors">
               Search advisors
             </Link>

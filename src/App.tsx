@@ -22,6 +22,8 @@ import AccountantDetail from "./pages/AccountantDetail";
 import AccountantSpecialty from "./pages/AccountantSpecialty";
 import AdvisorRegistration from "./pages/AdvisorRegistration";
 import AccountantRegistration from "./pages/AccountantRegistration";
+import ForAdvisors from "./pages/ForAdvisors";
+import ForAccountants from "./pages/ForAccountants";
 import AdvisorProfile from "./pages/AdvisorProfile";
 import InvestmentFirms from "./pages/InvestmentFirms";
 import InvestmentFirmDetail from "./pages/InvestmentFirmDetail";
@@ -46,6 +48,7 @@ import AppPage from "./pages/App";
 import { CompareProvider } from "./contexts/CompareContext";
 import CompareTray from "./components/compare/CompareTray";
 import CompareModal from "./components/compare/CompareModal";
+import { MatchingQuizPage } from "./features/matching-quiz";
 
 const queryClient = new QueryClient();
 
@@ -64,6 +67,7 @@ const App = () => (
               <div className="flex-grow">
                 <Routes>
                   <Route path="/" element={<Index />} />
+                  <Route path="/find-a-financial-professional" element={<MatchingQuizPage />} />
                   <Route path="/advisors" element={<Advisors />} />
                   <Route path="/advisors/:slug" element={<AdvisorDetail />} />
                   <Route path="/financial-professionals" element={<StatesIndex />} />
@@ -75,6 +79,8 @@ const App = () => (
                   <Route path="/accountants/:slug" element={<AccountantDetail />} />
                   <Route path="/advisor-registration" element={<AdvisorRegistration />} />
                   <Route path="/accountant-registration" element={<AccountantRegistration />} />
+                  <Route path="/for-advisors" element={<ForAdvisors />} />
+                  <Route path="/for-accountants" element={<ForAccountants />} />
                   <Route
                     path="/advisor-profile"
                     element={

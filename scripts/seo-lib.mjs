@@ -171,6 +171,16 @@ const staticPages = [
     priority: '0.9',
   },
   {
+    path: '/find-a-financial-professional',
+    title: seoTitle('Matching Quiz'),
+    description: seoDescription(
+      'Take our 2-minute quiz to get matched with vetted accountants and fiduciary financial advisors',
+      'Free, private, and no obligation.'
+    ),
+    changefreq: 'weekly',
+    priority: '0.9',
+  },
+  {
     path: '/financial-professionals',
     title: seoTitle('Financial Professionals by State'),
     description: seoDescription(
@@ -403,6 +413,26 @@ const staticPages = [
     ),
     changefreq: 'monthly',
     priority: '0.6',
+  },
+  {
+    path: '/for-advisors',
+    title: seoTitle('For Advisors'),
+    description: seoDescription(
+      'List your fiduciary advisory practice on Financial Professional',
+      'Flat membership to be listed, no pay-per-click, and rankings that are not for sale.'
+    ),
+    changefreq: 'monthly',
+    priority: '0.7',
+  },
+  {
+    path: '/for-accountants',
+    title: seoTitle('For Accountants'),
+    description: seoDescription(
+      'List your CPA or tax practice alongside fiduciary advisors',
+      'Same marketplace, clear specialties, and no pay-to-play rankings.'
+    ),
+    changefreq: 'monthly',
+    priority: '0.7',
   },
 ];
 
