@@ -1,0 +1,17 @@
+{
+  "name": "expert-find-hub",
+  "install": "npm install",
+  "ports": [
+    {
+      "name": "vite dev server",
+      "port": 8080
+    }
+  ],
+  "terminals": [
+    {
+      "name": "dev-server",
+      "command": "npm run dev",
+      "description": "Vite dev server for the React app, served on http://localhost:8080"
+    }
+  ]
+}
