@@ -12,8 +12,14 @@ const app = (
   </BrowserRouter>
 );
 
-// Use hydration for SSR in production
-if (import.meta.env.PROD) {
+// Only hydrate when the root already has real SSR markup. The default build
+// leaves `<!--app-html-->` in #root, and hydrateRoot against that empty shell
+// triggers React #418 / #423 mismatches on auth and layout chrome.
+const hasSSRMarkup = Array.from(root.childNodes).some(
+  (node) => node.nodeType === Node.ELEMENT_NODE
+);
+
+if (import.meta.env.PROD && hasSSRMarkup) {
   hydrateRoot(root, app);
 } else {
   createRoot(root).render(app);

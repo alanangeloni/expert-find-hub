@@ -1,13 +1,9 @@
-
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff } from "lucide-react";
-import { Seo } from '@/components/seo/Seo';
+import { Seo } from "@/components/seo/Seo";
 
 const ResetPassword = () => {
   const navigate = useNavigate();
@@ -16,8 +12,8 @@ const ResetPassword = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [hasSession, setHasSession] = useState(false);
 
-  // Check if we have a valid session from the reset link
   useEffect(() => {
     const checkSession = async () => {
       const { data } = await supabase.auth.getSession();
@@ -28,7 +24,9 @@ const ResetPassword = () => {
           variant: "destructive",
         });
         navigate("/auth/forgot-password");
+        return;
       }
+      setHasSession(true);
     };
 
     checkSession();
@@ -36,7 +34,7 @@ const ResetPassword = () => {
 
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (password !== confirmPassword) {
       toast({
         title: "Passwords don't match",
@@ -45,12 +43,12 @@ const ResetPassword = () => {
       });
       return;
     }
-    
+
     setIsLoading(true);
 
     try {
       const { error } = await supabase.auth.updateUser({
-        password: password,
+        password,
       });
 
       if (error) throw error;
@@ -59,12 +57,16 @@ const ResetPassword = () => {
         title: "Password updated",
         description: "Your password has been successfully reset",
       });
-      
+
       navigate("/auth/signin");
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "An error occurred during password reset";
       toast({
         title: "Error resetting password",
-        description: error.message || "An error occurred during password reset",
+        description: message,
         variant: "destructive",
       });
     } finally {
@@ -72,69 +74,97 @@ const ResetPassword = () => {
     }
   };
 
+  if (!hasSession) {
+    return (
+      <div className="auth-page page-enter">
+        <div className="onboard-loading">Checking reset link…</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <Seo title="Set a New Password | Financial Professional" description="Choose a new password for your Financial Professional account." noIndex />
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-brand-blue">
-          Create new password
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Please enter a new secure password for your account
-        </p>
+    <div className="auth-page page-enter">
+      <Seo
+        title="Set a New Password | Financial Professional"
+        description="Choose a new password for your Financial Professional account."
+        noIndex
+      />
+      <div className="auth-page__bg" aria-hidden="true">
+        <div className="auth-page__orb auth-page__orb--1" />
+        <div className="auth-page__orb auth-page__orb--2" />
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form onSubmit={handleResetPassword} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="password">New Password</Label>
-              <div className="relative">
-                <Input
+      <div className="auth-shell">
+        <div className="auth-brand">
+          <span className="keyline" />
+          <p className="auth-eyebrow">Security</p>
+          <h1>
+            Choose a
+            <br />
+            <em>new password</em>
+          </h1>
+          <p>Use a strong password you haven’t used elsewhere.</p>
+        </div>
+
+        <div className="auth-panel">
+          <form onSubmit={handleResetPassword} className="auth-form">
+            <div className="auth-field">
+              <label htmlFor="password">New password *</label>
+              <div className="auth-input-wrap auth-input-wrap--password">
+                <input
                   id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}
+                  className="auth-input"
                   required
+                  aria-required="true"
+                  minLength={8}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pr-10"
                   placeholder="••••••••"
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 flex items-center pr-3"
+                  className="auth-toggle-pw"
                   onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-4 w-4 text-gray-400" />
+                    <EyeOff className="h-4 w-4" />
                   ) : (
-                    <Eye className="h-4 w-4 text-gray-400" />
+                    <Eye className="h-4 w-4" />
                   )}
                 </button>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm New Password</Label>
-              <Input
+            <div className="auth-field">
+              <label htmlFor="confirmPassword">Confirm new password *</label>
+              <input
                 id="confirmPassword"
                 name="confirmPassword"
                 type={showPassword ? "text" : "password"}
+                className="auth-input"
                 required
+                aria-required="true"
+                minLength={8}
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 placeholder="••••••••"
               />
             </div>
 
-            <div>
-              <Button 
-                type="submit" 
-                className="w-full bg-brand-blue hover:bg-brand-blue/90"
+            <div className="auth-actions">
+              <button
+                type="submit"
+                className="btn btn--green btn--lg btn--full"
                 disabled={isLoading}
               >
-                {isLoading ? "Updating password..." : "Reset Password"}
-              </Button>
+                {isLoading ? "Updating password…" : "Reset password"}
+              </button>
+              <p className="auth-switch" style={{ textAlign: "center" }}>
+                <Link to="/auth/signin">Back to sign in</Link>
+              </p>
             </div>
           </form>
         </div>

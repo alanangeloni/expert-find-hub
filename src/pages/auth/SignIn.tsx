@@ -1,21 +1,21 @@
-
 import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, Mail } from "lucide-react";
-import { Seo } from '@/components/seo/Seo';
+import { Seo } from "@/components/seo/Seo";
+import { clearPendingVerifyEmail, isEmailVerified } from "@/lib/authHelpers";
 
 const SignIn = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const redirectTo = searchParams.get("redirect") || "/";
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,16 +29,24 @@ const SignIn = () => {
 
       if (error) throw error;
 
+      if (data.user && isEmailVerified(data.user)) {
+        clearPendingVerifyEmail();
+      }
+
       toast({
-        title: "Welcome back!",
+        title: "Welcome back",
         description: "You have successfully signed in.",
       });
 
-      navigate("/");
-    } catch (error: any) {
+      navigate(redirectTo.startsWith("/") ? redirectTo : "/");
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Please check your credentials and try again";
       toast({
         title: "Error signing in",
-        description: error.message || "Please check your credentials and try again",
+        description: message,
         variant: "destructive",
       });
     } finally {
@@ -47,86 +55,96 @@ const SignIn = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <Seo title="Sign In | Financial Professional" description="Sign in to your Financial Professional account." noIndex />
-
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-brand-blue">
-          Sign in to your account
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Or{" "}
-          <Link to="/auth/signup" className="font-medium text-brand-blue hover:text-brand-teal">
-            create a new account
-          </Link>
-        </p>
+    <div className="auth-page page-enter">
+      <Seo
+        title="Sign In | Financial Professional"
+        description="Sign in to your Financial Professional account."
+        noIndex
+      />
+      <div className="auth-page__bg" aria-hidden="true">
+        <div className="auth-page__orb auth-page__orb--1" />
+        <div className="auth-page__orb auth-page__orb--2" />
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form onSubmit={handleSignIn} className="space-y-6">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email address</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
+      <div className="auth-shell">
+        <div className="auth-brand">
+          <span className="keyline" />
+          <p className="auth-eyebrow">Welcome back</p>
+          <h1>
+            Sign in to
+            <br />
+            <em>your account</em>
+          </h1>
+          <p className="auth-switch">
+            New here?{" "}
+            <Link to="/auth/signup">Create an account</Link>
+          </p>
+        </div>
+
+        <div className="auth-panel">
+          <form onSubmit={handleSignIn} className="auth-form">
+            <div className="auth-field">
+              <label htmlFor="email">Email address *</label>
+              <div className="auth-input-wrap">
+                <Mail className="h-4 w-4" aria-hidden="true" />
+                <input
                   id="email"
                   name="email"
                   type="email"
+                  className="auth-input"
                   autoComplete="email"
                   required
+                  aria-required="true"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-9"
-                  placeholder="you@example.com"
+                  placeholder="you@firm.com"
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label htmlFor="password">Password</Label>
-                <Link
-                  to="/auth/forgot-password"
-                  className="text-sm font-medium text-brand-blue hover:text-brand-teal"
-                >
-                  Forgot your password?
+            <div className="auth-field">
+              <div style={{ display: "flex", justifyContent: "space-between", gap: "1rem" }}>
+                <label htmlFor="password">Password *</label>
+                <Link to="/auth/forgot-password" className="auth-link" style={{ fontSize: "0.875rem" }}>
+                  Forgot password?
                 </Link>
               </div>
-              <div className="relative">
-                <Input
+              <div className="auth-input-wrap auth-input-wrap--password">
+                <input
                   id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}
+                  className="auth-input"
                   autoComplete="current-password"
                   required
+                  aria-required="true"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pr-10"
                   placeholder="••••••••"
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 flex items-center pr-3"
+                  className="auth-toggle-pw"
                   onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
                 >
                   {showPassword ? (
-                    <EyeOff className="h-4 w-4 text-gray-400" />
+                    <EyeOff className="h-4 w-4" />
                   ) : (
-                    <Eye className="h-4 w-4 text-gray-400" />
+                    <Eye className="h-4 w-4" />
                   )}
                 </button>
               </div>
             </div>
 
-            <div>
-              <Button 
-                type="submit" 
-                className="w-full bg-brand-blue hover:bg-brand-blue/90"
+            <div className="auth-actions">
+              <button
+                type="submit"
+                className="btn btn--green btn--lg btn--full"
                 disabled={isLoading}
               >
-                {isLoading ? "Signing in..." : "Sign in"}
-              </Button>
+                {isLoading ? "Signing in…" : "Sign in"}
+              </button>
             </div>
           </form>
         </div>

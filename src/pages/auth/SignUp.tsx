@@ -1,14 +1,15 @@
-
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { Eye, EyeOff, Mail, User, Phone } from "lucide-react";
-import { Seo } from '@/components/seo/Seo';
+import { Seo } from "@/components/seo/Seo";
+import { EmailVerificationBanner } from "@/components/auth/EmailVerificationBanner";
+import {
+  isEmailVerified,
+  setPendingVerifyEmail,
+} from "@/lib/authHelpers";
 
 const professionalTypes = [
   "Financial Advisor",
@@ -17,7 +18,7 @@ const professionalTypes = [
   "Financial Planner",
   "Tax Professional",
   "Retirement Specialist",
-  "Insurance Agent"
+  "Insurance Agent",
 ];
 
 const SignUp = () => {
@@ -31,250 +32,373 @@ const SignUp = () => {
     email: "",
     password: "",
     confirmPassword: "",
-    agreeToTerms: false
+    agreeToTerms: false,
   });
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [pendingEmail, setPendingEmail] = useState<string | null>(null);
+  const [termsError, setTermsError] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleCheckboxChange = (checked: boolean) => {
-    setFormData((prev) => ({ ...prev, agreeToTerms: checked }));
+  const handleCheckboxChange = (checked: boolean | "indeterminate") => {
+    const next = checked === true;
+    setFormData((prev) => ({ ...prev, agreeToTerms: next }));
+    if (next) setTermsError(false);
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.agreeToTerms) {
+      setTermsError(true);
       toast({
-        title: "Error",
-        description: "You must agree to the terms and conditions",
-        variant: "destructive"
+        title: "Agreement required",
+        description: "Please agree to the Terms of Service and Privacy Policy to continue.",
+        variant: "destructive",
       });
       return;
     }
-    
+
     if (formData.password !== formData.confirmPassword) {
       toast({
-        title: "Error",
-        description: "Passwords do not match",
-        variant: "destructive"
+        title: "Passwords do not match",
+        description: "Please make sure both password fields match.",
+        variant: "destructive",
       });
       return;
     }
-    
+
     setIsLoading(true);
-    
+
     try {
       const { data, error } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
         options: {
+          emailRedirectTo: `${window.location.origin}/advisor-registration`,
           data: {
             first_name: formData.firstName,
             last_name: formData.lastName,
             phone_number: formData.phoneNumber,
             professional_type: formData.professionalType,
-          }
-        }
+          },
+        },
       });
-      
+
       if (error) throw error;
-      
+
+      // Supabase returns a user with empty identities when the email already exists
+      if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+        toast({
+          title: "Account already exists",
+          description: "Please sign in, or use forgot password if you need access.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      setPendingVerifyEmail(formData.email);
+
+      const verified = isEmailVerified(data.user);
+      if (verified && data.session) {
+        toast({
+          title: "Welcome aboard",
+          description: "Your account is ready. Continue to your advisor profile.",
+        });
+        navigate("/advisor-registration");
+        return;
+      }
+
+      setPendingEmail(formData.email);
       toast({
-        title: "Success!",
-        description: "Your account has been created. Please check your email to verify your account."
+        title: "Check your email",
+        description: "Verify your address to finish listing your profile.",
       });
-      
-      // Redirect to advisor registration page after successful signup
-      navigate("/advisor-registration");
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const message =
+        error instanceof Error ? error.message : "An error occurred during signup";
       toast({
         title: "Error creating account",
-        description: error.message || "An error occurred during signup",
-        variant: "destructive"
+        description: message,
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
     }
   };
 
+  if (pendingEmail) {
+    return (
+      <div className="auth-page page-enter">
+        <Seo
+          title="Verify your email | Financial Professional"
+          description="Verify your Financial Professional account email to continue advisor registration."
+          noIndex
+        />
+        <div className="auth-page__bg" aria-hidden="true">
+          <div className="auth-page__orb auth-page__orb--1" />
+          <div className="auth-page__orb auth-page__orb--2" />
+        </div>
+        <div className="auth-shell auth-shell--wide">
+          <div className="auth-brand">
+            <span className="keyline" />
+            <p className="auth-eyebrow">Almost there</p>
+            <h1>
+              Verify your
+              <br />
+              <em>email address</em>
+            </h1>
+            <p>
+              Your account was created. Confirm your email, then continue to list your public
+              advisor profile.
+            </p>
+          </div>
+          <div className="auth-panel">
+            <EmailVerificationBanner email={pendingEmail} />
+            <div className="auth-actions">
+              <button
+                type="button"
+                className="btn btn--green btn--lg btn--full"
+                onClick={() => navigate("/advisor-registration")}
+              >
+                Continue to advisor registration
+              </button>
+              <p className="auth-switch" style={{ textAlign: "center" }}>
+                Already verified?{" "}
+                <Link to="/auth/signin?redirect=/advisor-registration">Sign in</Link>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <Seo title="Create an Account | Financial Professional" description="Create a Financial Professional account to save advisors and request introductions." noIndex />
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-brand-blue">
-          Create your account
-        </h2>
-        <p className="mt-2 text-center text-sm text-gray-600">
-          Or{" "}
-          <Link to="/auth/signin" className="font-medium text-brand-blue hover:text-brand-teal">
-            sign in to your existing account
-          </Link>
-        </p>
+    <div className="auth-page page-enter">
+      <Seo
+        title="Create an Account | Financial Professional"
+        description="Create a Financial Professional account to list your advisor profile and connect with clients."
+        noIndex
+      />
+      <div className="auth-page__bg" aria-hidden="true">
+        <div className="auth-page__orb auth-page__orb--1" />
+        <div className="auth-page__orb auth-page__orb--2" />
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form onSubmit={handleSignUp} className="space-y-6">
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="firstName">First Name</Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                  <Input
+      <div className="auth-shell auth-shell--wide">
+        <div className="auth-brand">
+          <span className="keyline" />
+          <p className="auth-eyebrow">For advisors</p>
+          <h1>
+            List your
+            <br />
+            <em>profile</em>
+          </h1>
+          <p className="auth-switch">
+            Already have an account?{" "}
+            <Link to="/auth/signin?redirect=/advisor-registration">Sign in</Link>
+          </p>
+        </div>
+
+        <div className="auth-panel">
+          <form onSubmit={handleSignUp} className="auth-form" noValidate={false}>
+            <div className="auth-form__grid auth-form__grid--2">
+              <div className="auth-field">
+                <label htmlFor="firstName">First name *</label>
+                <div className="auth-input-wrap">
+                  <User className="h-4 w-4" aria-hidden="true" />
+                  <input
                     id="firstName"
                     name="firstName"
                     type="text"
+                    className="auth-input"
                     required
+                    aria-required="true"
+                    autoComplete="given-name"
                     value={formData.firstName}
                     onChange={handleChange}
-                    className="pl-9"
-                    placeholder="John"
+                    placeholder="Jordan"
                   />
                 </div>
               </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name</Label>
-                <div className="relative">
-                  <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                  <Input
+
+              <div className="auth-field">
+                <label htmlFor="lastName">Last name *</label>
+                <div className="auth-input-wrap">
+                  <User className="h-4 w-4" aria-hidden="true" />
+                  <input
                     id="lastName"
                     name="lastName"
                     type="text"
+                    className="auth-input"
                     required
+                    aria-required="true"
+                    autoComplete="family-name"
                     value={formData.lastName}
                     onChange={handleChange}
-                    className="pl-9"
-                    placeholder="Doe"
+                    placeholder="Lee"
                   />
                 </div>
               </div>
             </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="phoneNumber">Phone Number</Label>
-              <div className="relative">
-                <Phone className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
+
+            <div className="auth-field">
+              <label htmlFor="phoneNumber">Phone number</label>
+              <div className="auth-input-wrap">
+                <Phone className="h-4 w-4" aria-hidden="true" />
+                <input
                   id="phoneNumber"
                   name="phoneNumber"
                   type="tel"
+                  className="auth-input"
+                  autoComplete="tel"
                   value={formData.phoneNumber}
                   onChange={handleChange}
-                  className="pl-9"
                   placeholder="+1 (555) 123-4567"
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="professionalType">I am a...</Label>
+            <div className="auth-field">
+              <label htmlFor="professionalType">I am a… *</label>
               <select
                 id="professionalType"
                 name="professionalType"
+                className="auth-select"
+                required
+                aria-required="true"
                 value={formData.professionalType}
                 onChange={handleChange}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                required
               >
-                {professionalTypes.map(type => (
-                  <option key={type} value={type}>{type}</option>
+                {professionalTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
                 ))}
               </select>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="email">Email address</Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                <Input
+            <div className="auth-field">
+              <label htmlFor="email">Email address *</label>
+              <div className="auth-input-wrap">
+                <Mail className="h-4 w-4" aria-hidden="true" />
+                <input
                   id="email"
                   name="email"
                   type="email"
+                  className="auth-input"
                   autoComplete="email"
                   required
+                  aria-required="true"
                   value={formData.email}
                   onChange={handleChange}
-                  className="pl-9"
-                  placeholder="you@example.com"
+                  placeholder="you@firm.com"
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <div className="relative">
-                <Input
-                  id="password"
-                  name="password"
+            <div className="auth-form__grid auth-form__grid--2">
+              <div className="auth-field">
+                <label htmlFor="password">Password *</label>
+                <div className="auth-input-wrap auth-input-wrap--password">
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    className="auth-input"
+                    autoComplete="new-password"
+                    required
+                    aria-required="true"
+                    minLength={8}
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="••••••••"
+                  />
+                  <button
+                    type="button"
+                    className="auth-toggle-pw"
+                    onClick={() => setShowPassword(!showPassword)}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="h-4 w-4" />
+                    ) : (
+                      <Eye className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <div className="auth-field">
+                <label htmlFor="confirmPassword">Confirm password *</label>
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
                   type={showPassword ? "text" : "password"}
+                  className="auth-input"
                   autoComplete="new-password"
                   required
-                  value={formData.password}
+                  aria-required="true"
+                  minLength={8}
+                  value={formData.confirmPassword}
                   onChange={handleChange}
-                  className="pr-10"
                   placeholder="••••••••"
                 />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 flex items-center pr-3"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-4 w-4 text-gray-400" />
-                  ) : (
-                    <Eye className="h-4 w-4 text-gray-400" />
-                  )}
-                </button>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm Password</Label>
-              <Input
-                id="confirmPassword"
-                name="confirmPassword"
-                type={showPassword ? "text" : "password"}
-                autoComplete="new-password"
-                required
-                value={formData.confirmPassword}
-                onChange={handleChange}
-                placeholder="••••••••"
-              />
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Checkbox 
-                id="termsAndConditions" 
+            <div className="auth-check">
+              <Checkbox
+                id="termsAndConditions"
+                className="auth-check__control"
                 checked={formData.agreeToTerms}
                 onCheckedChange={handleCheckboxChange}
+                required
+                aria-required="true"
+                aria-invalid={termsError || undefined}
+                aria-describedby="terms-help"
               />
-              <label
-                htmlFor="termsAndConditions"
-                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-              >
-                I agree to the{" "}
-                <Link to="/terms" className="text-brand-blue hover:underline">
-                  terms and conditions
-                </Link>
-              </label>
+              <div className="auth-check__body">
+                <label htmlFor="termsAndConditions" className="auth-check__label">
+                  I agree to the Terms of Service and Privacy Policy *
+                </label>
+                <p id="terms-help">
+                  Please review our{" "}
+                  <Link to="/terms" target="_blank" rel="noopener noreferrer">
+                    Terms of Service
+                  </Link>{" "}
+                  and{" "}
+                  <Link to="/privacy" target="_blank" rel="noopener noreferrer">
+                    Privacy Policy
+                  </Link>
+                  .
+                </p>
+                {termsError && (
+                  <p role="alert" style={{ color: "var(--orange-dark)", fontSize: "0.8125rem" }}>
+                    You must agree before creating an account.
+                  </p>
+                )}
+              </div>
             </div>
 
-            <div>
-              <Button 
-                type="submit" 
-                className="w-full bg-brand-blue hover:bg-brand-blue/90"
+            <div className="auth-actions">
+              <button
+                type="submit"
+                className="btn btn--green btn--lg btn--full"
                 disabled={isLoading}
               >
-                {isLoading ? "Creating Account..." : "Create Account"}
-              </Button>
+                {isLoading ? "Creating account…" : "Create account"}
+              </button>
             </div>
           </form>
+          <p className="auth-trust">
+            Free to create. Trusted directory of fiduciary professionals.
+          </p>
         </div>
       </div>
     </div>

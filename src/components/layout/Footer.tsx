@@ -47,7 +47,8 @@ const Footer = () => {
       <div className="footer__bottom dcontainer">
         <p>&copy; {new Date().getFullYear()} Financial Professional. All rights reserved.</p>
         <div className="footer__legal">
-          <span>Connecting you with financial experts</span>
+          <Link to="/terms">Terms</Link>
+          <Link to="/privacy">Privacy</Link>
         </div>
       </div>
     </footer>
