@@ -104,16 +104,23 @@ export function InvestmentFirmForm({ firm, onSuccess }: InvestmentFirmFormProps)
       };
 
       if (firm) {
-        const { error } = await supabase
+        // .select().single() turns RLS 0-row updates into an error instead of a false success toast
+        const { data, error } = await supabase
           .from('investment_firms')
           .update(firmData)
-          .eq('id', firm.id);
+          .eq('id', firm.id)
+          .select('id')
+          .single();
         if (error) throw error;
+        if (!data) throw new Error('Firm update did not persist. Check admin RLS policies.');
       } else {
-        const { error } = await supabase
+        const { data, error } = await supabase
           .from('investment_firms')
-          .insert(firmData);
+          .insert(firmData)
+          .select('id')
+          .single();
         if (error) throw error;
+        if (!data) throw new Error('Firm create did not persist. Check admin RLS policies.');
       }
     },
     onSuccess: () => {
