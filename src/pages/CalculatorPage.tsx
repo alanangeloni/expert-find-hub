@@ -74,7 +74,7 @@ const CalculatorPage = () => {
             <Link to="/calculators" className="btn btn--outline btn--lg">
               All calculators
             </Link>
-            <Link to="/#match" className="btn btn--primary btn--lg">
+            <Link to="/find-a-financial-professional" className="btn btn--primary btn--lg">
               Take the matching quiz
             </Link>
           </div>

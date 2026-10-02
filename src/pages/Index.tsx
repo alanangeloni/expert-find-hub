@@ -11,7 +11,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import MatchQuiz from "@/components/home/MatchQuiz";
 
 /* --------------------------- Featured advisors --------------------------- */
 const FeaturedAdvisors = () => {
@@ -174,9 +173,9 @@ const HomePage = () => {
 
           <div className="home-hero__quiz-cta">
             <p>Not sure where to start?</p>
-            <a className="btn btn--green btn--lg" href="#match">
-              Take the 2-min matching quiz
-            </a>
+            <Link className="btn btn--green btn--lg" to="/find-a-financial-professional">
+              Take the 2-min quiz
+            </Link>
           </div>
         </div>
       </section>
@@ -253,9 +252,9 @@ const HomePage = () => {
           </div>
 
           <div className="home-how__cta">
-            <a className="btn btn--primary btn--lg" href="#match">
+            <Link className="btn btn--primary btn--lg" to="/find-a-financial-professional">
               Start the matching quiz
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -300,8 +299,36 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* Match quiz */}
-      <MatchQuiz />
+      {/* Match quiz entry — dedicated SPA at /find-a-financial-professional */}
+      <section className="home-quiz" id="match">
+        <div className="dcontainer">
+          <div className="home-quiz__card">
+            <header className="home-quiz__head">
+              <div>
+                <span className="home-quiz__rule" aria-hidden="true" />
+                <p className="home-quiz__eyebrow">Find your match</p>
+                <h2 className="home-quiz__headline">
+                  A few questions. <em>The right shortlist.</em>
+                </h2>
+                <p className="home-quiz__lead">
+                  Tell us whether you need an accountant or a financial advisor. We&apos;ll walk you
+                  through six quick steps and surface professionals from our directory.
+                </p>
+              </div>
+            </header>
+            <footer className="home-quiz__foot">
+              <p className="home-quiz__promise">
+                <span aria-hidden="true">✓</span>
+                Free, no obligation — and we never sell your details.
+              </p>
+              <Link className="home-quiz__next" to="/find-a-financial-professional">
+                Take the 2-min quiz
+                <span aria-hidden="true">→</span>
+              </Link>
+            </footer>
+          </div>
+        </div>
+      </section>
 
       {/* Why */}
       <section className="home-why">
@@ -335,7 +362,7 @@ const HomePage = () => {
                 </li>
               ))}
             </ul>
-            <a className="btn btn--green btn--lg" href="#match">
+            <a className="btn btn--green btn--lg" href="/find-a-financial-professional">
               Start matching
             </a>
           </div>
@@ -401,9 +428,9 @@ const HomePage = () => {
             <p>Take the quiz or browse the directory. Either way, matching is free.</p>
           </div>
           <div className="home-cta__actions">
-            <a className="btn btn--green btn--lg" href="#match">
+            <Link className="btn btn--green btn--lg" to="/find-a-financial-professional">
               Take the quiz
-            </a>
+            </Link>
             <Link className="btn btn--outline btn--lg home-cta__secondary" to="/advisors">
               Search advisors
             </Link>

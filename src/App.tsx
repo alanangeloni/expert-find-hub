@@ -45,6 +45,7 @@ import AppPage from "./pages/App";
 import { CompareProvider } from "./contexts/CompareContext";
 import CompareTray from "./components/compare/CompareTray";
 import CompareModal from "./components/compare/CompareModal";
+import { MatchingQuizPage } from "./features/matching-quiz";
 
 const queryClient = new QueryClient();
 
@@ -63,6 +64,7 @@ const App = () => (
               <div className="flex-grow">
                 <Routes>
                   <Route path="/" element={<Index />} />
+                  <Route path="/find-a-financial-professional" element={<MatchingQuizPage />} />
                   <Route path="/advisors" element={<Advisors />} />
                   <Route path="/advisors/:slug" element={<AdvisorDetail />} />
                   <Route path="/financial-professionals" element={<StatesIndex />} />
