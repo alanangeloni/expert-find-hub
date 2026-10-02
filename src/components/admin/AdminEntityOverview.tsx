@@ -41,6 +41,7 @@ export function AdminEntityOverview({ onNavigateTab }: AdminEntityOverviewProps)
       if (error) throw error;
       return data || [];
     },
+    retry: false,
   });
 
   const accountantsQuery = useQuery({
@@ -54,6 +55,7 @@ export function AdminEntityOverview({ onNavigateTab }: AdminEntityOverviewProps)
       if (error) throw error;
       return data || [];
     },
+    retry: false,
   });
 
   const investmentQuery = useQuery({
@@ -67,6 +69,7 @@ export function AdminEntityOverview({ onNavigateTab }: AdminEntityOverviewProps)
       if (error) throw error;
       return data || [];
     },
+    retry: false,
   });
 
   const accountingQuery = useQuery({
@@ -80,6 +83,7 @@ export function AdminEntityOverview({ onNavigateTab }: AdminEntityOverviewProps)
       if (error) throw error;
       return data || [];
     },
+    retry: false,
   });
 
   const meetingsQuery = useQuery({
@@ -93,14 +97,15 @@ export function AdminEntityOverview({ onNavigateTab }: AdminEntityOverviewProps)
       if (error) throw error;
       return data || [];
     },
+    retry: false,
   });
 
   const loading =
-    advisorsQuery.isLoading ||
-    accountantsQuery.isLoading ||
-    investmentQuery.isLoading ||
-    accountingQuery.isLoading ||
-    meetingsQuery.isLoading;
+    (advisorsQuery.isLoading && !advisorsQuery.isError) ||
+    (accountantsQuery.isLoading && !accountantsQuery.isError) ||
+    (investmentQuery.isLoading && !investmentQuery.isError) ||
+    (accountingQuery.isLoading && !accountingQuery.isError) ||
+    (meetingsQuery.isLoading && !meetingsQuery.isError);
 
   const advisors = advisorsQuery.data || [];
   const accountants = accountantsQuery.data || [];

@@ -87,7 +87,7 @@ export function AdvisorManagement() {
   const [sortKey, setSortKey] = useState("newest");
   const queryClient = useQueryClient();
 
-  const { data: advisors = [], isLoading } = useQuery({
+  const { data: advisors = [], isLoading, error, isFetching } = useQuery({
     queryKey: ["advisors-admin"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -98,6 +98,7 @@ export function AdvisorManagement() {
       if (error) throw error;
       return (data || []) as AdvisorRow[];
     },
+    retry: false,
   });
 
   const filterFn = useCallback(
@@ -311,6 +312,14 @@ export function AdvisorManagement() {
     setIsViewOpen(open);
     if (!open) setSelectedAdvisor(null);
   };
+
+  if (error) {
+    return (
+      <div className="text-destructive py-8 text-sm">
+        Error loading advisors: {(error as Error).message}
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
