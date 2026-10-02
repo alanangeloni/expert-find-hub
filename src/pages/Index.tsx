@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { AdvisorCard } from "@/components/advisors/AdvisorCard";
-import { getAdvisors, getAllAdvisors } from "@/services/advisorsService";
+import { getAllAdvisors, sortPhotoFirst } from "@/services/advisorsService";
 import { SPECIALTY_GROUPS } from "@/constants/specialties";
 import { Seo } from "@/components/seo/Seo";
 import {
@@ -20,9 +20,9 @@ const FeaturedAdvisors = () => {
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await getAdvisors({ page: 1, pageSize: 12 });
-        const shuffled = [...(data || [])].sort(() => 0.5 - Math.random());
-        setAdvisors(shuffled.slice(0, 3));
+        const all = await getAllAdvisors();
+        const withPhotos = sortPhotoFirst(all).filter((a) => a.headshot_url);
+        setAdvisors(withPhotos.slice(0, 6));
       } catch (e) {
         console.error(e);
       } finally {
@@ -34,7 +34,7 @@ const FeaturedAdvisors = () => {
   if (loading) {
     return (
       <div className="home-featured__grid">
-        {[1, 2, 3].map((i) => (
+        {[1, 2, 3, 4, 5, 6].map((i) => (
           <div key={i} className="home-featured__skeleton" />
         ))}
       </div>
