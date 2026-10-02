@@ -414,6 +414,26 @@ const staticPages = [
     changefreq: 'monthly',
     priority: '0.6',
   },
+  {
+    path: '/for-advisors',
+    title: seoTitle('For Advisors'),
+    description: seoDescription(
+      'List your fiduciary advisory practice on Financial Professional',
+      'Flat membership to be listed, no pay-per-click, and rankings that are not for sale.'
+    ),
+    changefreq: 'monthly',
+    priority: '0.7',
+  },
+  {
+    path: '/for-accountants',
+    title: seoTitle('For Accountants'),
+    description: seoDescription(
+      'List your CPA or tax practice alongside fiduciary advisors',
+      'Same marketplace, clear specialties, and no pay-to-play rankings.'
+    ),
+    changefreq: 'monthly',
+    priority: '0.7',
+  },
 ];
 
 const advisorLocation = (city, state) => [city, state].filter(Boolean).join(', ');

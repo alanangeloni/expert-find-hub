@@ -1,7 +1,6 @@
-/* Auth, legal, and advisor onboarding — aligned with homepage editorial system */
+/* Auth and advisor onboarding — aligned with homepage editorial system */
 
 .auth-page,
-.legal-page,
 .onboard-page {
   min-height: calc(100vh - var(--header-height));
   background: var(--cream);
@@ -17,7 +16,6 @@
 }
 
 .auth-page__bg,
-.legal-hero__bg,
 .onboard-hero__bg {
   position: absolute;
   inset: 0;
@@ -26,7 +24,6 @@
 }
 
 .auth-page__orb,
-.legal-hero__orb,
 .onboard-hero__orb {
   position: absolute;
   border-radius: 50%;
@@ -35,7 +32,6 @@
 }
 
 .auth-page__orb--1,
-.legal-hero__orb--1,
 .onboard-hero__orb--1 {
   width: 420px;
   height: 420px;
@@ -45,7 +41,6 @@
 }
 
 .auth-page__orb--2,
-.legal-hero__orb--2,
 .onboard-hero__orb--2 {
   width: 320px;
   height: 320px;
@@ -381,72 +376,47 @@
   margin-bottom: var(--space-4);
 }
 
-/* Legal pages */
-.legal-hero {
-  position: relative;
-  padding: var(--space-16) 0 var(--space-12);
-  overflow: hidden;
-  background: var(--cream);
+/* Legal pages — hero reuses advisor-search directory typography; page is white, no CTAs */
+.legal-page {
+  background: var(--white);
+  min-height: calc(100vh - var(--header-height));
+  padding-bottom: var(--space-24);
 }
 
-.legal-hero__content {
-  position: relative;
-  z-index: 1;
-  max-width: 720px;
+.legal-page .advisor-search__hero {
+  background: var(--white);
+  border-bottom: var(--d-border);
 }
 
-.legal-eyebrow {
-  font-size: var(--text-sm);
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--green-dark);
-  margin: var(--space-4) 0 var(--space-3);
-}
-
-.legal-hero h1 {
-  font-size: clamp(2.25rem, 5vw, 3.5rem);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.1;
-  color: var(--black);
-  margin: 0 0 var(--space-4);
-}
-
-.legal-hero h1 em {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-weight: 500;
-}
-
-.legal-lead {
-  font-size: var(--text-lg);
-  color: var(--gray-600);
-  line-height: 1.6;
-  margin: 0 0 var(--space-3);
-  max-width: 40rem;
-}
-
-.legal-updated {
+.advisor-search__hero-copy .legal-updated {
+  margin-top: var(--space-3);
   font-size: var(--text-sm);
   color: var(--gray-500);
-  margin: 0;
 }
 
+/* Full site-container width (same dcontainer as hero) — not a skinny reading column */
 .legal-body {
-  padding: 0 0 var(--space-24);
-  max-width: 760px;
+  max-width: none;
+  width: 100%;
+  padding-top: var(--space-8);
+  padding-bottom: var(--space-16);
 }
 
 .legal-body section {
   padding: var(--space-8) 0;
-  border-top: 1px solid var(--gray-200);
+  border-top: var(--d-border);
+}
+
+.legal-body section:first-child {
+  border-top: none;
+  padding-top: 0;
 }
 
 .legal-body h2 {
   font-size: var(--text-xl);
   font-weight: 700;
   letter-spacing: -0.02em;
+  line-height: 1.25;
   margin: 0 0 var(--space-3);
   color: var(--black);
 }
@@ -474,6 +444,10 @@
 .legal-body a {
   color: var(--green-dark);
   font-weight: 600;
+}
+
+.legal-body a:hover {
+  text-decoration: underline;
 }
 
 /* Advisor onboarding */

@@ -27,6 +27,7 @@
 @import './styles/design/BlogPostPage.css';
 @import './styles/design/MeetingRequestForm.css';
 @import './styles/design/AuthOnboarding.css';
+@import './styles/design/ForProLanding.css';
 @import './styles/design/extras.css';
 
 @tailwind base;
