@@ -112,6 +112,11 @@
 .for-pro__bullets {
   margin: 0;
   padding-left: var(--space-5);
+  list-style: disc;
+}
+
+.for-pro__bullets li {
+  list-style: disc;
 }
 
 .for-pro__bullets li + li {
