@@ -20,8 +20,8 @@ const FeaturedAdvisors = () => {
   useEffect(() => {
     (async () => {
       try {
-        const { data } = await getAdvisors({ page: 1, pageSize: 100 });
-        const withPhotos = sortPhotoFirst(data || []).filter((a) => a.headshot_url);
+        const all = await getAllAdvisors();
+        const withPhotos = sortPhotoFirst(all).filter((a) => a.headshot_url);
         setAdvisors(withPhotos.slice(0, 6));
       } catch (e) {
         console.error(e);
