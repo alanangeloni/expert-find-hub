@@ -151,6 +151,16 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://financialprofessional.com/for-advisors</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://financialprofessional.com/for-accountants</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://financialprofessional.com/advisors/brandonkraus</loc>
     <lastmod>2026-08-16</lastmod>
     <changefreq>monthly</changefreq>
@@ -4704,7 +4714,7 @@
   </url>
   <url>
     <loc>https://financialprofessional.com/accountants/together-cfo</loc>
-    <lastmod>2026-09-10</lastmod>
+    <lastmod>2026-10-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
