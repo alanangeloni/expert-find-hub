@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useSearchParams } from "react-router-dom";
-import { getAllAdvisors } from "@/services/advisorsService";
+import { getAllAdvisors, sortPhotoFirst } from "@/services/advisorsService";
 import { AdvisorCard } from "@/components/advisors/AdvisorCard";
 import { SearchFilters, type AdvisorFilters } from "@/components/search/SearchFilters";
 import { valuesForSpecialty, SPECIALTY_GROUPS } from "@/constants/specialties";
@@ -88,11 +88,14 @@ const AdvisorSearch = () => {
     if (filters.verifiedOnly) list = list.filter((a) => a.verified);
     if (filters.noMinimum) list = list.filter((a) => formatMinAssets(a.minimum) === "No minimum");
 
-    list.sort((a, b) => {
-      if (filters.sort === "name") return a.name.localeCompare(b.name);
-      if (filters.sort === "firm") return (a.firm_name || "").localeCompare(b.firm_name || "");
-      return (b.years_of_experience || 0) - (a.years_of_experience || 0);
-    });
+    if (filters.sort === "name") {
+      list.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (filters.sort === "firm") {
+      list.sort((a, b) => (a.firm_name || "").localeCompare(b.firm_name || ""));
+    } else {
+      // Default: advisors with photos first, randomized within each group for fairness.
+      list = sortPhotoFirst(list);
+    }
 
     return list;
   }, [advisors, filters]);
