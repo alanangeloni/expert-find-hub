@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Advisor } from '@/services/advisorsService';
 import { Badge } from '@/components/ui/badge';
 import { X } from 'lucide-react';
+import { HeadshotUpload } from '@/components/common/HeadshotUpload';
 import {
   Form,
   FormControl,
@@ -129,6 +130,7 @@ const editSchema = z.object({
   client_type: z.array(z.string()).max(10, 'Maximum 10 client types allowed').optional(),
   states_registered_in: z.array(z.string()).max(50, 'Maximum 50 states allowed').optional(),
   fiduciary: z.boolean().default(false),
+  headshot_url: z.string().url().optional().or(z.literal('')).nullable(),
 });
 
 type AdvisorFormData = z.infer<typeof editSchema>;
@@ -163,6 +165,7 @@ export const AdvisorProfileEdit: React.FC<AdvisorProfileEditProps> = ({ advisor,
       client_type: advisor.client_type || [],
       states_registered_in: advisor.states_registered_in || [],
       fiduciary: advisor.fiduciary || false,
+      headshot_url: advisor.headshot_url || null,
     }
   });
 
@@ -197,6 +200,7 @@ export const AdvisorProfileEdit: React.FC<AdvisorProfileEditProps> = ({ advisor,
         client_type: data.client_type || [],
         states_registered_in: data.states_registered_in || [],
         fiduciary: data.fiduciary,
+        headshot_url: data.headshot_url || null,
         updated_at: new Date().toISOString(),
       } as any; // Type assertion to bypass strict typing
 
@@ -532,6 +536,24 @@ export const AdvisorProfileEdit: React.FC<AdvisorProfileEditProps> = ({ advisor,
                     <div className="space-y-1 leading-none">
                       <FormLabel>Fiduciary</FormLabel>
                     </div>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="headshot_url"
+                render={({ field }) => (
+                  <FormItem className="md:col-span-2">
+                    <FormControl>
+                      <HeadshotUpload
+                        currentHeadshotUrl={field.value}
+                        onHeadshotChange={field.onChange}
+                        disabled={!canEdit}
+                        label="Profile photo"
+                      />
+                    </FormControl>
+                    <FormMessage />
                   </FormItem>
                 )}
               />

@@ -95,7 +95,7 @@ export default function CalculatorTool({ id, embed = false, showHeader = true }:
             Reset
           </button>
           <Link
-            to={`/?calculator=${meta.slug}#match`}
+            to="/find-a-financial-professional"
             className="btn btn--green btn--md"
             onClick={() => saveHandoff(meta, summary)}
           >

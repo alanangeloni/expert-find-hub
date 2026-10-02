@@ -96,7 +96,7 @@ const InvestmentFirms = () => {
             <Link to="/advisors" className="btn btn--primary btn--lg">
               Browse advisors
             </Link>
-            <Link to="/#match" className="btn btn--outline btn--lg">
+            <Link to="/find-a-financial-professional" className="btn btn--outline btn--lg">
               Take the matching quiz
             </Link>
           </div>

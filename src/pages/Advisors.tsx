@@ -122,7 +122,7 @@ const AdvisorSearch = () => {
             </p>
           </div>
           <div className="advisor-search__hero-cta">
-            <Link to="/#match" className="btn btn--primary btn--lg">
+            <Link to="/find-a-financial-professional" className="btn btn--primary btn--lg">
               Take the matching quiz
             </Link>
             <Link to="/firms" className="btn btn--outline btn--lg">

@@ -283,7 +283,7 @@ const BlogArticle = () => {
               <p>Match with fiduciary advisors who align with what you just read.</p>
             </div>
             <div className="blog-post__share-actions">
-              <Link to="/#match" className="btn btn--primary btn--md">
+              <Link to="/find-a-financial-professional" className="btn btn--primary btn--md">
                 Take the quiz
               </Link>
               <Link to="/advisors" className="btn btn--outline btn--md">
@@ -309,7 +309,7 @@ const BlogArticle = () => {
             <span className="blog-post__side-eyebrow">Next step</span>
             <h3>Get matched in 2 minutes</h3>
             <p>Tell us your goals, fee style, and values. We'll rank fiduciaries who fit.</p>
-            <Link to="/#match" className="btn btn--green btn--md btn--full">
+            <Link to="/find-a-financial-professional" className="btn btn--green btn--md btn--full">
               Start matching quiz
             </Link>
           </div>
