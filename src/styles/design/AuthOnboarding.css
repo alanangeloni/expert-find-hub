@@ -376,15 +376,28 @@
   margin-bottom: var(--space-4);
 }
 
-/* Legal pages — hero reuses advisor-search directory classes; body is prose only */
+/* Legal pages — hero reuses advisor-search directory typography; page is white, no CTAs */
+.legal-page {
+  background: var(--white);
+  min-height: calc(100vh - var(--header-height));
+  padding-bottom: var(--space-24);
+}
+
+.legal-page .advisor-search__hero {
+  background: var(--white);
+  border-bottom: var(--d-border);
+}
+
 .advisor-search__hero-copy .legal-updated {
   margin-top: var(--space-3);
   font-size: var(--text-sm);
   color: var(--gray-500);
 }
 
+/* Left-align with hero-copy inside the same dcontainer (do not center a narrower box) */
 .legal-body {
-  max-width: 760px;
+  max-width: 640px;
+  padding-top: var(--space-8);
   padding-bottom: var(--space-16);
 }
 
