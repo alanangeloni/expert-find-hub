@@ -4874,12 +4874,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://financialprofessional.com/firms/commonwealth</loc>
-    <lastmod>2025-06-08</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://financialprofessional.com/firms/edly</loc>
     <lastmod>2025-06-08</lastmod>
     <changefreq>monthly</changefreq>
@@ -5680,6 +5674,12 @@
   <url>
     <loc>https://financialprofessional.com/firms/worthy</loc>
     <lastmod>2025-06-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://financialprofessional.com/firms/commonwealth</loc>
+    <lastmod>2026-10-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
