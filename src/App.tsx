@@ -4,7 +4,6 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Routes, Route } from "react-router-dom";
-import { HelmetProvider } from 'react-helmet-async';
 import { AuthProvider } from "./contexts/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminRoute from "./components/AdminRoute";
@@ -50,14 +49,11 @@ import CompareTray from "./components/compare/CompareTray";
 import CompareModal from "./components/compare/CompareModal";
 import { MatchingQuizPage } from "./features/matching-quiz";
 
-const queryClient = new QueryClient();
-
-const App = () => (
+const App = ({ queryClient }: { queryClient: QueryClient }) => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <HelmetProvider>
         <AuthProvider>
           <CompareProvider>
           <ScrollToTop />
@@ -146,7 +142,6 @@ const App = () => (
           </div>
           </CompareProvider>
         </AuthProvider>
-      </HelmetProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
