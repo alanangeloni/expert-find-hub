@@ -2,6 +2,7 @@ import React, { useMemo, useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link, useSearchParams } from "react-router-dom";
 import { getAllAdvisors, sortPhotoFirst } from "@/services/advisorsService";
+import { useShuffleSeed } from "@/hooks/useShuffleSeed";
 import { AdvisorCard } from "@/components/advisors/AdvisorCard";
 import { SearchFilters, type AdvisorFilters } from "@/components/search/SearchFilters";
 import { valuesForSpecialty, SPECIALTY_GROUPS } from "@/constants/specialties";
@@ -28,6 +29,7 @@ const labelForRawService = (raw: string) => {
 const AdvisorSearch = () => {
   const [searchParams] = useSearchParams();
   const [filters, setFilters] = useState<AdvisorFilters>(EMPTY);
+  const shuffleSeed = useShuffleSeed();
   const [visible, setVisible] = useState(18);
 
   useEffect(() => {
@@ -94,11 +96,11 @@ const AdvisorSearch = () => {
       list.sort((a, b) => (a.firm_name || "").localeCompare(b.firm_name || ""));
     } else {
       // Default: advisors with photos first, randomized within each group for fairness.
-      list = sortPhotoFirst(list);
+      list = sortPhotoFirst(list, shuffleSeed);
     }
 
     return list;
-  }, [advisors, filters]);
+  }, [advisors, filters, shuffleSeed]);
 
   useEffect(() => setVisible(18), [filters]);
 

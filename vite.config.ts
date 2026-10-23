@@ -20,6 +20,10 @@ export default defineConfig(({ command }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  ssr: {
+    // Bundle dependencies into the prerender bundle to avoid CJS/ESM import issues in Node.
+    noExternal: true,
+  },
   build: {
     rollupOptions: {
       input: {

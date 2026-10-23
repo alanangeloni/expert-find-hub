@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getAllAdvisors, sortPhotoFirst } from "@/services/advisorsService";
+import { useShuffleSeed } from "@/hooks/useShuffleSeed";
 import { AdvisorCard } from "@/components/advisors/AdvisorCard";
 import { SearchFilters, type AdvisorFilters } from "@/components/search/SearchFilters";
 import { valuesForSpecialty, SPECIALTY_GROUPS } from "@/constants/specialties";
@@ -40,6 +41,7 @@ const StateAdvisors = () => {
   const { state: slug = "" } = useParams();
   const state = stateFromSlug(slug);
   const [filters, setFilters] = useState<AdvisorFilters>(EMPTY);
+  const shuffleSeed = useShuffleSeed();
   const [visible, setVisible] = useState(18);
 
   const { data: advisors = [], isLoading } = useQuery({
@@ -106,11 +108,11 @@ const StateAdvisors = () => {
       list.sort((a, b) => (a.firm_name || "").localeCompare(b.firm_name || ""));
     } else {
       // Default: advisors with photos first, randomized within each group for fairness.
-      list = sortPhotoFirst(list);
+      list = sortPhotoFirst(list, shuffleSeed);
     }
 
     return list;
-  }, [inState, filters]);
+  }, [inState, filters, shuffleSeed]);
 
   useEffect(() => setVisible(18), [filters, slug]);
 
