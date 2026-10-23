@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { BlogPost, getBlogPosts } from "@/services/blogService";
 import { Spinner } from "@/components/ui/spinner";
 import { useAuth } from "@/contexts/AuthContext";
@@ -14,14 +15,10 @@ import CalculatorTool from "@/features/calculators/CalculatorTool";
 
 const BlogArticle = () => {
   const { slug } = useParams<{ slug: string }>();
-  const [post, setPost] = useState<BlogPost | null>(null);
-  const [related, setRelated] = useState<BlogPost[]>([]);
-  const [allCategories, setAllCategories] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [notFound, setNotFound] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const adminView = !!(isAdmin && user);
 
   useEffect(() => {
     const checkAdminStatus = async () => {
@@ -36,86 +33,62 @@ const BlogArticle = () => {
     checkAdminStatus();
   }, [user]);
 
-  useEffect(() => {
-    const fetchBlogPost = async () => {
-      if (!slug) return;
-      setLoading(true);
-      try {
-        let queryBuilder = supabase.from("blog_posts").select("*").eq("slug", slug);
-        if (!(isAdmin && user)) {
-          const now = new Date().toISOString();
-          queryBuilder = queryBuilder.or(
-            `and(status.eq.published,published_at.is.null),and(status.eq.published,published_at.lte.${now}),and(status.eq.scheduled,published_at.lte.${now})`
-          );
-        }
-        const { data } = await queryBuilder.maybeSingle();
-
-        if (!data) {
-          // Old, unsafe article addresses (spaces, colons, capitals) now live in
-          // blog_slug_redirects. Send visitors and crawlers to the new address.
-          const { data: redirect } = await supabase
-            .from("blog_slug_redirects")
-            .select("new_slug")
-            .eq("old_slug", slug)
-            .maybeSingle();
-          if (redirect?.new_slug && redirect.new_slug !== slug) {
-            navigate(`/blog/${redirect.new_slug}`, { replace: true });
-            return;
-          }
-          setNotFound(true);
-          return;
-        }
-        const categories = await getPostCategories(data.id);
-        setPost({ ...data, categories } as BlogPost);
-      } catch (error) {
-        console.error("Error fetching blog post:", error);
-        setNotFound(true);
-      } finally {
-        setLoading(false);
+  const { data: postResult, isLoading: loading } = useQuery({
+    queryKey: ["blog-article", slug, adminView],
+    enabled: !!slug,
+    queryFn: async (): Promise<{ post: BlogPost | null; redirect?: string }> => {
+      let queryBuilder = supabase.from("blog_posts").select("*").eq("slug", slug!);
+      if (!adminView) {
+        const now = new Date().toISOString();
+        queryBuilder = queryBuilder.or(
+          `and(status.eq.published,published_at.is.null),and(status.eq.published,published_at.lte.${now}),and(status.eq.scheduled,published_at.lte.${now})`
+        );
       }
-    };
-    fetchBlogPost();
-  }, [slug, isAdmin, user]);
-
-  useEffect(() => {
-    const fetchAuthorInfo = async () => {
-      if (!post?.author_id) return;
-      try {
-        const { data } = await supabase
+      const { data } = await queryBuilder.maybeSingle();
+      if (!data) {
+        // Old, unsafe article addresses now live in blog_slug_redirects.
+        const { data: redirect } = await supabase
+          .from("blog_slug_redirects")
+          .select("new_slug")
+          .eq("old_slug", slug!)
+          .maybeSingle();
+        if (redirect?.new_slug && redirect.new_slug !== slug) return { post: null, redirect: redirect.new_slug };
+        return { post: null };
+      }
+      const categories = await getPostCategories(data.id);
+      let authorName: string | undefined;
+      if (data.author_id) {
+        const { data: author } = await supabase
           .from("profiles")
           .select("first_name, last_name")
-          .eq("id", post.author_id)
-          .single();
-        if (data) {
-          setPost((prev) => (prev ? { ...prev, authorName: `${data.first_name} ${data.last_name}` } : null));
-        }
-      } catch (error) {
-        console.error("Error fetching author info:", error);
+          .eq("id", data.author_id)
+          .maybeSingle();
+        if (author) authorName = `${author.first_name} ${author.last_name}`;
       }
-    };
-    fetchAuthorInfo();
-  }, [post?.author_id]);
+      return { post: { ...data, categories, ...(authorName ? { authorName } : {}) } as BlogPost };
+    },
+  });
+
+  const post = postResult?.post ?? null;
+  const notFound = !loading && !post;
 
   useEffect(() => {
-    const fetchRelated = async () => {
-      try {
-        const articles = await getBlogPosts({ status: "published", limit: 12 });
-        setAllCategories(Array.from(new Set(articles.flatMap((a) => a.categories || []))));
-        const others = articles.filter((a) => a.slug !== post?.slug);
-        const primary = post?.categories?.[0];
-        const sorted = primary
-          ? [...others].sort(
-              (a, b) =>
-                Number((b.categories || []).includes(primary)) - Number((a.categories || []).includes(primary))
-            )
-          : others;
-        setRelated(sorted.slice(0, 3));
-      } catch (error) {
-        console.error("Error fetching related articles:", error);
-      }
-    };
-    fetchRelated();
-  }, [post?.slug, post?.categories]);
+    if (postResult?.redirect) navigate(`/blog/${postResult.redirect}`, { replace: true });
+  }, [postResult?.redirect, navigate]);
+
+  const { data: recent = [] } = useQuery({
+    queryKey: ["blog-recent-12"],
+    queryFn: () => getBlogPosts({ status: "published", limit: 12 }),
+  });
+  const allCategories = Array.from(new Set(recent.flatMap((a) => a.categories || [])));
+  const primary = post?.categories?.[0];
+  const others = recent.filter((a) => a.slug !== post?.slug);
+  const related = (primary
+    ? [...others].sort(
+        (a, b) => Number((b.categories || []).includes(primary)) - Number((a.categories || []).includes(primary))
+      )
+    : others
+  ).slice(0, 3);
 
   if (loading) {
     return (
