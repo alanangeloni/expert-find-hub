@@ -69,7 +69,7 @@ async function run() {
   let full = 0;
   let headOnly = 0;
   const started = Date.now();
-  for (const page of pages) {
+  const renderPage = async (page) => {
     let html = applyHead(template, page);
     if (render) {
       try {
@@ -84,7 +84,16 @@ async function run() {
       headOnly += 1;
     }
     writeFileSync(outputPath(page.path), html);
-  }
+  };
+
+  // A few routes at a time: data fetching is network-bound.
+  const queue = [...pages];
+  const CONCURRENCY = 8;
+  await Promise.all(
+    Array.from({ length: CONCURRENCY }, async () => {
+      while (queue.length) await renderPage(queue.shift());
+    })
+  );
   console.log(
     `prerender: ${full} full pages, ${headOnly} head-only, ${((Date.now() - started) / 1000).toFixed(1)}s`
   );
