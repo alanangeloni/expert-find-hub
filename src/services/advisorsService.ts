@@ -166,15 +166,29 @@ export const getAdvisorsByIds = async (ids: string[]): Promise<Advisor[]> => {
   }
 };
 
-const shuffle = <T,>(list: T[]): T[] => [...list].sort(() => 0.5 - Math.random());
+// Seeded shuffle: seed 0 keeps the original order (used for prerendering).
+const shuffle = <T,>(list: T[], seed: number): T[] => {
+  const out = [...list];
+  if (!seed) return out;
+  let s = seed;
+  const rand = () => {
+    s = (s * 1103515245 + 12345) % 2147483648;
+    return s / 2147483648;
+  };
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [out[i], out[j]] = [out[j], out[i]];
+  }
+  return out;
+};
 
 /**
  * Advisors with a profile photo sort first; ordering within each group
  * (photo / no photo) is randomized so placement stays fair for everyone.
  */
-export const sortPhotoFirst = (list: Advisor[]): Advisor[] => {
-  const withPhoto = shuffle(list.filter((a) => !!a.headshot_url));
-  const withoutPhoto = shuffle(list.filter((a) => !a.headshot_url));
+export const sortPhotoFirst = (list: Advisor[], seed: number): Advisor[] => {
+  const withPhoto = shuffle(list.filter((a) => !!a.headshot_url), seed);
+  const withoutPhoto = shuffle(list.filter((a) => !a.headshot_url), seed + 7);
   return [...withPhoto, ...withoutPhoto];
 };
 

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { AdvisorCard } from "@/components/advisors/AdvisorCard";
 import { getAllAdvisors, sortPhotoFirst } from "@/services/advisorsService";
+import { useShuffleSeed } from "@/hooks/useShuffleSeed";
 import { SPECIALTY_GROUPS } from "@/constants/specialties";
 import { Seo } from "@/components/seo/Seo";
 import {
@@ -15,7 +16,8 @@ import {
 /* --------------------------- Featured advisors --------------------------- */
 const FeaturedAdvisors = () => {
   const { data: all, isLoading: loading } = useQuery({ queryKey: ["all-advisors"], queryFn: getAllAdvisors });
-  const advisors = sortPhotoFirst(all || []).filter((a) => a.headshot_url).slice(0, 6);
+  const shuffleSeed = useShuffleSeed();
+  const advisors = sortPhotoFirst(all || [], shuffleSeed).filter((a) => a.headshot_url).slice(0, 6);
 
   if (loading) {
     return (
