@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "predev": "node scripts/generate-sitemap.js",
-    "build": "vite build && node scripts/prerender-seo.js",
+    "build": "vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.mjs",
     "prebuild": "node scripts/generate-sitemap.js",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",

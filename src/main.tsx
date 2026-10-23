@@ -7,7 +7,8 @@ import './index.css'
 
 const queryClient = new QueryClient();
 const prerendered = (window as any).__RQ_STATE__;
-if (prerendered) hydrate(queryClient, prerendered);
+const samePath = ((window as any).__PRERENDER_PATH__ || '').replace(/\/+$/, '') === window.location.pathname.replace(/\/+$/, '');
+if (prerendered && samePath) hydrate(queryClient, prerendered);
 
 const root = document.getElementById("root")!;
 const app = (
@@ -19,9 +20,13 @@ const app = (
 );
 
 // Only hydrate when the root already has real prerendered markup.
-const hasSSRMarkup = Array.from(root.childNodes).some(
-  (node) => node.nodeType === Node.ELEMENT_NODE
-);
+// The homepage file also serves as the fallback for unlisted routes (admin,
+// sign-in), so hydrate only when the markup was rendered for this exact path.
+const normalize = (p: string) => p.replace(/\/+$/, '') || '/';
+const hasSSRMarkup =
+  normalize((window as any).__PRERENDER_PATH__ || '') === normalize(window.location.pathname) &&
+  Array.from(root.childNodes).some((node) => node.nodeType === Node.ELEMENT_NODE);
+if (!hasSSRMarkup) root.innerHTML = '';
 
 if (import.meta.env.PROD && hasSSRMarkup) {
   hydrateRoot(root, app);
