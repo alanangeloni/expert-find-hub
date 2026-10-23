@@ -1,5 +1,5 @@
 import ReactDOMServer from 'react-dom/server';
-import { StaticRouter } from 'react-router-dom/server';
+import { StaticRouter } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { QueryClient, dehydrate } from '@tanstack/react-query';
 import App from './App';
