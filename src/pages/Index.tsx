@@ -125,8 +125,8 @@ const HomePage = () => {
             <span className="home-hero__title-serif">with a Financial Professional</span>
           </h1>
           <p className="home-hero__subtitle">
-            We match you with vetted fiduciary financial advisors, based on your goals, values, and
-            the way you actually want to work together.
+            Find vetted fiduciary financial advisors for retirement, investing, tax and estate
+            planning. Compare fees and credentials, or get matched free based on your goals.
           </p>
 
           <form className="home-hero__search" onSubmit={handleSearch}>
@@ -205,8 +205,8 @@ const HomePage = () => {
               <em>the right relationship</em>
             </h2>
             <p className="home-section-desc">
-              We cut through the noise so you can focus on what matters: finding someone you trust
-              with your financial future.
+              Finding a financial advisor starts with your goals. Our free matching quiz helps you
+              narrow your options, compare profiles, and request an introduction without obligation.
             </p>
           </div>
 
@@ -478,8 +478,8 @@ const Index = () => {
   return (
     <>
       <Seo
-        title="Find a Financial Professional | Fiduciary Advisors"
-        description="Match with vetted, fee-only fiduciary financial advisors based on your goals, assets, and stage of life. Free to search, free to get matched."
+        title="Find a Fiduciary Advisor | Financial Professional"
+        description="Find vetted fiduciary financial advisors for retirement, investing, tax and estate planning. Compare fees and credentials, or get matched free with our quiz."
         structuredData={structuredData}
         canonicalUrl="https://financialprofessional.com/"
       />
