@@ -153,9 +153,9 @@ const NON_ADVISORY_ASSET_CLASSES = new Set(['Cryptocurrency']);
 const staticPages = [
   {
     path: '/',
-    title: 'Find a Financial Professional | Fiduciary Advisors',
+    title: 'Find a Fiduciary Advisor | Financial Professional',
     description: seoDescription(
-      'Match with vetted, fee-only fiduciary financial advisors based on your goals, assets, and stage of life. Free to search, free to get matched.'
+      'Find vetted fiduciary financial advisors for retirement, investing, tax and estate planning. Compare fees and credentials, or get matched free with our quiz.'
     ),
     changefreq: 'weekly',
     priority: '1.0',
