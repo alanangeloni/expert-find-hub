@@ -10,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import ReactMarkdown from "react-markdown";
 import { getPostCategories } from "@/utils/blogRelations";
 import { BlogCard, postDate, readTime, postExcerpt, authorHue } from "@/components/blog/BlogCard";
+import { HOUSE_BYLINE } from "@/lib/blogAuthor";
 import { calculatorBySlug } from "@/features/calculators/catalog";
 import CalculatorTool from "@/features/calculators/CalculatorTool";
 
@@ -113,7 +114,7 @@ const BlogArticle = () => {
   }
 
   const category = post.categories?.[0] || "Insights";
-  const author = post.authorName || "Financial Professional";
+  const author = post.authorName || HOUSE_BYLINE;
   const sideCategories = allCategories.filter((c) => c !== category).slice(0, 3);
 
   return (

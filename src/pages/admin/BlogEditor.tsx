@@ -17,6 +17,7 @@ const BlogEditor = () => {
     handleSubmit,
     onSubmit,
     isLoading,
+    authors,
   } = useBlogEditor();
 
   return (
@@ -36,6 +37,7 @@ const BlogEditor = () => {
             setValue={setValue}
             coverImageUrl={coverImageUrl}
             setCoverImageUrl={setCoverImageUrl}
+            authors={authors}
           />
 
           <Button type="submit" className="bg-indigo-600 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">

@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import type { BlogPost } from "@/services/blogService";
+import { HOUSE_BYLINE } from "@/lib/blogAuthor";
 
 export const postDate = (post: BlogPost) => {
   const raw = post.published_at || post.created_at;
@@ -29,7 +30,7 @@ interface BlogCardProps {
 
 export const BlogCard = ({ post, variant = "default" }: BlogCardProps) => {
   const category = post.categories?.[0] || "Insights";
-  const author = post.authorName || "Financial Professional";
+  const author = post.authorName || HOUSE_BYLINE;
   const hue = authorHue(author);
   const href = `/blog/${post.slug}`;
 
