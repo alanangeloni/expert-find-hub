@@ -1477,6 +1477,10 @@ export type Database = {
         Args: { category: string; post_id: string }
         Returns: undefined
       }
+      resolve_blog_author: {
+        Args: { raw_name: string; required?: boolean }
+        Returns: string
+      }
     }
     Enums: {
       accounting_service_type:

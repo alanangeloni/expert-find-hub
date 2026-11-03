@@ -10,6 +10,8 @@ import { BlogPost } from '@/services/blogService';
 import { createBlogPost, updateBlogPost } from '@/services/blogService';
 import { toast } from '@/components/ui/use-toast';
 import { blogPostSchema, type BlogPostFormValues, type BlogCategoryType, type BlogStatus } from '@/types/blog';
+import { fetchBlogAuthorChoices } from '@/services/blogService';
+import { isUuid, normalizeUuid } from '@/lib/blogAuthor';
 
 export const useBlogEditor = () => {
   // Get the slug from the URL params
@@ -73,6 +75,11 @@ export const useBlogEditor = () => {
     fetchPost();
   }, [slug]);
 
+  const { data: authors = [] } = useQuery({
+    queryKey: ['blog-author-choices'],
+    queryFn: fetchBlogAuthorChoices,
+  });
+
   const { control, handleSubmit, setValue, reset, formState: { errors } } = useForm<BlogPostFormValues>({
     resolver: zodResolver(blogPostSchema),
     defaultValues: {
@@ -84,6 +91,7 @@ export const useBlogEditor = () => {
       status: 'draft',
       categories: [],
       published_at: '',
+      author_id: '',
     },
   });
 
@@ -99,6 +107,7 @@ export const useBlogEditor = () => {
         status: existingPost.status,
         categories: existingPost.categories as BlogCategoryType[] || [],
         published_at: existingPost.published_at || '',
+        author_id: isUuid(existingPost.author_id) ? normalizeUuid(existingPost.author_id) ?? '' : '',
       };
       console.log('Resetting form with data:', formData);
       
@@ -133,6 +142,8 @@ export const useBlogEditor = () => {
       status: BlogStatus;
       categories?: string[];
       published_at?: string | null;
+      author_id?: string | null;
+      legacy_author_name?: string | null;
     }) => createBlogPost(postData),
     onSuccess: () => {
       toast({ title: "Blog post created successfully!" });
@@ -159,6 +170,8 @@ export const useBlogEditor = () => {
       status: BlogStatus;
       categories?: string[];
       published_at?: string | null;
+      author_id?: string | null;
+      legacy_author_name?: string | null;
     }) => updateBlogPost(id, postData),
     onSuccess: () => {
       toast({ title: "Blog post updated successfully!" });
@@ -181,29 +194,29 @@ export const useBlogEditor = () => {
   };
 
   const onSubmit = (data: BlogPostFormValues) => {
+    const authorId = (data.author_id ?? '').trim();
+    // Only the stored text byline is resolved, and only when this post has no uuid yet.
+    // Clearing the select on a post that already has an author stays cleared.
+    const legacyAuthorName =
+      !authorId && existingPost && !isUuid(existingPost.author_id)
+        ? existingPost.Author ?? null
+        : null;
+    const payload = {
+      title: data.title,
+      slug: data.slug,
+      content: data.content,
+      excerpt: data.excerpt,
+      cover_image_url: data.cover_image_url,
+      status: data.status,
+      categories: data.categories,
+      published_at: resolvePublishedAt(data),
+      author_id: authorId || null,
+      legacy_author_name: legacyAuthorName,
+    };
     if (slug && existingPost) {
-      updatePostMutation.mutate({
-        id: existingPost.id,
-        title: data.title,
-        slug: data.slug,
-        content: data.content,
-        excerpt: data.excerpt,
-        cover_image_url: data.cover_image_url,
-        status: data.status,
-        categories: data.categories,
-        published_at: resolvePublishedAt(data),
-      });
+      updatePostMutation.mutate({ id: existingPost.id, ...payload });
     } else {
-      createPostMutation.mutate({
-        title: data.title,
-        slug: data.slug,
-        content: data.content,
-        excerpt: data.excerpt,
-        cover_image_url: data.cover_image_url,
-        status: data.status,
-        categories: data.categories,
-        published_at: resolvePublishedAt(data),
-      });
+      createPostMutation.mutate(payload);
     }
   };
 
@@ -219,5 +232,6 @@ export const useBlogEditor = () => {
     handleSubmit,
     onSubmit,
     isLoading,
+    authors,
   };
 };
