@@ -57,7 +57,7 @@ type AssetClass = Database["public"]["Enums"]["Asset Class"];
 
 const ASSET_CLASSES: AssetClass[] = [
   "Art",
-  "Asset Management",
+  "Investment Management",
   "Collectibles",
   "Commodities",
   "Cryptocurrency",

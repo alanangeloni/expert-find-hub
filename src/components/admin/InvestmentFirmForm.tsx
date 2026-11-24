@@ -21,7 +21,7 @@ import {
 
 const assetClasses = [
   'Art',
-  'Asset Management',
+  'Investment Management',
   'Collectibles',
   'Commodities',
   'Cryptocurrency',

@@ -1699,7 +1699,7 @@ export type Database = {
         | "Series 8"
       "Asset Class":
         | "Art"
-        | "Asset Management"
+        | "Investment Management"
         | "Collectibles"
         | "Commodities"
         | "Cryptocurrency"
@@ -2347,7 +2347,7 @@ export const Constants = {
       ],
       "Asset Class": [
         "Art",
-        "Asset Management",
+        "Investment Management",
         "Collectibles",
         "Commodities",
         "Cryptocurrency",

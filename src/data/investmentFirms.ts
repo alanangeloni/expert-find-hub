@@ -292,7 +292,7 @@ export const firmsData = {
       },
       {
         name: "Steve Neff",
-        position: "Head of Asset Management",
+        position: "Head of Investment Management",
         bio: "Oversees Fidelity's investment divisions and trading operations.",
         avatar: "/placeholder.svg",
       },

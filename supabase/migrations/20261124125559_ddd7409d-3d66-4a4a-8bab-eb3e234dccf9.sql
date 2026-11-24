@@ -1,0 +1,1 @@
+ALTER TYPE public."Asset Class" RENAME VALUE 'Asset Management' TO 'Investment Management';
