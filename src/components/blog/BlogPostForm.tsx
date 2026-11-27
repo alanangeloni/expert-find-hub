@@ -11,12 +11,14 @@ import { Card, CardContent } from '@/components/ui/card';
 import { toast } from '@/components/ui/use-toast';
 import { uploadBlogImage } from '@/services/blogService';
 import { type BlogPostFormValues, BLOG_CATEGORIES, type BlogCategoryType } from '@/types/blog';
+import { HOUSE_BYLINE, type AuthorCandidate } from '@/lib/blogAuthor';
 
 interface BlogPostFormProps {
   control: Control<BlogPostFormValues>;
   errors: FieldErrors<BlogPostFormValues>;
   setValue: UseFormSetValue<BlogPostFormValues>;
   categories?: { id: string; name: BlogCategoryType }[];
+  authors?: AuthorCandidate[];
   coverImageUrl: string;
   setCoverImageUrl: (url: string) => void;
 }
@@ -34,6 +36,7 @@ export const BlogPostForm = ({
   control,
   errors,
   setValue,
+  authors = [],
   coverImageUrl,
   setCoverImageUrl
 }: BlogPostFormProps) => {
@@ -201,6 +204,43 @@ export const BlogPostForm = ({
             <p className="text-xs text-gray-500 mt-1">
               Set a past date for imported articles, or a future date with status "Scheduled" to publish automatically.
             </p>
+          </div>
+
+          <div>
+            <Label htmlFor="author_id" className="block text-sm font-medium text-gray-700">Author</Label>
+            <Controller
+              name="author_id"
+              control={control}
+              render={({ field }) => {
+                const selected = field.value || '';
+                const known = authors.some((author) => author.id === selected);
+                return (
+                  <Select
+                    onValueChange={(value) => field.onChange(value === 'none' ? '' : value)}
+                    value={selected || 'none'}
+                  >
+                    <SelectTrigger id="author_id" className="w-full mt-1">
+                      <SelectValue placeholder="Select an author" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">No author</SelectItem>
+                      {selected && !known && (
+                        <SelectItem value={selected}>Current author</SelectItem>
+                      )}
+                      {authors.map((author) => (
+                        <SelectItem key={author.id} value={author.id}>
+                          {author.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                );
+              }}
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Default: {HOUSE_BYLINE}. That name is the public byline when this is left as “No author”. The field submits a profile id.
+            </p>
+            {errors.author_id && <p className="text-red-500 text-sm mt-1">{errors.author_id.message}</p>}
           </div>
 
           <div>

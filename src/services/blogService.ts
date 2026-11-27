@@ -2,6 +2,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { getPostCategories } from "@/utils/blogRelations";
 import { uiCategoriesToDb } from "@/utils/blogCategoryMap";
 import { BLOG_CATEGORIES, type BlogStatus } from "@/types/blog";
+import {
+  blogAuthorColumn,
+  friendlyDatabaseError,
+  isUuid,
+  normalizeUuid,
+  personName,
+  resolveAuthorId,
+  slugifyName,
+  type AuthorCandidate,
+} from "@/lib/blogAuthor";
+
+export type BlogAuthorChoice = AuthorCandidate;
 
 export type BlogPostWriteInput = {
   title: string;
@@ -11,20 +23,102 @@ export type BlogPostWriteInput = {
   cover_image_url?: string;
   status: BlogStatus;
   published_at?: string | null;
-  author_id?: string;
+  author_id?: string | null;
+  /**
+   * Text byline already stored on the row (the "Author" column).
+   * Resolved to a profile id when author_id is empty. Never written as author_id.
+   */
+  legacy_author_name?: string | null;
   categories?: string[];
 };
 
-const toDbRow = (post: BlogPostWriteInput) => ({
-  title: post.title,
-  slug: post.slug,
-  content: post.content,
-  excerpt: post.excerpt ?? null,
-  cover_image_url: post.cover_image_url ?? null,
+const trimOrNull = (value?: string | null) => {
+  if (value == null) return null;
+  const trimmed = value.trim();
+  return trimmed ? trimmed : null;
+};
+
+const requiredTrim = (value: string, label: string) => {
+  const trimmed = (value ?? "").trim();
+  if (!trimmed) throw new Error(`${label} is required.`);
+  return trimmed;
+};
+
+const isMissingAuthorRpc = (error: { code?: string; message?: string }) =>
+  error.code === "PGRST202" ||
+  /could not find the function/i.test(error.message ?? "") ||
+  /schema cache/i.test(error.message ?? "");
+
+export const fetchBlogAuthorChoices = async (): Promise<AuthorCandidate[]> => {
+  const [profilesRes, authorsRes] = await Promise.all([
+    supabase.from("profiles").select("id, first_name, last_name"),
+    supabase.from("authors").select("first_name, last_name, \"author id\""),
+  ]);
+
+  const choices: AuthorCandidate[] = [];
+  const seen = new Set<string>();
+  const push = (id: string | null | undefined, name: string) => {
+    const uuid = normalizeUuid(id);
+    if (!uuid || !name || seen.has(uuid)) return;
+    seen.add(uuid);
+    choices.push({ id: uuid, name, slug: slugifyName(name) });
+  };
+
+  for (const profile of profilesRes.data ?? []) {
+    push(profile.id, personName(profile.first_name, profile.last_name));
+  }
+  for (const author of authorsRes.data ?? []) {
+    push(author["author id"], personName(author.first_name, author.last_name));
+  }
+
+  choices.sort((a, b) => a.name.localeCompare(b.name));
+  return choices;
+};
+
+const resolveViaServerOrLocal = async (raw: string, required: boolean): Promise<string | null> => {
+  const { data, error } = await supabase.rpc("resolve_blog_author", {
+    raw_name: raw,
+    required,
+  });
+  if (!error) return data ?? null;
+  if (!isMissingAuthorRpc(error)) throw new Error(friendlyDatabaseError(error.message));
+
+  let candidates: AuthorCandidate[] = [];
+  try {
+    candidates = await fetchBlogAuthorChoices();
+  } catch {
+    candidates = [];
+  }
+  const resolved = resolveAuthorId(raw, candidates, { required });
+  if (resolved.error) throw new Error(resolved.error);
+  return resolved.id;
+};
+
+const resolveAuthorForWrite = async (post: BlogPostWriteInput): Promise<string | null> => {
+  const explicit = (post.author_id ?? "").trim();
+  if (explicit) {
+    if (isUuid(explicit)) return normalizeUuid(explicit);
+    return resolveViaServerOrLocal(explicit, true);
+  }
+
+  const legacy = (post.legacy_author_name ?? "").trim();
+  if (!legacy || isUuid(legacy)) return null;
+  return resolveViaServerOrLocal(legacy, false);
+};
+
+const toDbRow = async (post: BlogPostWriteInput) => ({
+  title: requiredTrim(post.title, "Title"),
+  slug: requiredTrim(post.slug, "Slug"),
+  content: requiredTrim(post.content, "Content"),
+  excerpt: trimOrNull(post.excerpt),
+  cover_image_url: trimOrNull(post.cover_image_url),
   status: post.status,
-  author_id: post.author_id ?? null,
-  published_at: post.published_at ?? null,
-  blog_category: uiCategoriesToDb(post.categories),
+  // uuid column. blogAuthorColumn throws if a display name gets this far.
+  author_id: blogAuthorColumn(await resolveAuthorForWrite(post)),
+  published_at: trimOrNull(post.published_at),
+  blog_category: uiCategoriesToDb(
+    (post.categories ?? []).map((category) => category.trim()).filter(Boolean)
+  ),
 });
 
 // A post is live when it is published, or scheduled and its time has arrived.
@@ -48,6 +142,8 @@ export interface BlogPost {
   created_at: string;
   updated_at: string;
   author_id?: string;
+  /** Legacy text byline. Not an id. */
+  Author?: string | null;
   categories?: string[];
   authorName?: string;
 }
@@ -260,13 +356,13 @@ export const getBlogCategories = async (): Promise<BlogCategory[]> => {
 export const createBlogPost = async (post: BlogPostWriteInput): Promise<BlogPost> => {
   const { data, error } = await supabase
     .from("blog_posts")
-    .insert([toDbRow(post)])
+    .insert([await toDbRow(post)])
     .select()
     .single();
 
   if (error) {
     console.error("Error creating blog post:", error);
-    throw new Error(error.message);
+    throw new Error(friendlyDatabaseError(error.message));
   }
 
   const categories = await getPostCategories(data.id);
@@ -276,14 +372,14 @@ export const createBlogPost = async (post: BlogPostWriteInput): Promise<BlogPost
 export const updateBlogPost = async (id: string, updates: BlogPostWriteInput): Promise<BlogPost> => {
   const { data, error } = await supabase
     .from("blog_posts")
-    .update(toDbRow(updates))
+    .update(await toDbRow(updates))
     .eq("id", id)
     .select()
     .single();
 
   if (error) {
     console.error("Error updating blog post:", error);
-    throw new Error(error.message);
+    throw new Error(friendlyDatabaseError(error.message));
   }
 
   const categories = await getPostCategories(data.id);

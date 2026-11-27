@@ -10,6 +10,7 @@
     "prebuild": "node scripts/generate-sitemap.js",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
+    "test": "node --experimental-strip-types --test scripts/seo-head.test.mjs src/lib/blogAuthor.test.ts",
     "preview": "vite preview"
   },
   "dependencies": {
