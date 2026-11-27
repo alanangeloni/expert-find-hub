@@ -344,9 +344,9 @@ const staticPages = [
   },
   {
     path: '/calculators/401k-match',
-    title: seoTitle('401(k) Match Calculator'),
+    title: seoTitle('401(k) Employer Match Calculator: Free Money Check'),
     description: seoDescription(
-      'See the balance a salary deferral and employer match can reach, and whether match dollars are left behind.'
+      'Free 401(k) employer match calculator: see how much match money you get, whether you leave any on the table, and what your balance could grow to.'
     ),
     changefreq: 'monthly',
     priority: '0.7',
